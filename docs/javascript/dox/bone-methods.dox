@@ -1,0 +1,116 @@
+/**
+\class pdg::Bone
+\brief Animate a single bone in a Sprite's current rig.
+
+Use Sprite::getBone() after enabling the animation pose. Bone inherits Animated
+scheduling, scripts, easing, waits, pause, cancellation and completion handlers.
+Position and attachment coordinates are parent-relative; rotation is in radians
+and time is in seconds. moveTo(), rotateTo() and changeScaleTo() override their channels,
+starting from the displayed value. moveBy() and rotateBy() add to each fresh clip
+sample. changeScaleBy() adds a scale delta to each fresh clip sample. Completed controls persist.
+
+Height measures bone length and width measures its transverse bounds/capsule.
+Resize keeps child attachment positions proportional while preserving child sizes.
+Scale and flip propagate through descendants. Imported bone axes are preserved.
+Initial dimensions come from child connection distances, with unit length for a
+terminal bone; physical bones use their capsule dimensions. centerOffset is the
+attachment point in the parent frame; changing it adds a displacement from its
+reference position to the running clip's attachment motion.
+
+Controls run before pose modifiers and IK. Final rotations honor explicit limits,
+limits on a corresponding named Part, configured two-bone IK limits, and rotary
+limits connecting mapped physical Parts. Physical simulation owns dynamic poses;
+scripted controls supply animation targets. Resize updates capsule geometry and
+joint anchors outside locked solver callbacks. Scaling or reflecting a single
+live physical bone requires disabling animation physics first; use resize for
+physical dimensions, or Sprite flip to reflect the entire physical assembly.
+
+The Sprite advances controls automatically, including while its clip is paused.
+Use pauseSchedule() to pause the controls. Pose queries never advance their clocks.
+Replacing or disabling the rig invalidates handles. isAttached() remains safe;
+other getters and edits throw after invalidation. Bone handles and their controls
+are runtime state and are not included in Sprite snapshots.
+
+\note The Sprite must have an enabled animation pose. Do not edit controls inside
+pose modifier callbacks. Use the callback's borrowed pose to edit that pose.
+
+\par Example
+\code{.js}
+const forearm = sprite.getBone('forearm');
+forearm.series()
+    .rotateBy(0.5, 0.3, pdg.easeInOutQuad)
+    .wait(0.2)
+    .diminish(0, 0.25)
+    .endSeries();
+\endcode
+
+\see Sprite::enableAnimationPose(), Sprite::getBone(), Animated
+*/
+
+/**
+\fn pdg::Sprite::getBone(string name)
+\brief Get animated controls for a bone in the current rig.
+
+\param name Authored bone name; unknown names throw.
+\return A retained Bone handle with stable identity in this Sprite and rig.
+\note Enable the Sprite's animation pose first. Handles become invalid when
+that rig is replaced or disabled.
+\see Bone, getAnimationBoneNames()
+*/
+
+
+/**
+\fn pdg::Sprite::getBone(uint id)
+\brief Get animated controls for a bone in the current rig.
+
+\param id Bone ID in the current rig; unknown IDs throw.
+\return A retained Bone handle with stable identity in this Sprite and rig.
+\note Enable the Sprite's animation pose first. Handles become invalid when
+that rig is replaced or disabled.
+\see Bone, getAnimationBoneNames()
+*/
+
+
+/**
+\fn pdg::Bone::diminish(number influence, number seconds, int easing)
+\brief Ease scripted bone influence back toward the running animation.
+
+Blends controlled channels toward each fresh authored sample. Zero releases all
+controlled channels, including flips. This changes scripted influence, not alpha.
+A value between zero and one retains the corresponding fraction of control.
+
+\param influence Finite factor from zero to one.
+\param seconds Finite nonnegative duration in seconds.
+\param easing Easing constant; default pdg.linearTween.
+\return This Bone for chaining.
+\see getInfluence(), Animated::series()
+*/
+
+/**
+\fn pdg::Bone::setIKLimits(number minimum, number maximum)
+\brief Set final local rotation limits.
+\param minimum Finite lower angle in radians.
+\param maximum Finite upper angle, no smaller than minimum and at most one turn above it.
+\return This Bone for chaining. Invalid ranges throw without changing the limits.
+\see clearIKLimits()
+*/
+
+/**
+\fn pdg::Bone::setIKLimits(PhysicsConstraint constraint)
+\brief Share a live rotary limit with the bone.
+
+The constraint must join this bone's physical Part and its physical parent.
+Changes to the constraint update limits immediately. Disconnecting it releases
+its limit; clearIKLimits() removes the explicit association without disconnecting
+physics. Automatically discovered physical or IK limits may still apply.
+
+\param constraint Active rotary limit for this bone's physical joint.
+\return This Bone for chaining; incompatible constraints throw.
+\see PhysicsConstraint::setAngleLimits(), clearIKLimits()
+*/
+
+/**
+\fn pdg::Bone::clearIKLimits()
+\brief Remove this Bone's explicit limit override.
+\return This Bone for chaining. Existing Part, IK and physical-joint limits still apply.
+*/

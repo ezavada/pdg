@@ -1,0 +1,33 @@
+.TH "camera_output" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+camera_output \- Camera visibility, fades and transitions 
+.PP
+The engine composes camera output using private offscreen buffers during runtime frames\&. Application code controls visibility, opacity and transitions; it does not allocate or draw those buffers\&. Layer fades still modify individual contents\&. Camera fades apply to the complete scene image, preserving overlapping artwork\&.
+
+.PP
+Keep a composited camera's layers contiguous in drawing order\&. Transition scenes must not straddle another overlapping camera or screen-space drawing\&. The engine rejects ambiguous ordering instead of rearranging the scene\&. Put screen-space UI after the scene pair, using screen drawing, so it remains above the transition\&. Independent split-screen views keep their own viewport clipping\&.
+
+.PP
+Use cutTo(destination) for a scheduled visibility handoff with no blend\&. Cuts can use independent viewports or Ports and do not need contiguous scene pairs\&.
+
+.PP
+Wipe names describe the reveal boundary's travel direction, rather than the edge where the destination first appears\&. Wipes use a hard boundary with no softening or opacity interpolation\&. Progress zero displays the source; progress one displays the destination\&. The boundary is aligned to whole pixels inside the common viewport\&.
+
+.PP
+Style  Destination is revealed from  Boundary travels toward  camera_WipeLeft  Right edge  Left edge  camera_WipeRight  Left edge  Right edge  camera_WipeUp  Bottom edge  Top edge  camera_WipeDown  Top edge  Bottom edge  
+
+.PP
+Queued and active blended transitions reserve both cameras and retain the destination\&. They must share exactly one Port and an identical nonempty viewport\&. Self, cross-port, mismatched-viewport and overlapping transitions throw\&. Validation also occurs when a queued operation starts\&. Cancel with cancelSchedule() or stopIt(): cancellation restores visibility as it was at transition start\&. Removing the last attachment of either camera also cancels safely\&. Fade and transition progress obey the source camera's shared scheduler, with no separate timer\&.
+
+.PP
+All transition styles support scheduling, groups, pause and cancellation\&. Repetition, reversal, gain/clock trajectory modifiers and until() are not supported\&. A completed or cancelled transition must be requested again with transitionTo(), rather than restarted through restartIt()\&. Wipes retain source picking throughout the transition; the destination receives picking only after the handoff\&. Active/queued transitions contain runtime references and cannot be saved as portable snapshots\&. Camera opacity, visibility and ordinary fade schedules are portable\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Camera transitions require graphics, two attached scene cameras, and matching viewports\&. Camera state and ordinary fade animation also work in headless builds\&. 
+.RE
+.PP
+

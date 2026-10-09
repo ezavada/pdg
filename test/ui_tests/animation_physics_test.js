@@ -47,7 +47,8 @@ const stats = {frames:0, steps:0, bones:0, drawings:0, handArtwork:'left_hand', 
 // delayed frames can advance the wall clock while the engine limits catch-up.
 // Recovery deadlines and clip checks must not run ahead of the simulation.
 let simulationSeconds = 0;
-layer.addAnimationHelper(new pdg.IAnimationHelper((owner, seconds) => {
+const simulationClock = layer.createSprite();
+simulationClock.addAnimationHelper(new pdg.IAnimationHelper((owner, seconds) => {
     simulationSeconds += seconds;
     return true;
 }));

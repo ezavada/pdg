@@ -131,6 +131,7 @@ void View::draw() {
         auto v = matrix * glm::vec3(p.x, p.y, 1); p = Point(v.x, v.y);
     }
     Port* target = mPort;
+    Port::ScreenDrawingScope screenDrawing(*target);
     const Rect savedClip = target->getClipRect();
     if (savedClip.intersection(destination.getBounds()).empty()) return;
     bool transformed = false;

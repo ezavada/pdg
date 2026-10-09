@@ -1,15 +1,14 @@
 namespace pdg { /**
-
 \class MemBlock
-\brief holds arbitrary blocks of memory
+\brief Hold native memory for exchange between PDG APIs.
 
+A MemBlock is either an owned block or a borrowed view of another native object's
+storage. Serializer.getDataPtr() returns a borrowed block: keep the serializer
+alive and do not modify or clear it while using that block.
 
-Many functions of PDG, such as Image and Resource data, Streaming I/O, and Networking deal with blocks of memory. Since JavaScript has no way to natively deal with these, PDG adds the MemBlock class to pass those blocks of data between various parts of the PDG libraries. 
-
-This class is very similar to the Node.js Buffer class, but has no Node.js dependencies.
+getData() and getBytes() return independent Uint8Array copies.
+Use those snapshots when the data must outlive its native owner. See getData()
+for Node.js Buffer conversion and the copy cost of each conversion form.
 
 \ingroup Serialization
-
-
-
 **/ }

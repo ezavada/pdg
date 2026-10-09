@@ -19,8 +19,8 @@ assert.throws(() => pageIndex(shapes, '0'), /Unknown page/);
 assert.throws(() => pageIndex(shapes, '14'), /Unknown page/);
 assert.deepStrictEqual(visualPages(parse('ui', ['compositing'])).map(p => p.id),
     ['compositing/stroke-opacity', 'compositing/blend-modes']);
-assert.strictEqual(visualPages(parse('demo', [])).length, 7);
-assert.strictEqual(visualPages(parse('ui', [])).length, 38);
+assert.strictEqual(visualPages(parse('demo', [])).length, 10);
+assert.strictEqual(visualPages(parse('ui', [])).length, 55);
 const allSpecs = fs.readdirSync(path.resolve(__dirname, '../spec')).filter(n => /\.spec\.js$/.test(n)).map(n => n.slice(0, -8)).sort();
 const units = require('./unit_spec_catalog');
 assert.deepStrictEqual(units.web.slice().sort(), allSpecs, 'Browser suite catalog is stale');
@@ -35,3 +35,6 @@ assert(!jasmine.regExpSpec.test('sprite.spec.js'));
 console.log('PASS: runner selection, catalog and multi-suite filtering');
 
 assert.strictEqual(visualPages(parse('demo',['control-gallery']))[0].suite,'mvc');
+
+assert.strictEqual(visualPages(parse('ui',['bones']))[0].id,'bones/controls');
+assert.strictEqual(visualPages(parse('demo',['bone-controls']))[0].suite,'bone-controls');

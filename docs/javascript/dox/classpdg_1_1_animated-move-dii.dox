@@ -2,7 +2,7 @@ namespace pdg { /**
 \fn pdg::Animated::moveBy(Offset value, number durationSeconds, int easing)
 \brief Move by an offset.
 
-Adds the offset to the location. The overload without duration applies immediately. A timed request replaces programmed movement. With andThen(), the relative target is resolved when the operation starts. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+Adds the offset to the location. The overload without duration applies immediately. Only axes with nonzero offsets are acquired; a zero offset preserves that axis's existing position animation and programmed movement. A timed request replaces programmed movement on the acquired axes. With andThen(), the relative target is resolved when the operation starts. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
 
 \param value Relative offset in the container coordinate system.
 \param durationSeconds Finite nonnegative duration in seconds.
@@ -17,7 +17,7 @@ Adds the offset to the location. The overload without duration applies immediate
 \fn pdg::Animated::moveBy(number x, number y, number durationSeconds, int easing)
 \brief Move by an offset.
 
-Adds the offset to the location. The overload without duration applies immediately. A timed request replaces programmed movement. With andThen(), the relative target is resolved when the operation starts. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
+Adds the offset to the location. The overload without duration applies immediately. Only axes with nonzero offsets are acquired; a zero offset preserves that axis's existing position animation and programmed movement. A timed request replaces programmed movement on the acquired axes. With andThen(), the relative target is resolved when the operation starts. Durations are explicit floating-point seconds. Zero applies immediately; a request after wait() or andThen() must have positive duration.
 
 \param x Relative offset in the container coordinate system.
 \param y Relative offset in the container coordinate system.

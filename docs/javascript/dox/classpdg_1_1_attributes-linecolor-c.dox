@@ -1,7 +1,9 @@
 namespace pdg { /**
 
-\fn pdg::Attributes::lineColor(color)
+\fn pdg::Attributes::lineColor(Color color)
 
 \brief sets the line color for strokes and outlines
+
+Accepts a Color object, a CSS color string, or a packed RGBA number.
 
 **/ }

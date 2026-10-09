@@ -68,15 +68,16 @@ namespace pdg {
         Polygon(const Polygon&) = delete;
         Polygon& operator=(const Polygon&) = delete;
 		
+		// Point edits and transforms return self for chaining; arithmetic returns new polygons.
 		// Point management
-		void addPoint(const Point& p);
-		void addSpline(Spline* spline, float uStep = 0.01f);
-		void insertPoint(size_t index, const Point& p);
-		void removePoint(size_t index);
+		Polygon& addPoint(const Point& p);
+		Polygon& addSpline(Spline* spline, float uStep = 0.01f);
+		Polygon& insertPoint(size_t index, const Point& p);
+		Polygon& removePoint(size_t index);
 		size_t getPointCount() const;
 		Point getPoint(size_t index) const;
-		void setPoint(size_t index, const Point& p);
-		void clearPoints();
+		Polygon& setPoint(size_t index, const Point& p);
+		Polygon& clearPoints();
 		
 		// Geometric operations
 		Rect getBounds() const;

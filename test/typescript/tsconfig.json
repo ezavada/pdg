@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": false,
+    "types": [],
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "typeRoots": [
+      "../../tools/typescript/node_modules/@types"
+    ]
+  },
+  "include": [
+    "*.ts",
+    "../../docs/typescript/examples/*.ts"
+  ]
+}

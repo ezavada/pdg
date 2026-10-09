@@ -1,0 +1,111 @@
+/**
+\fn std::optional<CollisionQueryHit> pdg::Scene::raycast(const Point& start, const Point& end, const CollisionQueryOptions& options)
+\brief Return the closest accepted segment hit.
+Queries inspect current authoritative enabled attached Sprite, Part and Particle
+colliders, including bodyless colliders, independently of cameras and contact
+response. Available before stepping and while paused; call outside scene update/draw
+traversal. Predicates must not mutate geometry, scene membership, results or timing,
+or recursively query. Predicate failures propagate. Disposed scenes reject queries.
+
+Single-hit C++ values and their copies retain their colliders independently.
+Multiple-hit methods return a const reference to one scene-owned vector, valid
+until the next query on that scene or disposal. Copy the vector and explicitly
+retain collider references when keeping multiple-hit data longer. The vector uses
+reusable storage; geometry snapshots and scratch storage can allocate.
+
+A separate maxHits argument caps cast array overloads; CollisionQueryOptions.maxHits caps overlap results (default 16, range 0 to 1048576).
+Other options select layerMask intersected with layer queryBits, explicit layers,
+categoryMask, includeSensors, excludedColliders, excludedBodies and a synchronous
+boolean predicate. Foreign/detached explicit layers throw. Zero/empty selection
+matches nothing. Layers default to queryBits 1. queryBits are not serialized.
+
+Hits use scene world coordinates and public shape IDs. Casts sort by travel distance,
+collider ID then shape ID; overlaps sort by identity and expose only collider/shapeId.
+Initial touching/overlap counts and returns zero distance/fraction/normal. Nearest
+points use filled geometry: interior points return themselves at distance zero.
+No truncation flag is exposed for multiple results. Finite coordinates and
+nonnegative finite radii/distances are required; boxes must have positive dimensions.
+
+\param start World segment start.
+\param end World segment end.
+\param options Optional scene selection.
+\return Closest retained hit, or std::nullopt on a miss.
+\note Attach searched layers to a live scene; no physics step is required.
+\par Example
+\code{.cpp}
+pdg::CollisionQueryOptions options;
+options.maxHits = 8;
+const auto& hits = scene.raycast(pdg::Point(0, 50), pdg::Point(200, 50), 8, options);
+for (const auto& hit : hits) { /* use hit.collider and hit.distance here */ }
+// The next query invalidates the multiple-hit records above.
+\endcode
+*/
+/**
+\fn const std::vector<CollisionQueryHit>& pdg::Scene::raycast(const Point& start, const Point& end, uint32_t maxHits, const CollisionQueryOptions& options)
+\brief Query matching scene geometry.
+\param start Segment start.
+\param end Segment end.
+\param maxHits Integer multiple-hit limit, 0 to 1048576.
+\param options Optional scene selection; maxHits caps multiple results.
+\return Scene-owned vector, valid until the next query or disposal; empty on a miss.
+*/
+/**
+\fn std::optional<CollisionQueryHit> pdg::Scene::sweepCircle(const Point& center, double radius, const Vector& delta, const CollisionQueryOptions& options)
+\brief Query matching scene geometry.
+\param center Initial world center.
+\param radius Finite nonnegative world radius.
+\param delta World translation.
+\param options Optional scene selection; maxHits caps multiple results.
+\return Closest retained hit or std::nullopt.
+*/
+/**
+\fn const std::vector<CollisionQueryHit>& pdg::Scene::sweepCircle(const Point& center, double radius, const Vector& delta, uint32_t maxHits, const CollisionQueryOptions& options)
+\brief Query matching scene geometry.
+\param center Initial world center.
+\param radius Finite nonnegative world radius.
+\param delta World translation.
+\param maxHits Integer multiple-hit limit, 0 to 1048576.
+\param options Optional scene selection; maxHits caps multiple results.
+\return Scene-owned vector, valid until the next query or disposal; empty on a miss.
+*/
+/**
+\fn const std::vector<CollisionQueryHit>& pdg::Scene::overlapPoint(const Point& point, const CollisionQueryOptions& options)
+\brief Query matching scene geometry.
+\param point World point.
+\param options Optional scene selection; maxHits caps multiple results.
+\return Scene-owned vector, valid until the next query or disposal; empty on a miss.
+*/
+/**
+\fn const std::vector<CollisionQueryHit>& pdg::Scene::overlapCircle(const Point& center, double radius, const CollisionQueryOptions& options)
+\brief Query matching scene geometry.
+\param center World center.
+\param radius Finite nonnegative world radius.
+\param options Optional scene selection; maxHits caps multiple results.
+\return Scene-owned vector, valid until the next query or disposal; empty on a miss.
+*/
+/**
+\fn const std::vector<CollisionQueryHit>& pdg::Scene::overlapBox(const RotatedRect& box, const CollisionQueryOptions& options)
+\brief Query matching scene geometry.
+\param box Positive-size oriented world box.
+\param options Optional scene selection; maxHits caps multiple results.
+\return Scene-owned vector, valid until the next query or disposal; empty on a miss.
+*/
+/**
+\fn const std::vector<CollisionQueryHit>& pdg::Scene::overlapCapsule(const Point& start, const Point& end, double radius, const CollisionQueryOptions& options)
+\brief Query matching scene geometry.
+\param start First cap center.
+\param end Second cap center.
+\param radius Finite nonnegative world radius.
+\param options Optional scene selection; maxHits caps multiple results.
+\return Scene-owned vector, valid until the next query or disposal; empty on a miss.
+*/
+/**
+\fn std::optional<CollisionQueryHit> pdg::Scene::nearestPoint(const Point& point, double maxDistance, const CollisionQueryOptions& options)
+\brief Query matching scene geometry.
+Find the closest point on filled geometry within maxDistance. Inside a shape,
+return the input point with distance zero.
+\param point World search point.
+\param maxDistance Finite nonnegative inclusive search distance.
+\param options Optional scene selection; maxHits caps multiple results.
+\return Closest retained hit or std::nullopt.
+*/

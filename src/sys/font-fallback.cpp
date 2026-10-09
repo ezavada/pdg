@@ -55,8 +55,7 @@ static int measureTextRunWidth(const utf16string& text, FontImpl* font, int size
             CGFontGetGlyphsForUnichars(fontRef, const_cast<utf16char*>(text.data()),
                 glyphs.data(), glyphs.size());
 
-            CTFontRef ctFont = CTFontCreateWithGraphicsFont(
-                fontRef, size * macFont->mScalingFactor, nullptr, nullptr);
+            CTFontRef ctFont = static_cast<CTFontRef>(macFont->getCoreTextFont(size, style));
             if (ctFont) {
                 CTFontGetAdvancesForGlyphs(ctFont, kCTFontOrientationHorizontal,
                     glyphs.data(), advances.data(), advances.size());
@@ -64,7 +63,6 @@ static int measureTextRunWidth(const utf16string& text, FontImpl* font, int size
                 for (size_t i = 0; i < advances.size(); ++i) {
                     width += advances[i].width;
                 }
-                CFRelease(ctFont);
                 return static_cast<int>(std::ceil(width));
             }
         }

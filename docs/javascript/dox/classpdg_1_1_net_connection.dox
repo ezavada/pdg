@@ -4,11 +4,11 @@ namespace pdg { /**
 \brief sends data between two network endpoints
 
 
-NetConnection is part of the PDG Engine's custom protocol for games. It handles protocol negotiation. It manages communication over both a TCP connection (reliable transport with guaranteed delivery) and UDP communications (small and unreliable but fast) with the server. 
+NetConnection is part of the PDG Engine's custom protocol for games. It handles protocol negotiation. It manages communication over both a TCP connection (reliable transport with guaranteed delivery) and UDP communications (small and unreliable but fast) with the server. WebSocket and WebTransport carry the same reliable PDG framing. WebTransport additionally supplies unreliable session datagrams. The transport property identifies the underlying connection; message callbacks retain the delivery labels "tcp" (reliable) and "udp" (unreliable).
 
-NetConnection only represents an established connection created by NetClient or NetServer. 
+NetConnection only represents an established connection created by NetClient or NetServer.
 
-\warning NetClient, NetServer, and NetConnection all work together over a custom protocol. Do not attempt to use NetConnection to communicate with other kinds of servers, such as HTTP or raw TCP sockets. All you'll do is get a bunch of error messages. There are perfectly fine [Net][1] and [HTTP][2] modules built-in to Node.js (and thus to PDG) for communicating with other kinds of servers. 
+\warning NetClient, NetServer, and NetConnection all work together over a custom protocol. Do not attempt to use NetConnection to communicate with other kinds of servers, such as HTTP or raw TCP sockets. All you'll do is get a bunch of error messages. There are perfectly fine [Net][1] and [HTTP][2] modules built-in to Node.js (and thus to PDG) for communicating with other kinds of servers.
 
 \sa NetClient
 \sa NetServer

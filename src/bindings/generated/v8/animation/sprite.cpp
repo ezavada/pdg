@@ -42,6 +42,47 @@
 
 namespace pdg
 {
+#ifdef PDG_USING_JAVASCRIPT_CORE
+#define PROCEDURAL_PARAMETERS JSContextRef ctx, JSValueRef* exception
+#define PROCEDURAL_ARGUMENTS ctx, exception
+#else
+#define PROCEDURAL_PARAMETERS v8::Isolate* isolate
+#define PROCEDURAL_ARGUMENTS isolate
+#endif
+
+    static std::vector<double> proceduralBindingValues(PROCEDURAL_PARAMETERS, v8::Local<v8::Value> input)
+    {
+        std::vector<double> values;
+#ifdef PDG_USING_JAVASCRIPT_CORE
+        if(!JSValueIsArray(ctx,input)) { throw std::invalid_argument("Expected procedural array"); }
+        auto a=JSValueToObject(ctx,input,exception);auto key=JSStringCreateWithUTF8CString("length");
+        double n=JSValueToNumber(ctx,JSObjectGetProperty(ctx,a,key,exception),exception);JSStringRelease(key);
+        if(*exception||n>50000) { throw std::invalid_argument("Invalid procedural array"); }
+        for(unsigned i=0;i<n;++i)
+        {
+            auto item=JSObjectGetPropertyAtIndex(ctx,a,i,exception);if(*exception||!JSValueIsNumber(ctx,item))
+            {
+                throw std::invalid_argument("Invalid procedural number");
+            }
+            values.push_back(JSValueToNumber(ctx,item,exception));
+        }
+#else
+        if(!input->IsArray()) { throw std::invalid_argument("Expected procedural array"); }
+        auto a=input.As<v8::Array>();if(a->Length()>50000)
+        {
+            throw std::invalid_argument("Procedural array too long");
+        }
+        for(unsigned i=0;i<a->Length();++i)
+        {
+            v8::Local<v8::Value> item;if(!a->Get(isolate->GetCurrentContext(),i).ToLocal(&item)||!item->IsNumber())
+            {
+                throw std::invalid_argument("Invalid procedural number");
+            }
+            values.push_back(item.As<v8::Number>()->Value());
+        }
+#endif
+        return values;
+    }
 
 #ifndef PDG_NO_GUI
 
@@ -277,15 +318,29 @@ namespace pdg
     {
         std::vector<double> result;
 #ifdef PDG_USING_JAVASCRIPT_CORE
-        if(!JSValueIsArray(ctx,input))throw std::invalid_argument("Expected physical rig array");
+        if(!JSValueIsArray(ctx,input)) { throw std::invalid_argument("Expected physical rig array"); }
         auto array=JSValueToObject(ctx,input,exception);auto key=JSStringCreateWithUTF8CString("length");
         const auto length=JSValueToNumber(ctx,JSObjectGetProperty(ctx,array,key,exception),exception);JSStringRelease(key);
-        if(*exception||length>1500000)throw std::invalid_argument("Invalid physical rig array length");
-        for(unsigned i=0;i<length;++i){auto value=JSObjectGetPropertyAtIndex(ctx,array,i,exception);if(*exception||!JSValueIsNumber(ctx,value))throw std::invalid_argument("Invalid physical rig number");result.push_back(JSValueToNumber(ctx,value,exception));}
+        if(*exception||length>1500000) { throw std::invalid_argument("Invalid physical rig array length"); }
+        for(unsigned i=0;i<length;++i)
+        {
+            auto value=JSObjectGetPropertyAtIndex(ctx,array,i,exception);if(*exception||!JSValueIsNumber(ctx,value))
+            {
+                throw std::invalid_argument("Invalid physical rig number");
+            }
+            result.push_back(JSValueToNumber(ctx,value,exception));
+        }
 #else
-        if(!input->IsArray())throw std::invalid_argument("Expected physical rig array");
-        auto array=input.As<v8::Array>();if(array->Length()>1500000)throw std::invalid_argument("Invalid physical rig array length");
-        for(unsigned i=0;i<array->Length();++i){v8::Local<v8::Value> value;if(!array->Get(isolate->GetCurrentContext(),i).ToLocal(&value)||!value->IsNumber())throw std::invalid_argument("Invalid physical rig number");result.push_back(value.As<v8::Number>()->Value());}
+        if(!input->IsArray()) { throw std::invalid_argument("Expected physical rig array"); }
+        auto array=input.As<v8::Array>();if(array->Length()>1500000) { throw std::invalid_argument("Invalid physical rig array length"); }
+        for(unsigned i=0;i<array->Length();++i)
+        {
+            v8::Local<v8::Value> value;if(!array->Get(isolate->GetCurrentContext(),i).ToLocal(&value)||!value->IsNumber())
+            {
+                throw std::invalid_argument("Invalid physical rig number");
+            }
+            result.push_back(value.As<v8::Number>()->Value());
+        }
 #endif
         return result;
     }
@@ -293,7 +348,7 @@ namespace pdg
     static AnimationTwoBoneIK animationScriptIKConfig(PDG_POSE_SCRIPT_PARAMETERS, v8::Local<v8::Value> value)
     {
         AnimationTwoBoneIK config;
-        if (!value->IsObject()) throw std::invalid_argument("Expected IK configuration");
+        if (!value->IsObject()) { throw std::invalid_argument("Expected IK configuration"); }
 #ifdef PDG_USING_JAVASCRIPT_CORE
         auto object=JSValueToObject(ctx,value,exception);
 #else
@@ -303,28 +358,70 @@ namespace pdg
         {
 #ifdef PDG_USING_JAVASCRIPT_CORE
             auto key=JSStringCreateWithUTF8CString(name);auto item=JSObjectGetProperty(ctx,object,key,exception);JSStringRelease(key);
-            if (*exception || !JSValueIsNumber(ctx,item)) throw std::invalid_argument("Invalid IK configuration field");
+            if (*exception || !JSValueIsNumber(ctx,item)) { throw std::invalid_argument("Invalid IK configuration field"); }
             double number=JSValueToNumber(ctx,item,exception);
 #else
             v8::Local<v8::Value> item;
-            if (!object->Get(isolate->GetCurrentContext(),v8::String::NewFromUtf8(isolate,name).ToLocalChecked()).ToLocal(&item) || !item->IsNumber()) throw std::invalid_argument("Invalid IK configuration field");
+            if (!object->Get(isolate->GetCurrentContext(),v8::String::NewFromUtf8(isolate,name).ToLocalChecked()).ToLocal(&item) || !item->IsNumber()) { throw std::invalid_argument("Invalid IK configuration field"); }
             double number=item.As<v8::Number>()->Value();
 #endif
-            if (!std::isfinite(number)) throw std::invalid_argument("Nonfinite IK configuration field");
+            if (!std::isfinite(number)) { throw std::invalid_argument("Nonfinite IK configuration field"); }
             return number;
         };
-        {double n=read("root");if(n<0 || n>=animation_NoBone || n!=std::floor(n))throw std::invalid_argument("Invalid IK bone ID");config.root=static_cast<AnimationBoneId>(n);}
-        {double n=read("middle");if(n<0 || n>=animation_NoBone || n!=std::floor(n))throw std::invalid_argument("Invalid IK bone ID");config.middle=static_cast<AnimationBoneId>(n);}
-        {double n=read("tip");if(n<0 || n>=animation_NoBone || n!=std::floor(n))throw std::invalid_argument("Invalid IK bone ID");config.tip=static_cast<AnimationBoneId>(n);}
+        {
+            double n=read("root");if(n<0 || n>=animation_NoBone || n!=std::floor(n))
+            {
+                throw std::invalid_argument("Invalid IK bone ID");
+            }
+            config.root=static_cast<AnimationBoneId>(n);
+        }
+        {
+            double n=read("middle");if(n<0 || n>=animation_NoBone || n!=std::floor(n))
+            {
+                throw std::invalid_argument("Invalid IK bone ID");
+            }
+            config.middle=static_cast<AnimationBoneId>(n);
+        }
+        {
+            double n=read("tip");if(n<0 || n>=animation_NoBone || n!=std::floor(n))
+            {
+                throw std::invalid_argument("Invalid IK bone ID");
+            }
+            config.tip=static_cast<AnimationBoneId>(n);
+        }
         config.rootLength=read("rootLength");
         config.middleLength=read("middleLength");
         config.targetX=read("targetX");
         config.targetY=read("targetY");
         config.influence=read("influence");
-        {double n=read("space");if(n<-1 || n>2 || n!=std::floor(n))throw std::invalid_argument("Invalid IK enum");config.space=static_cast<int>(n);}
-        {double n=read("bendDirection");if(n<-1 || n>2 || n!=std::floor(n))throw std::invalid_argument("Invalid IK enum");config.bendDirection=static_cast<int>(n);}
-        {double n=read("stretch");if(n<-1 || n>2 || n!=std::floor(n))throw std::invalid_argument("Invalid IK enum");config.stretch=static_cast<int>(n);}
-        {double n=read("matchOrientation");if(n<-1 || n>2 || n!=std::floor(n))throw std::invalid_argument("Invalid IK enum");config.matchOrientation=static_cast<int>(n);}
+        {
+            double n=read("space");if(n<-1 || n>2 || n!=std::floor(n))
+            {
+                throw std::invalid_argument("Invalid IK enum");
+            }
+            config.space=static_cast<int>(n);
+        }
+        {
+            double n=read("bendDirection");if(n<-1 || n>2 || n!=std::floor(n))
+            {
+                throw std::invalid_argument("Invalid IK enum");
+            }
+            config.bendDirection=static_cast<int>(n);
+        }
+        {
+            double n=read("stretch");if(n<-1 || n>2 || n!=std::floor(n))
+            {
+                throw std::invalid_argument("Invalid IK enum");
+            }
+            config.stretch=static_cast<int>(n);
+        }
+        {
+            double n=read("matchOrientation");if(n<-1 || n>2 || n!=std::floor(n))
+            {
+                throw std::invalid_argument("Invalid IK enum");
+            }
+            config.matchOrientation=static_cast<int>(n);
+        }
         config.targetRotation=read("targetRotation");
         config.rootMin=read("rootMin");
         config.rootMax=read("rootMax");
@@ -351,10 +448,12 @@ namespace pdg
     ;
     ;
     ;
+    ;
     static v8::Local<v8::Object> animationModifierContextValue(PDG_POSE_SCRIPT_PARAMETERS, const AnimationModifierContext& context)
     {
         v8::Local<v8::Object> result = v8_ObjectCreateEmpty(isolate, 0);
         (void)result->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "deltaSeconds").ToLocalChecked(), v8::Number::New(isolate, context.deltaSeconds)).ToChecked();
+        (void)result->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "simulationDeltaSeconds").ToLocalChecked(), v8::Number::New(isolate, context.simulationDeltaSeconds)).ToChecked();
         (void)result->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "root").ToLocalChecked(), animationTransformValue(PDG_POSE_SCRIPT_ARGUMENTS,context.root)).ToChecked();
         (void)result->Set(isolate->GetCurrentContext(), v8::String::NewFromUtf8(isolate, "revision").ToLocalChecked(), v8::String::NewFromUtf8(isolate, std::to_string(context.revision).c_str()).ToLocalChecked()).ToChecked();
         return result;
@@ -373,13 +472,13 @@ namespace pdg
         const auto count = view.copy().getRig()->getBoneCount();
         const char* fields[] = {"x","y","rotation","scaleX","scaleY","alpha"};
 #ifdef PDG_USING_JAVASCRIPT_CORE
-        if (!edits || !JSValueIsArray(ctx,edits)) throw std::invalid_argument("Modifier bridge must return bone transforms");
+        if (!edits || !JSValueIsArray(ctx,edits)) { throw std::invalid_argument("Modifier bridge must return bone transforms"); }
         auto array = JSValueToObject(ctx,edits,exception);
         auto lengthKey = JSStringCreateWithUTF8CString("length");
         auto lengthValue = JSObjectGetProperty(ctx,array,lengthKey,exception); JSStringRelease(lengthKey);
-        if (*exception || JSValueToNumber(ctx,lengthValue,exception) != count) throw std::invalid_argument("Wrong modifier bone count");
+        if (*exception || JSValueToNumber(ctx,lengthValue,exception) != count) { throw std::invalid_argument("Wrong modifier bone count"); }
 #else
-        if (edits.IsEmpty() || !edits->IsArray() || edits.As<v8::Array>()->Length() != count) throw std::invalid_argument("Wrong modifier bone count");
+        if (edits.IsEmpty() || !edits->IsArray() || edits.As<v8::Array>()->Length() != count) { throw std::invalid_argument("Wrong modifier bone count"); }
         auto array = edits.As<v8::Array>();
 #endif
         for (uint32_t id=0;id<count;++id)
@@ -388,11 +487,11 @@ namespace pdg
             double* values[] = {&transform.x,&transform.y,&transform.rotation,&transform.scaleX,&transform.scaleY,&transform.alpha};
 #ifdef PDG_USING_JAVASCRIPT_CORE
             auto item=JSObjectGetPropertyAtIndex(ctx,array,id,exception);
-            if (*exception || !JSValueIsObject(ctx,item)) throw std::invalid_argument("Invalid modifier transform");
+            if (*exception || !JSValueIsObject(ctx,item)) { throw std::invalid_argument("Invalid modifier transform"); }
             auto object=JSValueToObject(ctx,item,exception);
 #else
             v8::Local<v8::Value> item;
-            if (!array->Get(isolate->GetCurrentContext(),id).ToLocal(&item) || !item->IsObject()) throw std::invalid_argument("Invalid modifier transform");
+            if (!array->Get(isolate->GetCurrentContext(),id).ToLocal(&item) || !item->IsObject()) { throw std::invalid_argument("Invalid modifier transform"); }
             auto object=item.As<v8::Object>();
 #endif
             for (int field=0;field<6;++field)
@@ -400,12 +499,11 @@ namespace pdg
 #ifdef PDG_USING_JAVASCRIPT_CORE
                 auto key=JSStringCreateWithUTF8CString(fields[field]);
                 auto value=JSObjectGetProperty(ctx,object,key,exception);JSStringRelease(key);
-                if (*exception || !JSValueIsNumber(ctx,value)) throw std::invalid_argument("Modifier transform fields must be numbers");
+                if (*exception || !JSValueIsNumber(ctx,value)) { throw std::invalid_argument("Modifier transform fields must be numbers"); }
                 *values[field]=JSValueToNumber(ctx,value,exception);
 #else
                 v8::Local<v8::Value> value;
-                if (!object->Get(isolate->GetCurrentContext(),v8::String::NewFromUtf8(isolate,fields[field]).ToLocalChecked()).ToLocal(&value) || !value->IsNumber())
-                    throw std::invalid_argument("Modifier transform fields must be numbers");
+                if (!object->Get(isolate->GetCurrentContext(),v8::String::NewFromUtf8(isolate,fields[field]).ToLocalChecked()).ToLocal(&value) || !value->IsNumber()) { throw std::invalid_argument("Modifier transform fields must be numbers"); }
                 *values[field]=value.As<v8::Number>()->Value();
 #endif
             }
@@ -468,7 +566,7 @@ namespace pdg
                 result = result__->getCppObject();
             }
         };
-        if(!result)throw std::invalid_argument("Animation drawing callback must return a Drawing or null");
+        if(!result) { throw std::invalid_argument("Animation drawing callback must return a Drawing or null"); }
         return result->share();
     }
     struct AnimationScriptDrawing : AnimationScriptModifier
@@ -518,6 +616,7 @@ namespace pdg
 #else
 #define SPRITE_SAVE_WEAK(sprite, obj) sprite->mSpriteScriptObj.Reset(isolate,obj); sprite->mSpriteScriptObj.SetWeak(); sprite->mAnimatedScriptObj.Reset(isolate,obj); sprite->mAnimatedScriptObj.SetWeak(); sprite->mEventEmitterScriptObj.Reset(isolate,obj); sprite->mEventEmitterScriptObj.SetWeak(); sprite->mISerializableScriptObj.Reset(isolate,obj); sprite->mISerializableScriptObj.SetWeak()
 #endif
+
     static bool s_Sprite_InNewFromCpp = false;
 
     void SpriteWrap::New(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -646,6 +745,138 @@ namespace pdg
         v8::Local<v8::FunctionTemplate> UnblockEvent_Tpl =
             v8::FunctionTemplate::New(isolate, UnblockEvent, v8::Local<v8::Value>(), UnblockEvent_Sig);
         t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "unblockEvent").ToLocalChecked(), UnblockEvent_Tpl);
+        v8::Local<v8::Signature> PlayScript_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> PlayScript_Tpl =
+            v8::FunctionTemplate::New(isolate, PlayScript, v8::Local<v8::Value>(), PlayScript_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "playScript").ToLocalChecked(), PlayScript_Tpl);
+        v8::Local<v8::Signature> Batch_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> Batch_Tpl =
+            v8::FunctionTemplate::New(isolate, Batch, v8::Local<v8::Value>(), Batch_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "batch").ToLocalChecked(), Batch_Tpl);
+        v8::Local<v8::Signature> EndBatch_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> EndBatch_Tpl =
+            v8::FunctionTemplate::New(isolate, EndBatch, v8::Local<v8::Value>(), EndBatch_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "endBatch").ToLocalChecked(), EndBatch_Tpl);
+        v8::Local<v8::Signature> Series_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> Series_Tpl =
+            v8::FunctionTemplate::New(isolate, Series, v8::Local<v8::Value>(), Series_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "series").ToLocalChecked(), Series_Tpl);
+        v8::Local<v8::Signature> EndSeries_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> EndSeries_Tpl =
+            v8::FunctionTemplate::New(isolate, EndSeries, v8::Local<v8::Value>(), EndSeries_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "endSeries").ToLocalChecked(), EndSeries_Tpl);
+        v8::Local<v8::Signature> AndAlso_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> AndAlso_Tpl =
+            v8::FunctionTemplate::New(isolate, AndAlso, v8::Local<v8::Value>(), AndAlso_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "andAlso").ToLocalChecked(), AndAlso_Tpl);
+        v8::Local<v8::Signature> Stagger_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> Stagger_Tpl =
+            v8::FunctionTemplate::New(isolate, Stagger, v8::Local<v8::Value>(), Stagger_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "stagger").ToLocalChecked(), Stagger_Tpl);
+        v8::Local<v8::Signature> Mark_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> Mark_Tpl =
+            v8::FunctionTemplate::New(isolate, Mark, v8::Local<v8::Value>(), Mark_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "mark").ToLocalChecked(), Mark_Tpl);
+        v8::Local<v8::Signature> JumpToMark_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> JumpToMark_Tpl =
+            v8::FunctionTemplate::New(isolate, JumpToMark, v8::Local<v8::Value>(), JumpToMark_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "jumpToMark").ToLocalChecked(), JumpToMark_Tpl);
+        v8::Local<v8::Signature> ScriptOn_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> ScriptOn_Tpl =
+            v8::FunctionTemplate::New(isolate, ScriptOn, v8::Local<v8::Value>(), ScriptOn_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "on").ToLocalChecked(), ScriptOn_Tpl);
+        v8::Local<v8::Signature> TriggerEvent_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> TriggerEvent_Tpl =
+            v8::FunctionTemplate::New(isolate, TriggerEvent, v8::Local<v8::Value>(), TriggerEvent_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "triggerEvent").ToLocalChecked(), TriggerEvent_Tpl);
+        v8::Local<v8::Signature> OnStarted_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> OnStarted_Tpl =
+            v8::FunctionTemplate::New(isolate, OnStarted, v8::Local<v8::Value>(), OnStarted_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "onStarted").ToLocalChecked(), OnStarted_Tpl);
+        v8::Local<v8::Signature> OnFinished_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> OnFinished_Tpl =
+            v8::FunctionTemplate::New(isolate, OnFinished, v8::Local<v8::Value>(), OnFinished_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "onFinished").ToLocalChecked(), OnFinished_Tpl);
+        v8::Local<v8::Signature> OnScriptFinished_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> OnScriptFinished_Tpl =
+            v8::FunctionTemplate::New(isolate, OnScriptFinished, v8::Local<v8::Value>(), OnScriptFinished_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "onScriptFinished").ToLocalChecked(), OnScriptFinished_Tpl);
+        v8::Local<v8::Signature> OnMark_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> OnMark_Tpl =
+            v8::FunctionTemplate::New(isolate, OnMark, v8::Local<v8::Value>(), OnMark_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "onMark").ToLocalChecked(), OnMark_Tpl);
+        v8::Local<v8::Signature> OnYoyo_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> OnYoyo_Tpl =
+            v8::FunctionTemplate::New(isolate, OnYoyo, v8::Local<v8::Value>(), OnYoyo_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "onYoyo").ToLocalChecked(), OnYoyo_Tpl);
+        v8::Local<v8::Signature> OnRepeat_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> OnRepeat_Tpl =
+            v8::FunctionTemplate::New(isolate, OnRepeat, v8::Local<v8::Value>(), OnRepeat_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "onRepeat").ToLocalChecked(), OnRepeat_Tpl);
+        v8::Local<v8::Signature> OnUntilFired_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> OnUntilFired_Tpl =
+            v8::FunctionTemplate::New(isolate, OnUntilFired, v8::Local<v8::Value>(), OnUntilFired_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "onUntilFired").ToLocalChecked(), OnUntilFired_Tpl);
+        v8::Local<v8::Signature> When_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> When_Tpl =
+            v8::FunctionTemplate::New(isolate, When, v8::Local<v8::Value>(), When_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "when").ToLocalChecked(), When_Tpl);
+        v8::Local<v8::Signature> Otherwise_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> Otherwise_Tpl =
+            v8::FunctionTemplate::New(isolate, Otherwise, v8::Local<v8::Value>(), Otherwise_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "otherwise").ToLocalChecked(), Otherwise_Tpl);
+        v8::Local<v8::Signature> EndWhen_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> EndWhen_Tpl =
+            v8::FunctionTemplate::New(isolate, EndWhen, v8::Local<v8::Value>(), EndWhen_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "endWhen").ToLocalChecked(), EndWhen_Tpl);
+        v8::Local<v8::Signature> EndOtherwise_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> EndOtherwise_Tpl =
+            v8::FunctionTemplate::New(isolate, EndOtherwise, v8::Local<v8::Value>(), EndOtherwise_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "endOtherwise").ToLocalChecked(), EndOtherwise_Tpl);
+        v8::Local<v8::Signature> Until_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> Until_Tpl =
+            v8::FunctionTemplate::New(isolate, Until, v8::Local<v8::Value>(), Until_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "until").ToLocalChecked(), Until_Tpl);
+        v8::Local<v8::Signature> Yoyo_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> Yoyo_Tpl =
+            v8::FunctionTemplate::New(isolate, Yoyo, v8::Local<v8::Value>(), Yoyo_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "yoyo").ToLocalChecked(), Yoyo_Tpl);
+        v8::Local<v8::Signature> Repeat_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> Repeat_Tpl =
+            v8::FunctionTemplate::New(isolate, Repeat, v8::Local<v8::Value>(), Repeat_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "repeat").ToLocalChecked(), Repeat_Tpl);
+        v8::Local<v8::Signature> Diminish_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> Diminish_Tpl =
+            v8::FunctionTemplate::New(isolate, Diminish, v8::Local<v8::Value>(), Diminish_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "diminish").ToLocalChecked(), Diminish_Tpl);
+        v8::Local<v8::Signature> Increase_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> Increase_Tpl =
+            v8::FunctionTemplate::New(isolate, Increase, v8::Local<v8::Value>(), Increase_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "increase").ToLocalChecked(), Increase_Tpl);
+        v8::Local<v8::Signature> SlowDown_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> SlowDown_Tpl =
+            v8::FunctionTemplate::New(isolate, SlowDown, v8::Local<v8::Value>(), SlowDown_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "slowDown").ToLocalChecked(), SlowDown_Tpl);
+        v8::Local<v8::Signature> SpeedUp_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> SpeedUp_Tpl =
+            v8::FunctionTemplate::New(isolate, SpeedUp, v8::Local<v8::Value>(), SpeedUp_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "speedUp").ToLocalChecked(), SpeedUp_Tpl);
+        v8::Local<v8::Signature> StopIt_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> StopIt_Tpl =
+            v8::FunctionTemplate::New(isolate, StopIt, v8::Local<v8::Value>(), StopIt_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "stopIt").ToLocalChecked(), StopIt_Tpl);
+        v8::Local<v8::Signature> RestartIt_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> RestartIt_Tpl =
+            v8::FunctionTemplate::New(isolate, RestartIt, v8::Local<v8::Value>(), RestartIt_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "restartIt").ToLocalChecked(), RestartIt_Tpl);
+        v8::Local<v8::Signature> PauseIt_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> PauseIt_Tpl =
+            v8::FunctionTemplate::New(isolate, PauseIt, v8::Local<v8::Value>(), PauseIt_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "pauseIt").ToLocalChecked(), PauseIt_Tpl);
+        v8::Local<v8::Signature> ResumeIt_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> ResumeIt_Tpl =
+            v8::FunctionTemplate::New(isolate, ResumeIt, v8::Local<v8::Value>(), ResumeIt_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "resumeIt").ToLocalChecked(), ResumeIt_Tpl);
         v8::Local<v8::Signature> GetBoundingBox_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> GetBoundingBox_Tpl =
             v8::FunctionTemplate::New(isolate, GetBoundingBox, v8::Local<v8::Value>(), GetBoundingBox_Sig);
@@ -1095,6 +1326,10 @@ namespace pdg
         v8::Local<v8::FunctionTemplate> GetAnimationDrawBounds_Tpl =
             v8::FunctionTemplate::New(isolate, GetAnimationDrawBounds, v8::Local<v8::Value>(), GetAnimationDrawBounds_Sig);
         t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getAnimationDrawBounds").ToLocalChecked(), GetAnimationDrawBounds_Tpl);
+        v8::Local<v8::Signature> ProceduralControl_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> ProceduralControl_Tpl =
+            v8::FunctionTemplate::New(isolate, ProceduralControl, v8::Local<v8::Value>(), ProceduralControl_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "_procedural").ToLocalChecked(), ProceduralControl_Tpl);
         v8::Local<v8::Signature> AddAnimationIK_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> AddAnimationIK_Tpl =
             v8::FunctionTemplate::New(isolate, AddAnimationIK, v8::Local<v8::Value>(), AddAnimationIK_Sig);
@@ -1159,6 +1394,10 @@ namespace pdg
         v8::Local<v8::FunctionTemplate> GetAnimationRigError_Tpl =
             v8::FunctionTemplate::New(isolate, GetAnimationRigError, v8::Local<v8::Value>(), GetAnimationRigError_Sig);
         t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getAnimationRigError").ToLocalChecked(), GetAnimationRigError_Tpl);
+        v8::Local<v8::Signature> GetBone_Sig = v8::Signature::New(isolate, t);
+        v8::Local<v8::FunctionTemplate> GetBone_Tpl =
+            v8::FunctionTemplate::New(isolate, GetBone, v8::Local<v8::Value>(), GetBone_Sig);
+        t->PrototypeTemplate()->Set(v8::String::NewFromUtf8(isolate, "getBone").ToLocalChecked(), GetBone_Tpl);
         v8::Local<v8::Signature> GetAnimationBoneNames_Sig = v8::Signature::New(isolate, t);
         v8::Local<v8::FunctionTemplate> GetAnimationBoneNames_Tpl =
             v8::FunctionTemplate::New(isolate, GetAnimationBoneNames, v8::Local<v8::Value>(), GetAnimationBoneNames_Sig);
@@ -1485,13 +1724,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            {
-                args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object IEventHandler] inHandler, [number int] inEventType = all_events)" " - " "add a new handler for some event type, or for all events if no type specified. "
-                    " \\param inHandler the object to handle events" " \\param inEventType the type of event to handle").ToLocalChecked() ); return;
-            };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -1500,11 +1733,11 @@ namespace pdg
         REQUIRE_CPP_OBJECT_OR_SUBCLASS_ARG(1, inHandler, IEventHandler);
         SCRIPT_DEBUG_ONLY( if (args[0].IsEmpty())
         {
-            std::cerr << __func__<<":"<< 571 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
+            std::cerr << __func__<<":"<< 901 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
         }
         else if (!args[0]->IsObject())
         {
-            std::cerr << __func__<<":"<< 571 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 901 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
@@ -1522,17 +1755,17 @@ namespace pdg
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 571 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""IEventHandler""\n";
+                    std::cout << __func__<<":"<< 901 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""IEventHandler""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 571 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""IEventHandler""\n";
+                    std::cout << __func__<<":"<< 901 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""IEventHandler""\n";
                 }
             }
             else
             {
                 IEventHandler* obj = dynamic_cast<IEventHandler*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 571 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""IEventHandler"" ("<<(void*)obj<<")\n";
+                    std::cout << __func__<<":"<< 901 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""IEventHandler"" ("<<(void*)obj<<")\n";
             }
         } );
         if (args.Length() >= 2 && !args[2 -1]->IsNumber())
@@ -1551,20 +1784,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            {
-                args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object IEventHandler] inHandler, [number int] inEventType = all_events)" " - " "remove a handler for some event type, or for all events (see note) if no type specified. "
-                    "If the handler is listed multiple times it will only remove it once.\n"
-                    "NOTE: inType == all_events doesn't work quite like you might expect. If "
-                    "you have registered a handler for multiple events, but not with all_events, "
-                    "doing removeHandler(handler, all_events) will do nothing. Basically, "
-                    "all_events is a special event type that matches all event types when "
-                    "considering whether to invoke a handler or not.\n"
-                    "It is safe to call remove handler from within an event handler's handleEvent() call."
-                    " \\param inHandler the object to handle events" " \\param inEventType the type of event to stop handling (see note)").ToLocalChecked() ); return;
-            };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -1587,10 +1807,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "remove all handlers").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -1606,14 +1823,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            {
-                args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] inEventType)" " - " "temporarily ignore all events of a particular type. "
-                    "Events that are blocked are NOT cached for later, they are just dropped."
-                    " \\param inEventType the type of event to block").ToLocalChecked() ); return;
-            };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1635,13 +1845,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            {
-                args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] inEventType)" " - " "stop ignoring events of a particular type "
-                    " \\param inEventType the type of event to unblock").ToLocalChecked() ); return;
-            };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1657,24 +1861,1281 @@ namespace pdg
         args.GetReturnValue().SetUndefined();
     }
 
+    void SpriteWrap::PlayScript(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsString())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a string  (""name"")");
+                return;
+            }
+            v8::String::Utf8Value name_Str(isolate, args[1 -1]->ToString(isolate->GetCurrentContext()).ToLocalChecked());
+            const char* name = *name_Str;;
+            self->playScript(name); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::Batch(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->batch(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::EndBatch(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->endBatch(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::Series(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->series(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::EndSeries(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->endSeries(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::AndAlso(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->andAlso(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::Stagger(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""intervalSeconds"")");
+                return;
+            }
+            double intervalSeconds = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            self->stagger(intervalSeconds); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch(const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::Mark(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            if(args.Length()>2)
+            {
+                if (args.Length() != 2)
+                {
+                    v8_ThrowArgCountException(isolate, args.Length(), 2);
+                    return;
+                };
+            }
+            if (!args[1 -1]->IsString())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a string  (""name"")");
+                return;
+            }
+            v8::String::Utf8Value name_Str(isolate, args[1 -1]->ToString(isolate->GetCurrentContext()).ToLocalChecked());
+            const char* name = *name_Str;;
+            if (args.Length() >= 2 && !args[2 -1]->IsBoolean())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a boolean (""saveState"")");
+                return;
+            }
+            bool saveState = (args.Length()<2) ? true : args[2 -1]->BooleanValue(isolate);;
+            self->mark(name, saveState); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::JumpToMark(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() < 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1, true);
+                return;
+            };
+            if(args.Length()>2)
+            {
+                if (args.Length() != 2)
+                {
+                    v8_ThrowArgCountException(isolate, args.Length(), 2);
+                    return;
+                };
+            }
+            if (!args[1 -1]->IsString())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a string  (""name"")");
+                return;
+            }
+            v8::String::Utf8Value name_Str(isolate, args[1 -1]->ToString(isolate->GetCurrentContext()).ToLocalChecked());
+            const char* name = *name_Str;;
+            if (args.Length() >= 2 && !args[2 -1]->IsBoolean())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a boolean (""restoreState"")");
+                return;
+            }
+            bool restoreState = (args.Length()<2) ? true : args[2 -1]->BooleanValue(isolate);;
+            self->jumpToMark(name, restoreState); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::When(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsFunction())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a function (""evaluator"")");
+                return;
+            }
+            v8::Local<v8::Function> evaluator = v8::Local<v8::Function>::Cast(args[1 -1]);;
+            self->when(MakeAnimationEvaluator(evaluator)); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::ScriptOn(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            self->mAnimatedScriptObj.Reset(isolate, args.This()); self->mAnimatedScriptObj.SetWeak();
+            ;
+            if (args.Length() != 2)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 2);
+                return;
+            };
+            if (!args[1 -1]->IsString())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a string  (""event"")");
+                return;
+            }
+            v8::String::Utf8Value event_Str(isolate, args[1 -1]->ToString(isolate->GetCurrentContext()).ToLocalChecked());
+            const char* event = *event_Str;;
+            if (!args[2 -1]->IsFunction())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a function (""handler"")");
+                return;
+            }
+            v8::Local<v8::Function> handler = v8::Local<v8::Function>::Cast(args[2 -1]);;
+            self->on(event, MakeAnimationEventHandler(handler)); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::OnStarted(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            self->mAnimatedScriptObj.Reset(isolate, args.This()); self->mAnimatedScriptObj.SetWeak();
+            ;
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsFunction())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a function (""handler"")");
+                return;
+            }
+            v8::Local<v8::Function> handler = v8::Local<v8::Function>::Cast(args[1 -1]);;
+            self->onStarted(MakeAnimationEventHandler(handler)); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::TriggerEvent(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            self->mAnimatedScriptObj.Reset(isolate, args.This()); self->mAnimatedScriptObj.SetWeak();
+            ;
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsString())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a string  (""name"")");
+                return;
+            }
+            v8::String::Utf8Value name_Str(isolate, args[1 -1]->ToString(isolate->GetCurrentContext()).ToLocalChecked());
+            const char* name = *name_Str;;
+            self->triggerEvent(name); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::OnFinished(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            self->mAnimatedScriptObj.Reset(isolate, args.This()); self->mAnimatedScriptObj.SetWeak();
+            ;
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsFunction())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a function (""handler"")");
+                return;
+            }
+            v8::Local<v8::Function> handler = v8::Local<v8::Function>::Cast(args[1 -1]);;
+            self->onFinished(MakeAnimationEventHandler(handler)); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::OnScriptFinished(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            self->mAnimatedScriptObj.Reset(isolate, args.This()); self->mAnimatedScriptObj.SetWeak();
+            ;
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsFunction())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a function (""handler"")");
+                return;
+            }
+            v8::Local<v8::Function> handler = v8::Local<v8::Function>::Cast(args[1 -1]);;
+            self->onScriptFinished(MakeAnimationEventHandler(handler)); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::OnMark(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            self->mAnimatedScriptObj.Reset(isolate, args.This()); self->mAnimatedScriptObj.SetWeak();
+            ;
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsFunction())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a function (""handler"")");
+                return;
+            }
+            v8::Local<v8::Function> handler = v8::Local<v8::Function>::Cast(args[1 -1]);;
+            self->onMark(MakeAnimationEventHandler(handler)); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::OnYoyo(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            self->mAnimatedScriptObj.Reset(isolate, args.This()); self->mAnimatedScriptObj.SetWeak();
+            ;
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsFunction())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a function (""handler"")");
+                return;
+            }
+            v8::Local<v8::Function> handler = v8::Local<v8::Function>::Cast(args[1 -1]);;
+            self->onYoyo(MakeAnimationEventHandler(handler)); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::OnRepeat(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            self->mAnimatedScriptObj.Reset(isolate, args.This()); self->mAnimatedScriptObj.SetWeak();
+            ;
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsFunction())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a function (""handler"")");
+                return;
+            }
+            v8::Local<v8::Function> handler = v8::Local<v8::Function>::Cast(args[1 -1]);;
+            self->onRepeat(MakeAnimationEventHandler(handler)); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::OnUntilFired(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            self->mAnimatedScriptObj.Reset(isolate, args.This()); self->mAnimatedScriptObj.SetWeak();
+            ;
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsFunction())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a function (""handler"")");
+                return;
+            }
+            v8::Local<v8::Function> handler = v8::Local<v8::Function>::Cast(args[1 -1]);;
+            self->onUntilFired(MakeAnimationEventHandler(handler)); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::Otherwise(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->otherwise(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::EndWhen(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->endWhen(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::EndOtherwise(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->endOtherwise(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::Until(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() != 1)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 1);
+                return;
+            };
+            if (!args[1 -1]->IsFunction())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a function (""evaluator"")");
+                return;
+            }
+            v8::Local<v8::Function> evaluator = v8::Local<v8::Function>::Cast(args[1 -1]);;
+            self->until(MakeAnimationEvaluator(evaluator)); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::Yoyo(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->yoyo(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::Repeat(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() < 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0, true);
+                return;
+            };
+            if (args.Length()>1)
+            {
+                if (args.Length() != 1)
+                {
+                    v8_ThrowArgCountException(isolate, args.Length(), 1);
+                    return;
+                };
+            }
+            if (args.Length() >= 1 && !args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""countValue"")");
+                return;
+            }
+            double countValue = (args.Length()<1) ? -1 : args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();;
+            if (args.Length() && (!std::isfinite(countValue) || countValue<0 || countValue>INT32_MAX || std::floor(countValue)!=countValue)) throw std::invalid_argument("Repeat count must be a nonnegative integer");
+            self->repeat(static_cast<int>(countValue)); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::Diminish(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() < 2)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 2, true);
+                return;
+            };
+            if (args.Length()>3)
+            {
+                if (args.Length() != 3)
+                {
+                    v8_ThrowArgCountException(isolate, args.Length(), 3);
+                    return;
+                };
+            }
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""factor"")");
+                return;
+            }
+            double factor = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (!args[2 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a number (""seconds"")");
+                return;
+            }
+            double seconds = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 3, "a number (""easing"")");
+                return;
+            }
+            long easing = (args.Length()<3) ? 0 : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
+            self->diminish(factor, seconds, easingIdToFunc(easing)); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::Increase(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() < 2)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 2, true);
+                return;
+            };
+            if (args.Length()>3)
+            {
+                if (args.Length() != 3)
+                {
+                    v8_ThrowArgCountException(isolate, args.Length(), 3);
+                    return;
+                };
+            }
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""factor"")");
+                return;
+            }
+            double factor = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (!args[2 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a number (""seconds"")");
+                return;
+            }
+            double seconds = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 3, "a number (""easing"")");
+                return;
+            }
+            long easing = (args.Length()<3) ? 0 : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
+            self->increase(factor, seconds, easingIdToFunc(easing)); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::SlowDown(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() < 2)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 2, true);
+                return;
+            };
+            if (args.Length()>3)
+            {
+                if (args.Length() != 3)
+                {
+                    v8_ThrowArgCountException(isolate, args.Length(), 3);
+                    return;
+                };
+            }
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""factor"")");
+                return;
+            }
+            double factor = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (!args[2 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a number (""seconds"")");
+                return;
+            }
+            double seconds = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 3, "a number (""easing"")");
+                return;
+            }
+            long easing = (args.Length()<3) ? 0 : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
+            self->slowDown(factor, seconds, easingIdToFunc(easing)); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::SpeedUp(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() < 2)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 2, true);
+                return;
+            };
+            if (args.Length()>3)
+            {
+                if (args.Length() != 3)
+                {
+                    v8_ThrowArgCountException(isolate, args.Length(), 3);
+                    return;
+                };
+            }
+            if (!args[1 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a number (""factor"")");
+                return;
+            }
+            double factor = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (!args[2 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a number (""seconds"")");
+                return;
+            }
+            double seconds = args[2 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+            if (args.Length() >= 3 && !args[3 -1]->IsNumber())
+            {
+                v8_ThrowArgTypeException(isolate, 3, "a number (""easing"")");
+                return;
+            }
+            long easing = (args.Length()<3) ? 0 : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
+            self->speedUp(factor, seconds, easingIdToFunc(easing)); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::StopIt(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->stopIt(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::RestartIt(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->restartIt(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::PauseIt(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->pauseIt(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::ResumeIt(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        try
+        {
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->resumeIt(); { args.GetReturnValue().Set( args.This() ); return; };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
     void SpriteWrap::GetBoundingBox(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Rect]" " function" "()").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            pdg::Rect value=self->getBoundingBox(); { args.GetReturnValue().Set( v8_MakeJavascriptRect(isolate, value) ); return; };
+        }
+        catch (const std::exception& error)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-
-        pdg::Rect theBoundingBox = self->getBoundingBox();
-        { args.GetReturnValue().Set( v8_MakeJavascriptRect(isolate, theBoundingBox) ); return; };
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteWrap::GetRotatedBounds(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1683,18 +3144,28 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object RotatedRect]" " function" "()").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            pdg::RotatedRect value=self->getRotatedBounds(); { args.GetReturnValue().Set( v8_MakeJavascriptRect(isolate, value) ); return; };
+        }
+        catch (const std::exception& error)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-
-        pdg::RotatedRect theRotatedBounds = self->getRotatedBounds();
-        { args.GetReturnValue().Set( v8_MakeJavascriptRect(isolate, theRotatedBounds) ); return; };
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteWrap::GetLocation(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1703,18 +3174,28 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Point]" " function" "()").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            pdg::Point value=self->getLocation(); { args.GetReturnValue().Set( v8_MakeJavascriptPoint(isolate, value) ); return; };
+        }
+        catch (const std::exception& error)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-
-        pdg::Point theLocation = self->getLocation();
-        { args.GetReturnValue().Set( v8_MakeJavascriptPoint(isolate, theLocation) ); return; };
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteWrap::GetMovement(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1723,18 +3204,28 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Offset]" " function" "()").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            pdg::Offset value=self->getMovement(); { args.GetReturnValue().Set( v8_MakeJavascriptOffset(isolate, value) ); return; };
+        }
+        catch (const std::exception& error)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-
-        pdg::Offset theMovement = self->getMovement();
-        { args.GetReturnValue().Set( v8_MakeJavascriptOffset(isolate, theMovement) ); return; };
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteWrap::GetSize(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1743,18 +3234,28 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Offset]" " function" "()").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            pdg::Offset value=self->getSize(); { args.GetReturnValue().Set( v8_MakeJavascriptOffset(isolate, value) ); return; };
+        }
+        catch (const std::exception& error)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-
-        pdg::Offset theSize = self->getSize();
-        { args.GetReturnValue().Set( v8_MakeJavascriptOffset(isolate, theSize) ); return; };
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteWrap::GetWidth(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1763,18 +3264,28 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            double value=self->getWidth(); { args.GetReturnValue().Set( v8::Number::New(isolate, value) ); return; };
+        }
+        catch (const std::exception& error)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-
-        double theWidth = self->getWidth();
-        { args.GetReturnValue().Set( v8::Number::New(isolate, theWidth) ); return; };
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteWrap::GetHeight(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1783,18 +3294,28 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            double value=self->getHeight(); { args.GetReturnValue().Set( v8::Number::New(isolate, value) ); return; };
+        }
+        catch (const std::exception& error)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-
-        double theHeight = self->getHeight();
-        { args.GetReturnValue().Set( v8::Number::New(isolate, theHeight) ); return; };
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteWrap::GetScale(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1803,18 +3324,28 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Offset]" " function" "()").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            pdg::Offset value=self->getScale(); { args.GetReturnValue().Set( v8_MakeJavascriptOffset(isolate, value) ); return; };
+        }
+        catch (const std::exception& error)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-
-        pdg::Offset theScale = self->getScale();
-        { args.GetReturnValue().Set( v8_MakeJavascriptOffset(isolate, theScale) ); return; };
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteWrap::GetStretching(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1823,18 +3354,28 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Offset]" " function" "()").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            pdg::Offset value=self->getStretching(); { args.GetReturnValue().Set( v8_MakeJavascriptOffset(isolate, value) ); return; };
+        }
+        catch (const std::exception& error)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-
-        pdg::Offset theStretching = self->getStretching();
-        { args.GetReturnValue().Set( v8_MakeJavascriptOffset(isolate, theStretching) ); return; };
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteWrap::GetRotation(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1843,18 +3384,28 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            double value=self->getRotation(); { args.GetReturnValue().Set( v8::Number::New(isolate, value) ); return; };
+        }
+        catch (const std::exception& error)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-
-        double theRotation = self->getRotation();
-        { args.GetReturnValue().Set( v8::Number::New(isolate, theRotation) ); return; };
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteWrap::GetCenterOffset(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1863,18 +3414,28 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Offset]" " function" "()").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            pdg::Offset value=self->getCenterOffset(); { args.GetReturnValue().Set( v8_MakeJavascriptOffset(isolate, value) ); return; };
+        }
+        catch (const std::exception& error)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-
-        pdg::Offset theCenterOffset = self->getCenterOffset();
-        { args.GetReturnValue().Set( v8_MakeJavascriptOffset(isolate, theCenterOffset) ); return; };
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteWrap::GetSpin(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1883,18 +3444,28 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
+        try
         {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
+            ;
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            double value=self->getSpin(); { args.GetReturnValue().Set( v8::Number::New(isolate, value) ); return; };
+        }
+        catch (const std::exception& error)
         {
-            v8_ThrowArgCountException(isolate, args.Length(), 0);
-            return;
-        };
-
-        double theSpin = self->getSpin();
-        { args.GetReturnValue().Set( v8::Number::New(isolate, theSpin) ); return; };
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
     }
 
     void SpriteWrap::SetLocation(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1905,10 +3476,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "({[object Point] value|number x, number y})" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -1974,10 +3542,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "({[object Point] value|number x, number y}, number durationSeconds = 0, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -2133,10 +3698,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "({[object Offset] value|number x, number y}, number durationSeconds = 0, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -2292,10 +3854,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "({[object Vector] value|number xPerSecond, number yPerSecond})" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -2361,10 +3920,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "({[object Vector] value|number xPerSecond, number yPerSecond}, number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -2506,10 +4062,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "({[object Vector] value|number xPerSecond, number yPerSecond}, number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -2651,10 +4204,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "({[object Offset] value|number width, number height})" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -2720,10 +4270,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "({[object Offset] value|number x, number y}, number durationSeconds, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -2865,10 +4412,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "({[object Offset] value|number x, number y}, number durationSeconds, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -3010,10 +4554,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number value)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -3054,10 +4595,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number value)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -3098,10 +4636,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number value)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -3142,10 +4677,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number value)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -3186,10 +4718,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number value)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -3230,10 +4759,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number widthPerSecond, number heightPerSecond)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 2)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 2, true);
@@ -3280,10 +4806,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number x, number y = x)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -3324,10 +4847,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number radiansPerSecond, number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -3406,10 +4926,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number radiansPerSecond, number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -3488,10 +5005,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number amountPerSecond, number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -3570,10 +5084,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number amountPerSecond, number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -3652,10 +5163,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number widthPerSecond, number heightPerSecond, number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 2)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 2, true);
@@ -3740,10 +5248,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number widthPerSecond, number heightPerSecond, number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 2)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 2, true);
@@ -3828,10 +5333,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number x, number y, number durationSeconds, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 2)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 2, true);
@@ -3916,10 +5418,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number x, number y, number durationSeconds, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 2)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 2, true);
@@ -4004,10 +5503,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number factor, number durationSeconds = 0, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -4093,10 +5589,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number widthFactor, number heightFactor, number durationSeconds = 0, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 2)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 2, true);
@@ -4188,10 +5681,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number deltaWidth, number deltaHeight, number durationSeconds = 0, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 2)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 2, true);
@@ -4283,10 +5773,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number width, number height, number durationSeconds, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 2)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 2, true);
@@ -4371,10 +5858,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number radians, number durationSeconds = 0, [number int] easing = easeInOutQuad, [number int] direction = rotationDirection_AsSpecified)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -4482,10 +5966,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number radians, number durationSeconds = 0, [number int] easing = easeInOutQuad, [number int] direction = rotationDirection_AsSpecified)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -4593,10 +6074,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "([object Offset] offset)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() != 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -4638,10 +6116,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(boolean flip)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() != 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -4677,10 +6152,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(boolean flip)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() != 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -4716,10 +6188,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() != 0)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -4749,10 +6218,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() != 0)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -4782,10 +6248,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() != 0)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -4815,10 +6278,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() != 0)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -4848,10 +6308,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() != 0)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -4881,10 +6338,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() != 0)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -4914,10 +6368,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() != 0)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -4947,10 +6398,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() != 0)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -4980,10 +6428,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() != 0)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -5013,10 +6458,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() != 0)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -5046,16 +6488,28 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
+            try
             {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "").ToLocalChecked() ); return; };
-            };
-            if (args.Length() != 0)
+                ;
+                if (args.Length() != 0)
+                {
+                    v8_ThrowArgCountException(isolate, args.Length(), 0);
+                    return;
+                };
+                { args.GetReturnValue().Set( v8::Boolean::New(isolate, self->isFlippedX()) ); return; };
+            }
+            catch (const std::exception& error)
             {
-                v8_ThrowArgCountException(isolate, args.Length(), 0);
-                return;
-            };
-            { args.GetReturnValue().Set( v8::Boolean::New(isolate, self->isFlippedX()) ); return; };
+                std::ostringstream excpt_;
+                excpt_ << error.what();
+                isolate->ThrowException( v8::Exception::Error( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+            }
         }
         catch (const std::exception& error)
         {
@@ -5079,16 +6533,28 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
+            try
             {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "").ToLocalChecked() ); return; };
-            };
-            if (args.Length() != 0)
+                ;
+                if (args.Length() != 0)
+                {
+                    v8_ThrowArgCountException(isolate, args.Length(), 0);
+                    return;
+                };
+                { args.GetReturnValue().Set( v8::Boolean::New(isolate, self->isFlippedY()) ); return; };
+            }
+            catch (const std::exception& error)
             {
-                v8_ThrowArgCountException(isolate, args.Length(), 0);
-                return;
-            };
-            { args.GetReturnValue().Set( v8::Boolean::New(isolate, self->isFlippedY()) ); return; };
+                std::ostringstream excpt_;
+                excpt_ << error.what();
+                isolate->ThrowException( v8::Exception::Error( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+            }
         }
         catch (const std::exception& error)
         {
@@ -5112,10 +6578,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() != 0)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -5145,10 +6608,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() != 0)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -5178,10 +6638,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "(number durationSeconds)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() < 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -5222,18 +6679,15 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "([object IAnimationHelper] helper)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             self->mAnimatedScriptObj.Reset(isolate, args.This()); self->mAnimatedScriptObj.SetWeak();
             SCRIPT_DEBUG_ONLY( if (args[0].IsEmpty())
             {
-                std::cerr << __func__<<":"<< 572 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
+                std::cerr << __func__<<":"<< 902 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
             }
             else if (!args[0]->IsObject())
             {
-                std::cerr << __func__<<":"<< 572 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
+                std::cerr << __func__<<":"<< 902 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
             }
             else
             {
@@ -5251,17 +6705,17 @@ namespace pdg
                     }
                     if (obj__)
                     {
-                        std::cout << __func__<<":"<< 572 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""IAnimationHelper""\n";
+                        std::cout << __func__<<":"<< 902 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""IAnimationHelper""\n";
                     }
                     else
                     {
-                        std::cout << __func__<<":"<< 572 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""IAnimationHelper""\n";
+                        std::cout << __func__<<":"<< 902 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""IAnimationHelper""\n";
                     }
                 }
                 else
                 {
                     IAnimationHelper* obj = dynamic_cast<IAnimationHelper*>(obj__->getCppObject());
-                        std::cout << __func__<<":"<< 572 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""IAnimationHelper"" ("<<(void*)obj<<")\n";
+                        std::cout << __func__<<":"<< 902 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""IAnimationHelper"" ("<<(void*)obj<<")\n";
                 }
             } );
             if (args.Length() != 1)
@@ -5295,10 +6749,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "([object IAnimationHelper] helper)" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() != 1)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -5330,10 +6781,7 @@ namespace pdg
 
         try
         {
-            if (args.Length() == 1 && args[0]->IsNull())
-            {
-                { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Animated]" " function" "()" " - " "").ToLocalChecked() ); return; };
-            };
+            ;
             if (args.Length() != 0)
             {
                 v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -5362,10 +6810,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -5382,10 +6827,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR [number uint]" " function" "([object Serializer] serializer)" " - " "get size of this object's data for the given stream").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -5417,10 +6859,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR undefined" " function" "([object Serializer] serializer)" " - " "write this object's data into the given stream").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -5448,10 +6887,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR undefined" " function" "([object Deserializer] deserializer)" " - " "read this object's data from the given stream").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -5527,10 +6963,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -5547,10 +6980,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -5567,10 +6997,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -5588,10 +7015,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -5608,10 +7032,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -5628,10 +7049,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -5648,10 +7066,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -5669,10 +7084,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object RotatedRect]" " function" "([number int] frameNum = -1)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() >= 1 && !args[1 -1]->IsNumber())
         {
             v8_ThrowArgTypeException(isolate, 1, "a number (""frameNum"")");
@@ -5689,10 +7101,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "([number int] frame)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -5714,11 +7123,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "which frame of animation the sprite is currently showing").ToLocalChecked() ); return; };
-        };
-
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -5734,11 +7139,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "total number of frames of animation for this sprite").ToLocalChecked() ); return; };
-        };
-
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -5754,10 +7155,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number fps, [number int] startingFrame = start_FromFirstFrame, [number int] numFrames = all_Frames, [number int] animateFlags = animate_Looping)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -5797,10 +7195,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -5816,10 +7211,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "(boolean wantsThem = true)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() >= 1 && !args[1 -1]->IsBoolean())
         {
             v8_ThrowArgTypeException(isolate, 1, "a boolean (""wantsThem"")");
@@ -5836,10 +7228,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "(boolean wantsThem = true)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() >= 1 && !args[1 -1]->IsBoolean())
         {
             v8_ThrowArgTypeException(isolate, 1, "a boolean (""wantsThem"")");
@@ -5856,10 +7245,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "(boolean wantsThem = true)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() >= 1 && !args[1 -1]->IsBoolean())
         {
             v8_ThrowArgTypeException(isolate, 1, "a boolean (""wantsThem"")");
@@ -5876,10 +7262,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Image] image, [number int] startingFrame = start_FromFirstFrame, [number int] numFrames = all_Frames)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -5909,10 +7292,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "({ [number int] animationId | string animationName })" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -5950,10 +7330,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "({ [number int] animationId | string animationName })" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -5989,10 +7366,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(string mapName)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -6015,10 +7389,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(string mapName)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -6041,10 +7412,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -6060,10 +7428,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Array]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -6094,10 +7459,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(boolean enable = true)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() >= 1 && !args[1 -1]->IsBoolean())
         {
             v8_ThrowArgTypeException(isolate, 1, "a boolean (""enable"")");
@@ -6114,10 +7476,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -6133,10 +7492,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "({ [number int] animationId | string animationName }, number blendTime)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -6178,10 +7534,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -6197,10 +7550,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -6216,10 +7566,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -6235,10 +7582,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -6254,10 +7598,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -6273,10 +7614,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -6292,10 +7630,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -6311,10 +7646,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -6330,10 +7662,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "(string attachPointName)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -6356,10 +7685,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Offset]" " function" "(string attachPointName)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -6382,10 +7708,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Sprite] sprite, string attachPointName)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -6409,10 +7732,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Sprite] sprite)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -6429,10 +7749,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "(string attachPointName)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -6464,10 +7781,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(string entityName, string animationName = \"idle\")" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -6499,10 +7813,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "(boolean wantsThem = true)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() >= 1 && !args[1 -1]->IsBoolean())
         {
             v8_ThrowArgTypeException(isolate, 1, "a boolean (""wantsThem"")");
@@ -6519,10 +7830,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object ISpriteDrawHelper] helper)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         self->mSpriteScriptObj.Reset(isolate, args.This());
         if (args.Length() != 1)
         {
@@ -6532,11 +7840,11 @@ namespace pdg
         REQUIRE_CPP_OBJECT_OR_SUBCLASS_OR_NULL_ARG(1, helper, ISpriteDrawHelper);
         SCRIPT_DEBUG_ONLY( if (args[0].IsEmpty())
         {
-            std::cerr << __func__<<":"<< 874 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
+            std::cerr << __func__<<":"<< 1204 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
         }
         else if (!args[0]->IsObject())
         {
-            std::cerr << __func__<<":"<< 874 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 1204 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
@@ -6554,17 +7862,17 @@ namespace pdg
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 874 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""ISpriteDrawHelper""\n";
+                    std::cout << __func__<<":"<< 1204 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""ISpriteDrawHelper""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 874 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""ISpriteDrawHelper""\n";
+                    std::cout << __func__<<":"<< 1204 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""ISpriteDrawHelper""\n";
                 }
             }
             else
             {
                 ISpriteDrawHelper* obj = dynamic_cast<ISpriteDrawHelper*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 874 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""ISpriteDrawHelper"" ("<<(void*)obj<<")\n";
+                    std::cout << __func__<<":"<< 1204 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""ISpriteDrawHelper"" ("<<(void*)obj<<")\n";
             }
         } )
             self->setDrawHelper(helper);
@@ -6577,10 +7885,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object ISpriteDrawHelper] helper)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         self->mSpriteScriptObj.Reset(isolate, args.This());
         if (args.Length() != 1)
         {
@@ -6590,11 +7895,11 @@ namespace pdg
         REQUIRE_CPP_OBJECT_OR_SUBCLASS_OR_NULL_ARG(1, helper, ISpriteDrawHelper);
         SCRIPT_DEBUG_ONLY( if (args[0].IsEmpty())
         {
-            std::cerr << __func__<<":"<< 883 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
+            std::cerr << __func__<<":"<< 1213 << " - NIL JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<")\n";
         }
         else if (!args[0]->IsObject())
         {
-            std::cerr << __func__<<":"<< 883 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
+            std::cerr << __func__<<":"<< 1213 << " - NOT JS Object (" "args[0]" "|"<<*((void**)&(args[0]))<<") : " << (args[0].IsEmpty() ? "empty" : args[0]->IsArray() ? "array" : args[0]->IsFunction() ? "function" : args[0]->IsStringObject() ? "string (object)" : args[0]->IsString() ? "string" : args[0]->IsNull() ? "null" : args[0]->IsUndefined() ? "undefined" : args[0]->IsNumberObject() ? "number (object)" : args[0]->IsNumber() ? "number" : args[0]->IsBoolean() ? "boolean" : args[0]->IsDate() ? "date" : args[0]->IsRegExp() ? "regexp" : args[0]->IsNativeError() ? "error" : args[0]->IsObject() ? "object" : "unknown") << "\n";
         }
         else
         {
@@ -6612,17 +7917,17 @@ namespace pdg
                 }
                 if (obj__)
                 {
-                    std::cout << __func__<<":"<< 883 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""ISpriteDrawHelper""\n";
+                    std::cout << __func__<<":"<< 1213 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - is a subclass of C++ ""ISpriteDrawHelper""\n";
                 }
                 else
                 {
-                    std::cout << __func__<<":"<< 883 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""ISpriteDrawHelper""\n";
+                    std::cout << __func__<<":"<< 1213 << " - JS Object (""args[0]""|"<<*((void**)&(args[0]))<<"): " << objName << " - does not wrap ""ISpriteDrawHelper""\n";
                 }
             }
             else
             {
                 ISpriteDrawHelper* obj = dynamic_cast<ISpriteDrawHelper*>(obj__->getCppObject());
-                    std::cout << __func__<<":"<< 883 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""ISpriteDrawHelper"" ("<<(void*)obj<<")\n";
+                    std::cout << __func__<<":"<< 1213 << " - JS Object (""args[0]""|" << *((void**)&(args[0])) << "): " << objName<<" - wraps C++ ""ISpriteDrawHelper"" ("<<(void*)obj<<")\n";
             }
         } )
             self->setPostDrawHelper(helper);
@@ -6636,10 +7941,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Image] oldImage, [object Image] newImage)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -6657,10 +7959,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] offsetX, [number int] offsetY, [object Image] image = null, [number int] startingFrame = start_FromFirstFrame, [number int] numFrames = all_Frames)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2, true);
@@ -6715,10 +8014,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Offset]" " function" "([object Image] image = null, [number int] frameNum = 0)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         Image* image = 0;
         if (args.Length() >= 1)
         {
@@ -6750,10 +8046,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "(number opacity)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -6775,10 +8068,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -6794,10 +8084,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number targetOpacity, number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -6829,7 +8116,7 @@ namespace pdg
         {
             self->fadeTo(targetOpacity, durationSeconds);
         }
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void SpriteWrap::FadeIn(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -6838,10 +8125,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -6867,7 +8151,7 @@ namespace pdg
         {
             self->fadeIn(durationSeconds);
         }
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void SpriteWrap::FadeOut(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -6876,10 +8160,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number durationSeconds, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -6905,7 +8186,7 @@ namespace pdg
         {
             self->fadeOut(durationSeconds);
         }
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void SpriteWrap::IsBehind(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -6914,10 +8195,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "([object Sprite] sprite)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -6934,10 +8212,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[number int]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -6953,10 +8228,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "([object Sprite] sprite)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -6973,10 +8245,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "([object Sprite] sprite)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -6993,10 +8262,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "()" " - " "put this sprite in front of all others in its layer").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -7012,10 +8278,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "()" " - " "put this sprite behind all others in its layer").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -7031,10 +8294,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Collider]" " function" "([number int] mode = frameCollider_AlphaMask, [number int] alphaThreshold = 128)" " - " "Follow current frame collision geometry").ToLocalChecked() ); return; };
-        };
+        ;
         try
         {
             if (args.Length() >= 1 && !args[1 -1]->IsNumber())
@@ -7111,10 +8371,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Collider]" " function" "()" " - " "Follow authored animation collision boxes").ToLocalChecked() ); return; };
-        };
+        ;
         try
         {
             if (args.Length() != 0)
@@ -7156,10 +8413,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "([object Image] frameImage, [object Image] maskImage)" " - " "Assign a mask to frames using an image").ToLocalChecked() ); return; };
-        };
+        ;
         try
         {
             if (args.Length() != 2)
@@ -7194,10 +8448,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "(boolean wantsThem = true)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() >= 1 && !args[1 -1]->IsBoolean())
         {
             v8_ThrowArgTypeException(isolate, 1, "a boolean (""wantsThem"")");
@@ -7214,10 +8465,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "(boolean wantsThem = true)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() >= 1 && !args[1 -1]->IsBoolean())
         {
             v8_ThrowArgTypeException(isolate, 1, "a boolean (""wantsThem"")");
@@ -7234,10 +8482,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "([number int] collisionType = collide_BoundingBox)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() >= 1 && !args[1 -1]->IsNumber())
         {
             v8_ThrowArgTypeException(isolate, 1, "a number (""collisionType"")");
@@ -7255,10 +8500,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object SpriteLayer]" " function" "()" " - " "get the layer that contains this sprite").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -7283,15 +8525,48 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object IEventHandler]" " function" "([number int] eventCode, function func)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
             return;
         };
+        if(args[0]->IsString())
+        {
+            self->mAnimatedScriptObj.Reset(isolate, args.This()); self->mAnimatedScriptObj.SetWeak();
+            if (!args[1 -1]->IsString())
+            {
+                v8_ThrowArgTypeException(isolate, 1, "a string  (""event"")");
+                return;
+            }
+            v8::String::Utf8Value event_Str(isolate, args[1 -1]->ToString(isolate->GetCurrentContext()).ToLocalChecked());
+            const char* event = *event_Str;;
+            if (!args[2 -1]->IsFunction())
+            {
+                v8_ThrowArgTypeException(isolate, 2, "a function (""handler"")");
+                return;
+            }
+            v8::Local<v8::Function> handler = v8::Local<v8::Function>::Cast(args[2 -1]);;
+            try
+            {
+                self->on(event,MakeAnimationEventHandler(handler));
+                {
+                    args.GetReturnValue().Set( args.This() ); return;
+                };
+            }
+            catch(const std::exception& error)
+            {
+                std::ostringstream excpt_;
+                excpt_ << error.what();
+                isolate->ThrowException( v8::Exception::Error( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+            }
+        }
         if (!args[1 -1]->IsNumber())
         {
             v8_ThrowArgTypeException(isolate, 1, "a number (""eventCode"")");
@@ -7338,10 +8613,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object IEventHandler]" " function" "(function func)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -7378,10 +8650,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object IEventHandler]" " function" "(function func)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -7414,10 +8683,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object IEventHandler]" " function" "(function func)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -7450,10 +8716,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object IEventHandler]" " function" "(function func)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -7486,10 +8749,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object IEventHandler]" " function" "(function func)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -7522,10 +8782,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object IEventHandler]" " function" "(function func)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -7558,10 +8815,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object IEventHandler]" " function" "(function func)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -7594,10 +8848,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object IEventHandler]" " function" "(function func)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -7630,10 +8881,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object IEventHandler]" " function" "(function func)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -7666,10 +8914,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object IEventHandler]" " function" "(function func)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -7702,10 +8947,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object IEventHandler]" " function" "(function func)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -7738,10 +8980,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object IEventHandler]" " function" "(function func)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -7774,10 +9013,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object IEventHandler]" " function" "(function func)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -7810,10 +9046,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object IEventHandler]" " function" "(function func)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -7846,10 +9079,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object IEventHandler]" " function" "(function func)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -7882,10 +9112,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object IEventHandler]" " function" "(function func)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -7918,10 +9145,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object IEventHandler]" " function" "(function func)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -7956,10 +9180,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object RotatedRect]" " function" "(string boxName)" " - " "get a Spriter collision box by name").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -7982,10 +9203,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "(string boxName)" " - " "check if a Spriter collision box is active").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -8008,10 +9226,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "get the number of active Spriter collision boxes").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -8027,10 +9242,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "string" " function" "(number index)" " - " "get the name of a Spriter collision box by index").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -8062,10 +9274,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -8081,10 +9290,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -8100,10 +9306,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(string clip, number timeSeconds)" " - " "select an independent clip time in floating-point seconds").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -8146,10 +9349,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(string clip, number timeSeconds, number durationSeconds)" " - " "select an independent clip time in floating-point seconds").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 3)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 3);
@@ -8198,10 +9398,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "test independently timed crossfade state").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -8218,10 +9415,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()" " - " "read normalized independently timed crossfade progress").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -8238,10 +9432,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "test physical animation capability").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -8258,10 +9449,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "test physical animation state").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -8278,10 +9466,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(object definition)" " - " "create a versioned physical rig").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -8312,10 +9497,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "(number totalMass, number unitsPerMeter = 1)" " - " "generate a dynamic rig from the reference skeleton").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -8357,10 +9539,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "([object Part] part, [object Part] parent = null)" " - " "register a physical Part in the generated rig assembly").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -8393,10 +9572,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "([object Part] part, boolean includeDescendants = true)" " - " "release rig membership and disconnect boundary joints").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -8433,10 +9609,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "([object Part] part)" " - " "test whether a Part contributes to this generated rig assembly").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -8454,10 +9627,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "({number bone | string bone})" " - " "select the physical root bone").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -8494,10 +9664,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[number uint]" " function" "()" " - " "get the selected physical root bone ID").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -8532,10 +9699,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "()" " - " "restore automatic physical root selection").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -8566,10 +9730,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Array]" " function" "()" " - " "copy setup geometry diagnostics").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -8592,10 +9753,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "([number int] mode, {string bone = undefined | [number uint] bone = undefined}, boolean includeDescendants = false, number recoveryTime = 0.5, [number int] direction = rotationDirection_AsSpecified)" " - " "change whole-rig or selected bone control").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 5)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 5);
@@ -8654,10 +9812,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[number int]" " function" "({string bone = undefined | [number uint] bone = undefined}, boolean includeDescendants = false)" " - " "query actual whole-rig or selected bone control").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -8703,10 +9858,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sprite]" " function" "(object settings, {string bone = undefined | [number uint] bone = undefined}, boolean includeDescendants = false)" " - " "configure selected animation drive force and response").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 7)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 7);
@@ -8782,10 +9934,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "object" " function" "({string bone | [number uint] bone})" " - " "copy a bone's configured drive settings or return null").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -8834,10 +9983,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number recoveryTime = 0.5, [number int] direction = rotationDirection_AsSpecified)" " - " "recover animation control and remove the physical rig").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0, true);
@@ -8879,10 +10025,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[number uint]" " function" "({ [object Drawing] drawing | function callback }, object options)" " - " "attach artwork to an animation bone").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 3)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 3, true);
@@ -8990,10 +10133,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number uint] id)" " - " "remove a drawing registration at a safe frame boundary").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -9029,10 +10169,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "release all drawing callbacks").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -9046,10 +10183,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number uint] id, boolean enabled)" " - " "enable or disable a drawing registration").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -9105,10 +10239,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "string" " function" "([number uint] id)" " - " "read a disabled drawable failure").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -9165,10 +10296,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "object" " function" "()" " - " "read conservative visual bounds in owning-layer coordinates").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -9197,16 +10325,59 @@ namespace pdg
         }
     }
 
+    void SpriteWrap::ProceduralControl(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        ;
+        if (args.Length() != 2)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 2);
+            return;
+        };
+        if (!args[1 -1]->IsNumber())
+        {
+            v8_ThrowArgTypeException(isolate, 1, "a number (""operation"")");
+            return;
+        }
+        double operation = args[1 -1]->NumberValue(isolate->GetCurrentContext()).ToChecked();
+        try
+        {
+            if(!std::isfinite(operation)||operation!=std::floor(operation)||operation<1||operation>16) { throw std::invalid_argument("Invalid procedural operation"); }
+            auto result=self->proceduralControl(int(operation),proceduralBindingValues(PROCEDURAL_ARGUMENTS,args[1]));
+#ifdef PDG_USING_JAVASCRIPT_CORE
+            auto a=JSObjectMakeArray(ctx,0,nullptr,exception);for(unsigned i=0;i<result.size();++i)JSObjectSetPropertyAtIndex(ctx,a,i,v8::Number::New(isolate, result[i]),exception);
+#else
+            auto a=v8::Array::New(isolate);for(unsigned i=0;i<result.size();++i)(void)a->Set(isolate->GetCurrentContext(),i,v8::Number::New(isolate, result[i])).ToChecked();
+#endif
+            { args.GetReturnValue().Set( a ); return; };
+        }
+        catch(const std::exception& e)
+        {
+            std::ostringstream excpt_;
+            excpt_ << e.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+    }
+
     void SpriteWrap::AddAnimationIK(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[number uint]" " function" "(object config, [number int] order = 0)" " - " "register a two-bone IK constraint").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -9262,10 +10433,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number uint] id, number x, number y, [number int] space = animationSpace_Rig)" " - " "update an IK target in explicit owning-layer coordinates").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 3)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 3, true);
@@ -9332,10 +10500,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "object" " function" "([number uint] id)" " - " "read reach, clamp, stretch, and limit diagnostics").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -9391,10 +10556,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[number uint]" " function" "(function callback, [number int] stage = animationStage_PreConstraint, [number int] order = 0)" " - " "register a synchronous borrowed-pose callback").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -9471,10 +10633,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number uint] id)" " - " "remove a modifier at the next evaluation boundary").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -9510,10 +10669,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "remove all pose callbacks at the next evaluation boundary").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -9527,10 +10683,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "string" " function" "([number uint] id)" " - " "read a disabled callback's diagnostic").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -9586,10 +10739,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] source)" " - " "select a clip, reference, or procedural base").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -9641,10 +10791,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[number int]" " function" "()" " - " "read the animation source integer constant").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -9661,10 +10808,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "test GUI drawing capability without changing pose state").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -9679,10 +10823,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] flags)" " - " "select per-instance animationDebug flag bits").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -9734,10 +10875,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[number int]" " function" "()" " - " "read per-instance animationDebug flag bits").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -9752,10 +10890,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "(string referenceAnimation)" " - " "enable fixed-hierarchy poses using a reference clip at time zero").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -9777,10 +10912,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -9795,10 +10927,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "string" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -9807,16 +10936,72 @@ namespace pdg
         { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, self->getAnimationRigError().c_str()).ToLocalChecked() ); return; };
     }
 
+    void SpriteWrap::GetBone(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        ;
+        if (args.Length() != 1)
+        {
+            v8_ThrowArgCountException(isolate, args.Length(), 1);
+            return;
+        };
+        try
+        {
+            Bone* bone;
+            if(args[0]->IsString())
+            {
+                if (!args[1 -1]->IsString())
+                {
+                    v8_ThrowArgTypeException(isolate, 1, "a string  (""name"")");
+                    return;
+                }
+                v8::String::Utf8Value name_Str(isolate, args[1 -1]->ToString(isolate->GetCurrentContext()).ToLocalChecked());
+                const char* name = *name_Str;;bone=self->getBone(name);
+            }
+            else
+            {
+                if (!args[1 -1]->IsNumber())
+                {
+                    v8_ThrowArgTypeException(isolate, 1, "a number (""id"")");
+                    return;
+                }
+                unsigned long id = args[1 -1]->Uint32Value(isolate->GetCurrentContext()).ToChecked();bone=self->getBone(id);
+            }
+            if (!bone) { args.GetReturnValue().SetNull(); return; };
+            if (bone->mBoneScriptObj.IsEmpty())
+            {
+                { args.GetReturnValue().Set( BoneWrap::NewFromCpp(isolate, bone) ); return; };
+            }
+            else
+            {
+                v8::Local<v8::Object> obj__ = v8::Local<v8::Object>::New(isolate, bone->mBoneScriptObj );
+                { args.GetReturnValue().Set( obj__ ); return; };
+            };
+        }
+        catch(const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
     void SpriteWrap::GetAnimationBoneNames(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Array]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -9839,10 +11024,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "object" " function" "(string name, [number int] space = animationSpace_Local)" " - " "read an owned transform in local, rig or world coordinates").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -9906,10 +11088,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Array]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -9932,10 +11111,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "object" " function" "(string name, [number int] space = animationSpace_Local)" " - " "read an owned transform in local, rig or world coordinates").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -9999,10 +11175,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(string name, object transform)" " - " "set a persistent absolute local bone override").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -10309,10 +11482,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "object" " function" "()" " - " "copy the final local pose into an owned snapshot").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -10347,10 +11517,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "object" " function" "(string clip, number timeSeconds)" " - " "sample an independent pose at a floating-point seconds timestamp").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -10401,10 +11568,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Part]" " function" "()" " - " "mounting Part controlling this Sprite root, or null").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -10431,10 +11595,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Part]" " function" "(string name)" " - " "create an independently animated Part owned by this Sprite").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -10483,10 +11644,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Part]" " function" "(Part part, boolean includeDescendants = true)" " - " "move a Part and optional subtree into this Sprite").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -10534,10 +11692,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Part]" " function" "([number uint] id)" " - " "get a Part by its per-Sprite ID, or null").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -10582,10 +11737,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Part]" " function" "(string name)" " - " "find a Part by its unique name, or null").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -10616,11 +11768,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[number uint]" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
+        ; if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
@@ -10634,11 +11782,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Array]" " function" "()" " - " "owned names in creation order").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
+        ; if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
@@ -10660,10 +11804,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "([number uint] id)" " - " "detach a Part; retained references keep their local state").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -10716,11 +11857,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "detach all Parts").ToLocalChecked() ); return; };
-        };
-        if (args.Length() != 0)
+        ; if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
             return;
@@ -10772,10 +11909,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object PhysicsBody]" " function" "()" " - " "optional body or shared NoPhysics; this never creates a body").ToLocalChecked() ); return; };
-        };
+        ;
         try
         {
             if (args.Length() != 0)
@@ -10817,10 +11951,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object PhysicsBody]" " function" "(number mass = 1, number momentOfInertia = 1)" " - " "set up the body, applying mass and inertia on every call").ToLocalChecked() ); return; };
-        };
+        ;
         try
         {
             if (args.Length() >= 1 && !args[1 -1]->IsNumber())
@@ -10864,10 +11995,7 @@ namespace pdg
         SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
         Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "detach the body; retained references keep their state").ToLocalChecked() ); return; };
-        };
+        ;
         try
         {
             if (args.Length() != 0)
@@ -10889,4 +12017,119 @@ namespace pdg
             ())));
         }
     }
+
+    void SpriteWrap::ReadCollider(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        ;
+        try
+        {
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            auto* result=&static_cast<Collider&>(self->collider); if (!result)
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+            if (result->mColliderScriptObj.IsEmpty())
+            {
+                { args.GetReturnValue().Set( ColliderWrap::NewFromCpp(isolate, result) ); return; };
+            }
+            else
+            {
+                v8::Local<v8::Object> obj__ = v8::Local<v8::Object>::New(isolate, result->mColliderScriptObj );
+                { args.GetReturnValue().Set( obj__ ); return; };
+            };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::SetupCollider(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        ;
+        try
+        {
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            auto* result=&self->setupCollider(); if (!result)
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+            if (result->mColliderScriptObj.IsEmpty())
+            {
+                { args.GetReturnValue().Set( ColliderWrap::NewFromCpp(isolate, result) ); return; };
+            }
+            else
+            {
+                v8::Local<v8::Object> obj__ = v8::Local<v8::Object>::New(isolate, result->mColliderScriptObj );
+                { args.GetReturnValue().Set( obj__ ); return; };
+            };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
+    void SpriteWrap::RemoveCollider(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
+        SpriteWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SpriteWrap>(args.This());
+        Sprite* self = dynamic_cast<Sprite*>(objWrapper->cppPtr_);
+
+        ;
+        try
+        {
+            if (args.Length() != 0)
+            {
+                v8_ThrowArgCountException(isolate, args.Length(), 0);
+                return;
+            };
+            self->removeCollider(); args.GetReturnValue().SetUndefined();
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << error.what();
+            isolate->ThrowException( v8::Exception::Error( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+        }
+    }
+
 }

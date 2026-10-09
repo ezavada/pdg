@@ -114,7 +114,9 @@ class AnimationPhysicsRig {
     void reflect(const AnimationTransform& root, bool flipX, bool flipY,
                  const std::vector<PhysicsBody*>& members);
     double bodyReflection(uint32_t index) const;
+    bool resizeBone(AnimationBoneId bone,double widthFactor,double heightFactor);
     void moveToSpace(cpSpace* space);
+    void adoptMovedSpace(cpSpace* space);
     uint32 snapshotRecord(ISerializer* writer, bool emit) const;
     static std::unique_ptr<AnimationPhysicsRig> restoreSnapshot(IDeserializer* reader,
         const AnimationPose& desired, const AnimationTransform& root, const std::vector<PhysicsBody*>& bodies,
@@ -125,6 +127,10 @@ class AnimationPhysicsRig {
     struct Storage;
     std::unique_ptr<Storage> mStorage;
     AnimationPhysicsDefinition mDefinition;
+    std::vector<AnimationPhysicsBody> mGeometryReference;
+    struct GeometryJoint { std::shared_ptr<PhysicsConstraint> constraint; Point a,b; };
+    std::vector<GeometryJoint> mGeometryJoints;
+    std::vector<Offset> mGeometryFactors;
     std::shared_ptr<const AnimationRig> mRig;
     std::vector<AnimationBoneId> mOrder;
     struct Control;

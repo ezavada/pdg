@@ -4,7 +4,7 @@ namespace pdg { /**
 
 \ingroup Graphics Animation
 
-\brief Container for drawing elements (lines, shapes, images) that can be rendered to a Port
+\brief Container for drawing elements (lines, shapes, images, text) that can be rendered to a Port
 
 Drawing contents are shared by nested drawings and animation attachments. ElementRef retains its drawing contents, so elements remain editable while those owners exist. Nested drawing cycles are rejected. Persistent animation artwork is registered with Sprite.addAnimationDrawable(drawing, options); dynamic callbacks return a Drawing or null.
 

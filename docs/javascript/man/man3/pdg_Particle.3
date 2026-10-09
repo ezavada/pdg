@@ -1,4 +1,4 @@
-.TH "Particle" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Particle" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -15,9 +15,23 @@ Inherits \fBAnimated\fP, and \fBEventEmitter\fP\&.
 
 .in +1c
 .ti -1c
+.RI "\fBParticle\fP ()"
+.br
+.ti -1c
+.RI "boolean \fBanimate\fP (number seconds)"
+.br
+.ti -1c
+.RI "\fBParticle\fP \fBbreakTrail\fP ()"
+.br
+.RI "Start fresh history at the current position, keeping trail settings\&. Does nothing when no trail is configured\&. "
+.ti -1c
 .RI "\fBParticle\fP \fBclearContent\fP ()"
 .br
 .RI "Remove the artwork\&. "
+.ti -1c
+.RI "\fBParticle\fP \fBclearTrail\fP ()"
+.br
+.RI "Disable the trail and release its history\&. "
 .ti -1c
 .RI "\fBexpire\fP ()"
 .br
@@ -47,9 +61,17 @@ Inherits \fBAnimated\fP, and \fBEventEmitter\fP\&.
 .br
 .RI "Read the optional owned emitter\&. "
 .ti -1c
+.RI "number \fBgetTrailPointCount\fP ()"
+.br
+.RI "Count retained history points, excluding the temporary render head\&. "
+.ti -1c
 .RI "boolean \fBhasContent\fP ()"
 .br
 .RI "Test whether artwork is assigned\&. "
+.ti -1c
+.RI "boolean \fBhasTrail\fP ()"
+.br
+.RI "Test whether a trail is configured, including an empty history\&. "
 .ti -1c
 .RI "boolean \fBisAlive\fP ()"
 .br
@@ -83,6 +105,10 @@ Inherits \fBAnimated\fP, and \fBEventEmitter\fP\&.
 .br
 .RI "Set whole-particle opacity\&. "
 .ti -1c
+.RI "\fBParticle\fP \fBsetTrail\fP (\fBParticleTrailOptions\fP options)"
+.br
+.RI "Configure a bounded ribbon following the particle's motion\&. "
+.ti -1c
 .RI "\fBCollider\fP \fBsetupCollider\fP ()"
 .br
 .RI "Create or return the optional whole-body collider\&. "
@@ -99,9 +125,16 @@ Inherits \fBAnimated\fP, and \fBEventEmitter\fP\&.
 Public Member Functions inherited from \fBAnimated\fP
 .in +1c
 .ti -1c
+.RI "\fBAnimated\fP ()"
+.br
+.ti -1c
 .RI "\fBAnimated\fP \fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
 .br
 .RI "Register a callback after the object's normal animation step\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBandAlso\fP ()"
+.br
+.RI "Join the following operand to the preceding parallel chain\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBandThen\fP ()"
 .br
@@ -110,6 +143,10 @@ Public Member Functions inherited from \fBAnimated\fP
 .RI "boolean \fBanimate\fP (number deltaSeconds)"
 .br
 .RI "Advance programmed animation by elapsed seconds\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBbatch\fP ()"
+.br
+.RI "Open an anonymous animation block\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBcancelSchedule\fP ()"
 .br
@@ -183,6 +220,26 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Retire all helpers on this object\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBdiminish\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Reduce the preceding block amplitude around its baseline\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendBatch\fP ()"
+.br
+.RI "Close and select the innermost anonymous block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendOtherwise\fP ()"
+.br
+.RI "Close a conditional with an alternative\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendSeries\fP ()"
+.br
+.RI "Close and select the innermost series\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendWhen\fP ()"
+.br
+.RI "Close a conditional without an alternative\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBflipX\fP ()"
 .br
 .RI "Toggle the x reflection flag immediately\&. "
@@ -247,6 +304,10 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Test whether animations are running or queued\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBincrease\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Increase the preceding block amplitude around its baseline\&. "
+.ti -1c
 .RI "boolean \fBisFlippedX\fP ()"
 .br
 .RI "Read the x reflection flag\&. "
@@ -258,6 +319,14 @@ Public Member Functions inherited from \fBAnimated\fP
 .RI "boolean \fBisSchedulePaused\fP ()"
 .br
 .RI "Test whether scheduled animation advancement is paused\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBjumpToMark\fP (string name, boolean restoreState=true)"
+.br
+.RI "Continue execution at the operation following a mark\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmark\fP (string name, boolean saveState=true)"
+.br
+.RI "Create a named script location and optionally save state on arrival\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBmoveBy\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
@@ -275,13 +344,64 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Move to a location\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBon\fP (string event, function handler)"
+.br
+.RI "Observe a selected animation block's lifecycle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonFinished\fP (function handler)"
+.br
+.RI "Observe finished events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonMark\fP (function handler)"
+.br
+.RI "Observe mark events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonRepeat\fP (function handler)"
+.br
+.RI "Observe repeat events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonScriptFinished\fP (function handler)"
+.br
+.RI "Observe scriptFinished events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonStarted\fP (function handler)"
+.br
+.RI "Observe started events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonUntilFired\fP (function handler)"
+.br
+.RI "Observe untilFired events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonYoyo\fP (function handler)"
+.br
+.RI "Observe yoyo events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBotherwise\fP ()"
+.br
+.RI "Open the alternative of the innermost conditional\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBpauseIt\fP ()"
+.br
+.RI "Pause the most recently selected animation element\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBpauseSchedule\fP ()"
 .br
 .RI "Pause scheduled animations and their delays\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBplayScript\fP (string name)"
+.br
+.RI "Instantiate a named animation script on this target\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
 .br
 .RI "Retire a specific animation helper\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrepeat\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBrepeat\fP (int additionalExecutions)"
+.br
+.RI "Repeat the preceding block\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBresizeBy\fP (number deltaWidth, number deltaHeight, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
@@ -290,6 +410,14 @@ Public Member Functions inherited from \fBAnimated\fP
 .RI "\fBAnimated\fP \fBresizeTo\fP (number width, number height, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
 .RI "Animate logical size to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrestartIt\fP ()"
+.br
+.RI "Restart the most recently selected animation element from its baseline\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresumeIt\fP ()"
+.br
+.RI "Resume the most recently selected paused animation element\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBresumeSchedule\fP ()"
 .br
@@ -302,6 +430,10 @@ Public Member Functions inherited from \fBAnimated\fP
 .RI "\fBAnimated\fP \fBrotateTo\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
 .br
 .RI "Rotate to an absolute angle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBseries\fP ()"
+.br
+.RI "Open a block whose successive operands wait for completion\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP offset)"
 .br
@@ -367,9 +499,25 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Set logical width immediately\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBslowDown\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Divide the preceding block playback rate\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBspeedUp\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Increase the preceding block playback rate\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstagger\fP (number intervalSeconds)"
+.br
+.RI "\fBOffset\fP the selected block's start across successive \fBTroupe\fP members\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBstopGrowing\fP ()"
 .br
 .RI "Stop all programmed changes to logical size\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopIt\fP ()"
+.br
+.RI "Stop the most recently selected animation element\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBstopMovement\fP ()"
 .br
@@ -387,13 +535,32 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Multiply logical width and height by independent factors\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBtriggerEvent\fP (string name)"
+.br
+.RI "Emit a custom named animation event or record an event step\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBuntil\fP (function evaluator)"
+.br
+.RI "Finish the preceding block when its evaluator returns true\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBwait\fP (number durationSeconds)"
 .br
 .RI "Delay the next timed animation request\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBwhen\fP (function evaluator)"
+.br
+.RI "Open a conditional animation branch\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fByoyo\fP ()"
+.br
+.RI "Play the preceding trajectory forward and back\&. "
 .in -1c
 
 Public Member Functions inherited from \fBEventEmitter\fP
 .in +1c
+.ti -1c
+.RI "\fBEventEmitter\fP ()"
+.br
 .ti -1c
 .RI "\fBaddHandler\fP (\fBIEventHandler\fP inHandler, int inEventType=\fBall_events\fP)"
 .br
@@ -428,6 +595,20 @@ Public Member Functions inherited from \fBEventEmitter\fP
 .RI "\fBPhysicsBody\fP \fBphysics\fP"
 .br
 .in -1c
+.SS "Additional Inherited Members"
+
+
+Static Public Member Functions inherited from \fBAnimated\fP
+.in +1c
+.ti -1c
+.RI "static \fBAnimationScript\fP \fBdefineScript\fP (string name)"
+.br
+.RI "Create a library-owned named animation recorder\&. "
+.ti -1c
+.RI "static boolean \fBdeleteScript\fP (string name)"
+.br
+.RI "Remove a definition and release its memory in the shared script library\&. "
+.in -1c
 .SH "Detailed Description"
 .PP 
 Lightweight whole-body artwork and optional physics\&. 
@@ -445,8 +626,29 @@ ParticleEffects
 .RE
 .PP
 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "Particle ()"
+
+.PP
+Referenced by \fBbreakTrail()\fP, \fBclearContent()\fP, \fBclearTrail()\fP, \fBfadeTo()\fP, \fBsetDrawing()\fP, \fBsetImage()\fP, \fBsetLifetime()\fP, \fBsetOpacity()\fP, and \fBsetTrail()\fP\&.
 .SH "Member Function Documentation"
 .PP 
+.SS "boolean animate (number seconds)"
+
+.SS "\fBParticle\fP breakTrail ()"
+
+.PP
+Start fresh history at the current position, keeping trail settings\&. Does nothing when no trail is configured\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The receiver for call chaining\&. 
+.RE
+.PP
+
+.PP
+References \fBParticle()\fP\&.
 .SS "\fBParticle\fP clearContent ()"
 
 .PP
@@ -463,6 +665,21 @@ ParticleEffects
 .RE
 .PP
 
+.PP
+References \fBParticle()\fP\&.
+.SS "\fBParticle\fP clearTrail ()"
+
+.PP
+Disable the trail and release its history\&. 
+.PP
+\fBReturns\fP
+.RS 4
+The receiver for call chaining\&. 
+.RE
+.PP
+
+.PP
+References \fBParticle()\fP\&.
 .SS "expire ()"
 
 .PP
@@ -500,7 +717,7 @@ ParticleEffects
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBParticle()\fP, and \fBpdg::linearTween\fP\&.
 .SS "number getAge ()"
 
 .PP
@@ -581,6 +798,17 @@ ParticleEffects
 .RE
 .PP
 
+.SS "number getTrailPointCount ()"
+
+.PP
+Count retained history points, excluding the temporary render head\&. 
+.PP
+\fBReturns\fP
+.RS 4
+Zero for disabled, uninitialized or fully aged history; otherwise at most maxPoints\&. Includes the boundary point used to clip the oldest visible segment\&. 
+.RE
+.PP
+
 .SS "boolean hasContent ()"
 
 .PP
@@ -594,6 +822,17 @@ True for an assigned \fBImage\fP or \fBDrawing\fP\&.
 \fBSee also\fP
 .RS 4
 ParticleEffects 
+.RE
+.PP
+
+.SS "boolean hasTrail ()"
+
+.PP
+Test whether a trail is configured, including an empty history\&. 
+.PP
+\fBReturns\fP
+.RS 4
+True when configured\&. Expiry transfers the trail to its layer, or clears it if detached, and returns false\&. 
 .RE
 .PP
 
@@ -673,6 +912,8 @@ ParticleEffects
 .RE
 .PP
 
+.PP
+References \fBParticle()\fP\&.
 .SS "\fBParticle\fP setImage (\fBImage\fP content)"
 
 .PP
@@ -700,6 +941,8 @@ ParticleEffects
 .RE
 .PP
 
+.PP
+References \fBParticle()\fP\&.
 .SS "\fBParticle\fP setLifetime (number value)"
 
 .PP
@@ -721,6 +964,8 @@ ParticleEffects
 .RE
 .PP
 
+.PP
+References \fBParticle()\fP\&.
 .SS "\fBParticle\fP setOpacity (number value)"
 
 .PP
@@ -742,6 +987,58 @@ ParticleEffects
 .RE
 .PP
 
+.PP
+References \fBParticle()\fP\&.
+.SS "\fBParticle\fP setTrail (\fBParticleTrailOptions\fP options)"
+
+.PP
+Configure a bounded ribbon following the particle's motion\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIoptions\fP Trail settings; omitted fields use \fBParticleTrailOptions\fP defaults\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+The receiver for call chaining\&.
+.RE
+.PP
+The ribbon records positions in layer coordinates after particle motion and physics\&. \fBCamera\fP motion does not add history\&. Width and minimum distance are layer units; lifetime and sampleInterval are simulation seconds\&. Width and opacity interpolate linearly toward endWidth and endOpacity as each sample ages\&. \fBColor\fP alpha multiplies the sampled particle opacity\&. A temporary head joins the latest stored point to the current position\&. maxPoints bounds stored history; reaching that limit shortens the visible trail\&. Rendering uses solid, antialiased CPU ribbons with normal alpha blending\&.
+
+.PP
+Calling setTrail again replaces the configuration and clears history\&. \fBParticle\fP emitter templates copy settings with empty history\&. Expiring particles release their physics and particle budget slot immediately; the layer retains only their fading ribbon\&. Retired ribbons are limited to the layer's particle budget and 65536 reserved history points, evicting oldest tails first when necessary\&. Removing a particle explicitly clears its history; removeAllParticles and layer disposal also clear retired tails\&. Trail configuration and recorded script arguments are portable; live trail histories are transient and omitted from layer snapshots\&.
+
+.PP
+Layer animation pauses and scene simulation clocks also govern trail aging\&. Explicit setLocation calls reset history\&. breakDistance resets it when one simulation step moves farther than its limit; use 0 to disable this safeguard\&. Use breakTrail for other discontinuities\&. No ribbon is drawn until it has two distinct points\&.
+
+.PP
+\fBNote\fP
+.RS 4
+GUI targets render trails\&. Headless targets still simulate and validate them\&. No \fBImage\fP, \fBDrawing\fP, collider or physics body is required\&. This call is also available on \fBAnimationScript\fP and \fBTroupe\fP recorders for \fBParticle\fP playback targets\&.
+.RE
+.PP
+.PP
+.nf
+const prototype = new pdg\&.Particle()\&.setLifetime(1\&.5)
+    \&.setTrail({lifetime:0\&.4, width:6, endWidth:0, color:'orange',
+               minDistance:2, maxPoints:32});
+layer\&.createParticleEmitter()\&.setParticleTemplate(prototype)
+    \&.setLocation(200,300)\&.setRotation(\-Math\&.PI/2)
+    \&.setParticleSpeed(150,200)\&.setSpread(0\&.5)
+    \&.setEmissionRate(25)\&.startEmitting();
+.fi
+.PP
+ 
+.PP
+\fBSee also\fP
+.RS 4
+\fBParticle::clearTrail\fP, \fBParticle::breakTrail\fP, \fBSpriteLayer::getParticleTrailCount\fP 
+.RE
+.PP
+
+.PP
+References \fBParticle()\fP\&.
 .SS "\fBCollider\fP setupCollider ()"
 
 .PP

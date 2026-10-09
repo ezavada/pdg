@@ -1,4 +1,4 @@
-.TH "AnimationContactTarget" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "AnimationContactTarget" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -17,11 +17,11 @@ AnimationContactTarget \- World and platform contact locks with timed release\&.
 .br
 .RI "Create an unlocked contact target\&. "
 .ti -1c
-.RI "object \fBgetState\fP ()"
+.RI "\fBAnimationContactState\fP \fBgetState\fP ()"
 .br
 .RI "Copy the current contact point and influence\&. "
 .ti -1c
-.RI "\fBlockPlatform\fP (number x, number y, number support, object frame)"
+.RI "\fBlockPlatform\fP (number x, number y, number support, \fBAnimationTransform\fP frame)"
 .br
 .RI "Lock a contact to a moving support\&. "
 .ti -1c
@@ -33,7 +33,7 @@ AnimationContactTarget \- World and platform contact locks with timed release\&.
 .br
 .RI "Release the lock with an optional fade\&. "
 .ti -1c
-.RI "object \fBupdate\fP (number deltaSeconds, boolean contactActive, boolean withinReach, number support=0, object frame=undefined, number releaseSeconds=0)"
+.RI "\fBAnimationContactState\fP \fBupdate\fP (number deltaSeconds, boolean contactActive, boolean withinReach, number support=0, \fBAnimationTransform\fP frame=undefined, number releaseSeconds=0)"
 .br
 .RI "Follow a support or advance the release fade\&. "
 .in -1c
@@ -90,7 +90,7 @@ console\&.log(state\&.x, state\&.y, state\&.influence);
 
 .SH "Member Function Documentation"
 .PP 
-.SS "object getState ()"
+.SS "\fBAnimationContactState\fP getState ()"
 
 .PP
 Copy the current contact point and influence\&. Editing the returned object does not change the helper\&.
@@ -105,7 +105,7 @@ An independent state object described below\&.
 .PP
 \fBContact state\fP
 .RS 4
-Field  Meaning  \fRx\fP, \fRy\fP  Locked or last-released point in owning-layer coordinates\&.  \fRinfluence\fP  Weight from 0 to 1; fades after release\&.  \fRlocked\fP  True while tracking a world point or platform; false during and after release\&.  
+See \fBAnimationContactState\fP for the generated field schema\&.
 .RE
 .PP
 
@@ -116,7 +116,7 @@ Field  Meaning  \fRx\fP, \fRy\fP  Locked or last-released point in owning-layer 
 .RE
 .PP
 
-.SS "lockPlatform (number x, number y, number support, object frame)"
+.SS "lockPlatform (number x, number y, number support, \fBAnimationTransform\fP frame)"
 
 .PP
 Lock a contact to a moving support\&. Converts the world point into the platform frame\&. Subsequent \fBupdate()\fP calls transform that local point using the same support's current frame\&. Replaces any previous lock and resets influence to 1\&. Singular frames throw\&.
@@ -205,10 +205,17 @@ No value\&.
 .RE
 .PP
 
-.SS "object update (number deltaSeconds, boolean contactActive, boolean withinReach, number support = \fR0\fP, object frame = \fRundefined\fP, number releaseSeconds = \fR0\fP)"
+.SS "\fBAnimationContactState\fP update (number deltaSeconds, boolean contactActive, boolean withinReach, number support = \fR0\fP, \fBAnimationTransform\fP frame = \fRundefined\fP, number releaseSeconds = \fR0\fP)"
 
 .PP
-Follow a support or advance the release fade\&. Inactive contact, an unreachable target, or a missing/replaced platform ID releases the lock\&. World locks do not require a support\&. Released targets never reacquire automatically; call a lock method on the next contact edge\&. A zero time step preserves fade progress but can still update a platform point or release a lock\&.
+Follow a support or advance the release fade\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRframe:\fP Required and validated only while a platform lock remains active; otherwise ignored\&.
+.RE
+.PP
+Inactive contact, an unreachable target, or a missing/replaced platform ID releases the lock\&. World locks do not require a support\&. Released targets never reacquire automatically; call a lock method on the next contact edge\&. A zero time step preserves fade progress but can still update a platform point or release a lock\&.
 
 .PP
 \fBParameters\fP

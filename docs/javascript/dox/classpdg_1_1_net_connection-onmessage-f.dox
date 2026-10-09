@@ -6,6 +6,6 @@ namespace pdg { /**
 
 Whenever the remote end sends a message, you will get an onMessage callback to the function specified with the message that was sent. 
 
-\param callback the function that should be called when a message is received. The message is the first parameter passed to the callback function. Second parameter is the connection object. Third parameter is a string with the transport type (currently either 'upd' or 'tcp', where 'udp' means it was sent via sendDgram() and 'tcp' means it was sent via send() )
+\param callback the function that should be called when a message is received. The message is the first parameter passed to the callback function. Second parameter is the connection object. Third parameter is the delivery label: 'tcp' for reliable native TCP, WebSocket or WebTransport streams, and 'udp' for unreliable native UDP or WebTransport datagrams. sendDgram() uses the 'tcp' label when it falls back to reliable delivery. Inspect connection.transport for the actual transport.
 
 **/ }

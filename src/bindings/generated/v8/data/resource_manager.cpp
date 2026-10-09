@@ -38,6 +38,7 @@
 #include "pdg-lib.h"
 
 #include <cstdlib>
+#include <algorithm>
 
 namespace pdg
 {
@@ -183,10 +184,7 @@ namespace pdg
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(args.This());
         ResourceManager* self = dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "string" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -203,10 +201,7 @@ namespace pdg
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(args.This());
         ResourceManager* self = dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object ResourceManager]" " function" "(string inLanguage)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -230,10 +225,7 @@ namespace pdg
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(args.This());
         ResourceManager* self = dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "(string filename)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -256,10 +248,7 @@ namespace pdg
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(args.This());
         ResourceManager* self = dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] refNum)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -281,10 +270,7 @@ namespace pdg
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(args.This());
         ResourceManager* self = dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "string" " function" "([number int] id, [number int] substring = -1)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -313,10 +299,7 @@ namespace pdg
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(args.This());
         ResourceManager* self = dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "(string resourceName)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -339,10 +322,7 @@ namespace pdg
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(args.This());
         ResourceManager* self = dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[string Binary]" " function" "(string resourceName)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -361,14 +341,13 @@ namespace pdg
             return;
         }
         long maxSize = (args.Length()<2) ? -1 : args[2 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        unsigned long bufferSize;
-        if (maxSize < 0)
+        unsigned long resourceSize = self->getResourceSize(resourceName);
+        unsigned long bufferSize = maxSize < 0 ? resourceSize : std::min(resourceSize, static_cast<unsigned long>(maxSize));
+        if (!bufferSize)
         {
-            bufferSize = self->getResourceSize(resourceName);
-        }
-        else
-        {
-            bufferSize = maxSize;
+            {
+                args.GetReturnValue().Set( v8::Boolean::New(isolate, false) ); return;
+            };
         }
         uint8* buffer = (uint8*) std::malloc(bufferSize);
         bool loaded = self->getResource(resourceName, buffer, bufferSize);
@@ -377,7 +356,7 @@ namespace pdg
             std::free(buffer);
             { args.GetReturnValue().Set( v8::Boolean::New(isolate, false) ); return; };
         }
-        v8::Local<v8::Value> resultVal = EncodeBinary(buffer, bufferSize);
+        v8::Local<v8::Value> resultVal = MakeUint8Array(buffer, bufferSize);
         std::free(buffer);
         { args.GetReturnValue().Set( resultVal ); return; };
     }
@@ -388,10 +367,7 @@ namespace pdg
         ResourceManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ResourceManagerWrap>(args.This());
         ResourceManager* self = dynamic_cast<ResourceManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "string" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);

@@ -96,7 +96,7 @@ sprite.findPart('forearm').physics.setDriveTarget(new pdg.Point(20, 10), 0, 120,
 \see setAnimationPhysicsMode()
 */
 /**
-\fn pdg::Sprite::setAnimationPhysicsDriveSettings(object settings, string bone, boolean includeDescendants)
+\fn pdg::Sprite::setAnimationPhysicsDriveSettings(AnimationPhysicsDriveOptions settings, string bone, boolean includeDescendants)
 \brief Replace drive settings for a skeleton selection.
 
 \htmlonly[block]
@@ -122,7 +122,7 @@ sprite.findPart('forearm').physics.setDriveTarget(new pdg.Point(20, 10), 0, 120,
 \see getAnimationPhysicsDriveSettings(), setAnimationPhysicsMode()
 */
 /**
-\fn pdg::Sprite::setAnimationPhysicsDriveSettings(object settings, uint bone, boolean includeDescendants)
+\fn pdg::Sprite::setAnimationPhysicsDriveSettings(AnimationPhysicsDriveOptions settings, uint bone, boolean includeDescendants)
 \brief Replace drive settings for a skeleton selection.
 
 See the <a href="#animation-physics-drive-settings">drive settings record</a>.

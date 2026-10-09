@@ -63,7 +63,7 @@ namespace pdg {
         type_Image,
         type_ImageStrip,
         type_Drawing,  // a drawing can contain other drawings
-        // not including Text yet
+        type_Text,
     };
 
     class ElementRef {
@@ -80,6 +80,11 @@ namespace pdg {
         const std::vector<Point>& getControlPoints() const;   // all the control points for the element
         const Point& getControlPoint(int controlPointIndex) const;
         void changeControlPoint(int controlPointIndex, const Point& controlPoint);
+
+        /// Borrow the owned UTF-8 text; throws for non-text or removed elements.
+        const char* getText() const;
+        /// Copy replacement UTF-8 text without changing layout or styling.
+        void setText(const char* text);
 
         void getAttributes(Attributes& attrs) const;
         void setAttributes(const Attributes& attrs);
@@ -144,6 +149,9 @@ namespace pdg {
 
         virtual ElementRef* addImage(const Rect& rect, const Image& image, const Attributes& attrs) = 0;
         virtual ElementRef* addImageStrip(const Rect& rect, const ImageStrip& imageStrip, const Attributes& attrs) = 0;
+        /// Add owned UTF-8 text laid out in a local rectangle using text attributes.
+        virtual ElementRef* addText(const char* text, const Rect& rect, const Attributes& attrs) = 0;
+
         virtual ElementRef* addDrawing(const Rect& rect, const Drawing& drawing, const Attributes& attrs) = 0;
 
 		    virtual size_t getElementCount() const = 0;
@@ -165,11 +173,15 @@ namespace pdg {
         virtual void drawTransformed(Port* port, const Attributes& parent, bool localStrokes = false) const = 0;
         // Map bounds into a finite affine parallelogram; degenerate source axes retain unit scale.
         glm::mat3 destinationTransform(const Quad& destination) const;
-        // drawing operations
+    protected:
+        /// @cond INTERNAL
+        // Internal replay entry points; applications use Port::drawDrawing().
         virtual void draw(Port* port) = 0;
         virtual void draw(Port* port, const Rect& rect) = 0;
         virtual void draw(Port* port, const Quad& quad) = 0;
         virtual void draw(Port* port, const RotatedRect& rr) = 0;
+        /// @endcond
+    public:
     #endif // PDG_NO_GUI
 
   #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS

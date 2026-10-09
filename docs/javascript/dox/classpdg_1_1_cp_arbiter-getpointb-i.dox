@@ -4,7 +4,12 @@ namespace pdg { /**
 
 \brief get the location of a particular contact point
 
-\param i index into contact points
+\param i integer index into contact points, from 0 through getCount() - 1
+
+\throws TypeError if i is not a signed 32-bit integer.
+\throws RangeError if i is outside the current contact count.
+
+\note Read contact data during the collision callback while the arbiter is valid.
 
 \return the location of the contact
 

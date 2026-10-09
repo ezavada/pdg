@@ -82,6 +82,8 @@ const configuredJobs = parseJobCount(process.env.PDG_NODE_GYP_JOBS) ||
 const makeJobs = inheritedJobCount();
 const inheritedJobserver = process.platform !== 'win32' && hasInheritedJobserver();
 const jobs = configuredJobs || makeJobs || defaultJobCount();
+try { require('./build-webtransport').build(jobs); }
+catch(error) { console.error('[pdg] '+error.message); process.exit(1); }
 const nodeGyp = resolveNodeGypCommand();
 const args = nodeGyp.args.concat(['rebuild', '--jobs', String(jobs)]);
 if (process.env.PDG_NODE_BUILD_CONFIG === 'Release') args.push('--release');

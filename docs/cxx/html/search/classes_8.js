@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['keyinfo_0',['KeyInfo',['../structpdg_1_1_key_info.html',1,'pdg']]],
-  ['keypressinfo_1',['KeyPressInfo',['../structpdg_1_1_key_press_info.html',1,'pdg']]]
+  ['jigglejointstate_0',['JiggleJointState',['../structpdg_1_1_jiggle_joint_state.html',1,'pdg']]],
+  ['jiggleresult_1',['JiggleResult',['../structpdg_1_1_jiggle_result.html',1,'pdg']]],
+  ['jigglestate_2',['JiggleState',['../structpdg_1_1_jiggle_state.html',1,'pdg']]]
 ];

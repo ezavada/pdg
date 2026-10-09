@@ -2,9 +2,11 @@ namespace pdg { /**
 
 \fn pdg::SpriteLayer::layerToPortRect
 
-\brief translate the rectangle (or RotatedRect) to account for layer transformations
+\brief translate the rectangle (or RotatedRect) to account for the effective camera
 
-Adjusts for layer rotation, zoom and scrolling (origin) to get drawing coordinates.
+Adjusts for the effective camera view and port anchor to get drawing coordinates.
+
+Nonuniform scale or reflection returns enclosing bounds. For exact transformed corners, use the Quad conversion.
 
 \param r Rect or RotatedRect in layer coordinates
 

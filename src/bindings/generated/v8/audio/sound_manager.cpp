@@ -244,13 +244,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            {
-                args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object IEventHandler] inHandler, [number int] inEventType = all_events)" " - " "add a new handler for some event type, or for all events if no type specified. "
-                    " \\param inHandler the object to handle events" " \\param inEventType the type of event to handle").ToLocalChecked() ); return;
-            };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -310,20 +304,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            {
-                args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object IEventHandler] inHandler, [number int] inEventType = all_events)" " - " "remove a handler for some event type, or for all events (see note) if no type specified. "
-                    "If the handler is listed multiple times it will only remove it once.\n"
-                    "NOTE: inType == all_events doesn't work quite like you might expect. If "
-                    "you have registered a handler for multiple events, but not with all_events, "
-                    "doing removeHandler(handler, all_events) will do nothing. Basically, "
-                    "all_events is a special event type that matches all event types when "
-                    "considering whether to invoke a handler or not.\n"
-                    "It is safe to call remove handler from within an event handler's handleEvent() call."
-                    " \\param inHandler the object to handle events" " \\param inEventType the type of event to stop handling (see note)").ToLocalChecked() ); return;
-            };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -346,10 +327,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "remove all handlers").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -365,14 +343,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            {
-                args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] inEventType)" " - " "temporarily ignore all events of a particular type. "
-                    "Events that are blocked are NOT cached for later, they are just dropped."
-                    " \\param inEventType the type of event to block").ToLocalChecked() ); return;
-            };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -394,13 +365,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            {
-                args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] inEventType)" " - " "stop ignoring events of a particular type "
-                    " \\param inEventType the type of event to unblock").ToLocalChecked() ); return;
-            };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -422,10 +387,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -442,10 +404,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Sound]" " function" "(number inVolume)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -468,10 +427,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number vol = 1.0, [number int] offsetX = 0, number pitch = 0, [number uint] fromMs = 0, [number int] lenMs = ENTIRE_LENGTH)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() >= 1 && !args[1 -1]->IsNumber())
         {
             v8_ThrowArgTypeException(isolate, 1, "a number (""vol"")");
@@ -512,10 +468,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -531,10 +484,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -550,10 +500,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -569,10 +516,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -588,10 +532,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -607,10 +548,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "Sound" " function" "(boolean loopingOn)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -632,10 +570,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -651,10 +586,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "Sound" " function" "(number pitchOffset)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -676,10 +608,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number targetOffset, [number int] msDuration, [number int] easing = easeInOutQuad)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2, true);
@@ -720,10 +649,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "Sound" " function" "([number int] offsetX)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -745,10 +671,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] targetOffset, [number int] msDuration, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2, true);
@@ -789,10 +712,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number uint] fadeMs, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -827,10 +747,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number uint] fadeMs, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -865,10 +782,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(number level, [number uint] fadeMs, [number int] easing = linearTween)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2, true);
@@ -909,10 +823,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "Sound" " function" "([number int] skipMilliseconds)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -934,10 +845,7 @@ namespace pdg
         SoundWrap* objWrapper = jswrap::ObjectWrap::Unwrap<SoundWrap>(args.This());
         Sound* self = dynamic_cast<Sound*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "Sound" " function" "([number uint] timeMs)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);

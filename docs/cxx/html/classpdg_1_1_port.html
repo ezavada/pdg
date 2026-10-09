@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Pixel Dust Game Engine
-   &#160;<span id="projectnumber">v1.1.1</span>
+   &#160;<span id="projectnumber">v1.2.0</span>
    </div>
   </td>
  </tr>
@@ -106,12 +106,16 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div id="doc-content">
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#friends">Friends</a> &#124;
 <a href="classpdg_1_1_port-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">Port Class Reference<div class="ingroups"><a class="el" href="group___graphics.html">Graphics</a></div></div></div>
+  <div class="headertitle"><div class="title">Port Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p><a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> and setter operations return this port by reference for chaining.  
+ <a href="#details">More...</a></p>
 
 <p><code>#include &lt;port.h&gt;</code></p>
 <div class="dynheader">
@@ -119,8 +123,8 @@ Inheritance diagram for Port:</div>
 <div class="dyncontent">
 <div class="center"><img src="classpdg_1_1_port__inherit__graph.png" border="0" usemap="#a_port_inherit__map" loading="lazy" alt="Inheritance graph"/></div>
 <map name="a_port_inherit__map" id="a_port_inherit__map">
-<area shape="rect" title=" " alt="" coords="20,79,65,105"/>
-<area shape="rect" href="classpdg_1_1_renderer.html" title=" " alt="" coords="5,5,80,31"/>
+<area shape="rect" title="Drawing and setter operations return this port by reference for chaining." alt="" coords="20,79,65,105"/>
+<area shape="rect" href="classpdg_1_1_renderer.html" title="Drawing operations return the renderer by reference for chaining." alt="" coords="5,5,80,31"/>
 <area shape="poly" title=" " alt="" coords="45,45,45,79,40,78,40,48"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -129,74 +133,103 @@ Collaboration diagram for Port:</div>
 <div class="dyncontent">
 <div class="center"><img src="classpdg_1_1_port__coll__graph.png" border="0" usemap="#a_port_coll__map" loading="lazy" alt="Collaboration graph"/></div>
 <map name="a_port_coll__map" id="a_port_coll__map">
-<area shape="rect" title=" " alt="" coords="20,79,65,105"/>
-<area shape="rect" href="classpdg_1_1_renderer.html" title=" " alt="" coords="5,5,80,31"/>
+<area shape="rect" title="Drawing and setter operations return this port by reference for chaining." alt="" coords="20,79,65,105"/>
+<area shape="rect" href="classpdg_1_1_renderer.html" title="Drawing operations return the renderer by reference for chaining." alt="" coords="5,5,80,31"/>
 <area shape="poly" title=" " alt="" coords="45,45,45,79,40,78,40,48"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-nested-classes" class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:ScreenDrawingScope" id="r_ScreenDrawingScope"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_port_1_1_screen_drawing_scope.html">ScreenDrawingScope</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Temporarily draw in port coordinates, for UI or already projected content.  <a href="classpdg_1_1_port_1_1_screen_drawing_scope.html#details">More...</a><br /></td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a2e7c5b2c4abac4722973456c8cd94fdb" id="r_a2e7c5b2c4abac4722973456c8cd94fdb"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a2e7c5b2c4abac4722973456c8cd94fdb">drawLine</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;from, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;to, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
-<tr class="memitem:a9f08ff60e04e96b03907650c1a44aa7a" id="r_a9f08ff60e04e96b03907650c1a44aa7a"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a9f08ff60e04e96b03907650c1a44aa7a">drawRect</a> (const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
-<tr class="memitem:ae68b9010f7e5cde8c49bbdd457afd2d5" id="r_ae68b9010f7e5cde8c49bbdd457afd2d5"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#ae68b9010f7e5cde8c49bbdd457afd2d5">drawQuad</a> (const <a class="el" href="group___graphics.html#gad144e096b54d6bd74ec90603775913e1">Quad</a> &amp;quad, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
-<tr class="memitem:ad5bd2b908fc24c852fe1f0bf8253c50d" id="r_ad5bd2b908fc24c852fe1f0bf8253c50d"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#ad5bd2b908fc24c852fe1f0bf8253c50d">drawPolygon</a> (const <a class="el" href="classpdg_1_1_polygon.html">Polygon</a> &amp;polygon, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
-<tr class="memitem:a8b85ccb4ec3d0a7794c539e7cf033956" id="r_a8b85ccb4ec3d0a7794c539e7cf033956"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a8b85ccb4ec3d0a7794c539e7cf033956">drawSpline</a> (const <a class="el" href="classpdg_1_1_spline.html">Spline</a> &amp;spline, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
-<tr class="memitem:a8d541a360397d82464edbf87a48f3686" id="r_a8d541a360397d82464edbf87a48f3686"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a8d541a360397d82464edbf87a48f3686">drawEllipse</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;center, float xRadius, float yRadius, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
-<tr class="memitem:a27b1c0726501e44888d265eb4d1f65bd" id="r_a27b1c0726501e44888d265eb4d1f65bd"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a27b1c0726501e44888d265eb4d1f65bd">drawArc</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;center, float xRadius, float yRadius, float startAngle, float endAngle, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
-<tr class="memitem:a4dc2d3312ef65347a106b93397113139" id="r_a4dc2d3312ef65347a106b93397113139"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a4dc2d3312ef65347a106b93397113139">drawImage</a> (<a class="el" href="classpdg_1_1_image.html">Image</a> *img, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;loc, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
-<tr class="memitem:a38f3cff803f3a8111429c9258e55d633" id="r_a38f3cff803f3a8111429c9258e55d633"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a38f3cff803f3a8111429c9258e55d633">drawImage</a> (<a class="el" href="classpdg_1_1_image.html">Image</a> *img, const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
-<tr class="memitem:a7b4b01414d555ea9edd402b226983704" id="r_a7b4b01414d555ea9edd402b226983704"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a7b4b01414d555ea9edd402b226983704">drawImage</a> (<a class="el" href="classpdg_1_1_image.html">Image</a> *img, const <a class="el" href="group___graphics.html#gad144e096b54d6bd74ec90603775913e1">Quad</a> &amp;quad, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
-<tr class="memitem:a2fae74ac318beab87ef8c22a2a7da215" id="r_a2fae74ac318beab87ef8c22a2a7da215"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a2fae74ac318beab87ef8c22a2a7da215">drawDrawing</a> (const <a class="el" href="classpdg_1_1_drawing.html">Drawing</a> &amp;drawing, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;loc, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
-<tr class="memitem:a009dbc29af211596eee13404d1adb790" id="r_a009dbc29af211596eee13404d1adb790"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a009dbc29af211596eee13404d1adb790">drawDrawing</a> (const <a class="el" href="classpdg_1_1_drawing.html">Drawing</a> &amp;drawing, const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
-<tr class="memitem:a7e9407747e144558b2e0c83a50558689" id="r_a7e9407747e144558b2e0c83a50558689"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a7e9407747e144558b2e0c83a50558689">drawText</a> (const char *text, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;loc, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
-<tr class="memitem:a4831d4f11be67fe184ff496aec1729d3" id="r_a4831d4f11be67fe184ff496aec1729d3"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a4831d4f11be67fe184ff496aec1729d3">drawText</a> (const char *text, const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
-<tr class="memitem:aa8d66bf935879d8892aadd1778620f32" id="r_aa8d66bf935879d8892aadd1778620f32"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#aa8d66bf935879d8892aadd1778620f32">drawSphere</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;center, float radius, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
+<tr class="memitem:ae1816404bada39b32bd72f5369de1c49" id="r_ae1816404bada39b32bd72f5369de1c49"><td class="memItemLeft"><a class="el" href="#ad8bd9afbbd7af19d996da80e9d25890d">Camera</a> *&#160;</td><td class="memItemRight"><a class="el" href="#ae1816404bada39b32bd72f5369de1c49">getCamera</a> () const</td></tr>
+<tr class="memdesc:ae1816404bada39b32bd72f5369de1c49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Port-owned camera, created lazily; its viewport always covers this <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a>.  <br /></td></tr>
+<tr class="memitem:afdda017f05cba1311cfa7d0e43e79234" id="r_afdda017f05cba1311cfa7d0e43e79234"><td class="memItemLeft"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#afdda017f05cba1311cfa7d0e43e79234">setCameraAnchor</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;anchor)</td></tr>
+<tr class="memdesc:afdda017f05cba1311cfa7d0e43e79234"><td class="mdescLeft">&#160;</td><td class="mdescRight">Anchor in port coordinates; initially (0,0). Does not change the camera.  <br /></td></tr>
+<tr class="memitem:a24dd4fd5ad3e30b3e510e105951ff18e" id="r_a24dd4fd5ad3e30b3e510e105951ff18e"><td class="memItemLeft"><a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a>&#160;</td><td class="memItemRight"><a class="el" href="#a24dd4fd5ad3e30b3e510e105951ff18e">getCameraAnchor</a> () const</td></tr>
+<tr class="memitem:ae5c3c5945ae2f929ee8505e6b84f5016" id="r_ae5c3c5945ae2f929ee8505e6b84f5016"><td class="memItemLeft">glm::mat3&#160;</td><td class="memItemRight"><a class="el" href="#ae5c3c5945ae2f929ee8505e6b84f5016">getCameraTransform</a> ()</td></tr>
+<tr class="memitem:a267c0bd252af05ee54422a6a1480ed4a" id="r_a267c0bd252af05ee54422a6a1480ed4a"><td class="memItemLeft"><a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a>&#160;</td><td class="memItemRight"><a class="el" href="#a267c0bd252af05ee54422a6a1480ed4a">worldToPort</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;point)</td></tr>
+<tr class="memdesc:a267c0bd252af05ee54422a6a1480ed4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert through this port's camera, irrespective of drawing-enable state.  <br /></td></tr>
+<tr class="memitem:af87b7275529661a112c5cb38ea84e3cc" id="r_af87b7275529661a112c5cb38ea84e3cc"><td class="memItemLeft"><a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a>&#160;</td><td class="memItemRight"><a class="el" href="#af87b7275529661a112c5cb38ea84e3cc">portToWorld</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;point)</td></tr>
+<tr class="memdesc:af87b7275529661a112c5cb38ea84e3cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Inverse camera conversion; excludes explicit layer cameras and parallax.  <br /></td></tr>
+<tr class="memitem:a2833e7975c3d9f9ae5eedf672de3f510" id="r_a2833e7975c3d9f9ae5eedf672de3f510"><td class="memItemLeft"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a2833e7975c3d9f9ae5eedf672de3f510">setCameraDrawingEnabled</a> (bool enabled)</td></tr>
+<tr class="memitem:a30c7eb3871337100be537a7d8867e586" id="r_a30c7eb3871337100be537a7d8867e586"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a30c7eb3871337100be537a7d8867e586">getCameraDrawingEnabled</a> () const</td></tr>
+<tr class="memitem:a11475a7b281cebbd43509b832cd86986" id="r_a11475a7b281cebbd43509b832cd86986"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#a11475a7b281cebbd43509b832cd86986">isCameraDrawingEnabled</a> () const</td></tr>
+<tr class="memitem:a6614f100bbd02672eed8ea33df446b3b" id="r_a6614f100bbd02672eed8ea33df446b3b"><td class="memItemLeft"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a6614f100bbd02672eed8ea33df446b3b">drawVector</a> (const <a class="el" href="group___graphics.html#gacd7abb9e87eb29fe1b6d677b7e51a814">Vector</a> &amp;v, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
+<tr class="memitem:a8d8cd9d573bdc72f5d3f56079bd080b8" id="r_a8d8cd9d573bdc72f5d3f56079bd080b8"><td class="memItemLeft"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a8d8cd9d573bdc72f5d3f56079bd080b8">drawCircle</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;center, float radius, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
+<tr class="memitem:a6a7d20a3cbcc473ebd8b787fe9a383c9" id="r_a6a7d20a3cbcc473ebd8b787fe9a383c9"><td class="memItemLeft"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a6a7d20a3cbcc473ebd8b787fe9a383c9">drawRoundedRect</a> (const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, float radius, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
+<tr class="memitem:afa8ebda902a039065dc2800579fa8cf5" id="r_afa8ebda902a039065dc2800579fa8cf5"><td class="memItemLeft"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#afa8ebda902a039065dc2800579fa8cf5">drawBezier</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;from, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;control1, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;control2, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;to, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
+<tr class="memitem:a8f35f970935591261ba691df18878493" id="r_a8f35f970935591261ba691df18878493"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a8f35f970935591261ba691df18878493">drawLine</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;from, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;to, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
+<tr class="memitem:a1dbb73f0de2f240cd27aa58dd1923a87" id="r_a1dbb73f0de2f240cd27aa58dd1923a87"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a1dbb73f0de2f240cd27aa58dd1923a87">drawRect</a> (const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
+<tr class="memitem:a53e437200d7eb0ebf35af08e6ab847a7" id="r_a53e437200d7eb0ebf35af08e6ab847a7"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a53e437200d7eb0ebf35af08e6ab847a7">drawQuad</a> (const <a class="el" href="group___graphics.html#gad144e096b54d6bd74ec90603775913e1">Quad</a> &amp;quad, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
+<tr class="memitem:aed7e7e341ae3abf6eb19b58e8524645b" id="r_aed7e7e341ae3abf6eb19b58e8524645b"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#aed7e7e341ae3abf6eb19b58e8524645b">drawPolygon</a> (const <a class="el" href="classpdg_1_1_polygon.html">Polygon</a> &amp;polygon, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
+<tr class="memitem:a34d79935e215b7299275aef71f610858" id="r_a34d79935e215b7299275aef71f610858"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a34d79935e215b7299275aef71f610858">drawSpline</a> (const <a class="el" href="classpdg_1_1_spline.html">Spline</a> &amp;spline, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
+<tr class="memitem:a73674b01787db9ac3ae82425120dcfd4" id="r_a73674b01787db9ac3ae82425120dcfd4"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a73674b01787db9ac3ae82425120dcfd4">drawEllipse</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;center, float xRadius, float yRadius, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
+<tr class="memitem:ad9b33a2d7c674b4f962df534c432f3f5" id="r_ad9b33a2d7c674b4f962df534c432f3f5"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#ad9b33a2d7c674b4f962df534c432f3f5">drawArc</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;center, float xRadius, float yRadius, float startAngle, float endAngle, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
+<tr class="memitem:aabf8b267355f9657e67466709204f613" id="r_aabf8b267355f9657e67466709204f613"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#aabf8b267355f9657e67466709204f613">drawImage</a> (<a class="el" href="classpdg_1_1_image.html">Image</a> *img, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;loc, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
+<tr class="memitem:ab031149bf639c197dc3f335e70a9e981" id="r_ab031149bf639c197dc3f335e70a9e981"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#ab031149bf639c197dc3f335e70a9e981">drawImage</a> (<a class="el" href="classpdg_1_1_image.html">Image</a> *img, const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
+<tr class="memitem:afe585fd6be1ee63f5c6ee07910c568a9" id="r_afe585fd6be1ee63f5c6ee07910c568a9"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#afe585fd6be1ee63f5c6ee07910c568a9">drawImage</a> (<a class="el" href="classpdg_1_1_image.html">Image</a> *img, const <a class="el" href="group___graphics.html#gad144e096b54d6bd74ec90603775913e1">Quad</a> &amp;quad, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
+<tr class="memitem:a2d2f874b0d1d2e3d31fa008a9ccb986c" id="r_a2d2f874b0d1d2e3d31fa008a9ccb986c"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a2d2f874b0d1d2e3d31fa008a9ccb986c">drawDrawing</a> (const <a class="el" href="classpdg_1_1_drawing.html">Drawing</a> &amp;drawing, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;loc, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
+<tr class="memitem:aa468198b4cd66e7bef397d58ad5478be" id="r_aa468198b4cd66e7bef397d58ad5478be"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#aa468198b4cd66e7bef397d58ad5478be">drawDrawing</a> (const <a class="el" href="classpdg_1_1_drawing.html">Drawing</a> &amp;drawing, const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
+<tr class="memitem:a5dbdbf514ef1ecf5594ee9e32581f3e5" id="r_a5dbdbf514ef1ecf5594ee9e32581f3e5"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a5dbdbf514ef1ecf5594ee9e32581f3e5">drawText</a> (const char *text, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;loc, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
+<tr class="memitem:aa8b828f257e76b3d96dbd724b10f8ff6" id="r_aa8b828f257e76b3d96dbd724b10f8ff6"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#aa8b828f257e76b3d96dbd724b10f8ff6">drawText</a> (const char *text, const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
+<tr class="memitem:a86c141133dfe992454ad09bf4457c286" id="r_a86c141133dfe992454ad09bf4457c286"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a86c141133dfe992454ad09bf4457c286">drawSphere</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;center, float radius, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs) override</td></tr>
 <tr class="memitem:a45c0309140e594d3c642e64ac16d47fd" id="r_a45c0309140e594d3c642e64ac16d47fd"><td class="memItemLeft">virtual <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a>&#160;</td><td class="memItemRight"><a class="el" href="#a45c0309140e594d3c642e64ac16d47fd">getDrawingArea</a> ()</td></tr>
 <tr class="memitem:a374c66dd05df6bdf665859ae4a67aebc" id="r_a374c66dd05df6bdf665859ae4a67aebc"><td class="memItemLeft"><a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a>&#160;</td><td class="memItemRight"><a class="el" href="#a374c66dd05df6bdf665859ae4a67aebc">getClipRect</a> ()</td></tr>
-<tr class="memdesc:a374c66dd05df6bdf665859ae4a67aebc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current single clip in <a class="el" href="classpdg_1_1_port.html">Port</a> coordinates; defaults to the drawing area.  <br /></td></tr>
-<tr class="memitem:aca1d5cf197c221389424e78c73dc5e80" id="r_aca1d5cf197c221389424e78c73dc5e80"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#aca1d5cf197c221389424e78c73dc5e80">setClipRect</a> (const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect)</td></tr>
-<tr class="memdesc:aca1d5cf197c221389424e78c73dc5e80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace the clip, intersecting with the drawing area. Empty clips suppress all drawing.  <br /></td></tr>
-<tr class="memitem:ad1ea20ce14dc5937063a438006e5e63e" id="r_ad1ea20ce14dc5937063a438006e5e63e"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ad1ea20ce14dc5937063a438006e5e63e">resetClipRect</a> ()</td></tr>
-<tr class="memdesc:ad1ea20ce14dc5937063a438006e5e63e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restore clipping to the full drawing area. There is no clip stack.  <br /></td></tr>
-<tr class="memitem:a5837a83effc76077b619aab7303fe9e0" id="r_a5837a83effc76077b619aab7303fe9e0"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a5837a83effc76077b619aab7303fe9e0">clear</a> (const <a class="el" href="structpdg_1_1_color.html">Color</a> &amp;color=<a class="el" href="structpdg_1_1_color.html">Color</a>(0, 0, 0, 0))</td></tr>
-<tr class="memdesc:a5837a83effc76077b619aab7303fe9e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace pixels inside the current clip with an exact color.  <br /></td></tr>
-<tr class="memitem:ab55d1ba100d0aa9ccfc75d7fcac28928" id="r_ab55d1ba100d0aa9ccfc75d7fcac28928"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#ab55d1ba100d0aa9ccfc75d7fcac28928">setDrawingOrigin</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;origin)</td></tr>
-<tr class="memdesc:ab55d1ba100d0aa9ccfc75d7fcac28928"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the <a class="el" href="classpdg_1_1_port.html">Port</a> coordinate at the top left of an offscreen surface.  <br /></td></tr>
+<tr class="memdesc:a374c66dd05df6bdf665859ae4a67aebc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current single clip in <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> coordinates; defaults to the drawing area.  <br /></td></tr>
+<tr class="memitem:a37ce842d4e8a6f4dd4d927ef48dff55d" id="r_a37ce842d4e8a6f4dd4d927ef48dff55d"><td class="memItemLeft"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a37ce842d4e8a6f4dd4d927ef48dff55d">setClipRect</a> (const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect)</td></tr>
+<tr class="memdesc:a37ce842d4e8a6f4dd4d927ef48dff55d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace the clip, intersecting with the drawing area. Empty clips suppress all drawing.  <br /></td></tr>
+<tr class="memitem:a79e37d9e0afc0e7774769882fafa1222" id="r_a79e37d9e0afc0e7774769882fafa1222"><td class="memItemLeft"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a79e37d9e0afc0e7774769882fafa1222">resetClipRect</a> ()</td></tr>
+<tr class="memdesc:a79e37d9e0afc0e7774769882fafa1222"><td class="mdescLeft">&#160;</td><td class="mdescRight">Restore clipping to the full drawing area. There is no clip stack.  <br /></td></tr>
+<tr class="memitem:ad5a9e63216f589fb83bf01fd39744058" id="r_ad5a9e63216f589fb83bf01fd39744058"><td class="memItemLeft"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#ad5a9e63216f589fb83bf01fd39744058">clear</a> (const <a class="el" href="structpdg_1_1_color.html">Color</a> &amp;color=<a class="el" href="structpdg_1_1_color.html">Color</a>(0, 0, 0, 0))</td></tr>
+<tr class="memdesc:ad5a9e63216f589fb83bf01fd39744058"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace pixels inside the current clip with an exact color.  <br /></td></tr>
+<tr class="memitem:a9b77746290dfa23c856d7a8e8a32317e" id="r_a9b77746290dfa23c856d7a8e8a32317e"><td class="memItemLeft"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a9b77746290dfa23c856d7a8e8a32317e">setDrawingOrigin</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;origin)</td></tr>
+<tr class="memdesc:a9b77746290dfa23c856d7a8e8a32317e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> coordinate at the top left of an offscreen surface.  <br /></td></tr>
 <tr class="memitem:ad53bb6e76535c4768b4b4a1f31d9b089" id="r_ad53bb6e76535c4768b4b4a1f31d9b089"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ad53bb6e76535c4768b4b4a1f31d9b089">getTextWidth</a> (const char *text, int size, uint32 style=<a class="el" href="group___graphics.html#ggaddb2fa415e015ee482fa2cd9eba96af7a648cd39612294ee28c9fa5e98b6e2e54">textStyle_Plain</a>, int len=-1)</td></tr>
 <tr class="memitem:a346747a17b9c9e61a709334bd9db7ba7" id="r_a346747a17b9c9e61a709334bd9db7ba7"><td class="memItemLeft"><a class="el" href="classpdg_1_1_font.html">Font</a> *&#160;</td><td class="memItemRight"><a class="el" href="#a346747a17b9c9e61a709334bd9db7ba7">getCurrentFont</a> (uint32 style=<a class="el" href="group___graphics.html#ggaddb2fa415e015ee482fa2cd9eba96af7a648cd39612294ee28c9fa5e98b6e2e54">textStyle_Plain</a>)</td></tr>
-<tr class="memitem:a9a5c0ab486e5f3cc7677144beb013665" id="r_a9a5c0ab486e5f3cc7677144beb013665"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a9a5c0ab486e5f3cc7677144beb013665">setFont</a> (<a class="el" href="classpdg_1_1_font.html">Font</a> *font=0)</td></tr>
-<tr class="memitem:aa5b0893578ab2ca2ec36c62a79e9b413" id="r_aa5b0893578ab2ca2ec36c62a79e9b413"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#aa5b0893578ab2ca2ec36c62a79e9b413">setFontForStyle</a> (<a class="el" href="classpdg_1_1_font.html">Font</a> *font, uint32 style)</td></tr>
-<tr class="memitem:a30f9573323644ec19fffcefab6559b8d" id="r_a30f9573323644ec19fffcefab6559b8d"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a30f9573323644ec19fffcefab6559b8d">setFontScalingFactor</a> (float scaleBy)</td></tr>
+<tr class="memitem:a23923b6c992636c8392786a3967058ef" id="r_a23923b6c992636c8392786a3967058ef"><td class="memItemLeft"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a23923b6c992636c8392786a3967058ef">setFont</a> (<a class="el" href="classpdg_1_1_font.html">Font</a> *font=0)</td></tr>
+<tr class="memitem:a7a40f79518ebfb92ec121f8be849ac52" id="r_a7a40f79518ebfb92ec121f8be849ac52"><td class="memItemLeft"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a7a40f79518ebfb92ec121f8be849ac52">setFontForStyle</a> (<a class="el" href="classpdg_1_1_font.html">Font</a> *font, uint32 style)</td></tr>
+<tr class="memitem:a8959ffabeae6d4677295ffab4ceccfcd" id="r_a8959ffabeae6d4677295ffab4ceccfcd"><td class="memItemLeft"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a8959ffabeae6d4677295ffab4ceccfcd">setFontScalingFactor</a> (float scaleBy)</td></tr>
 <tr class="memitem:ad16196f557155941764231a2a228d2a8" id="r_ad16196f557155941764231a2a228d2a8"><td class="memItemLeft">int&#160;</td><td class="memItemRight"><a class="el" href="#ad16196f557155941764231a2a228d2a8">startTrackingMouse</a> (const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, void *userData=0)</td></tr>
-<tr class="memitem:a443fee59fa800ceb2ae90a4ca1bb7aa3" id="r_a443fee59fa800ceb2ae90a4ca1bb7aa3"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a443fee59fa800ceb2ae90a4ca1bb7aa3">stopTrackingMouse</a> (int trackingRef)</td></tr>
-<tr class="memitem:afc339d03787158c54560d23a83af5319" id="r_afc339d03787158c54560d23a83af5319"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#afc339d03787158c54560d23a83af5319">setCursor</a> (<a class="el" href="classpdg_1_1_image.html">Image</a> *cursorImage, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;hotSpot)</td></tr>
+<tr class="memitem:a3c697bb48c0a3e3e132c91d3e06dd714" id="r_a3c697bb48c0a3e3e132c91d3e06dd714"><td class="memItemLeft"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a3c697bb48c0a3e3e132c91d3e06dd714">stopTrackingMouse</a> (int trackingRef)</td></tr>
+<tr class="memitem:af234783ef6744c0fb8d5b995460cd6aa" id="r_af234783ef6744c0fb8d5b995460cd6aa"><td class="memItemLeft"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#af234783ef6744c0fb8d5b995460cd6aa">setCursor</a> (<a class="el" href="classpdg_1_1_image.html">Image</a> *cursorImage, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;hotSpot)</td></tr>
 <tr class="memitem:a46a4ce787b3661440e7f0fd7d7afd5b7" id="r_a46a4ce787b3661440e7f0fd7d7afd5b7"><td class="memItemLeft"><a class="el" href="classpdg_1_1_image.html">Image</a> *&#160;</td><td class="memItemRight"><a class="el" href="#a46a4ce787b3661440e7f0fd7d7afd5b7">getCursor</a> ()</td></tr>
-<tr class="memitem:a47117fdbef6b3a112c25f0856190e970" id="r_a47117fdbef6b3a112c25f0856190e970"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a47117fdbef6b3a112c25f0856190e970">resetCursor</a> ()</td></tr>
+<tr class="memitem:a0bb6c87b29109375c10c4e0b2dfce857" id="r_a0bb6c87b29109375c10c4e0b2dfce857"><td class="memItemLeft"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="#a0bb6c87b29109375c10c4e0b2dfce857">resetCursor</a> ()</td></tr>
 <tr class="inherit_header pub_methods_classpdg_1_1_renderer"><td colspan="2">Public Member Functions inherited from <a class="el" href="classpdg_1_1_renderer.html">Renderer</a></td></tr>
 <tr class="memitem:a82f5f1b60e836bc86031909251d74c76 pub_methods_classpdg_1_1_renderer" id="r_a82f5f1b60e836bc86031909251d74c76"><td class="memItemLeft">virtual&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_renderer.html#a82f5f1b60e836bc86031909251d74c76">~Renderer</a> ()=default</td></tr>
-<tr class="memitem:a9f917b65a083c0515b89aa5486d92dcb pub_methods_classpdg_1_1_renderer" id="r_a9f917b65a083c0515b89aa5486d92dcb"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_renderer.html#a9f917b65a083c0515b89aa5486d92dcb">drawVector</a> (const <a class="el" href="group___graphics.html#gacd7abb9e87eb29fe1b6d677b7e51a814">Vector</a> &amp;v, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
-<tr class="memitem:a08b002499a89b00d231c175dcbf2ffd6 pub_methods_classpdg_1_1_renderer" id="r_a08b002499a89b00d231c175dcbf2ffd6"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_renderer.html#a08b002499a89b00d231c175dcbf2ffd6">drawBezier</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;from, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;control1, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;control2, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;to, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
-<tr class="memitem:aee55eddbaea5d2700375658a46e12dac pub_methods_classpdg_1_1_renderer" id="r_aee55eddbaea5d2700375658a46e12dac"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_renderer.html#aee55eddbaea5d2700375658a46e12dac">drawCircle</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;center, float radius, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
-<tr class="memitem:ab954b4d34f782dac9c807891e99dc991 pub_methods_classpdg_1_1_renderer" id="r_ab954b4d34f782dac9c807891e99dc991"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_renderer.html#ab954b4d34f782dac9c807891e99dc991">drawRoundedRect</a> (const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, float radius, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
+<tr class="memitem:a1a9dfff9e7a8a630e43dc7077036ac8f pub_methods_classpdg_1_1_renderer" id="r_a1a9dfff9e7a8a630e43dc7077036ac8f"><td class="memItemLeft"><a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_renderer.html#a1a9dfff9e7a8a630e43dc7077036ac8f">drawVector</a> (const <a class="el" href="group___graphics.html#gacd7abb9e87eb29fe1b6d677b7e51a814">Vector</a> &amp;v, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
+<tr class="memitem:a8241e22d1a61ff0f7359c14bf94998de pub_methods_classpdg_1_1_renderer" id="r_a8241e22d1a61ff0f7359c14bf94998de"><td class="memItemLeft"><a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_renderer.html#a8241e22d1a61ff0f7359c14bf94998de">drawBezier</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;from, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;control1, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;control2, const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;to, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
+<tr class="memitem:a55d05138a55ccc8c40d1ca4cd5359ef0 pub_methods_classpdg_1_1_renderer" id="r_a55d05138a55ccc8c40d1ca4cd5359ef0"><td class="memItemLeft"><a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_renderer.html#a55d05138a55ccc8c40d1ca4cd5359ef0">drawCircle</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;center, float radius, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
+<tr class="memitem:a91a19f580b445efb3b4601f34cb2dd02 pub_methods_classpdg_1_1_renderer" id="r_a91a19f580b445efb3b4601f34cb2dd02"><td class="memItemLeft"><a class="el" href="classpdg_1_1_renderer.html">Renderer</a> &amp;&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_renderer.html#a91a19f580b445efb3b4601f34cb2dd02">drawRoundedRect</a> (const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, float radius, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-friends" class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
+<tr class="memitem:acca9001be71c3eb475aff436431c3a9d" id="r_acca9001be71c3eb475aff436431c3a9d"><td class="memItemLeft">class&#160;</td><td class="memItemRight"><a class="el" href="#acca9001be71c3eb475aff436431c3a9d">ScopedCameraDrawing</a></td></tr>
+<tr class="memitem:a2493c92cedf84a7d2a3f1b3d5ba5b163" id="r_a2493c92cedf84a7d2a3f1b3d5ba5b163"><td class="memItemLeft">class&#160;</td><td class="memItemRight"><a class="el" href="#a2493c92cedf84a7d2a3f1b3d5ba5b163">ScopedOffscreenDrawing</a></td></tr>
+<tr class="memitem:a33441fa18e6418038bb3d46c458294a7" id="r_a33441fa18e6418038bb3d46c458294a7"><td class="memItemLeft">class&#160;</td><td class="memItemRight"><a class="el" href="#a33441fa18e6418038bb3d46c458294a7">PortImpl</a></td></tr>
+<tr class="memitem:ad8bd9afbbd7af19d996da80e9d25890d" id="r_ad8bd9afbbd7af19d996da80e9d25890d"><td class="memItemLeft">class&#160;</td><td class="memItemRight"><a class="el" href="#ad8bd9afbbd7af19d996da80e9d25890d">Camera</a></td></tr>
+<tr class="memitem:a748eef48a9f30ad3c9c499e95ee3a1cd" id="r_a748eef48a9f30ad3c9c499e95ee3a1cd"><td class="memItemLeft">class&#160;</td><td class="memItemRight"><a class="el" href="#a748eef48a9f30ad3c9c499e95ee3a1cd">SpriteLayer</a></td></tr>
+<tr class="memitem:ad65eae853be6e1a35bf85e6865583560" id="r_ad65eae853be6e1a35bf85e6865583560"><td class="memItemLeft">class&#160;</td><td class="memItemRight"><a class="el" href="#ad65eae853be6e1a35bf85e6865583560">GraphicsManager</a></td></tr>
+<tr class="memitem:ac495e8b586409665102aa3021200d453" id="r_ac495e8b586409665102aa3021200d453"><td class="memItemLeft">class&#160;</td><td class="memItemRight"><a class="el" href="#ac495e8b586409665102aa3021200d453">SpriteManager</a></td></tr>
 <tr class="memitem:ae1b51069bd7a5ed814555e5175a0524c" id="r_ae1b51069bd7a5ed814555e5175a0524c"><td class="memItemLeft">class&#160;</td><td class="memItemRight"><a class="el" href="#ae1b51069bd7a5ed814555e5175a0524c">ImageOpenGL</a></td></tr>
+<tr class="memitem:a78ad7b9baba72a10a0af9f2ec46ef901" id="r_a78ad7b9baba72a10a0af9f2ec46ef901"><td class="memItemLeft">void&#160;</td><td class="memItemRight"><a class="el" href="#a78ad7b9baba72a10a0af9f2ec46ef901">graphics_finishDrawing</a> (<a class="el" href="classpdg_1_1_port.html">Port</a> *)</td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Graphics A collection of static enumerations that are used when drawing</p>
-<p><a class="el" href="classpdg_1_1_port.html">Port</a> An area in which drawing is done, a viewport. This could be a full screen drawing context or a window.</p>
+<div class="textblock"><p><a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> and setter operations return this port by reference for chaining. </p>
 <dl class="section note"><dt>Note</dt><dd><b>API Stability: 2 — Evolving</b>. This API is implemented and supported, but its contract is still settling. Compatibility is preserved where practical; breaking changes are documented in release notes. See <a class="el" href="index.html#api_stability" title="API stability">API stability</a>. </dd></dl>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
-<a id="a5837a83effc76077b619aab7303fe9e0" name="a5837a83effc76077b619aab7303fe9e0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5837a83effc76077b619aab7303fe9e0">&#9670;&#160;</a></span>clear()</h2>
+<a id="ad5a9e63216f589fb83bf01fd39744058" name="ad5a9e63216f589fb83bf01fd39744058"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5a9e63216f589fb83bf01fd39744058">&#9670;&#160;</a></span>clear()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void clear </td>
+          <td class="memname"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp; clear </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structpdg_1_1_color.html">Color</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>color</em></span><span class="paramdefsep"> = </span><span class="paramdefval"><a class="el" href="structpdg_1_1_color.html">Color</a>(0,&#160;0,&#160;0,&#160;0)</span></td><td>)</td>
           <td></td>
@@ -213,12 +246,12 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 <p>Works on graphics-enabled onscreen and offscreen ports. The current clip is unchanged. Live images made from an offscreen port reflect the clear on their next draw. </p><dl class="section note"><dt>Note</dt><dd>API stability: 2 — Evolving. </dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#aca1d5cf197c221389424e78c73dc5e80" title="Replace the clip, intersecting with the drawing area. Empty clips suppress all drawing.">setClipRect()</a>, <a class="el" href="#ad1ea20ce14dc5937063a438006e5e63e" title="Restore clipping to the full drawing area. There is no clip stack.">resetClipRect()</a>, <a class="el" href="classpdg_1_1_graphics_manager.html#a29fd2e05e0e78837c54611ed574f3605" title="Create a persistent transparent RGBA drawing surface without a window.">GraphicsManager::createOffscreenPort()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a37ce842d4e8a6f4dd4d927ef48dff55d" title="Replace the clip, intersecting with the drawing area. Empty clips suppress all drawing.">setClipRect()</a>, <a class="el" href="#a79e37d9e0afc0e7774769882fafa1222" title="Restore clipping to the full drawing area. There is no clip stack.">resetClipRect()</a>, <a class="el" href="classpdg_1_1_graphics_manager.html#a29fd2e05e0e78837c54611ed574f3605" title="Create a persistent transparent RGBA drawing surface without a window.">GraphicsManager::createOffscreenPort()</a> </dd></dl>
 
 </div>
 </div>
-<a id="a27b1c0726501e44888d265eb4d1f65bd" name="a27b1c0726501e44888d265eb4d1f65bd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a27b1c0726501e44888d265eb4d1f65bd">&#9670;&#160;</a></span>drawArc()</h2>
+<a id="ad9b33a2d7c674b4f962df534c432f3f5" name="ad9b33a2d7c674b4f962df534c432f3f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9b33a2d7c674b4f962df534c432f3f5">&#9670;&#160;</a></span>drawArc()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -227,7 +260,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawArc </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp; drawArc </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>center</em></span>, </td>
         </tr>
@@ -264,12 +297,12 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a2d51a8ed724dc1c5c7ee04b117ed2515">Renderer</a>.</p>
+<p>Implements <a class="el" href="classpdg_1_1_renderer.html#ae913b712619d064140e234a700b627d5">Renderer</a>.</p>
 
 </div>
 </div>
-<a id="a2fae74ac318beab87ef8c22a2a7da215" name="a2fae74ac318beab87ef8c22a2a7da215"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2fae74ac318beab87ef8c22a2a7da215">&#9670;&#160;</a></span>drawDrawing() <span class="overload">[1/2]</span></h2>
+<a id="afa8ebda902a039065dc2800579fa8cf5" name="afa8ebda902a039065dc2800579fa8cf5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa8ebda902a039065dc2800579fa8cf5">&#9670;&#160;</a></span>drawBezier()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -278,7 +311,89 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawDrawing </td>
+          <td class="memname"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp; drawBezier </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>from</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>control1</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>control2</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>to</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>attrs</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="reference">References <a class="el" href="classpdg_1_1_renderer.html#a8241e22d1a61ff0f7359c14bf94998de">Renderer::drawBezier()</a>.</p>
+
+</div>
+</div>
+<a id="a8d8cd9d573bdc72f5d3f56079bd080b8" name="a8d8cd9d573bdc72f5d3f56079bd080b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d8cd9d573bdc72f5d3f56079bd080b8">&#9670;&#160;</a></span>drawCircle()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp; drawCircle </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>center</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>radius</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>attrs</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="reference">References <a class="el" href="classpdg_1_1_renderer.html#a55d05138a55ccc8c40d1ca4cd5359ef0">Renderer::drawCircle()</a>.</p>
+
+</div>
+</div>
+<a id="a2d2f874b0d1d2e3d31fa008a9ccb986c" name="a2d2f874b0d1d2e3d31fa008a9ccb986c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2d2f874b0d1d2e3d31fa008a9ccb986c">&#9670;&#160;</a></span>drawDrawing() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp; drawDrawing </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classpdg_1_1_drawing.html">Drawing</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>drawing</em></span>, </td>
         </tr>
@@ -300,12 +415,12 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classpdg_1_1_renderer.html#ad59193eea03dbbcbd70d11f0e1934241">Renderer</a>.</p>
+<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a515c965b339e25fbe727c91672c73469">Renderer</a>.</p>
 
 </div>
 </div>
-<a id="a009dbc29af211596eee13404d1adb790" name="a009dbc29af211596eee13404d1adb790"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a009dbc29af211596eee13404d1adb790">&#9670;&#160;</a></span>drawDrawing() <span class="overload">[2/2]</span></h2>
+<a id="aa468198b4cd66e7bef397d58ad5478be" name="aa468198b4cd66e7bef397d58ad5478be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa468198b4cd66e7bef397d58ad5478be">&#9670;&#160;</a></span>drawDrawing() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -314,7 +429,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawDrawing </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp; drawDrawing </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classpdg_1_1_drawing.html">Drawing</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>drawing</em></span>, </td>
         </tr>
@@ -336,12 +451,12 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a402f96fbdbbefe4c7a8f6b16870af844">Renderer</a>.</p>
+<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a4b7f904ae128a329a519926b3aef75d1">Renderer</a>.</p>
 
 </div>
 </div>
-<a id="a8d541a360397d82464edbf87a48f3686" name="a8d541a360397d82464edbf87a48f3686"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8d541a360397d82464edbf87a48f3686">&#9670;&#160;</a></span>drawEllipse()</h2>
+<a id="a73674b01787db9ac3ae82425120dcfd4" name="a73674b01787db9ac3ae82425120dcfd4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a73674b01787db9ac3ae82425120dcfd4">&#9670;&#160;</a></span>drawEllipse()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -350,7 +465,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawEllipse </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp; drawEllipse </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>center</em></span>, </td>
         </tr>
@@ -377,12 +492,12 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a76606725ac064f153a0feb8b3d03c5ca">Renderer</a>.</p>
+<p>Implements <a class="el" href="classpdg_1_1_renderer.html#af13a15291835080332747a7b17efc61f">Renderer</a>.</p>
 
 </div>
 </div>
-<a id="a4dc2d3312ef65347a106b93397113139" name="a4dc2d3312ef65347a106b93397113139"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4dc2d3312ef65347a106b93397113139">&#9670;&#160;</a></span>drawImage() <span class="overload">[1/3]</span></h2>
+<a id="aabf8b267355f9657e67466709204f613" name="aabf8b267355f9657e67466709204f613"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aabf8b267355f9657e67466709204f613">&#9670;&#160;</a></span>drawImage() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -391,7 +506,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawImage </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp; drawImage </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classpdg_1_1_image.html">Image</a> *</td>          <td class="paramname"><span class="paramname"><em>img</em></span>, </td>
         </tr>
@@ -413,14 +528,14 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a1aa7da0060a5289ac6d9e3513b3ddfc8">Renderer</a>.</p>
+<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a45d029832d00edfd47c196a620caa495">Renderer</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="#a47117fdbef6b3a112c25f0856190e970">resetCursor()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="#a0bb6c87b29109375c10c4e0b2dfce857">resetCursor()</a>.</p>
 
 </div>
 </div>
-<a id="a7b4b01414d555ea9edd402b226983704" name="a7b4b01414d555ea9edd402b226983704"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7b4b01414d555ea9edd402b226983704">&#9670;&#160;</a></span>drawImage() <span class="overload">[2/3]</span></h2>
+<a id="afe585fd6be1ee63f5c6ee07910c568a9" name="afe585fd6be1ee63f5c6ee07910c568a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe585fd6be1ee63f5c6ee07910c568a9">&#9670;&#160;</a></span>drawImage() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -429,7 +544,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawImage </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp; drawImage </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classpdg_1_1_image.html">Image</a> *</td>          <td class="paramname"><span class="paramname"><em>img</em></span>, </td>
         </tr>
@@ -451,12 +566,12 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classpdg_1_1_renderer.html#add47ffdb637c35359325da2a4ac55d4d">Renderer</a>.</p>
+<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a038895d68ea732e060336e8a52f0af7d">Renderer</a>.</p>
 
 </div>
 </div>
-<a id="a38f3cff803f3a8111429c9258e55d633" name="a38f3cff803f3a8111429c9258e55d633"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a38f3cff803f3a8111429c9258e55d633">&#9670;&#160;</a></span>drawImage() <span class="overload">[3/3]</span></h2>
+<a id="ab031149bf639c197dc3f335e70a9e981" name="ab031149bf639c197dc3f335e70a9e981"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab031149bf639c197dc3f335e70a9e981">&#9670;&#160;</a></span>drawImage() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -465,7 +580,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawImage </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp; drawImage </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classpdg_1_1_image.html">Image</a> *</td>          <td class="paramname"><span class="paramname"><em>img</em></span>, </td>
         </tr>
@@ -487,12 +602,12 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classpdg_1_1_renderer.html#ab7dbcc38dd3ec0e354fc70380bcf3d95">Renderer</a>.</p>
+<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a323935a07dc322f6223c127b01d46aa1">Renderer</a>.</p>
 
 </div>
 </div>
-<a id="a2e7c5b2c4abac4722973456c8cd94fdb" name="a2e7c5b2c4abac4722973456c8cd94fdb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2e7c5b2c4abac4722973456c8cd94fdb">&#9670;&#160;</a></span>drawLine()</h2>
+<a id="a8f35f970935591261ba691df18878493" name="a8f35f970935591261ba691df18878493"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f35f970935591261ba691df18878493">&#9670;&#160;</a></span>drawLine()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -501,7 +616,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawLine </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp; drawLine </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>from</em></span>, </td>
         </tr>
@@ -523,12 +638,12 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a492dd1ec49b6944bd191db386ae97da0">Renderer</a>.</p>
+<p>Implements <a class="el" href="classpdg_1_1_renderer.html#ad5bfc77d7e2a717ef6251cdd2796165e">Renderer</a>.</p>
 
 </div>
 </div>
-<a id="ad5bd2b908fc24c852fe1f0bf8253c50d" name="ad5bd2b908fc24c852fe1f0bf8253c50d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5bd2b908fc24c852fe1f0bf8253c50d">&#9670;&#160;</a></span>drawPolygon()</h2>
+<a id="aed7e7e341ae3abf6eb19b58e8524645b" name="aed7e7e341ae3abf6eb19b58e8524645b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed7e7e341ae3abf6eb19b58e8524645b">&#9670;&#160;</a></span>drawPolygon()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -537,7 +652,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawPolygon </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp; drawPolygon </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classpdg_1_1_polygon.html">Polygon</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>polygon</em></span>, </td>
         </tr>
@@ -554,12 +669,12 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a1421e218b0aa38bf6d5c39ec7984e7db">Renderer</a>.</p>
+<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a1f8b6840e9d5f821211e2a96c894d71d">Renderer</a>.</p>
 
 </div>
 </div>
-<a id="ae68b9010f7e5cde8c49bbdd457afd2d5" name="ae68b9010f7e5cde8c49bbdd457afd2d5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae68b9010f7e5cde8c49bbdd457afd2d5">&#9670;&#160;</a></span>drawQuad()</h2>
+<a id="a53e437200d7eb0ebf35af08e6ab847a7" name="a53e437200d7eb0ebf35af08e6ab847a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a53e437200d7eb0ebf35af08e6ab847a7">&#9670;&#160;</a></span>drawQuad()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -568,7 +683,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawQuad </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp; drawQuad </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="group___graphics.html#gad144e096b54d6bd74ec90603775913e1">Quad</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>quad</em></span>, </td>
         </tr>
@@ -585,12 +700,12 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classpdg_1_1_renderer.html#ac31f4ca351189b56aa8b39de94cfe414">Renderer</a>.</p>
+<p>Implements <a class="el" href="classpdg_1_1_renderer.html#ad3905a284689eda07ede36943c5088cf">Renderer</a>.</p>
 
 </div>
 </div>
-<a id="a9f08ff60e04e96b03907650c1a44aa7a" name="a9f08ff60e04e96b03907650c1a44aa7a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9f08ff60e04e96b03907650c1a44aa7a">&#9670;&#160;</a></span>drawRect()</h2>
+<a id="a1dbb73f0de2f240cd27aa58dd1923a87" name="a1dbb73f0de2f240cd27aa58dd1923a87"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1dbb73f0de2f240cd27aa58dd1923a87">&#9670;&#160;</a></span>drawRect()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -599,7 +714,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawRect </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp; drawRect </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rect</em></span>, </td>
         </tr>
@@ -616,12 +731,12 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a27ea31a3ac3b068a76400be6efa4aac4">Renderer</a>.</p>
+<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a241fd24aa1912f64d73d5a7dc519097e">Renderer</a>.</p>
 
 </div>
 </div>
-<a id="aa8d66bf935879d8892aadd1778620f32" name="aa8d66bf935879d8892aadd1778620f32"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa8d66bf935879d8892aadd1778620f32">&#9670;&#160;</a></span>drawSphere()</h2>
+<a id="a6a7d20a3cbcc473ebd8b787fe9a383c9" name="a6a7d20a3cbcc473ebd8b787fe9a383c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a7d20a3cbcc473ebd8b787fe9a383c9">&#9670;&#160;</a></span>drawRoundedRect()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -630,7 +745,43 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawSphere </td>
+          <td class="memname"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp; drawRoundedRect </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rect</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>radius</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>attrs</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="reference">References <a class="el" href="classpdg_1_1_renderer.html#a91a19f580b445efb3b4601f34cb2dd02">Renderer::drawRoundedRect()</a>.</p>
+
+</div>
+</div>
+<a id="a86c141133dfe992454ad09bf4457c286" name="a86c141133dfe992454ad09bf4457c286"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86c141133dfe992454ad09bf4457c286">&#9670;&#160;</a></span>drawSphere()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp; drawSphere </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>center</em></span>, </td>
         </tr>
@@ -652,12 +803,12 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a7d8a023b43352e7b1d93b849e9982cce">Renderer</a>.</p>
+<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a2ab767c5866a32f979070dc004d1497a">Renderer</a>.</p>
 
 </div>
 </div>
-<a id="a8b85ccb4ec3d0a7794c539e7cf033956" name="a8b85ccb4ec3d0a7794c539e7cf033956"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b85ccb4ec3d0a7794c539e7cf033956">&#9670;&#160;</a></span>drawSpline()</h2>
+<a id="a34d79935e215b7299275aef71f610858" name="a34d79935e215b7299275aef71f610858"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34d79935e215b7299275aef71f610858">&#9670;&#160;</a></span>drawSpline()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -666,7 +817,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawSpline </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp; drawSpline </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classpdg_1_1_spline.html">Spline</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>spline</em></span>, </td>
         </tr>
@@ -683,12 +834,12 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a223ea829babb2d8c6e3c33c67481fc6c">Renderer</a>.</p>
+<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a98301ac704e61f6f6fdd57469cc561cb">Renderer</a>.</p>
 
 </div>
 </div>
-<a id="a7e9407747e144558b2e0c83a50558689" name="a7e9407747e144558b2e0c83a50558689"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7e9407747e144558b2e0c83a50558689">&#9670;&#160;</a></span>drawText() <span class="overload">[1/2]</span></h2>
+<a id="a5dbdbf514ef1ecf5594ee9e32581f3e5" name="a5dbdbf514ef1ecf5594ee9e32581f3e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5dbdbf514ef1ecf5594ee9e32581f3e5">&#9670;&#160;</a></span>drawText() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -697,7 +848,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawText </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp; drawText </td>
           <td>(</td>
           <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>text</em></span>, </td>
         </tr>
@@ -719,14 +870,14 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classpdg_1_1_renderer.html#ae8e005e43a2a8c3e165f5c0c6f7278c9">Renderer</a>.</p>
+<p>Implements <a class="el" href="classpdg_1_1_renderer.html#abec3892cf9f827a19baa1640e2a12295">Renderer</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="#a47117fdbef6b3a112c25f0856190e970">resetCursor()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="#a0bb6c87b29109375c10c4e0b2dfce857">resetCursor()</a>.</p>
 
 </div>
 </div>
-<a id="a4831d4f11be67fe184ff496aec1729d3" name="a4831d4f11be67fe184ff496aec1729d3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4831d4f11be67fe184ff496aec1729d3">&#9670;&#160;</a></span>drawText() <span class="overload">[2/2]</span></h2>
+<a id="aa8b828f257e76b3d96dbd724b10f8ff6" name="aa8b828f257e76b3d96dbd724b10f8ff6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8b828f257e76b3d96dbd724b10f8ff6">&#9670;&#160;</a></span>drawText() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -735,7 +886,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void drawText </td>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_port.html">Port</a> &amp; drawText </td>
           <td>(</td>
           <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>text</em></span>, </td>
         </tr>
@@ -757,7 +908,126 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a34167fbf63a3cd003f119f557fe80253">Renderer</a>.</p>
+<p>Implements <a class="el" href="classpdg_1_1_renderer.html#a05075d67e58c80ecc98941576233f5da">Renderer</a>.</p>
+
+</div>
+</div>
+<a id="a6614f100bbd02672eed8ea33df446b3b" name="a6614f100bbd02672eed8ea33df446b3b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6614f100bbd02672eed8ea33df446b3b">&#9670;&#160;</a></span>drawVector()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp; drawVector </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="group___graphics.html#gacd7abb9e87eb29fe1b6d677b7e51a814">Vector</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>v</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>attrs</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="reference">References <a class="el" href="classpdg_1_1_renderer.html#a1a9dfff9e7a8a630e43dc7077036ac8f">Renderer::drawVector()</a>.</p>
+
+</div>
+</div>
+<a id="ae1816404bada39b32bd72f5369de1c49" name="ae1816404bada39b32bd72f5369de1c49"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1816404bada39b32bd72f5369de1c49">&#9670;&#160;</a></span>getCamera()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="#ad8bd9afbbd7af19d996da80e9d25890d">Camera</a> * getCamera </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Port-owned camera, created lazily; its viewport always covers this <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a>. </p>
+
+<p class="reference">References <a class="el" href="#ad8bd9afbbd7af19d996da80e9d25890d">Camera</a>.</p>
+
+</div>
+</div>
+<a id="a24dd4fd5ad3e30b3e510e105951ff18e" name="a24dd4fd5ad3e30b3e510e105951ff18e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a24dd4fd5ad3e30b3e510e105951ff18e">&#9670;&#160;</a></span>getCameraAnchor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> getCameraAnchor </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a30c7eb3871337100be537a7d8867e586" name="a30c7eb3871337100be537a7d8867e586"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30c7eb3871337100be537a7d8867e586">&#9670;&#160;</a></span>getCameraDrawingEnabled()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool getCameraDrawingEnabled </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae5c3c5945ae2f929ee8505e6b84f5016" name="ae5c3c5945ae2f929ee8505e6b84f5016"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae5c3c5945ae2f929ee8505e6b84f5016">&#9670;&#160;</a></span>getCameraTransform()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">glm::mat3 getCameraTransform </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -776,7 +1046,7 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Current single clip in <a class="el" href="classpdg_1_1_port.html">Port</a> coordinates; defaults to the drawing area. </p>
+<p>Current single clip in <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> coordinates; defaults to the drawing area. </p>
 
 </div>
 </div>
@@ -874,14 +1144,58 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="ad1ea20ce14dc5937063a438006e5e63e" name="ad1ea20ce14dc5937063a438006e5e63e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad1ea20ce14dc5937063a438006e5e63e">&#9670;&#160;</a></span>resetClipRect()</h2>
+<a id="a11475a7b281cebbd43509b832cd86986" name="a11475a7b281cebbd43509b832cd86986"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11475a7b281cebbd43509b832cd86986">&#9670;&#160;</a></span>isCameraDrawingEnabled()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool isCameraDrawingEnabled </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af87b7275529661a112c5cb38ea84e3cc" name="af87b7275529661a112c5cb38ea84e3cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af87b7275529661a112c5cb38ea84e3cc">&#9670;&#160;</a></span>portToWorld()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void resetClipRect </td>
+          <td class="memname"><a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> portToWorld </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>point</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Inverse camera conversion; excludes explicit layer cameras and parallax. </p>
+
+</div>
+</div>
+<a id="a79e37d9e0afc0e7774769882fafa1222" name="a79e37d9e0afc0e7774769882fafa1222"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79e37d9e0afc0e7774769882fafa1222">&#9670;&#160;</a></span>resetClipRect()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp; resetClipRect </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -893,14 +1207,14 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="a47117fdbef6b3a112c25f0856190e970" name="a47117fdbef6b3a112c25f0856190e970"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a47117fdbef6b3a112c25f0856190e970">&#9670;&#160;</a></span>resetCursor()</h2>
+<a id="a0bb6c87b29109375c10c4e0b2dfce857" name="a0bb6c87b29109375c10c4e0b2dfce857"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0bb6c87b29109375c10c4e0b2dfce857">&#9670;&#160;</a></span>resetCursor()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void resetCursor </td>
+          <td class="memname"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp; resetCursor </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -908,18 +1222,70 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="reference">References <a class="el" href="#a4dc2d3312ef65347a106b93397113139">drawImage()</a>, <a class="el" href="#a7e9407747e144558b2e0c83a50558689">drawText()</a>, <a class="el" href="namespacepdg.html#a0e324bb3f9b5ef730400fab6dc5b0538a92767f8e76b3455dbb14a8ef117c9b84">pdg::fit_Fill</a>, and <a class="el" href="group___graphics.html#ggaddb2fa415e015ee482fa2cd9eba96af7a648cd39612294ee28c9fa5e98b6e2e54">pdg::textStyle_Plain</a>.</p>
+<p class="reference">References <a class="el" href="#aabf8b267355f9657e67466709204f613">drawImage()</a>, <a class="el" href="#a5dbdbf514ef1ecf5594ee9e32581f3e5">drawText()</a>, <a class="el" href="namespacepdg.html#a0e324bb3f9b5ef730400fab6dc5b0538a92767f8e76b3455dbb14a8ef117c9b84">pdg::fit_Fill</a>, and <a class="el" href="group___graphics.html#ggaddb2fa415e015ee482fa2cd9eba96af7a648cd39612294ee28c9fa5e98b6e2e54">pdg::textStyle_Plain</a>.</p>
 
 </div>
 </div>
-<a id="aca1d5cf197c221389424e78c73dc5e80" name="aca1d5cf197c221389424e78c73dc5e80"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aca1d5cf197c221389424e78c73dc5e80">&#9670;&#160;</a></span>setClipRect()</h2>
+<a id="afdda017f05cba1311cfa7d0e43e79234" name="afdda017f05cba1311cfa7d0e43e79234"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afdda017f05cba1311cfa7d0e43e79234">&#9670;&#160;</a></span>setCameraAnchor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp; setCameraAnchor </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>anchor</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Anchor in port coordinates; initially (0,0). Does not change the camera. </p>
+
+</div>
+</div>
+<a id="a2833e7975c3d9f9ae5eedf672de3f510" name="a2833e7975c3d9f9ae5eedf672de3f510"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2833e7975c3d9f9ae5eedf672de3f510">&#9670;&#160;</a></span>setCameraDrawingEnabled()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp; setCameraDrawingEnabled </td>
+          <td>(</td>
+          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>enabled</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a37ce842d4e8a6f4dd4d927ef48dff55d" name="a37ce842d4e8a6f4dd4d927ef48dff55d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37ce842d4e8a6f4dd4d927ef48dff55d">&#9670;&#160;</a></span>setClipRect()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void setClipRect </td>
+          <td class="memname"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp; setClipRect </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rect</em></span></td><td>)</td>
           <td></td>
@@ -931,14 +1297,14 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="afc339d03787158c54560d23a83af5319" name="afc339d03787158c54560d23a83af5319"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afc339d03787158c54560d23a83af5319">&#9670;&#160;</a></span>setCursor()</h2>
+<a id="af234783ef6744c0fb8d5b995460cd6aa" name="af234783ef6744c0fb8d5b995460cd6aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af234783ef6744c0fb8d5b995460cd6aa">&#9670;&#160;</a></span>setCursor()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void setCursor </td>
+          <td class="memname"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp; setCursor </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classpdg_1_1_image.html">Image</a> *</td>          <td class="paramname"><span class="paramname"><em>cursorImage</em></span>, </td>
         </tr>
@@ -952,14 +1318,14 @@ Friends</h2></td></tr>
 
 </div>
 </div>
-<a id="ab55d1ba100d0aa9ccfc75d7fcac28928" name="ab55d1ba100d0aa9ccfc75d7fcac28928"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab55d1ba100d0aa9ccfc75d7fcac28928">&#9670;&#160;</a></span>setDrawingOrigin()</h2>
+<a id="a9b77746290dfa23c856d7a8e8a32317e" name="a9b77746290dfa23c856d7a8e8a32317e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b77746290dfa23c856d7a8e8a32317e">&#9670;&#160;</a></span>setDrawingOrigin()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void setDrawingOrigin </td>
+          <td class="memname"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp; setDrawingOrigin </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>origin</em></span></td><td>)</td>
           <td></td>
@@ -967,7 +1333,7 @@ Friends</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Set the <a class="el" href="classpdg_1_1_port.html">Port</a> coordinate at the top left of an offscreen surface. </p>
+<p>Set the <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> coordinate at the top left of an offscreen surface. </p>
 <p>Set the coordinate at the top left of an offscreen surface and reset its clip. Does not move pixels. Main/window ports reject this operation.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -975,21 +1341,21 @@ Friends</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>Pixel dimensions and stored pixels do not change. <a class="el" href="#a45c0309140e594d3c642e64ac16d47fd">getDrawingArea()</a> reports the new origin and the clip resets to that area. <a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> and clipping now use those coordinates; <a class="el" href="classpdg_1_1_image.html">Image</a> pixel coordinates remain zero-based. This supports rendering a View into a reusable surface without changing its layout coordinates. Onscreen ports and nonfinite origins are rejected with an error. </p><dl class="section note"><dt>Note</dt><dd>Requires a <a class="el" href="classpdg_1_1_port.html">Port</a> from <a class="el" href="classpdg_1_1_graphics_manager.html#a29fd2e05e0e78837c54611ed574f3605" title="Create a persistent transparent RGBA drawing surface without a window.">GraphicsManager::createOffscreenPort()</a>. </dd>
+<p>Pixel dimensions and stored pixels do not change. <a class="el" href="#a45c0309140e594d3c642e64ac16d47fd">getDrawingArea()</a> reports the new origin and the clip resets to that area. <a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> and clipping now use those coordinates; <a class="el" href="classpdg_1_1_image.html" title="Appearance setters return this image by reference for chaining.">Image</a> pixel coordinates remain zero-based. This supports rendering a View into a reusable surface without changing its layout coordinates. Onscreen ports and nonfinite origins are rejected with an error. </p><dl class="section note"><dt>Note</dt><dd>Requires a <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> from <a class="el" href="classpdg_1_1_graphics_manager.html#a29fd2e05e0e78837c54611ed574f3605" title="Create a persistent transparent RGBA drawing surface without a window.">GraphicsManager::createOffscreenPort()</a>. </dd>
 <dd>
 API stability: 2 — Evolving. </dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a5837a83effc76077b619aab7303fe9e0" title="Replace pixels inside the current clip with an exact color.">clear()</a>, <a class="el" href="#a45c0309140e594d3c642e64ac16d47fd">getDrawingArea()</a>, <a class="el" href="classpdg_1_1_image.html#a76e97e81f3782ef65f50c5c72c188762" title="Create a snapshot or a live image of an offscreen surface.">Image::createImageFromOffscreenPort()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#ad5a9e63216f589fb83bf01fd39744058" title="Replace pixels inside the current clip with an exact color.">clear()</a>, <a class="el" href="#a45c0309140e594d3c642e64ac16d47fd">getDrawingArea()</a>, <a class="el" href="classpdg_1_1_image.html#a76e97e81f3782ef65f50c5c72c188762" title="Create a snapshot or a live image of an offscreen surface.">Image::createImageFromOffscreenPort()</a> </dd></dl>
 
 </div>
 </div>
-<a id="a9a5c0ab486e5f3cc7677144beb013665" name="a9a5c0ab486e5f3cc7677144beb013665"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9a5c0ab486e5f3cc7677144beb013665">&#9670;&#160;</a></span>setFont()</h2>
+<a id="a23923b6c992636c8392786a3967058ef" name="a23923b6c992636c8392786a3967058ef"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23923b6c992636c8392786a3967058ef">&#9670;&#160;</a></span>setFont()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void setFont </td>
+          <td class="memname"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp; setFont </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classpdg_1_1_font.html">Font</a> *</td>          <td class="paramname"><span class="paramname"><em>font</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span></td><td>)</td>
           <td></td>
@@ -999,14 +1365,14 @@ API stability: 2 — Evolving. </dd></dl>
 
 </div>
 </div>
-<a id="aa5b0893578ab2ca2ec36c62a79e9b413" name="aa5b0893578ab2ca2ec36c62a79e9b413"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa5b0893578ab2ca2ec36c62a79e9b413">&#9670;&#160;</a></span>setFontForStyle()</h2>
+<a id="a7a40f79518ebfb92ec121f8be849ac52" name="a7a40f79518ebfb92ec121f8be849ac52"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a40f79518ebfb92ec121f8be849ac52">&#9670;&#160;</a></span>setFontForStyle()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void setFontForStyle </td>
+          <td class="memname"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp; setFontForStyle </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classpdg_1_1_font.html">Font</a> *</td>          <td class="paramname"><span class="paramname"><em>font</em></span>, </td>
         </tr>
@@ -1020,14 +1386,14 @@ API stability: 2 — Evolving. </dd></dl>
 
 </div>
 </div>
-<a id="a30f9573323644ec19fffcefab6559b8d" name="a30f9573323644ec19fffcefab6559b8d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a30f9573323644ec19fffcefab6559b8d">&#9670;&#160;</a></span>setFontScalingFactor()</h2>
+<a id="a8959ffabeae6d4677295ffab4ceccfcd" name="a8959ffabeae6d4677295ffab4ceccfcd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8959ffabeae6d4677295ffab4ceccfcd">&#9670;&#160;</a></span>setFontScalingFactor()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void setFontScalingFactor </td>
+          <td class="memname"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp; setFontScalingFactor </td>
           <td>(</td>
           <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>scaleBy</em></span></td><td>)</td>
           <td></td>
@@ -1058,14 +1424,14 @@ API stability: 2 — Evolving. </dd></dl>
 
 </div>
 </div>
-<a id="a443fee59fa800ceb2ae90a4ca1bb7aa3" name="a443fee59fa800ceb2ae90a4ca1bb7aa3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a443fee59fa800ceb2ae90a4ca1bb7aa3">&#9670;&#160;</a></span>stopTrackingMouse()</h2>
+<a id="a3c697bb48c0a3e3e132c91d3e06dd714" name="a3c697bb48c0a3e3e132c91d3e06dd714"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c697bb48c0a3e3e132c91d3e06dd714">&#9670;&#160;</a></span>stopTrackingMouse()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void stopTrackingMouse </td>
+          <td class="memname"><a class="el" href="classpdg_1_1_port.html">Port</a> &amp; stopTrackingMouse </td>
           <td>(</td>
           <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>trackingRef</em></span></td><td>)</td>
           <td></td>
@@ -1075,7 +1441,105 @@ API stability: 2 — Evolving. </dd></dl>
 
 </div>
 </div>
+<a id="a267c0bd252af05ee54422a6a1480ed4a" name="a267c0bd252af05ee54422a6a1480ed4a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a267c0bd252af05ee54422a6a1480ed4a">&#9670;&#160;</a></span>worldToPort()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> worldToPort </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>point</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert through this port's camera, irrespective of drawing-enable state. </p>
+
+</div>
+</div>
 <a name="doc-related-members" id="doc-related-members"></a><h2 id="header-doc-related-members" class="groupheader">Friends And Related Symbol Documentation</h2>
+<a id="ad8bd9afbbd7af19d996da80e9d25890d" name="ad8bd9afbbd7af19d996da80e9d25890d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8bd9afbbd7af19d996da80e9d25890d">&#9670;&#160;</a></span>Camera</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">friend class Camera</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel friend">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="reference">References <a class="el" href="#ad8bd9afbbd7af19d996da80e9d25890d">Camera</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="#ad8bd9afbbd7af19d996da80e9d25890d">Camera</a>, <a class="el" href="#ae1816404bada39b32bd72f5369de1c49">getCamera()</a>, and <a class="el" href="#a78ad7b9baba72a10a0af9f2ec46ef901">graphics_finishDrawing</a>.</p>
+
+</div>
+</div>
+<a id="a78ad7b9baba72a10a0af9f2ec46ef901" name="a78ad7b9baba72a10a0af9f2ec46ef901"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a78ad7b9baba72a10a0af9f2ec46ef901">&#9670;&#160;</a></span>graphics_finishDrawing</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void graphics_finishDrawing </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classpdg_1_1_port.html">Port</a> *</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel friend">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="reference">References <a class="el" href="#ad8bd9afbbd7af19d996da80e9d25890d">Camera</a>.</p>
+
+</div>
+</div>
+<a id="ad65eae853be6e1a35bf85e6865583560" name="ad65eae853be6e1a35bf85e6865583560"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad65eae853be6e1a35bf85e6865583560">&#9670;&#160;</a></span>GraphicsManager</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">friend class GraphicsManager</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel friend">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="reference">References <a class="el" href="#ad65eae853be6e1a35bf85e6865583560">GraphicsManager</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="#ad65eae853be6e1a35bf85e6865583560">GraphicsManager</a>.</p>
+
+</div>
+</div>
 <a id="ae1b51069bd7a5ed814555e5175a0524c" name="ae1b51069bd7a5ed814555e5175a0524c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae1b51069bd7a5ed814555e5175a0524c">&#9670;&#160;</a></span>ImageOpenGL</h2>
 
@@ -1099,6 +1563,136 @@ API stability: 2 — Evolving. </dd></dl>
 <p class="reference">References <a class="el" href="#ae1b51069bd7a5ed814555e5175a0524c">ImageOpenGL</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="#ae1b51069bd7a5ed814555e5175a0524c">ImageOpenGL</a>.</p>
+
+</div>
+</div>
+<a id="a33441fa18e6418038bb3d46c458294a7" name="a33441fa18e6418038bb3d46c458294a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a33441fa18e6418038bb3d46c458294a7">&#9670;&#160;</a></span>PortImpl</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">friend class PortImpl</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel friend">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="reference">References <a class="el" href="#a33441fa18e6418038bb3d46c458294a7">PortImpl</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="#a33441fa18e6418038bb3d46c458294a7">PortImpl</a>.</p>
+
+</div>
+</div>
+<a id="acca9001be71c3eb475aff436431c3a9d" name="acca9001be71c3eb475aff436431c3a9d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acca9001be71c3eb475aff436431c3a9d">&#9670;&#160;</a></span>ScopedCameraDrawing</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">friend class ScopedCameraDrawing</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel friend">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="reference">References <a class="el" href="#acca9001be71c3eb475aff436431c3a9d">ScopedCameraDrawing</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="#acca9001be71c3eb475aff436431c3a9d">ScopedCameraDrawing</a>.</p>
+
+</div>
+</div>
+<a id="a2493c92cedf84a7d2a3f1b3d5ba5b163" name="a2493c92cedf84a7d2a3f1b3d5ba5b163"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2493c92cedf84a7d2a3f1b3d5ba5b163">&#9670;&#160;</a></span>ScopedOffscreenDrawing</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">friend class ScopedOffscreenDrawing</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel friend">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="reference">References <a class="el" href="#a2493c92cedf84a7d2a3f1b3d5ba5b163">ScopedOffscreenDrawing</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="#a2493c92cedf84a7d2a3f1b3d5ba5b163">ScopedOffscreenDrawing</a>.</p>
+
+</div>
+</div>
+<a id="a748eef48a9f30ad3c9c499e95ee3a1cd" name="a748eef48a9f30ad3c9c499e95ee3a1cd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a748eef48a9f30ad3c9c499e95ee3a1cd">&#9670;&#160;</a></span>SpriteLayer</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">friend class SpriteLayer</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel friend">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="reference">References <a class="el" href="#a748eef48a9f30ad3c9c499e95ee3a1cd">SpriteLayer</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="#a748eef48a9f30ad3c9c499e95ee3a1cd">SpriteLayer</a>.</p>
+
+</div>
+</div>
+<a id="ac495e8b586409665102aa3021200d453" name="ac495e8b586409665102aa3021200d453"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac495e8b586409665102aa3021200d453">&#9670;&#160;</a></span>SpriteManager</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">friend class SpriteManager</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel friend">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="reference">References <a class="el" href="#ac495e8b586409665102aa3021200d453">SpriteManager</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="#ac495e8b586409665102aa3021200d453">SpriteManager</a>.</p>
 
 </div>
 </div>

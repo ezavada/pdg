@@ -1,4 +1,5 @@
 #include "pdg/sys/animationcontroller.h"
+#include "pdg/sys/animationtargets.h"
 #include <numbers>
 #include <algorithm>
 #include <cmath>
@@ -119,15 +120,19 @@ bool AnimationPipeline::isInsideCallback() {
 AnimationPose
 AnimationPipeline::evaluate(const AnimationPose &base, const AnimationTransform &root,
                             double deltaSeconds,
-                            const std::map<AnimationBoneId, AnimationTransform> &overrides) {
+                            const std::map<AnimationBoneId, AnimationTransform> &overrides,
+                            const std::function<void(AnimationPose&,bool)>& controls, double simulationDeltaSeconds) {
     require(std::isfinite(deltaSeconds) && deltaSeconds >= 0,
             "Animation delta must be finite nonnegative seconds");
+    if (simulationDeltaSeconds == -1) simulationDeltaSeconds = deltaSeconds;
+    require(std::isfinite(simulationDeltaSeconds) && simulationDeltaSeconds >= 0, "Invalid simulation delta");
     if (mEvaluating)
         throw std::logic_error("Recursive animation evaluation is not allowed");
     validatePose(base, root);
     auto result = mSource == animationSource_Clip ? base.copy() : AnimationPose(base.getRig());
     for (const auto &value : overrides)
         result.setLocalTransform(value.first, value.second);
+    if(controls)controls(result,false);
     validatePose(result, root);
     auto entries = mEntries;
     std::stable_sort(entries.begin(), entries.end(), [](const auto &a, const auto &b) {
@@ -146,7 +151,7 @@ AnimationPipeline::evaluate(const AnimationPose &base, const AnimationTransform 
             }
         }
     } finish{*this};
-    const AnimationModifierContext context{deltaSeconds, root, mRevision};
+    const AnimationModifierContext context{deltaSeconds, root, mRevision, simulationDeltaSeconds};
     for (const auto &entry : entries) {
         if (!entry->enabled)
             continue;
@@ -176,6 +181,8 @@ AnimationPipeline::evaluate(const AnimationPose &base, const AnimationTransform 
             ++mRevision;
         }
     }
+    if(controls)controls(result,true);
+    validatePose(result,root);
     return result;
 }
 AnimationIKResult solveAnimationTwoBoneIK(AnimationPose &output, const AnimationTwoBoneIK &c,
@@ -298,4 +305,6 @@ AnimationIKResult solveAnimationTwoBoneIK(AnimationPose &output, const Animation
     output = std::move(blended);
     return result;
 }
+
+#include "animationprocedural.inc"
 } // namespace pdg

@@ -103,6 +103,7 @@ namespace pdg
         JSObjectSetProperty(ctx, jsFindData, ((symbol_found) ? symbol_found : symbol_found = JSStringCreateWithUTF8CString("found")), JSValueMakeBoolean(ctx, found), kJSPropertyAttributeNone, exception);
         return jsFindData;
     }
+
     JSValueRef FileManager_FindNext(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         ;

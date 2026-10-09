@@ -28,6 +28,7 @@
 // -----------------------------------------------
 
 #include "pdg/sys/attributes.h"
+#include "pdg/sys/animated.h"
 
 namespace pdg {
 
@@ -283,6 +284,7 @@ namespace pdg {
 
     // Line attributes
     Attributes& Attributes::lineColor(const Color& color) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("lineColor", captureAnimationArguments(color))) return *this;
         validateAttributeEdit();
         attributeChanging(LineColor);
         mLineColor = color;
@@ -293,6 +295,7 @@ namespace pdg {
     }
 
     Attributes& Attributes::lineThickness(float thickness) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("lineThickness", captureAnimationArguments(thickness))) return *this;
         validateAttributeEdit();
         attributeChanging(LineThickness);
         mLineThickness = thickness;
@@ -303,6 +306,7 @@ namespace pdg {
     }
 
     Attributes& Attributes::lineOpacity(float opacity) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("lineOpacity", captureAnimationArguments(opacity))) return *this;
         validateAttributeEdit();
         attributeChanging(LineOpacity);
         mLineOpacity = opacity;
@@ -313,6 +317,7 @@ namespace pdg {
     }
 
     Attributes& Attributes::lineStyle(LineStyle style) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("lineStyle", captureAnimationArguments(style))) return *this;
         validateAttributeEdit();
         attributeChanging(StrokeStyle);
         mLineStyle = style;
@@ -321,6 +326,7 @@ namespace pdg {
 
     // Fill attributes
     Attributes& Attributes::fillColor(const Color& color) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("fillColor", captureAnimationArguments(color))) return *this;
         validateAttributeEdit();
         attributeChanging(Fill);
         mFillColor = color;
@@ -332,6 +338,7 @@ namespace pdg {
     }
 
     Attributes& Attributes::fillOpacity(float opacity) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("fillOpacity", captureAnimationArguments(opacity))) return *this;
         validateAttributeEdit();
         attributeChanging(FillOpacity);
         mFillOpacity = opacity;
@@ -342,6 +349,7 @@ namespace pdg {
     }
 
     Attributes& Attributes::fillGradient(const Point& start, const Color& startColor, const Point& end, const Color& endColor) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("fillGradient", captureAnimationArguments(start, startColor, end, endColor))) return *this;
         validateAttributeEdit();
         attributeChanging(Fill);
         mGradientType = gradientType_Linear;
@@ -356,6 +364,7 @@ namespace pdg {
     }
 
     Attributes& Attributes::fillRadialGradient(const Point& center, const Color& centerColor, float radius, const Color& endColor) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("fillRadialGradient", captureAnimationArguments(center, centerColor, radius, endColor))) return *this;
         validateAttributeEdit();
         attributeChanging(Fill);
         mGradientType = gradientType_Radial;
@@ -371,6 +380,7 @@ namespace pdg {
 
     // Shape attributes
     Attributes& Attributes::roundedCorners(float radius) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("roundedCorners", captureAnimationArguments(radius))) return *this;
         validateAttributeEdit();
         attributeChanging(RoundedCorners);
         mRoundedCornerRadius = radius;
@@ -379,6 +389,7 @@ namespace pdg {
 
     // Transform attributes
     Attributes& Attributes::translation(const Offset& offset) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("translation", captureAnimationArguments(offset))) return *this;
         validateAttributeEdit();
         glm::mat3 translation = glm::mat3(1.0f);
         translation[2] = glm::vec3(offset.x, offset.y, 1.0f);
@@ -462,6 +473,7 @@ namespace pdg {
     }
 
     Attributes& Attributes::transform(const glm::mat3& matrix) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("transform", captureAnimationArguments(matrix))) return *this;
         validateAttributeEdit();
         return composeTransform(matrix, TransformOperation::General);
     }
@@ -471,6 +483,7 @@ namespace pdg {
     }
 
     Attributes& Attributes::setTransform(const glm::mat3& matrix) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("setTransform", captureAnimationArguments(matrix))) return *this;
         setTransformImpl(matrix);
         return *this;
     }
@@ -482,6 +495,7 @@ namespace pdg {
 
     // Blend mode
     Attributes& Attributes::blendMode(BlendMode mode) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("blendMode", captureAnimationArguments(mode))) return *this;
         validateAttributeEdit();
         attributeChanging(Blend);
         mBlendMode = mode;
@@ -490,6 +504,7 @@ namespace pdg {
 
     // Text attributes
     Attributes& Attributes::textSize(float size) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("textSize", captureAnimationArguments(size))) return *this;
         validateAttributeEdit();
         attributeChanging(TextSize);
         mTextSize = size;
@@ -497,6 +512,7 @@ namespace pdg {
     }
 
     Attributes& Attributes::textStyle(uint32 style) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("textStyle", captureAnimationArguments(style))) return *this;
         validateAttributeEdit();
         attributeChanging(TextStyle);
         mTextStyle = style;
@@ -504,6 +520,7 @@ namespace pdg {
     }
 
     Attributes& Attributes::font(Font* font) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("font", captureAnimationArguments(font))) return *this;
         validateAttributeEdit();
         attributeChanging(Typeface);
         if (font) font->addRef();
@@ -514,6 +531,7 @@ namespace pdg {
 
     // Image attributes
     Attributes& Attributes::frame(int frame) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("frame", captureAnimationArguments(frame))) return *this;
         validateAttributeEdit();
         attributeChanging(Frame);
         mFrame = frame;
@@ -521,6 +539,7 @@ namespace pdg {
     }
 
     Attributes& Attributes::fitType(FitType fit) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("fitType", captureAnimationArguments(fit))) return *this;
         validateAttributeEdit();
         attributeChanging(Fit);
         mFitType = fit;
@@ -528,6 +547,7 @@ namespace pdg {
     }
 
     Attributes& Attributes::clipOverflow(bool clip) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("clipOverflow", captureAnimationArguments(clip))) return *this;
         validateAttributeEdit();
         attributeChanging(Clip);
         mClipOverflow = clip;
@@ -535,6 +555,7 @@ namespace pdg {
     }
 
     Attributes& Attributes::subsection(const Rect& section) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("subsection", captureAnimationArguments(section))) return *this;
         validateAttributeEdit();
         attributeChanging(Subsection);
         mSubsection = section;
@@ -543,6 +564,7 @@ namespace pdg {
 
     // Sphere attributes
     Attributes& Attributes::sphereRotation(float rotation) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("sphereRotation", captureAnimationArguments(rotation))) return *this;
         validateAttributeEdit();
         attributeChanging(SphereRotation);
         mSphereRotation = rotation;
@@ -550,6 +572,7 @@ namespace pdg {
     }
 
     Attributes& Attributes::polarOffset(const Offset& offset) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("polarOffset", captureAnimationArguments(offset))) return *this;
         validateAttributeEdit();
         attributeChanging(PolarOffset);
         mPolarOffset = offset;
@@ -557,6 +580,7 @@ namespace pdg {
     }
 
     Attributes& Attributes::lightOffset(const Offset& offset) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("lightOffset", captureAnimationArguments(offset))) return *this;
         validateAttributeEdit();
         attributeChanging(LightOffset);
         mLightOffset = offset;
@@ -564,6 +588,7 @@ namespace pdg {
     }
 
     Attributes& Attributes::ambientLight(const Color& color) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("ambientLight", captureAnimationArguments(color))) return *this;
         validateAttributeEdit();
         attributeChanging(AmbientLight);
         mAmbientLight = color;
@@ -571,6 +596,7 @@ namespace pdg {
     }
 
     Attributes& Attributes::texture(Image* texture) {
+    if(auto* animated=dynamic_cast<AnimatedBase*>(this); animated && animated->recordOperation("texture", captureAnimationArguments(texture))) return *this;
         validateAttributeEdit();
         attributeChanging(Texture);
         if (texture) texture->addRef();
@@ -581,3 +607,7 @@ namespace pdg {
 
 
 } // end namespace pdg
+
+namespace pdg {
+#include "animation-operations-attributes.inc"
+}

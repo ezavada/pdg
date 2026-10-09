@@ -185,6 +185,8 @@
         }
 
         window.process.argv = args;
+        window.process.env.PDG_TEXT_WORKLOAD = params.get('text-workload') || '';
+
         window.process.exit = function(code) {
             if (code) fail("benchmark called process.exit(" + code + ")");
             else window.pdg.quit();

@@ -37,3 +37,12 @@ See \ref ParticleEffects for lightweight particles, point emitters and nested tr
  * \ingroup Animation Graphics
  * \brief Sprite and tile layers, drawing helpers, and collision helpers.
  */
+
+/** \defgroup StructuredDataTypes Structured Data Types
+ * \brief Data records, options, event payloads, and value types used by the JavaScript API.
+ *
+ * These names describe the structure of values accepted or returned by PDG.
+ * They are documentation types, not constructors or additional runtime exports.
+ * Follow a type's fields and ownership notes when creating or retaining a value;
+ * native handles must be obtained from the documented factory or getter.
+ */

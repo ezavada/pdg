@@ -45,6 +45,19 @@ describe("Sound", function() {
 	expect(pdg.Sound).toBeDefined();
   });
 
+  if (typeof document !== 'undefined') it("loads sounds through the browser resource manager", function() {
+    expect(typeof pdg.res.getSound).toBe('function');
+    var ref = pdg.res.openResourceFile('data');
+    try {
+      var sound = pdg.res.getSound('clink1.mp3');
+      expect(sound).toBeDefined();
+      expect(sound).not.toBeNull();
+      sound.setLooping(true);
+      expect(sound.isLooping()).toBe(true);
+      sound.stop();
+    } finally { pdg.res.closeResourceFile(ref); }
+  });
+
 
   it("retains a constructed sound across stop and replay", function() {
     var filename = 'data/clink1.mp3';

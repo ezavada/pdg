@@ -1,4 +1,4 @@
-.TH "Deserializer" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Deserializer" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -12,6 +12,9 @@ Deserializer \- deserialize data from a serialized data stream
 .SS "Public Member Functions"
 
 .in +1c
+.ti -1c
+.RI "\fBDeserializer\fP ()"
+.br
 .ti -1c
 .RI "number \fBdeserialize_1\fP ()"
 .br
@@ -113,13 +116,13 @@ Deserializer \- deserialize data from a serialized data stream
 .br
 .RI "deserialize a \fBVector\fP "
 .ti -1c
-.RI "\fBsetDataPtr\fP (BinaryString data)"
-.br
-.RI "set the serialized data "
-.ti -1c
 .RI "\fBsetDataPtr\fP (\fBMemBlock\fP data)"
 .br
 .RI "set the serialized data "
+.ti -1c
+.RI "\fBsetDataPtr\fP (Uint8Array data)"
+.br
+.RI "Initialize a reader from an owned copy of Uint8Array bytes\&. "
 .in -1c
 .SH "Detailed Description"
 .PP 
@@ -195,6 +198,10 @@ function deserializeStuff(des) {
 \fBpdg\&.registerSerializableClass\fP 
 .RE
 .PP
+
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "Deserializer ()"
 
 .SH "Member Function Documentation"
 .PP 
@@ -629,26 +636,6 @@ a \fBVector\fP
 .RE
 .PP
 
-.SS "setDataPtr (BinaryString data)"
-
-.PP
-set the serialized data Set the data block that should be deserialized\&. It should have been created at some point by a \fBpdg\&.Serializer\fP\&.
-
-.PP
-\fBParameters\fP
-.RS 4
-\fIdata\fP the BinaryString object with the serialized data
-.RE
-.PP
-\fBSee also\fP
-.RS 4
-\fBsetDataPtr(MemBlock)\fP 
-
-.PP
-\fBSerializer\&.getDataPtr\fP 
-.RE
-.PP
-
 .SS "setDataPtr (\fBMemBlock\fP data)"
 
 .PP
@@ -662,10 +649,26 @@ set the serialized data Set the data block that should be deserialized\&. It sho
 .PP
 \fBSee also\fP
 .RS 4
-\fBsetDataPtr(BinaryString)\fP 
+\fBsetDataPtr(Uint8Array)\fP 
 
 .PP
 \fBSerializer\&.getDataPtr\fP 
+.RE
+.PP
+
+.SS "setDataPtr (Uint8Array data)"
+
+.PP
+Initialize a reader from an owned copy of Uint8Array bytes\&. Copies only the supplied view's bytes, including when the view is a Node Buffer\&. The deserializer retains the copy until its input is replaced or the reader is destroyed\&. Mutating, detaching or collecting the source after this call cannot change the reader\&. Strings are rejected\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP A Uint8Array containing a serialized stream\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBsetDataPtr(MemBlock)\fP 
 .RE
 .PP
 

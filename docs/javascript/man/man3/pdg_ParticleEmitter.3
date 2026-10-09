@@ -1,4 +1,4 @@
-.TH "ParticleEmitter" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "ParticleEmitter" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -14,6 +14,12 @@ Inherits \fBAnimated\fP\&.
 .SS "Public Member Functions"
 
 .in +1c
+.ti -1c
+.RI "\fBParticleEmitter\fP ()"
+.br
+.ti -1c
+.RI "boolean \fBanimate\fP (number seconds)"
+.br
 .ti -1c
 .RI "number \fBemit\fP (uint count=1)"
 .br
@@ -95,9 +101,16 @@ Inherits \fBAnimated\fP\&.
 Public Member Functions inherited from \fBAnimated\fP
 .in +1c
 .ti -1c
+.RI "\fBAnimated\fP ()"
+.br
+.ti -1c
 .RI "\fBAnimated\fP \fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
 .br
 .RI "Register a callback after the object's normal animation step\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBandAlso\fP ()"
+.br
+.RI "Join the following operand to the preceding parallel chain\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBandThen\fP ()"
 .br
@@ -106,6 +119,10 @@ Public Member Functions inherited from \fBAnimated\fP
 .RI "boolean \fBanimate\fP (number deltaSeconds)"
 .br
 .RI "Advance programmed animation by elapsed seconds\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBbatch\fP ()"
+.br
+.RI "Open an anonymous animation block\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBcancelSchedule\fP ()"
 .br
@@ -179,6 +196,26 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Retire all helpers on this object\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBdiminish\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Reduce the preceding block amplitude around its baseline\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendBatch\fP ()"
+.br
+.RI "Close and select the innermost anonymous block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendOtherwise\fP ()"
+.br
+.RI "Close a conditional with an alternative\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendSeries\fP ()"
+.br
+.RI "Close and select the innermost series\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendWhen\fP ()"
+.br
+.RI "Close a conditional without an alternative\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBflipX\fP ()"
 .br
 .RI "Toggle the x reflection flag immediately\&. "
@@ -243,6 +280,10 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Test whether animations are running or queued\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBincrease\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Increase the preceding block amplitude around its baseline\&. "
+.ti -1c
 .RI "boolean \fBisFlippedX\fP ()"
 .br
 .RI "Read the x reflection flag\&. "
@@ -254,6 +295,14 @@ Public Member Functions inherited from \fBAnimated\fP
 .RI "boolean \fBisSchedulePaused\fP ()"
 .br
 .RI "Test whether scheduled animation advancement is paused\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBjumpToMark\fP (string name, boolean restoreState=true)"
+.br
+.RI "Continue execution at the operation following a mark\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmark\fP (string name, boolean saveState=true)"
+.br
+.RI "Create a named script location and optionally save state on arrival\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBmoveBy\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
@@ -271,13 +320,64 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Move to a location\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBon\fP (string event, function handler)"
+.br
+.RI "Observe a selected animation block's lifecycle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonFinished\fP (function handler)"
+.br
+.RI "Observe finished events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonMark\fP (function handler)"
+.br
+.RI "Observe mark events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonRepeat\fP (function handler)"
+.br
+.RI "Observe repeat events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonScriptFinished\fP (function handler)"
+.br
+.RI "Observe scriptFinished events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonStarted\fP (function handler)"
+.br
+.RI "Observe started events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonUntilFired\fP (function handler)"
+.br
+.RI "Observe untilFired events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonYoyo\fP (function handler)"
+.br
+.RI "Observe yoyo events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBotherwise\fP ()"
+.br
+.RI "Open the alternative of the innermost conditional\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBpauseIt\fP ()"
+.br
+.RI "Pause the most recently selected animation element\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBpauseSchedule\fP ()"
 .br
 .RI "Pause scheduled animations and their delays\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBplayScript\fP (string name)"
+.br
+.RI "Instantiate a named animation script on this target\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
 .br
 .RI "Retire a specific animation helper\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrepeat\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBrepeat\fP (int additionalExecutions)"
+.br
+.RI "Repeat the preceding block\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBresizeBy\fP (number deltaWidth, number deltaHeight, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
@@ -286,6 +386,14 @@ Public Member Functions inherited from \fBAnimated\fP
 .RI "\fBAnimated\fP \fBresizeTo\fP (number width, number height, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
 .RI "Animate logical size to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrestartIt\fP ()"
+.br
+.RI "Restart the most recently selected animation element from its baseline\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresumeIt\fP ()"
+.br
+.RI "Resume the most recently selected paused animation element\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBresumeSchedule\fP ()"
 .br
@@ -298,6 +406,10 @@ Public Member Functions inherited from \fBAnimated\fP
 .RI "\fBAnimated\fP \fBrotateTo\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
 .br
 .RI "Rotate to an absolute angle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBseries\fP ()"
+.br
+.RI "Open a block whose successive operands wait for completion\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP offset)"
 .br
@@ -363,9 +475,25 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Set logical width immediately\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBslowDown\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Divide the preceding block playback rate\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBspeedUp\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Increase the preceding block playback rate\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstagger\fP (number intervalSeconds)"
+.br
+.RI "\fBOffset\fP the selected block's start across successive \fBTroupe\fP members\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBstopGrowing\fP ()"
 .br
 .RI "Stop all programmed changes to logical size\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopIt\fP ()"
+.br
+.RI "Stop the most recently selected animation element\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBstopMovement\fP ()"
 .br
@@ -383,9 +511,39 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Multiply logical width and height by independent factors\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBtriggerEvent\fP (string name)"
+.br
+.RI "Emit a custom named animation event or record an event step\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBuntil\fP (function evaluator)"
+.br
+.RI "Finish the preceding block when its evaluator returns true\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBwait\fP (number durationSeconds)"
 .br
 .RI "Delay the next timed animation request\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBwhen\fP (function evaluator)"
+.br
+.RI "Open a conditional animation branch\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fByoyo\fP ()"
+.br
+.RI "Play the preceding trajectory forward and back\&. "
+.in -1c
+.SS "Additional Inherited Members"
+
+
+Static Public Member Functions inherited from \fBAnimated\fP
+.in +1c
+.ti -1c
+.RI "static \fBAnimationScript\fP \fBdefineScript\fP (string name)"
+.br
+.RI "Create a library-owned named animation recorder\&. "
+.ti -1c
+.RI "static boolean \fBdeleteScript\fP (string name)"
+.br
+.RI "Remove a definition and release its memory in the shared script library\&. "
 .in -1c
 .SH "Detailed Description"
 .PP 
@@ -404,8 +562,16 @@ ParticleEffects
 .RE
 .PP
 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "ParticleEmitter ()"
+
+.PP
+Referenced by \fBsetEmissionRate()\fP, \fBsetParticleSpeed()\fP, \fBsetParticleTemplate()\fP, \fBsetSeed()\fP, \fBsetSpread()\fP, \fBsetVelocityInheritance()\fP, \fBstartEmitting()\fP, and \fBstopEmitting()\fP\&.
 .SH "Member Function Documentation"
 .PP 
+.SS "boolean animate (number seconds)"
+
 .SS "number emit (uint count = \fR1\fP)"
 
 .PP
@@ -608,6 +774,8 @@ ParticleEffects
 .RE
 .PP
 
+.PP
+References \fBParticleEmitter()\fP\&.
 .SS "\fBParticleEmitter\fP setParticleSpeed (number minimum, number maximum = \fRminimum\fP)"
 
 .PP
@@ -631,6 +799,8 @@ ParticleEffects
 .RE
 .PP
 
+.PP
+References \fBParticleEmitter()\fP\&.
 .SS "\fBParticleEmitter\fP setParticleTemplate (\fBParticle\fP particle)"
 
 .PP
@@ -652,6 +822,8 @@ ParticleEffects
 .RE
 .PP
 
+.PP
+References \fBParticleEmitter()\fP\&.
 .SS "\fBParticleEmitter\fP setSeed (uint seed)"
 
 .PP
@@ -673,6 +845,8 @@ ParticleEffects
 .RE
 .PP
 
+.PP
+References \fBParticleEmitter()\fP\&.
 .SS "\fBParticleEmitter\fP setSpread (number value)"
 
 .PP
@@ -694,6 +868,8 @@ ParticleEffects
 .RE
 .PP
 
+.PP
+References \fBParticleEmitter()\fP\&.
 .SS "\fBParticleEmitter\fP setVelocityInheritance (number value)"
 
 .PP
@@ -715,6 +891,8 @@ ParticleEffects
 .RE
 .PP
 
+.PP
+References \fBParticleEmitter()\fP\&.
 .SS "\fBParticleEmitter\fP startEmitting ()"
 
 .PP
@@ -731,6 +909,8 @@ ParticleEffects
 .RE
 .PP
 
+.PP
+References \fBParticleEmitter()\fP\&.
 .SS "\fBParticleEmitter\fP stopEmitting ()"
 
 .PP
@@ -747,6 +927,8 @@ ParticleEffects
 .RE
 .PP
 
+.PP
+References \fBParticleEmitter()\fP\&.
 
 .SH "Author"
 .PP 

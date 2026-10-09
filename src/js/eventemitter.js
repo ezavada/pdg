@@ -151,7 +151,6 @@ class EventEmitter {
     }
 
 
-
 // ==============================================================
 // protected - you shouldn't need to call these directly, call postEvent instead
 

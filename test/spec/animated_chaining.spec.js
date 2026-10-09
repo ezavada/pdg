@@ -45,16 +45,16 @@ describe('Animated call chaining', function() {
         calls.forEach(function(call) { a.cancelSchedule(); expect(a[call[0]].apply(a,call.slice(1))).toBe(a); });
         if (typeof a.delete === 'function') a.delete();
     });
-    it('preserves Sprite, Part, Layer and AnimatedAttributes identity through inherited chains', function() {
-        const sprite=new pdg.Sprite(),part=sprite.createPart('chain'),layer=pdg.createSpriteLayer();
+    it('preserves Sprite, Part, Camera and AnimatedAttributes identity through inherited chains', function() {
+        const sprite=new pdg.Sprite(),part=sprite.createPart('chain'),camera=new pdg.Camera();
         const attributes=new pdg.AnimatedAttributes();
         try {
-            [sprite,part,layer,attributes].forEach(function(a) {
+            [sprite,part,camera,attributes].forEach(function(a) {
                 expect(a.moveTo(1,2,.1).rotateTo(1,.1).changeScaleTo(2,2,.1).wait(.1)
                     .cancelSchedule().clearAnimationHelpers()).toBe(a);
             });
         } finally {
-            pdg.cleanupLayer(layer);
+            if (typeof camera.delete === 'function') camera.delete();
             if (typeof sprite.delete === 'function') { part.delete();sprite.delete();attributes.delete(); }
         }
     });
@@ -93,14 +93,14 @@ describe('Animated sequencing', function() {
         a.moveTo(30,0,.5,pdg.linearTween);a.animate(.5);expect(a.getLocation().x).toBe(30);
         expect(a.hasScheduledAnimations()).toBe(false);
     });
-    it('sequences inherited Sprite, Part, Layer and appearance mutations', function() {
-        const sprite=new pdg.Sprite(),part=sprite.createPart('sequence'),layer=pdg.createSpriteLayer();
+    it('sequences inherited Sprite, Part, Camera and appearance mutations', function() {
+        const sprite=new pdg.Sprite(),part=sprite.createPart('sequence'),camera=new pdg.Camera();
         const attrs=new pdg.AnimatedAttributes();
         try {
-            [sprite,part,layer,attrs].forEach(function(a) {
+            [sprite,part,camera,attrs].forEach(function(a) {
                 a.moveTo(10,0,.5,pdg.linearTween).andThen().moveTo(20,0,.5,pdg.linearTween);
                 expect(a.hasScheduledAnimations()).toBe(true);
-                // Native Sprite and Layer are stepped by SpriteManager; their timing
+                // Native Sprites are stepped by SpriteManager; their timing
                 // is also exercised deterministically by the C++ owner tests.
                 if (typeof a.animate === 'function') {
                     a.animate(.75);expect(a.getLocation().x).toBeCloseTo(15,5);
@@ -109,7 +109,7 @@ describe('Animated sequencing', function() {
             });
             attrs.changeFillOpacity(0,.5,pdg.linearTween).andThen().changeFillOpacity(1,.5,pdg.linearTween);
             attrs.animate(.75);expect(attrs.getFillOpacity()).toBeCloseTo(.5,5);
-        } finally {pdg.cleanupLayer(layer);}
+        } finally {if (typeof camera.delete === 'function') camera.delete();}
     });
 });
 

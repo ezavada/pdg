@@ -4,7 +4,14 @@ const path = require('path');
 const cp = require('child_process');
 const root = path.resolve(__dirname, '../..');
 const catalog = [
+    {id:'ios-network-transport', file:'ios_network_transport.test.js'},
+    {id:'network-transport', file:'network_transport.test.js'},
+    {id:'webtransport', file:'webtransport.test.js'},
+    {id:'api-contracts', file:'api_contracts.test.js'},
+    {id:'interface-metadata', file:'interface_metadata.test.js'},
+    {id:'emscripten-generation', file:'emscripten_generation.test.js'},
     {id:'test-options', file:'test_options.test.js'},
+    {id:'unit-output', file:'unit_output.test.js'},
     {id:'node-build', file:'node_build.test.js', posix:true},
     {id:'wasm-release', file:'wasm_release.test.js', posix:true},
     {id:'perf-runner', file:'perf_runner.test.js'},
@@ -15,7 +22,7 @@ const catalog = [
 function main(args) {
     if (args.includes('--help') || args.includes('-h')) {
         console.log('Usage: test/tools [--list] [suite ...]\n' +
-            'Runs tooling checks without a PDG build. No suites selects all six.\n' +
+            'Runs tooling checks without a PDG build. No suites selects all suites.\n' +
             'Node: PDG_NODE, tools/node, then node on PATH.\n' +
             'C++20 compiler: CXX (executable path), otherwise c++ or Windows cl.exe.\n' +
             'node-build and wasm-release require POSIX Bash and are skipped on Windows.\n' +

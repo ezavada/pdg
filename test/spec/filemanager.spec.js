@@ -161,8 +161,11 @@ describe("FileManager", function() {
     it("can find specific files", function() {
       var files = fileManager.findFiles('spec/net*.spec.js');
       console.log(files);
-      expect(files.length).toEqual(3);
+      expect(files.length).toEqual(6);
       expect(files).toEqual([
+        'net_ios.spec.js',
+        'net_websocket.spec.js',
+        'net_webtransport.spec.js',
         'netclient.spec.js',
         'netconnection.spec.js',
         'netserver.spec.js'
@@ -407,24 +410,34 @@ describe("FileManager", function() {
       expect(Array.isArray(dirs)).toBe(true);
     });
 
-    it("handles null paths", function() {
+    // Both helpers delegate to findFirst, whose path argument is a required string.
+    it("rejects null paths", function() {
       expect(function() {
         fileManager.findFiles(null);
-      }).not.toThrow();
+      }).toThrow();
       
       expect(function() {
         fileManager.findDirs(null);
-      }).not.toThrow();
+      }).toThrow();
     });
 
-    it("handles undefined paths", function() {
+    it("rejects undefined paths", function() {
       expect(function() {
         fileManager.findFiles(undefined);
-      }).not.toThrow();
+      }).toThrow();
       
       expect(function() {
         fileManager.findDirs(undefined);
-      }).not.toThrow();
+      }).toThrow();
+    });
+
+    it("rejects omitted paths", function() {
+      expect(function() {
+        fileManager.findFiles();
+      }).toThrow();
+      expect(function() {
+        fileManager.findDirs();
+      }).toThrow();
     });
 
     it("handles paths with special characters", function() {

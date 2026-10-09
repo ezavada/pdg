@@ -399,18 +399,12 @@ describe("Rect", function() {
   describe("utility operations", function() {
 
     it("can round coordinates", function() {
-      // Note: The round method has a bug in the implementation - it uses undefined variables
-      // This test is expected to fail until the bug is fixed
       var rect = new Rect(10.7, 20.3, 110.9, 70.1);
-      expect(function() {
-        rect.round();
-      }).toThrow();
-      
-      // Expected behavior (when bug is fixed):
-      // expect(rect.left).toEqual(11);
-      // expect(rect.top).toEqual(20);
-      // expect(rect.right).toEqual(111);
-      // expect(rect.bottom).toEqual(70);
+      expect(rect.round()).toBe(rect);
+      expect(rect.left).toEqual(11);
+      expect(rect.top).toEqual(20);
+      expect(rect.right).toEqual(111);
+      expect(rect.bottom).toEqual(70);
     });
 
     it("can convert to quad", function() {

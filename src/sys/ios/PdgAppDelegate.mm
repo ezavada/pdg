@@ -29,6 +29,9 @@
 #include "pdg_project.h"
 
 #include "pdg-lib.h"
+#ifdef PDG_COMPILING_FOR_JAVASCRIPT
+#include "pdg_ios_network.h"
+#endif
 
 #import "PDGAppDelegate.h"
 #import "EAGLView.h"
@@ -59,6 +62,13 @@
 	[glView stopAnimation];
 }
 
+- (void)applicationDidEnterBackground:(UIApplication *)application
+{
+#ifdef PDG_COMPILING_FOR_JAVASCRIPT
+    JSC_IOS_NetworkSuspend();
+#endif
+}
+
 - (void) applicationDidBecomeActive:(UIApplication *)application
 {
 	[glView startAnimation];
@@ -67,6 +77,9 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
 	[glView stopAnimation];
+#ifdef PDG_COMPILING_FOR_JAVASCRIPT
+    JSC_IOS_NetworkShutdown();
+#endif
     pdg_LibQuit();
 }
 

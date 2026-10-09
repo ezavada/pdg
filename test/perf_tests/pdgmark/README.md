@@ -5,6 +5,16 @@ For **QuickPDGMark**, the short fixed-load variant, run
 also accept `--quick`. See the [shared runner guide](../README.md) for sampling,
 calibration and report details. The ramp-up mode described below remains available.
 
+To measure changing counters, set `PDG_TEXT_WORKLOAD=changing`. This replaces
+the fixed text labels with plain Arial counters that change every frame:
+
+```bash
+PDG_TEXT_WORKLOAD=changing ./test/perf pdgmark cpp-pdgmark
+PDG_TEXT_WORKLOAD=changing ./test/perf --web pdgmark
+```
+
+The default workload retains its fixed labels, mixed styles, and transforms.
+
 A comprehensive 2D rendering benchmark for PDG.
 
 ## What It Tests
@@ -189,7 +199,7 @@ The comparison tool shows:
 
 ### Expected Improvements
 
-Based on the optimization plan in `docs/note-ai/opengl-optimization-analysis.md`:
+These are optimization targets, rather than measured results:
 
 **Scenario 1: Simple Optimizations**
 - State caching
@@ -282,7 +292,7 @@ Each test includes simple animations to simulate realistic rendering scenarios:
 
 ## Integration with Optimization Plan
 
-This benchmark directly supports the optimization work outlined in `docs/note-ai/opengl-optimization-analysis.md`:
+This benchmark measures the following optimization areas:
 
 ### Validates Multiple Optimization Areas
 
@@ -301,6 +311,5 @@ This benchmark directly supports the optimization work outlined in `docs/note-ai
 ## See Also
 
 - `QUICKSTART.md` - Quick 30-second start guide
-- `docs/note-ai/opengl-optimization-analysis.md` - Full optimization plan
+- [Performance tests](../README.md) - Shared benchmark workloads and baselines
 - `test/perf_tests/bunnymark/README.md` - Bunnymark sprite test
-

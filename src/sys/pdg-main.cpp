@@ -31,6 +31,8 @@
 // see pdg_node.cpp and pdg_main_v24.js for JavaScript apps
 
 #include "pdg_project.h"
+#include "pdg/sys/camera.h"
+#include "pdg/sys/scene.h"
 #include <format>
 
 #include "pdg/msvcfix.h" // fixes GCC too
@@ -474,6 +476,13 @@ int main_init(int argc, const char* argv[], bool isInitialized) {
 // Main run loop
 // -----------------------------------------------
 void main_run() {
+    Scene::advanceAll();
+    TimerManager::instance().checkTimers();
+    static ms_time lastCameraTick = OS::getMilliseconds();
+    const ms_time cameraTick = OS::getMilliseconds();
+    Camera::advanceAttached(double(cameraTick - lastCameraTick) / 1000.0);
+    lastCameraTick = cameraTick;
+
 
 	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%s", std::format("{:12} - ENTERING main_run()", OS::getMilliseconds()).c_str()); )
 
@@ -490,7 +499,7 @@ void main_run() {
 
 	// check timers will almost certainly trigger some drawing to happen if any timers fire
 	Port* mainPort = GraphicsManager::instance().getMainPort();
-	if (mainPort) {
+	if (mainPort || !GraphicsManager::instance().getAllActivePorts().empty()) {
 		// calc our frames per second
 		if (performanceUncapped || currMs >= gNextRedrawMillisec) {
 			if ((gFrameNum % 100) == 0 && currMs > gFPSBaseMs) {
@@ -539,7 +548,7 @@ void main_run() {
 	}
   #endif // !PDG_NO_GUI
 
-	TimerManager::instance().checkTimers();
+
 
 	RUN_LOOP_DEBUG_ONLY(OS::_DOUT("%s", std::format("{:12} -    Timer check/fire complete", OS::getMilliseconds()).c_str()); )
 
@@ -651,6 +660,7 @@ int main_cleanup(bool* dontExit) {
 		}
 	}
 
+    Scene::disposeAll();
   #ifndef PDG_NO_NETWORK
     delete NetworkManager::getSingletonInstance(); // cleanup network manager
   #endif // PDG_NO_NETWORK

@@ -162,10 +162,7 @@ namespace pdg
         LogManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<LogManagerWrap>(args.This());
         LogManager* self = dynamic_cast<LogManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -182,10 +179,7 @@ namespace pdg
         LogManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<LogManagerWrap>(args.This());
         LogManager* self = dynamic_cast<LogManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object LogManager]" " function" "([number int] inLogLevel)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -208,10 +202,7 @@ namespace pdg
         LogManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<LogManagerWrap>(args.This());
         LogManager* self = dynamic_cast<LogManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(string inLogNameBase, [number int] initMode = LogManager.init_StdOut)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -240,10 +231,7 @@ namespace pdg
         LogManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<LogManagerWrap>(args.This());
         LogManager* self = dynamic_cast<LogManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] level, string category, string message)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 3)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 3);
@@ -275,10 +263,7 @@ namespace pdg
     void LogManagerWrap::BinaryDump(const v8::FunctionCallbackInfo<v8::Value>& args)
     {
         [[maybe_unused]] v8::Isolate* isolate = args.GetIsolate();
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "string" " function" "({[string Binary]|[object MemBlock]} inData, [number int] length = 0, [number int] bytesPerLine = 20)" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -296,21 +281,98 @@ namespace pdg
             return;
         }
         long bytesPerLine = (args.Length()<3) ? 20 : args[3 -1]->Int32Value(isolate->GetCurrentContext()).ToChecked();;
-        int dataSize = 0;
-        char* inData = 0;
-        if (args[0]->IsString())
+        size_t available = 0;
+        if (length < 0 || bytesPerLine <= 0)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "invalid dump length or line width";
+            isolate->ThrowException( v8::Exception::RangeError( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        const char* inData = 0;
+        if (IsUint8Array(args[0]))
         {
             size_t bytes = 0;
-            uint8* ptr = (uint8*) DecodeBinary(args[0], &bytes);
-            inData = (char*)ptr;
-            dataSize = (length == 0) ? bytes : length;
+            const uint8* ptr = nullptr;
+            if (!GetUint8ArrayData(args[0], ptr, bytes))
+            {
+                std::ostringstream excpt_;
+                excpt_ << "expected an attached, non-shared Uint8Array";
+                isolate->ThrowException( v8::Exception::TypeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            if (bytes > UINT32_MAX)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "byte array exceeds the supported size";
+                isolate->ThrowException( v8::Exception::RangeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
+            inData = (const char*)ptr;
+            available = bytes;
         }
         else
         {
+            if (!MemBlockWrap::GetTemplate(isolate)->HasInstance(args[0]))
+            {
+                std::ostringstream excpt_;
+                excpt_ << "expected Uint8Array or MemBlock";
+                isolate->ThrowException( v8::Exception::TypeError( ([&]()
+                {
+                    v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                        return maybe.IsEmpty() ?
+                        v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+                }
+                ())));
+                {
+                    args.GetReturnValue().SetNull(); return;
+                };
+            }
             REQUIRE_CPP_OBJECT_ARG(1, memBlock, MemBlock);
             inData = memBlock->ptr;
-            dataSize = (length == 0) ? memBlock->bytes : length;
+            available = memBlock->bytes;
         }
+        size_t count = length == 0 ? available : static_cast<size_t>(length);
+        if (count > available || count > (INT32_MAX - 32) / 16 || bytesPerLine > (INT32_MAX - 32) / 16)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "binaryDump range exceeds available or supported data";
+            isolate->ThrowException( v8::Exception::RangeError( ([&]()
+            {
+                v8::MaybeLocal<v8::String> maybe = v8::String::NewFromUtf8(isolate, excpt_.str().c_str());
+                    return maybe.IsEmpty() ?
+                    v8::String::NewFromUtf8Literal(isolate, "[String creation failed]") : maybe.ToLocalChecked();
+            }
+            ())));
+            {
+                args.GetReturnValue().SetNull(); return;
+            };
+        }
+        int dataSize = static_cast<int>(count);
         int outBufSize = (4 * dataSize) + (6 * dataSize/bytesPerLine) + (4 * bytesPerLine) + 32;
         char* outBuf = new char[outBufSize];
         OS::binaryDump(outBuf, outBufSize, inData, dataSize, bytesPerLine);

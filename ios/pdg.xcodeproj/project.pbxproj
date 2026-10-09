@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		ED2026100700030000000001 /* pdg_ios_network.mm in Sources */ = {isa = PBXBuildFile; fileRef = ED2026100700030000000003 /* pdg_ios_network.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		ED2026100700030000000002 /* pdg_ios_network.mm in Sources */ = {isa = PBXBuildFile; fileRef = ED2026100700030000000003 /* pdg_ios_network.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		ED2026100700030000000006 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED2026100700030000000005 /* Network.framework */; };
+		ED2026100700030000000007 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED2026100700030000000005 /* Network.framework */; };
+
 		F1A0020026A2000000000099 /* animatedattributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1A0030026A2000000000099 /* animatedattributes.cpp */; };
 		F1A0020026A2000000000001 /* attributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1A0030026A2000000000001 /* attributes.cpp */; };
 		F1A0020126A2000000000001 /* drawing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F1A0030126A2000000000001 /* drawing.cpp */; };
@@ -82,6 +87,9 @@
 		AB7A492917E917200097119F /* libstdc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AB7A492817E917200097119F /* libstdc++.dylib */; };
 		AB7A492B17E9177D0097119F /* libicucore.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AB7A492A17E9177D0097119F /* libicucore.dylib */; };
 		AB7E7FCB17E6334700C9BA8F /* animated.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABF1950E17B9A239007B2570 /* animated.cpp */; };
+		F19A20261003000100000001 /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F19A20261003000100000004 /* camera.cpp */; };
+		F19A20261007000200000001 /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F19A20261007000200000004 /* scene.cpp */; };
+		F19A20261007000100000001 /* bone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F19A20261007000100000004 /* bone.cpp */; };
 		F20A20260920000100000002 /* physicsbody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F20A20260920000100000001 /* physicsbody.cpp */; };
 		F20A20260923000500000002 /* particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F20A20260923000500000001 /* particle.cpp */; };
 		F22C20260922000100000002 /* collider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F22C20260922000100000001 /* collider.cpp */; };
@@ -281,6 +289,9 @@
 		ABE24AED182C38A000EAFEDB /* main.js in Resources */ = {isa = PBXBuildFile; fileRef = AB39C7EE17ED1611003CF18E /* main.js */; };
 		ABE5AF4818256D150030BDBB /* pdg_interfaces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABC5FEE717E63FAD008DB803 /* pdg_interfaces.cpp */; };
 		ABE5AF4918256D150030BDBB /* animated.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABF1950E17B9A239007B2570 /* animated.cpp */; };
+		F19A20261003000100000002 /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F19A20261003000100000004 /* camera.cpp */; };
+		F19A20261007000200000002 /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F19A20261007000200000004 /* scene.cpp */; };
+		F19A20261007000100000002 /* bone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F19A20261007000100000004 /* bone.cpp */; };
 		F20A20260920000100000003 /* physicsbody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F20A20260920000100000001 /* physicsbody.cpp */; };
 		F20A20260923000500000003 /* particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F20A20260923000500000001 /* particle.cpp */; };
 		F22C20260922000100000003 /* collider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F22C20260922000100000001 /* collider.cpp */; };
@@ -380,6 +391,9 @@
 		ABEE90B017EB988700E90CCE /* pdg_jsc_support.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABEE90AE17EB988700E90CCE /* pdg_jsc_support.cpp */; };
 		ABEE90B317F1C5DB00E90CCE /* console.js in Resources */ = {isa = PBXBuildFile; fileRef = ABEE90B117F1C5C100E90CCE /* console.js */; };
 		ABF1952917B9A23A007B2570 /* animated.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABF1950E17B9A239007B2570 /* animated.cpp */; };
+		F19A20261003000100000003 /* camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F19A20261003000100000004 /* camera.cpp */; };
+		F19A20261007000200000003 /* scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F19A20261007000200000004 /* scene.cpp */; };
+		F19A20261007000100000003 /* bone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F19A20261007000100000004 /* bone.cpp */; };
 		F20A20260920000100000004 /* physicsbody.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F20A20260920000100000001 /* physicsbody.cpp */; };
 		F20A20260923000500000004 /* particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F20A20260923000500000001 /* particle.cpp */; };
 		F22C20260922000100000004 /* collider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F22C20260922000100000001 /* collider.cpp */; };
@@ -417,6 +431,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		ED2026100700030000000003 /* pdg_ios_network.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = pdg_ios_network.mm; sourceTree = "<group>"; };
+		ED2026100700030000000004 /* pdg_ios_network.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pdg_ios_network.h; sourceTree = "<group>"; };
+		ED2026100700030000000005 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = System/Library/Frameworks/Network.framework; sourceTree = SDKROOT; };
+
 		F1A0030026A2000000000099 /* animatedattributes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ../src/sys/animatedattributes.cpp; sourceTree = SOURCE_ROOT; };
 		F20A20260920000100000001 /* physicsbody.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = physicsbody.cpp; path = src/sys/physicsbody.cpp; sourceTree = "<group>"; };
 		F20A20260923000500000001 /* particle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = particle.cpp; path = src/sys/particle.cpp; sourceTree = "<group>"; };
@@ -518,6 +536,9 @@
 		AB2A82FC180371C100168FEB /* framework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = framework.h; sourceTree = "<group>"; };
 		AB2A82FD180371C100168FEB /* msvcfix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = msvcfix.h; sourceTree = "<group>"; };
 		AB2A82FF180371C100168FEB /* animated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = animated.h; sourceTree = "<group>"; };
+		F19A20261003000100000005 /* camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = camera.h; sourceTree = "<group>"; };
+		F19A20261007000200000005 /* scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scene.h; sourceTree = "<group>"; };
+		F19A20261007000100000005 /* bone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bone.h; sourceTree = "<group>"; };
 		F19A20260919000100000002 /* animationpose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = animationpose.h; sourceTree = "<group>"; };
 		F19A20260919000100000012 /* animationcontroller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = animationcontroller.h; sourceTree = "<group>"; };
 		F19A20260919000100000022 /* animationphysics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = animationphysics.h; sourceTree = "<group>"; };
@@ -691,6 +712,9 @@
 		ABEE90AF17EB988700E90CCE /* pdg_jsc_support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pdg_jsc_support.h; sourceTree = "<group>"; };
 		ABEE90B117F1C5C100E90CCE /* console.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = console.js; sourceTree = "<group>"; };
 		ABF1950E17B9A239007B2570 /* animated.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = animated.cpp; path = src/sys/animated.cpp; sourceTree = "<group>"; };
+		F19A20261003000100000004 /* camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = camera.cpp; path = src/sys/camera.cpp; sourceTree = "<group>"; };
+		F19A20261007000200000004 /* scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scene.cpp; path = src/sys/scene.cpp; sourceTree = "<group>"; };
+		F19A20261007000100000004 /* bone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bone.cpp; path = src/sys/bone.cpp; sourceTree = "<group>"; };
 		F19A20260919000100000001 /* animationpose.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = animationpose.cpp; path = src/sys/animationpose.cpp; sourceTree = "<group>"; };
 		F19A20260919000100000011 /* animationcontroller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = animationcontroller.cpp; path = src/sys/animationcontroller.cpp; sourceTree = "<group>"; };
 		F19A20260919000100000021 /* animationphysics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = animationphysics.cpp; path = src/sys/animationphysics.cpp; sourceTree = "<group>"; };
@@ -825,6 +849,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				AB0842AF195205C00012FDFC /* JavaScriptCore.framework in Frameworks */,
+				F1A0020E26A2000000000001 /* CoreText.framework in Frameworks */,
+				ED2026100700030000000006 /* Network.framework in Frameworks */,
 				AB7E802117E6334700C9BA8F /* AudioToolbox.framework in Frameworks */,
 				AB7E802217E6334700C9BA8F /* UIKit.framework in Frameworks */,
 				AB7E802317E6334700C9BA8F /* Foundation.framework in Frameworks */,
@@ -841,6 +867,7 @@
 			files = (
 				F1A0020E26A2000000000001 /* CoreText.framework in Frameworks */,
 				AB0842B0195205E40012FDFC /* JavaScriptCore.framework in Frameworks */,
+				ED2026100700030000000007 /* Network.framework in Frameworks */,
 				ABE5AFA318256D150030BDBB /* AudioToolbox.framework in Frameworks */,
 				ABE5AFA418256D150030BDBB /* UIKit.framework in Frameworks */,
 				ABE5AFA518256D150030BDBB /* Foundation.framework in Frameworks */,
@@ -983,6 +1010,9 @@
 			isa = PBXGroup;
 			children = (
 				AB2A82FF180371C100168FEB /* animated.h */,
+				F19A20261003000100000005 /* camera.h */,
+				F19A20261007000200000005 /* scene.h */,
+				F19A20261007000100000005 /* bone.h */,
 				F19A20260919000100000002 /* animationpose.h */,
 				F19A20260919000100000012 /* animationcontroller.h */,
 				F19A20260919000100000022 /* animationphysics.h */,
@@ -1058,6 +1088,7 @@
 			isa = PBXGroup;
 			children = (
 				AB0842AE195205C00012FDFC /* JavaScriptCore.framework */,
+				ED2026100700030000000005 /* Network.framework */,
 				ABC330C317B9C61200AC84AC /* AudioToolbox.framework */,
 				AB4006A217B99C8100A66604 /* UIKit.framework */,
 				AB4006A417B99C8100A66604 /* Foundation.framework */,
@@ -1312,6 +1343,9 @@
 			children = (
 				AB2A82C81801A89700168FEB /* gles */,
 				ABF1950E17B9A239007B2570 /* animated.cpp */,
+				F19A20261003000100000004 /* camera.cpp */,
+				F19A20261007000200000004 /* scene.cpp */,
+				F19A20261007000100000004 /* bone.cpp */,
 				F20A20260920000100000001 /* physicsbody.cpp */,
 				F20A20260923000500000001 /* particle.cpp */,
 				F22C20260922000100000001 /* collider.cpp */,
@@ -1381,6 +1415,8 @@
 				ABF3CF0F1827CE58008D0C8D /* vm.js */,
 				ABD2E13717F1154500B5F352 /* pdg_natives.h */,
 				ABFB470217EBE93800F95C24 /* pdg_jsc_ios.cpp */,
+				ED2026100700030000000003 /* pdg_ios_network.mm */,
+				ED2026100700030000000004 /* pdg_ios_network.h */,
 				ABFB470317EBE93800F95C24 /* pdg_jsc_ios.h */,
 			);
 			name = "jsc-ios";
@@ -1416,6 +1452,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = AB7E802A17E6334700C9BA8F /* Build configuration list for PBXNativeTarget "pdg-js" */;
 			buildPhases = (
+				ED2026100800010000000001 /* Build native WebTransport */,
 				AB7E7FCA17E6334700C9BA8F /* Sources */,
 				AB7E802017E6334700C9BA8F /* Frameworks */,
 				AB7E802717E6334700C9BA8F /* Resources */,
@@ -1439,6 +1476,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = ABE5AFB418256D150030BDBB /* Build configuration list for PBXNativeTarget "pdg-js-test" */;
 			buildPhases = (
+				ED2026100800010000000001 /* Build native WebTransport */,
 				ABE5AF4718256D150030BDBB /* Sources */,
 				ABE5AFA218256D150030BDBB /* Frameworks */,
 				ABE5AFAC18256D150030BDBB /* Resources */,
@@ -1544,6 +1582,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		ED2026100800010000000001 /* Build native WebTransport */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = ();
+			inputPaths = ();
+			name = "Build native WebTransport";
+			outputPaths = ("$(BUILT_PRODUCTS_DIR)/webtransport/libpdg_webtransport_all.a",);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../tools/build-webtransport-ios.sh\"\nmkdir -p \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"\n/usr/bin/ditto \"${BUILT_PRODUCTS_DIR}/webtransport/THIRD_PARTY_NOTICES.txt\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/WebTransport-Licenses.txt\"\n";
+		};
+
 		ED1000000000000000000040 /* Copy iOS test support files */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -1579,6 +1630,9 @@
 			files = (
 				F1A0001026A1000000000001 /* audio_cleanup_manager.cpp in Sources */,
 				ABF1952917B9A23A007B2570 /* animated.cpp in Sources */,
+				F19A20261003000100000003 /* camera.cpp in Sources */,
+				F19A20261007000200000003 /* scene.cpp in Sources */,
+				F19A20261007000100000003 /* bone.cpp in Sources */,
 				F20A20260920000100000004 /* physicsbody.cpp in Sources */,
 				F20A20260923000500000004 /* particle.cpp in Sources */,
 				F22C20260922000100000004 /* collider.cpp in Sources */,
@@ -1683,8 +1737,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F1A0020026A2000000000001 /* attributes.cpp in Sources */,
+				F1A0020026A2000000000099 /* animatedattributes.cpp in Sources */,
+				F1A0020126A2000000000001 /* drawing.cpp in Sources */,
+				F1A0020226A2000000000001 /* font-fallback.cpp in Sources */,
+				F1A0020326A2000000000001 /* imagecache-opengl.cpp in Sources */,
+				F1A0020426A2000000000001 /* imagecache-opengl-v2.cpp in Sources */,
+				F1A0020526A2000000000001 /* opengl-state-cache.cpp in Sources */,
+				F1A0020626A2000000000001 /* polygon.cpp in Sources */,
+				F1A0020726A2000000000001 /* port-renderer.cpp in Sources */,
+				F1A0020926A2000000000001 /* tinyxml2.cpp in Sources */,
+				F1A0020A26A2000000000001 /* pugixml.cpp in Sources */,
+				F1A0020B26A2000000000001 /* tinyxmlspriterfiledocumentwrapper.cpp in Sources */,
+				F1A0020C26A2000000000001 /* tinyxmlspriterfileelementwrapper.cpp in Sources */,
+				F1A0020D26A2000000000001 /* tinyxmlspriterfileattributewrapper.cpp in Sources */,
 				F1A0001226A1000000000001 /* audio_cleanup_manager.cpp in Sources */,
 				AB7E7FCB17E6334700C9BA8F /* animated.cpp in Sources */,
+				F19A20261003000100000001 /* camera.cpp in Sources */,
+				F19A20261007000200000001 /* scene.cpp in Sources */,
+				F19A20261007000100000001 /* bone.cpp in Sources */,
 				F20A20260920000100000002 /* physicsbody.cpp in Sources */,
 				F20A20260923000500000002 /* particle.cpp in Sources */,
 				F22C20260922000100000002 /* collider.cpp in Sources */,
@@ -1776,6 +1847,7 @@
 				AB7E801F17E6334700C9BA8F /* network-posix.cpp in Sources */,
 				ABEE90B017EB988700E90CCE /* pdg_jsc_support.cpp in Sources */,
 				ABFB470417EBE93800F95C24 /* pdg_jsc_ios.cpp in Sources */,
+				ED2026100700030000000001 /* pdg_ios_network.mm in Sources */,
 				AB53E82B17F761E000B30B66 /* color.cpp in Sources */,
 				AB2A82CE1801A89700168FEB /* gles-hacks.c in Sources */,
 				AB2A82D01801A89700168FEB /* glues_quad.c in Sources */,
@@ -1806,6 +1878,9 @@
 				F1A0020D26A2000000000001 /* tinyxmlspriterfileattributewrapper.cpp in Sources */,
 				F1A0001326A1000000000001 /* audio_cleanup_manager.cpp in Sources */,
 				ABE5AF4918256D150030BDBB /* animated.cpp in Sources */,
+				F19A20261003000100000002 /* camera.cpp in Sources */,
+				F19A20261007000200000002 /* scene.cpp in Sources */,
+				F19A20261007000100000002 /* bone.cpp in Sources */,
 				F20A20260920000100000003 /* physicsbody.cpp in Sources */,
 				F20A20260923000500000003 /* particle.cpp in Sources */,
 				F22C20260922000100000003 /* collider.cpp in Sources */,
@@ -1897,6 +1972,7 @@
 				ABE5AF9A18256D150030BDBB /* network-posix.cpp in Sources */,
 				ABE5AF9B18256D150030BDBB /* pdg_jsc_support.cpp in Sources */,
 				ABE5AF9C18256D150030BDBB /* pdg_jsc_ios.cpp in Sources */,
+				ED2026100700030000000002 /* pdg_ios_network.mm in Sources */,
 				ABE5AF9D18256D150030BDBB /* color.cpp in Sources */,
 				ABE5AF9E18256D150030BDBB /* gles-hacks.c in Sources */,
 				ABE5AF9F18256D150030BDBB /* glues_quad.c in Sources */,
@@ -2038,8 +2114,10 @@
 		AB7E802B17E6334700C9BA8F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				OTHER_LDFLAGS = ("$(inherited)", "$(BUILT_PRODUCTS_DIR)/webtransport/libpdg_webtransport_all.a", "-framework", Security,);
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					PDG_USE_WEBTRANSPORT,
 					"PDG_PROJECT=PDG_PROJECT_IOS_JS_APP",
 					"DEBUG=1",
 					"$(inherited)",
@@ -2073,8 +2151,10 @@
 		AB7E802C17E6334700C9BA8F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				OTHER_LDFLAGS = ("$(inherited)", "$(BUILT_PRODUCTS_DIR)/webtransport/libpdg_webtransport_all.a", "-framework", Security,);
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					PDG_USE_WEBTRANSPORT,
 					"PDG_PROJECT=PDG_PROJECT_IOS_JS_APP",
 					NDEBUG,
 					"$(inherited)",
@@ -2108,8 +2188,10 @@
 		ABE5AFB518256D150030BDBB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				OTHER_LDFLAGS = ("$(inherited)", "$(BUILT_PRODUCTS_DIR)/webtransport/libpdg_webtransport_all.a", "-framework", Security,);
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					PDG_USE_WEBTRANSPORT,
 					"PDG_PROJECT=PDG_PROJECT_IOS_JS_APP",
 					"DEBUG=1",
 					"$(inherited)",
@@ -2144,8 +2226,10 @@
 		ABE5AFB618256D150030BDBB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				OTHER_LDFLAGS = ("$(inherited)", "$(BUILT_PRODUCTS_DIR)/webtransport/libpdg_webtransport_all.a", "-framework", Security,);
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					PDG_USE_WEBTRANSPORT,
 					"PDG_PROJECT=PDG_PROJECT_IOS_JS_APP",
 					NDEBUG,
 					"$(inherited)",

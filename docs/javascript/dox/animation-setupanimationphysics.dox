@@ -1,5 +1,5 @@
 /**
-\fn pdg::Sprite::setupAnimationPhysics(object definition)
+\fn pdg::Sprite::setupAnimationPhysics(AnimationPhysicsDefinition definition)
 \brief Create a physical rig for the current pose.
 
 Validates the definition before creating bodies and joints. Creates an ordinary root PhysicsBody if needed, temporarily makes it kinematic, and suspends its collision filter. Clip/controller evaluation supplies the desired pose; physical bodies then supply the displayed result.

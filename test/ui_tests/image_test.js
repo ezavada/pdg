@@ -26,6 +26,7 @@ console.log("Number of screens detected:", numScreens);
 // Store created ports for cleanup
 var ports = [];
 var testImages = [];
+var textureSources = null;
 var currentTest = pdg.visualTestSession ? pdg.visualTestSession.page : 0;
 var frameCount = 0;
 
@@ -414,7 +415,7 @@ function runTransparencyTest(port) {
     var textAttrs = new pdg.Attributes().textSize(20).textStyle(pdg.textStyle_Centered + pdg.textStyle_Bold).fillColor("yellow");
     port.drawText(testTitle, titlePoint, textAttrs);
     
-    var img = testImages[2]; // Use rocks image
+    var img = testImages[2]; // Use earth map image
     var baseX = 50;
     var baseY = 120;
     
@@ -442,33 +443,55 @@ function runTransparencyTest(port) {
     }
 }
 
-// Test 5: Texture drawing
-function runTextureTest(port) {
-    var testTitle = "Image Texture Test";
-    var titlePoint = new pdg.Point(port.getDrawingArea().width()/2, 60);
-    var textAttrs = new pdg.Attributes().textSize(20).textStyle(pdg.textStyle_Centered + pdg.textStyle_Bold).fillColor("yellow");
-        port.drawText(testTitle, titlePoint, textAttrs);
-    
-    var img = testImages[3]; // Use tiles image
-    
-    // Draw as texture filling different areas
-    var textureAreas = [
-        { rect: new pdg.Rect(50, 120, 200, 150), label: "Small Texture" },
-        { rect: new pdg.Rect(300, 120, 300, 200), label: "Large Texture" },
-        { rect: new pdg.Rect(650, 120, 150, 300), label: "Tall Texture" }
-    ];
-    
-    textureAreas.forEach(function(area) {
-        //port.drawTexture(img, area.rect);  // FIXME: texture drawing needs to be reimplemented
-        var textAttrs = new pdg.Attributes().textSize(12).textStyle(pdg.textStyle_Plain).fillColor("white");
-        port.drawText(area.label, new pdg.Point(area.rect.left, area.rect.bottom + 5), textAttrs);
+// Test 5: Repeat genuinely different-sized source images over equal-sized areas.
+function createTextureSources() {
+    if (textureSources) return;
+    textureSources = [32, 64, 128].map(function(size, index) {
+        var surface = pdg.gfx.createOffscreenPort(new pdg.Rect(size, size));
+        if (!surface) throw Error("Could not create texture source surface");
+        try {
+            surface.drawImage(testImages[3], surface.getDrawingArea(),
+                new pdg.Attributes().fitType(pdg.fit_Fill));
+            return {image: new pdg.Image(surface, pdg.CopyPixels),
+                label: ["Small", "Medium", "Large"][index]};
+        } finally {
+            pdg.gfx.closeGraphicsPort(surface);
+        }
     });
-    
-    // Draw some regular images for comparison
-    var regularRect = new pdg.Rect(50, 350, 100, 100);
-    port.drawImage(img, regularRect, new pdg.Attributes());
-    var textAttrs = new pdg.Attributes().textSize(12).textStyle(pdg.textStyle_Plain).fillColor("white");
-    port.drawText("Regular Image", new pdg.Point(regularRect.left, regularRect.bottom + 5), textAttrs);
+}
+
+function runTextureTest(port) {
+    createTextureSources();
+    var area = port.getDrawingArea();
+    var textAttrs = new pdg.Attributes().textSize(20)
+        .textStyle(pdg.textStyle_Centered + pdg.textStyle_Bold).fillColor("yellow");
+    port.drawText("Image Texture Test", new pdg.Point(area.width() / 2, 60), textAttrs);
+
+    var margin = 24;
+    var width = (area.width() - margin * 4) / 3;
+    var height = Math.min(360, area.height() - 360);
+    var labelAttrs = new pdg.Attributes().textSize(14)
+        .textStyle(pdg.textStyle_Centered).fillColor("white");
+    var frameAttrs = new pdg.Attributes().lineColor("silver").lineThickness(1);
+    textureSources.forEach(function(source, index) {
+        var img = source.image;
+        var x = margin + index * (width + margin);
+        var center = x + width / 2;
+        var destination = new pdg.Rect(new pdg.Point(x, 140), width, height);
+        port.drawText(source.label + " source: " + img.getWidth() + " x " + img.getHeight(),
+            new pdg.Point(center, 118), labelAttrs);
+        port.drawImage(img, destination, new pdg.Attributes().fitType(pdg.fit_Tile));
+        port.drawRect(destination, frameAttrs);
+
+        // Show the source at its actual size beneath its repeated texture.
+        var previewY = destination.bottom + 48;
+        port.drawText("One source image (actual size)",
+            new pdg.Point(center, previewY - 14), labelAttrs);
+        var preview = new pdg.Rect(new pdg.Point(center - img.getWidth() / 2, previewY),
+            img.getWidth(), img.getHeight());
+        port.drawImage(img, preview, new pdg.Attributes().fitType(pdg.fit_Fill));
+        port.drawRect(preview, frameAttrs);
+    });
 }
 
 function runNextTest() {

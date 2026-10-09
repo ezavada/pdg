@@ -4,6 +4,7 @@
 #define ATTRIBUTES_ENDIF %#endif
 // Shared Attributes surface, instantiated with correctly typed native wrappers.
 #define HAS_ATTRIBUTES_METHODS(klass) \
+    METHODS_FROM(klass, Attributes, \
         HAS_METHOD(klass, "withAppearance", WithAppearance) CR \
         HAS_METHOD(klass, "lineColor", LineColor) CR \
         HAS_METHOD(klass, "lineThickness", LineThickness) CR \
@@ -66,11 +67,12 @@ ATTRIBUTES_ENDIF CR CR \
         HAS_METHOD(klass, "getPolarOffset", GetPolarOffset) CR \
         HAS_METHOD(klass, "getLightOffset", GetLightOffset) CR \
         HAS_METHOD(klass, "getAmbientLight", GetAmbientLight) CR \
-        HAS_METHOD(klass, "getTexture", GetTexture)
+        HAS_METHOD(klass, "getTexture", GetTexture) \
+    )
 
 #define ATTRIBUTES_METHODS_IMPL(klass, scriptClass) \
 METHOD_IMPL(klass, WithAppearance) CR \
-    METHOD_SIGNATURE("", [object Attributes], 2, ([object Attributes] overrides, boolean textOnly = false)); CR \
+    METHOD_SIGNATURE("", [object Attributes], 2, ([object Attributes const&] overrides, boolean textOnly = false)); CR \
     REQUIRE_ARG_MIN_COUNT(1); CR \
     REQUIRE_ATTRIBUTES_ARG(1, overrides); CR \
     OPTIONAL_BOOL_ARG(2, textOnly, false); CR \
@@ -78,7 +80,7 @@ METHOD_IMPL(klass, WithAppearance) CR \
     RETURN_CPP_OBJECT(result, Attributes); CR \
     END CR \
 METHOD_IMPL(klass, GetLineColor) CR \
-    METHOD_SIGNATURE("", [object Color], 0, ()); CR \
+    METHOD_SIGNATURE("", [object Color const&], 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
     Color color = const_cast<Color&>(self->getLineColor()); CR \
     RETURN_COLOR(color); CR \
@@ -102,7 +104,7 @@ METHOD_IMPL(klass, GetLineStyle) CR \
     RETURN_UINT32(style); CR \
     END CR \
 METHOD_IMPL(klass, GetFillColor) CR \
-    METHOD_SIGNATURE("", [object Color], 0, ()); CR \
+    METHOD_SIGNATURE("", [object Color const&], 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
     Color color = const_cast<Color&>(self->getFillColor()); CR \
     RETURN_COLOR(color); CR \
@@ -126,31 +128,31 @@ METHOD_IMPL(klass, GetGradientType) CR \
     RETURN_UINT32(type); CR \
     END CR \
 METHOD_IMPL(klass, GetGradientStart) CR \
-    METHOD_SIGNATURE("", [object Point], 0, ()); CR \
+    METHOD_SIGNATURE("", [object Point const&], 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
     Point start = const_cast<Point&>(self->getGradientStart()); CR \
     RETURN_POINT(start); CR \
     END CR \
 METHOD_IMPL(klass, GetGradientEnd) CR \
-    METHOD_SIGNATURE("", [object Point], 0, ()); CR \
+    METHOD_SIGNATURE("", [object Point const&], 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
     Point end = const_cast<Point&>(self->getGradientEnd()); CR \
     RETURN_POINT(end); CR \
     END CR \
 METHOD_IMPL(klass, GetGradientStartColor) CR \
-    METHOD_SIGNATURE("", [object Color], 0, ()); CR \
+    METHOD_SIGNATURE("", [object Color const&], 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
     Color color = const_cast<Color&>(self->getGradientStartColor()); CR \
     RETURN_COLOR(color); CR \
     END CR \
 METHOD_IMPL(klass, GetGradientEndColor) CR \
-    METHOD_SIGNATURE("", [object Color], 0, ()); CR \
+    METHOD_SIGNATURE("", [object Color const&], 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
     Color color = const_cast<Color&>(self->getGradientEndColor()); CR \
     RETURN_COLOR(color); CR \
     END CR \
 METHOD_IMPL(klass, GetRadialGradientCenter) CR \
-    METHOD_SIGNATURE("", [object Point], 0, ()); CR \
+    METHOD_SIGNATURE("", [object Point const&], 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
     Point center = const_cast<Point&>(self->getRadialGradientCenter()); CR \
     RETURN_POINT(center); CR \
@@ -162,13 +164,13 @@ METHOD_IMPL(klass, GetRadialGradientRadius) CR \
     RETURN_NUMBER(radius); CR \
     END CR \
 METHOD_IMPL(klass, GetRadialGradientCenterColor) CR \
-    METHOD_SIGNATURE("", [object Color], 0, ()); CR \
+    METHOD_SIGNATURE("", [object Color const&], 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
     Color color = const_cast<Color&>(self->getRadialGradientCenterColor()); CR \
     RETURN_COLOR(color); CR \
     END CR \
 METHOD_IMPL(klass, GetRadialGradientEndColor) CR \
-    METHOD_SIGNATURE("", [object Color], 0, ()); CR \
+    METHOD_SIGNATURE("", [object Color const&], 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
     Color color = const_cast<Color&>(self->getRadialGradientEndColor()); CR \
     RETURN_COLOR(color); CR \
@@ -207,7 +209,7 @@ METHOD_IMPL(klass, GetBlendMode) CR \
     END CR \
 METHOD_IMPL(klass, LineColor) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([object Color] color)); CR \
+    METHOD_SIGNATURE("sets the line color for strokes and outlines", [this], 1, ({[object Color const&] color|string colorName|number rgba})); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_COLOR_ARG(1, color); CR \
     self->lineColor(color); CR \
@@ -216,7 +218,7 @@ METHOD_IMPL(klass, LineColor) CR \
     END CR \
 METHOD_IMPL(klass, LineThickness) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([number float] thickness)); CR \
+    METHOD_SIGNATURE("sets the thickness of line strokes in pixels", [this], 1, ([number float] thickness)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_NUMBER_ARG(1, thickness); CR \
     self->lineThickness(thickness); CR \
@@ -225,7 +227,7 @@ METHOD_IMPL(klass, LineThickness) CR \
     END CR \
 METHOD_IMPL(klass, LineOpacity) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([number float] opacity)); CR \
+    METHOD_SIGNATURE("sets the opacity for line strokes (0.0 to 1.0)", [this], 1, ([number float] opacity)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_NUMBER_ARG(1, opacity); CR \
     self->lineOpacity(opacity); CR \
@@ -234,7 +236,7 @@ METHOD_IMPL(klass, LineOpacity) CR \
     END CR \
 METHOD_IMPL(klass, SetLineStyle) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([number int] lineStyle)); CR \
+    METHOD_SIGNATURE("sets the style of line strokes (solid, dashed, etc.)", [this], 1, ([number int] lineStyle)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_NUMBER_ARG(1, lineStyle); CR \
     self->lineStyle(static_cast<LineStyle>(lineStyle)); CR \
@@ -243,7 +245,7 @@ METHOD_IMPL(klass, SetLineStyle) CR \
     END CR \
 METHOD_IMPL(klass, FillColor) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([object Color] color)); CR \
+    METHOD_SIGNATURE("sets the fill color for shapes and drawings", [this], 1, ({[object Color const&] color|string colorName|number rgba})); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_COLOR_ARG(1, color); CR \
     self->fillColor(color); CR \
@@ -252,7 +254,7 @@ METHOD_IMPL(klass, FillColor) CR \
     END CR \
 METHOD_IMPL(klass, FillOpacity) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([number float] opacity)); CR \
+    METHOD_SIGNATURE("sets the opacity for fill operations (0.0 to 1.0)", [this], 1, ([number float] opacity)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_NUMBER_ARG(1, opacity); CR \
     self->fillOpacity(opacity); CR \
@@ -261,7 +263,7 @@ METHOD_IMPL(klass, FillOpacity) CR \
     END CR \
 METHOD_IMPL(klass, FillGradient) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 4, ([object Point] start, [object Color] startColor, [object Point] end, [object Color] endColor)); CR \
+    METHOD_SIGNATURE("sets a linear gradient fill from start point to end point", [this], 4, ([object Point const&] start, {[object Color const&] startColor|string startColorName|number startRGBA}, [object Point const&] end, {[object Color const&] endColor|string endColorName|number endRGBA})); CR \
     REQUIRE_ARG_COUNT(4); CR \
     REQUIRE_POINT_ARG(1, start); CR \
     REQUIRE_COLOR_ARG(2, startColor); CR \
@@ -273,7 +275,7 @@ METHOD_IMPL(klass, FillGradient) CR \
     END CR \
 METHOD_IMPL(klass, FillRadialGradient) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 4, ([object Point] center, [object Color] centerColor, [number float] radius, [object Color] endColor)); CR \
+    METHOD_SIGNATURE("Create a radial gradient fill from center point to outer radius", [this], 4, ([object Point const&] center, {[object Color const&] centerColor|string centerColorName|number centerRGBA}, [number float] radius, {[object Color const&] endColor|string endColorName|number endRGBA})); CR \
     REQUIRE_ARG_COUNT(4); CR \
     REQUIRE_POINT_ARG(1, center); CR \
     REQUIRE_COLOR_ARG(2, centerColor); CR \
@@ -285,7 +287,7 @@ METHOD_IMPL(klass, FillRadialGradient) CR \
     END CR \
 METHOD_IMPL(klass, RoundedCorners) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([number float] radius)); CR \
+    METHOD_SIGNATURE("sets the radius for rounded corners", [this], 1, ([number float] radius)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_NUMBER_ARG(1, radius); CR \
     self->roundedCorners(radius); CR \
@@ -294,7 +296,7 @@ METHOD_IMPL(klass, RoundedCorners) CR \
     END CR \
 METHOD_IMPL(klass, Translation) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([object Offset] offset)); CR \
+    METHOD_SIGNATURE("sets the translation offset for transformations", [this], 1, ([object Offset const&] offset)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_OFFSET_ARG(1, offset); CR \
     self->translation(offset); CR \
@@ -303,7 +305,7 @@ METHOD_IMPL(klass, Translation) CR \
     END CR \
 METHOD_IMPL(klass, Rotation) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 2, ([number float] radians, [object Point] center = Point(0,0))); CR \
+    METHOD_SIGNATURE("sets the rotation angle and center point for transformations", [this], 2, ([number float] radians, [object Point const&] center = Point(0,0))); CR \
     REQUIRE_ARG_MIN_COUNT(1); CR \
     REQUIRE_NUMBER_ARG(1, radians); CR \
     OPTIONAL_POINT_ARG(2, center, Point(0, 0)); CR \
@@ -313,7 +315,7 @@ METHOD_IMPL(klass, Rotation) CR \
     END CR \
 METHOD_IMPL(klass, Scale) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 3, ([number float] xFactor, [number float] yFactor = xFactor, [object Point] center = Point(0,0))); CR \
+    METHOD_SIGNATURE("sets the scaling factors for x and y axes", [this], 3, ([number float] xFactor, [number float] yFactor = xFactor, [object Point const&] center = Point(0,0))); CR \
     REQUIRE_ARG_MIN_COUNT(1); CR \
     REQUIRE_NUMBER_ARG(1, xFactor); CR \
     OPTIONAL_NUMBER_ARG(2, yFactor, xFactor); CR \
@@ -328,7 +330,7 @@ METHOD_IMPL(klass, Scale) CR \
     END CR \
 METHOD_IMPL(klass, Skew) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 3, ([number float] xSkew, [number float] ySkew, [object Point] center = Point(0,0))); CR \
+    METHOD_SIGNATURE("sets the skew transformation for x and y axes", [this], 3, ([number float] xSkew, [number float] ySkew, [object Point const&] center = Point(0,0))); CR \
     REQUIRE_ARG_MIN_COUNT(2); CR \
     REQUIRE_NUMBER_ARG(1, xSkew); CR \
     REQUIRE_NUMBER_ARG(2, ySkew); CR \
@@ -339,7 +341,7 @@ METHOD_IMPL(klass, Skew) CR \
     END CR \
 METHOD_IMPL(klass, Transform) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([array number] matrix)); CR \
+    METHOD_SIGNATURE("sets the transformation matrix directly", [this], 1, ([array number] matrix)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     ATTRIBUTES_IFDEF PDG_USING_JAVASCRIPT_CORE CR \
     if (!JSValueIsArray(ctx, ARGV[0])) { CR \
@@ -396,7 +398,7 @@ METHOD_IMPL(klass, Transform) CR \
     END CR \
 METHOD_IMPL(klass, SetTransform) CR \
     try { CR \
-    METHOD_SIGNATURE("", [object scriptClass], 1, ([array number] matrix)); CR \
+    METHOD_SIGNATURE("Replace the affine transform immediately.", [this], 1, ([array number] matrix)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     ATTRIBUTES_IFDEF PDG_USING_JAVASCRIPT_CORE CR \
     if (!JSValueIsArray(ctx, ARGV[0])) { CR \
@@ -453,7 +455,7 @@ METHOD_IMPL(klass, SetTransform) CR \
     END CR \
 METHOD_IMPL(klass, SetBlendMode) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([number int] blendMode)); CR \
+    METHOD_SIGNATURE("sets the blend mode for rendering operations", [this], 1, ([number int] blendMode)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_NUMBER_ARG(1, blendMode); CR \
     self->blendMode(static_cast<BlendMode>(blendMode)); CR \
@@ -462,7 +464,7 @@ METHOD_IMPL(klass, SetBlendMode) CR \
     END CR \
 METHOD_IMPL(klass, TextSize) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([number float] size)); CR \
+    METHOD_SIGNATURE("Sets the text size in points for drawing text", [this], 1, ([number float] size)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_NUMBER_ARG(1, size); CR \
     self->textSize(size); CR \
@@ -471,7 +473,7 @@ METHOD_IMPL(klass, TextSize) CR \
     END CR \
 METHOD_IMPL(klass, TextStyle) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([number int] style)); CR \
+    METHOD_SIGNATURE("Sets text style flags (bold, italic, underline, alignment)", [this], 1, ([number int] style)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_NUMBER_ARG(1, style); CR \
     self->textStyle(static_cast<uint32>(style)); CR \
@@ -481,7 +483,7 @@ METHOD_IMPL(klass, TextStyle) CR \
 ATTRIBUTES_IFNDEF PDG_NO_GUI CR \
 METHOD_IMPL(klass, SetFont) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([object Font] font)); CR \
+    METHOD_SIGNATURE("Sets the font to use for drawing text", [this], 1, ([object Font*] font = null)); CR \
     OPTIONAL_CPP_OBJECT_ARG(1, font, Font, 0); CR \
     self->font(font); CR \
     RETURN_THIS; CR \
@@ -490,7 +492,7 @@ METHOD_IMPL(klass, SetFont) CR \
 ATTRIBUTES_ENDIF CR \
 METHOD_IMPL(klass, Frame) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([number int] frame)); CR \
+    METHOD_SIGNATURE("Sets which frame of an ImageStrip to draw", [this], 1, ([number int] frame)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_NUMBER_ARG(1, frame); CR \
     self->frame(frame); CR \
@@ -499,7 +501,7 @@ METHOD_IMPL(klass, Frame) CR \
     END CR \
 METHOD_IMPL(klass, SetFitType) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([number int] fit)); CR \
+    METHOD_SIGNATURE("Sets how an image should be fitted into a target rectangle", [this], 1, ([number int] fit)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_NUMBER_ARG(1, fit); CR \
     self->fitType(static_cast<FitType>(fit)); CR \
@@ -508,7 +510,7 @@ METHOD_IMPL(klass, SetFitType) CR \
     END CR \
 METHOD_IMPL(klass, ClipOverflow) CR \
     try { CR \
-    METHOD_SIGNATURE("", [object scriptClass], 1, (boolean clip)); CR \
+    METHOD_SIGNATURE("Confine drawing overflow to the operation's bounds.", [this], 1, (boolean clip)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_BOOL_ARG(1, clip); CR \
     self->clipOverflow(clip); CR \
@@ -517,7 +519,7 @@ METHOD_IMPL(klass, ClipOverflow) CR \
     END CR \
 METHOD_IMPL(klass, Subsection) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([object Rect] section)); CR \
+    METHOD_SIGNATURE("Sets a subsection of an image to draw", [this], 1, ([object Rect const&] section)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_RECT_ARG(1, section); CR \
     self->subsection(section); CR \
@@ -526,7 +528,7 @@ METHOD_IMPL(klass, Subsection) CR \
     END CR \
 METHOD_IMPL(klass, SphereRotation) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([number float] rotation)); CR \
+    METHOD_SIGNATURE("Sets the rotation angle in radians for a textured sphere", [this], 1, ([number float] rotation)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_NUMBER_ARG(1, rotation); CR \
     self->sphereRotation(rotation); CR \
@@ -535,7 +537,7 @@ METHOD_IMPL(klass, SphereRotation) CR \
     END CR \
 METHOD_IMPL(klass, PolarOffset) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([object Offset] offset)); CR \
+    METHOD_SIGNATURE("Sets the polar offset for rotating a textured sphere", [this], 1, ([object Offset const&] offset)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_OFFSET_ARG(1, offset); CR \
     self->polarOffset(offset); CR \
@@ -544,7 +546,7 @@ METHOD_IMPL(klass, PolarOffset) CR \
     END CR \
 METHOD_IMPL(klass, LightOffset) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([object Offset] offset)); CR \
+    METHOD_SIGNATURE("Sets light source with spherical coordinates in radians", [this], 1, ([object Offset const&] offset)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_OFFSET_ARG(1, offset); CR \
     self->lightOffset(offset); CR \
@@ -553,7 +555,7 @@ METHOD_IMPL(klass, LightOffset) CR \
     END CR \
 METHOD_IMPL(klass, AmbientLight) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([object Color] color)); CR \
+    METHOD_SIGNATURE("Set the ambient light.", [this], 1, ({[object Color const&] color|string colorName|number rgba})); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_COLOR_ARG(1, color); CR \
     self->ambientLight(color); CR \
@@ -562,7 +564,7 @@ METHOD_IMPL(klass, AmbientLight) CR \
     END CR \
 METHOD_IMPL(klass, Texture) CR \
     try { CR \
-    METHOD_SIGNATURE("", undefined, 1, ([object Image] texture)); CR \
+    METHOD_SIGNATURE("Sets the texture image to use for drawing a sphere", [this], 1, ([object Image*] texture)); CR \
     REQUIRE_ARG_COUNT(1); CR \
     REQUIRE_CPP_OBJECT_ARG(1, texture, Image); CR \
     self->texture(texture); CR \
@@ -583,7 +585,7 @@ METHOD_IMPL(klass, GetTextStyle) CR \
     END CR \
 ATTRIBUTES_IFNDEF PDG_NO_GUI CR \
 METHOD_IMPL(klass, GetFont) CR \
-    METHOD_SIGNATURE("", [object Font], 0, ()); CR \
+    METHOD_SIGNATURE("", [object Font*], 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
     Font* font = self->getFont(); CR \
     RETURN_CPP_OBJECT(font, Font); CR \
@@ -608,7 +610,7 @@ METHOD_IMPL(klass, GetClipOverflow) CR \
     RETURN_BOOL(clip); CR \
     END CR \
 METHOD_IMPL(klass, GetSubsection) CR \
-    METHOD_SIGNATURE("", [object Rect], 0, ()); CR \
+    METHOD_SIGNATURE("", [object Rect const&], 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
     Rect section = self->getSubsection(); CR \
     RETURN_RECT(section); CR \
@@ -620,25 +622,25 @@ METHOD_IMPL(klass, GetSphereRotation) CR \
     RETURN_NUMBER(rotation); CR \
     END CR \
 METHOD_IMPL(klass, GetPolarOffset) CR \
-    METHOD_SIGNATURE("", [object Offset], 0, ()); CR \
+    METHOD_SIGNATURE("", [object Offset const&], 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
     Offset offset = const_cast<Offset&>(self->getPolarOffset()); CR \
     RETURN_OFFSET(offset); CR \
     END CR \
 METHOD_IMPL(klass, GetLightOffset) CR \
-    METHOD_SIGNATURE("", [object Offset], 0, ()); CR \
+    METHOD_SIGNATURE("", [object Offset const&], 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
     Offset offset = const_cast<Offset&>(self->getLightOffset()); CR \
     RETURN_OFFSET(offset); CR \
     END CR \
 METHOD_IMPL(klass, GetAmbientLight) CR \
-    METHOD_SIGNATURE("", [object Color], 0, ()); CR \
+    METHOD_SIGNATURE("", [object Color const&], 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
     Color color = const_cast<Color&>(self->getAmbientLight()); CR \
     RETURN_COLOR(color); CR \
     END CR \
 METHOD_IMPL(klass, GetTexture) CR \
-    METHOD_SIGNATURE("", [object Image], 0, ()); CR \
+    METHOD_SIGNATURE("", [object Image*], 0, ()); CR \
     REQUIRE_ARG_COUNT(0); CR \
     Image* texture = self->getTexture(); CR \
     RETURN_CPP_OBJECT(texture, Image); CR \

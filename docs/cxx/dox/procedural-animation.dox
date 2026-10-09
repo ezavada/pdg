@@ -1,0 +1,96 @@
+/**
+\page native_procedural_animation Procedural jiggle and FABRIK
+
+Use AnimationJiggle and AnimationFABRIK with Sprite's enabled animation pose,
+or with an independent contiguous Part chain. The numeric solvers
+solveAnimationJiggle(), stepJiggleTarget() and solveAnimationFABRIK() also work on
+AnimationPose values without a Sprite. Springs use simulation seconds, frequency
+in Hz, radians for angles and world engine units for displacement/acceleration.
+
+For chain jiggle, AnimationJiggle::chain includes the root bone. Native Part
+setJiggle() instead accepts following Parts separately; the receiver is the root.
+Set a positive length for terminal independent Parts. AnimationJiggle::joints
+provides sparse overrides identified by bone ID (stable Part ID for Part adapters).
+Unspecified overrides inherit the controller's values. Native settings setters
+accept a complete configuration; edit the value returned by get*JiggleOptions()
+to preserve existing tuning. JavaScript setters accept sparse patches. Defaults and numeric
+ranges are declared by AnimationJiggle and validated by validateAnimationJiggle().
+
+IK-target jiggle requires an existing two-bone controller, identified by
+AnimationJiggle::ik for Sprite. Filtering happens in world coordinates before the
+IK solve. The stored desired target is unchanged. Physical Part IK drives accept
+these filtered targets and continue to resolve contact through their existing
+bodies and colliders. Chain jiggle does not create bodies or query obstacles.
+
+FABRIK changes joint rotations, preserves offsets and endpoint orientation, and
+returns AnimationFABRIKResult. At most maxIterations passes run, including for
+unreachable targets. Sprite limits intersect with live Bone rotation limits.
+Part solvers use live setIKLimits(). Part parent frames and local scales must be
+uniform and nonsingular. Invalid configurations throw before editing output.
+
+Modifiers run by stage, order, then registration. IK-target jiggle is a decorator;
+chain jiggle is post-constraint. Built-in controllers reject competing ownership
+of the same rotating joints. Springs keep numerical state separate from the
+animated base, so repeated evaluation does not compound the effect. Reading
+state or pose advances no simulation. Disabled springs freeze and reenabling
+reseeds. set*Influence() can fade linearly in simulation seconds.
+
+Full Sprite/Layer snapshots preserve native controllers, state, fades and Part
+base rotations. Incremental records require unchanged topology. JiggleState
+restores numerical state only; use full serialization to transfer configuration
+and animated base motion together.
+
+\par Native example
+\code{.cpp}
+pdg::AnimationJiggle settings;
+settings.mode = pdg::jiggleMode_Chain;
+settings.length = 12;
+settings.frequency = 2;
+settings.dampingRatio = 0.3;
+root->setJiggle(settings, {middle, tip});
+root->kickJiggle(2, 0, 1); // Add 2 radians/second to middle.
+\endcode
+
+\see pdg::Sprite::addAnimationJiggle(), pdg::Part::setJiggle(),
+pdg::Sprite::addAnimationFABRIK(), pdg::Part::solveFABRIK()
+*/
+
+/**
+\fn pdg::AnimationFABRIKResult pdg::solveAnimationFABRIK(AnimationPose &pose, const AnimationFABRIK &config, const AnimationTransform &root)
+\brief Solve a contiguous pose chain with bounded FABRIK iterations.
+\param pose Input and output pose; invalid inputs leave it unchanged.
+\param config Root-to-endpoint chain, target, influence, tolerance and optional per-joint local limits. See \ref native_procedural_animation.
+\param root Owning world transform; local targets use the first joint's parent frame.
+\return Full-solve and applied endpoint error, convergence, iteration count, limit and geometric reach diagnostics.
+*/
+
+/**
+\fn void pdg::validateAnimationJiggle(const AnimationJiggle &config)
+\brief Validate finite spring tuning, ranges and sparse override identities.
+\param config Jiggle configuration to check. Chain geometry is validated when solving.
+\throws std::invalid_argument Invalid settings, duplicate overrides or overrides outside the chain.
+*/
+
+/**
+\fn pdg::JiggleResult pdg::solveAnimationJiggle(AnimationPose &pose, const AnimationJiggle &config, JiggleState &state, double seconds, const AnimationTransform &root, const std::vector<double> &minimum, const std::vector<double> &maximum)
+\brief Advance individual world-heading springs and apply chain rotations atomically.
+\param pose Desired pose and resulting pose; local translations and scale are preserved.
+\param config Chain mode configuration. Each joint needs a positive declared, inferred or overridden lever length.
+\param state Persistent spring state; first evaluation seeds it from the desired pose.
+\param seconds Nonnegative simulation seconds. Zero evaluates output without integrating.
+\param root Owning world transform.
+\param minimum Optional live local angle lower limits, one per chain joint.
+\param maximum Matching upper limits; omit both arrays for no additional limits.
+\return Applied influence, consumed time, substeps, and reset/limit diagnostics.
+*/
+
+/**
+\fn pdg::JiggleResult pdg::stepJiggleTarget(const AnimationJiggle &config, JiggleState &state, double x, double y, double seconds)
+\brief Advance a world-space target spring and compute the influenced target.
+\param config IK-target jiggle tuning.
+\param state Persistent target position and velocity; first evaluation seeds from the target.
+\param x Desired world x coordinate.
+\param y Desired world y coordinate.
+\param seconds Nonnegative simulation seconds; zero does not integrate.
+\return Desired, filtered and effective positions, lag, consumed time and work/reset diagnostics.
+*/

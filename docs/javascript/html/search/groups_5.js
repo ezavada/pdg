@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['layers_0',['Sprites and layers',['../group___sprites.html',1,'']]]
+  ['key_20code_20constants_0',['Key Code Constants',['../group___key_codes.html',1,'']]]
 ];

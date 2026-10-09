@@ -1,0 +1,107 @@
+.TH "ISpriteDrawHelper" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ISpriteDrawHelper \- helper for drawing sprite overlays and add-on effects  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBISpriteDrawHelper\fP (function callback)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+helper for drawing sprite overlays and add-on effects 
+
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
+.RE
+.PP
+Implement this interface to do extra drawing stuff for a specific \fBSprite\fP then start using it by calling the sprite's setDrawHelper() method\&. You can only have one \fBSprite\fP Draw Helper attached to a particular sprite for normal drawing (before the sprite would normally draw) and one for post draw (after the sprite has been drawn)
+
+.PP
+For those coding in Javascript, there is an implementation of \fBISpriteDrawHelper\fP that maps a function definition to the draw call\&. So to create a helper:
+
+.PP
+.PP
+.nf
+const myHelper = new pdg\&.ISpriteDrawHelper(function(sprite, port) {
+                console\&.log("in my sprite draw helper for " + sprite );
+                const r = sprite\&.getLayer()\&.layerToPortRect(sprite\&.getBoundingBox());
+                port\&.drawRect(r, new pdg\&.Attributes()
+                                \&.fillColor(new pdg\&.Color("black"))
+                                \&.lineColor(new pdg\&.Color("white")));
+                return false;  // don't let sprite draw itself (ignored for post draw)
+});
+mySprite\&.setDrawHelper(myHelper);
+.fi
+.PP
+
+.PP
+For a helper with its own methods or state, declare a JavaScript class that extends \fR\fBpdg\&.ISpriteDrawHelper\fP\fP\&. The native interface takes a callback in its constructor; forward that callback to your \fRdraw()\fP method through \fRsuper()\fP:
+
+.PP
+.PP
+.nf
+class MyDrawHelperClass extends pdg\&.ISpriteDrawHelper {
+    constructor() {
+        super(function(sprite, port) {
+            return this\&.draw(sprite, port);
+        });
+    }
+
+    draw(sprite, port) {
+        console\&.log("Drawing sprite:", sprite);
+        return true; // allow normal sprite drawing
+    }
+}
+
+mySprite\&.setDrawHelper(new MyDrawHelperClass());
+.fi
+.PP
+.SS "Your Custom Function:"
+As you can see from the examples above, your \fBSprite\fP Draw Helper function (or draw() method) will be called with two parameters, and return a boolean: 
+.PP
+\fBParameters\fP
+.RS 4
+\fIsprite\fP the \fBSprite\fP that is being drawn 
+.br
+\fIport\fP the \fBPort\fP where the sprite should be drawn 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+\fBtrue\fP if the normal \fBSprite\fP drawing should happen; or \fBfalse\fP if the normal \fBSprite\fP drawing should be skipped\&. This return result only applies when called for pre-draw\&. If the helper is installed as a post-draw helper using setPostDrawHelper(), then the return result is ignored\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBSprite\&.setDrawHelper()\fP 
+.RE
+.PP
+
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "ISpriteDrawHelper (function callback)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRcallback:\fP \fBSpriteDrawCallback\fP\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

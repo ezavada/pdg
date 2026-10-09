@@ -1,19 +1,22 @@
 <map id="Sprite" name="Sprite">
-<area shape="rect" id="Node000001" title="Animated image frames, Spriter playback, and pose&#45;based animation extensions." alt="" coords="746,112,801,138"/>
-<area shape="rect" id="Node000002" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="501,5,599,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="614,26,669,42,723,68,747,89,766,113,761,111,743,92,720,72,667,47,614,31"/>
-<area shape="rect" id="Node000003" href="$classpdg_1_1_animated.html" title=" " alt="" coords="483,55,617,80"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="633,73,678,82,723,94,754,112,749,111,721,99,677,87,633,79"/>
-<area shape="rect" id="Node000004" href="$classpdg_1_1_animated_base.html" title=" " alt="" coords="308,55,414,80"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="429,65,485,67,480,68,430,70"/>
-<area shape="rect" id="Node000005" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="166,55,258,80"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="274,65,310,67,305,68,275,70"/>
-<area shape="rect" id="Node000006" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="5,55,117,80"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="131,65,168,66,163,69,133,70"/>
-<area shape="rect" id="Node000007" href="$classpdg_1_1_physics_body_ref.html" title=" " alt="" coords="474,104,626,145"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="642,122,748,125,742,125,642,127"/>
-<area shape="rect" id="Node000008" href="$classpdg_1_1_collider_ref.html" title=" " alt="" coords="463,169,637,195"/>
-<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="652,168,721,151,750,139,755,137,723,156,653,173"/>
-<area shape="rect" id="Node000009" href="$classpdg_1_1_user_data.html" title=" " alt="" coords="511,220,589,246"/>
-<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="604,229,663,219,693,209,720,195,735,182,747,167,764,139,769,136,752,170,739,186,723,199,695,214,664,225,605,234"/>
+<area shape="rect" id="Node000001" title="Animated image frames, Spriter playback, and pose&#45;based animation extensions." alt="" coords="832,164,888,190"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="501,44,599,70"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="600,73,835,166,829,167,599,78"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="750,17,970,43"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="613,38,660,30,752,27,747,28,661,35,614,43"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="784,47,726,58,660,62,600,61,599,56,660,57,725,53,789,46"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_animated.html" title=" " alt="" coords="483,107,617,132"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="633,132,834,171,829,172,632,137"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_animated_base.html" title=" " alt="" coords="308,107,414,132"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="429,117,485,119,480,120,430,122"/>
+<area shape="rect" id="Node000006" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="166,107,258,132"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="274,117,310,119,305,120,275,122"/>
+<area shape="rect" id="Node000007" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="5,107,117,132"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="131,117,168,118,163,121,133,122"/>
+<area shape="rect" id="Node000008" href="$classpdg_1_1_physics_body_ref.html" title=" " alt="" coords="474,156,626,197"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="642,174,835,176,829,177,642,179"/>
+<area shape="rect" id="Node000009" href="$classpdg_1_1_collider_ref.html" title=" " alt="" coords="463,221,637,247"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="651,215,725,202,829,183,834,182,726,208,652,221"/>
+<area shape="rect" id="Node000010" href="$classpdg_1_1_user_data.html" title=" " alt="" coords="511,272,589,298"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="604,274,662,261,725,243,786,215,834,191,839,189,788,220,727,248,664,266,604,279"/>
 </map>

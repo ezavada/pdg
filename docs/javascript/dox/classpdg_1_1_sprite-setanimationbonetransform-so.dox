@@ -1,5 +1,5 @@
 /**
-\fn pdg::Sprite::setAnimationBoneTransform(string name, object transform)
+\fn pdg::Sprite::setAnimationBoneTransform(string name, AnimationTransform transform)
 \brief Override a bone's parent-local transform.
 
 Replaces all six transform components; this is an absolute local override, not an accumulated offset. It persists across updates and clip changes until cleared or the rig is replaced. Invalid names or nonfinite values throw.

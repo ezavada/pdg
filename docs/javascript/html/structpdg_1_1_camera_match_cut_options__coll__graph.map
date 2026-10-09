@@ -1,0 +1,17 @@
+<map id="CameraMatchCutOptions" name="CameraMatchCutOptions">
+<area shape="rect" id="Node000001" title="CameraMatchCutOptions." alt="" coords="188,219,358,245"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_sprite.html" title="animated, moving image that is automatically moved, animated, and drawn" alt="" coords="245,102,300,128"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="275,142,275,220,270,217,271,145"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_animated.html" title="something that can be automatically moved, spun or resized over time." alt="" coords="5,5,82,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="87,35,247,100,243,104,87,40"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="106,5,203,31"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="182,38,260,101,255,102,181,43"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_i_serializable.html" title="Interface for an object which can be serialized." alt="" coords="227,5,319,31"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="274,44,275,102,270,100,271,48"/>
+<area shape="rect" id="Node000006" href="$classpdg_1_1_collider.html" title="Optional shapes, filtering, sensors and contacts for a Sprite, Part or Particle." alt="" coords="343,5,408,31"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="354,40,288,104,284,99,349,43"/>
+<area shape="poly" id="edge6_Node000006_Node000006" title=" " alt="" coords="424,8,432,12,435,19,426,28,409,30,408,25,424,23,430,18,428,15,424,13"/>
+<area shape="rect" id="Node000007" href="$classpdg_1_1_physics_body.html" title="Optional physical motion for a Sprite or Part, using seconds." alt="" coords="525,5,623,31"/>
+<area shape="poly" id="edge7_Node000002_Node000007" title=" " alt="" coords="520,37,391,81,302,108,300,103,389,75,525,35"/>
+<area shape="poly" id="edge8_Node000007_Node000007" title=" " alt="" coords="639,9,650,18,642,27,624,30,623,25,639,22,645,18,638,14"/>
+</map>

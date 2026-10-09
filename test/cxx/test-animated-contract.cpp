@@ -96,10 +96,14 @@ void helperLifetimes() {
 
     int nested = 0;
     a.addAnimationHelper(new OwnedHelper(destroyed, [&](AnimatedBase*) {
-        ++nested; a.animate(.01); return false;
+        ++nested;
+        rejects([&] { a.animate(.01); }, "recursive helper updates are rejected");
+        return false;
     }));
     a.animate(.1);
     expect(nested == 1 && destroyed == 5, "recursive animation does not re-enter its running helper");
+    a.animate(.1);
+    expect(nested == 1, "owner can update after rejecting helper reentry");
     {
         Subject owner;
         owner.addAnimationHelper(new OwnedHelper(destroyed, [](AnimatedBase*) { return true; }));

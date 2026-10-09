@@ -59,11 +59,13 @@ struct OffscreenSurface {
     long width = 0, height = 0;
     uint64 revision = 1, pixelRevision = 0;
     std::vector<uint8> pixels; // straight RGBA, populated only for explicit CPU access
+    bool preservePixels = true;
     ~OffscreenSurface();
     void readPixels();
     void releaseContext();
 };
 void releaseOffscreenSurfacesForContext(PortImpl* port);
+std::shared_ptr<OffscreenSurface> createOffscreenSurface(long width, long height, PortImpl* contextPort, bool preservePixels = true);
 
 class PortImpl : public Port {
 public:
@@ -105,6 +107,11 @@ public: // public for sys framework implementation, nobody else
     bool            mNeedRedraw;
     Rect            mDrawingRect;
     Rect            mClipRect;
+    float           mDrawableScaleX = 1.0f;
+    float           mDrawableScaleY = 1.0f;
+    size_t          mTextLabelsDrawn = 0, mNewTextLabels = 0;
+    unsigned        mTextChurnFrames = 0;
+    bool            mDigitCacheEnabled = false;
 
     Image*          mCurrentCursor;
     Point           mHotSpot;
@@ -115,7 +122,7 @@ public: // public for sys framework implementation, nobody else
 	float			mFontScalingFactor;
 
 	ImageCache*		mImageCache;       // hash-based image cache for this port
-	TextCacheEntry* mTextCache;        // text cache for this port
+	TextCache mTextCache;        // text cache for this port
 	int				mPortIndex;        // unique index for this port
 	OpenGLStateCache mStateCache;      // OpenGL texture binding cache for this port
 
@@ -123,12 +130,24 @@ public: // public for sys framework implementation, nobody else
     									// and pass it to platform_xxx calls
 
     std::shared_ptr<OffscreenSurface> mOffscreen;
+    // Private frame buffers. They are not registered as Ports or exposed as Images.
+    struct CameraPass { Camera* camera; std::shared_ptr<OffscreenSurface> surface; };
+    std::vector<CameraPass> mCameraPasses;
+    std::vector<std::shared_ptr<OffscreenSurface>> mCameraSurfaces;
+    std::shared_ptr<OffscreenSurface> mCameraWeightSurface, mCameraScratchSurface;
+    std::shared_ptr<OffscreenSurface> mCameraBlendSurface;
+    bool mCameraFrame = false, mCameraCompositing = false;
+    unsigned mCameraCaptureDepth = 0;
+    GLint mCameraDestinationFramebuffer=0, mCameraDestinationViewport[4]{};
+    void beginCameraFrame();
+    void finishCameraFrame();
+    std::shared_ptr<OffscreenSurface> cameraDrawingSurface();
 };
 
 // Redirect an offscreen operation, restoring the caller's framebuffer and drawing state.
 class ScopedOffscreenDrawing {
 public:
-    explicit ScopedOffscreenDrawing(Port* port);
+    explicit ScopedOffscreenDrawing(Port* port, bool textOperation = false);
     explicit ScopedOffscreenDrawing(OffscreenSurface& surface, PortImpl* port = nullptr);
     ~ScopedOffscreenDrawing();
     ScopedOffscreenDrawing(const ScopedOffscreenDrawing&) = delete;
@@ -138,6 +157,7 @@ private:
     PortImpl* target = nullptr;
     PortImpl* previous = nullptr;
     OffscreenSurface* surface = nullptr;
+    bool cameraCapture = false;
     bool switchedContext = false, savedDirty = false;
     GLint framebuffer = 0, texture = 0, renderbuffer = 0, matrixMode = 0, packAlignment = 4;
     GLint viewport[4], scissor[4];
@@ -146,6 +166,11 @@ private:
 };
 
 void graphics_drawText(PortImpl& port, const char* text, int len, const Quad& quad, int size, uint32 style, Color rgba);
+void graphics_drawTextRaster(PortImpl& port, const char* text, int len, const Quad& quad, int size, uint32 style,
+                             Color rgba, TextCacheEntry* cachedEntry = nullptr);
+void graphics_submitText(PortImpl& port, const TextCacheEntry& entry, const Quad& quad, Color color,
+                         bool premultiplied = false, bool bottomOrigin = false);
+void graphics_flushText();
 
 } // end namespace pdg
 

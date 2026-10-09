@@ -1,7 +1,7 @@
 // -----------------------------------------------
 // event_manager.cpp
 //
-// Implementation file for EventManager bindings
+// Class-specific JavaScript bindings.
 //
 // Written by Ed Zavada, 2013
 // Copyright (c) 2013, Dream Rock Studios, LLC
@@ -25,35 +25,6 @@
 
 
 namespace pdg {
-
-
-// ========================================================================================
-//MARK: IEventHandler
-// ========================================================================================
-
-BINDING_INITIALIZER_IMPL(IEventHandler)
-EXPORT_CLASS_SYMBOLS("IEventHandler", IEventHandler, , , );
-END
-
-CLEANUP_IMPL(IEventHandler)
-
-
-// ========================================================================================
-//MARK: EventEmitter
-// ========================================================================================
-
-BINDING_INITIALIZER_IMPL(EventEmitter)
-    EXPORT_CLASS_SYMBOLS("EventEmitter", EventEmitter, , ,
-    	// method section
-		HAS_EMITTER_METHODS(EventEmitter)
-    );
-	END
-EMITTER_BASE_CLASS_IMPL(EventEmitter)
-
-CPP_MANAGED_CONSTRUCTOR_IMPL(EventEmitter)
-    return new EventEmitter();
-	END
-
 
 // ========================================================================================
 //MARK: Event Manager
@@ -85,5 +56,14 @@ STATIC_METHOD_IMPL(EventManager, IsButtonDown)
 
 CPP_SINGLETON_CONSTRUCTOR_IMPL(EventManager)
 
+} // namespace pdg
 
-} // namespace pdg 
+// @pdg-class {"name":"EventManager","native_binding":{"browser":{"generate":true,"base":null,"support_bindings":[{"name":"_addNativeEventBridge","symbol":"pdg::emscriptenEventManagerAddEventBridge"}]}}}
+
+// @pdg-member {"name":"EventManager.getDeviceOrientation","native_binding":{"browser":{"generate":false}}}
+
+// @pdg-member {"name":"EventManager.isButtonDown","native_binding":{"browser":{"generate":false}}}
+
+// @pdg-member {"name":"EventManager.isKeyDown","native_binding":{"browser":{"generate":false}}}
+
+// @pdg-member {"name":"EventManager.isRawKeyDown","native_binding":{"browser":{"generate":false}}}

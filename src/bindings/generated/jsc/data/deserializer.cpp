@@ -641,30 +641,61 @@ namespace pdg
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-        if (!JSValueIsString(ctx, arguments[0]) && !JSValueIsObject(ctx, arguments[0]))
+        if (!IsUint8Array(arguments[0]) && !JSValueIsObjectOfClass(ctx, arguments[0], MemBlock_class()))
         {
             std::ostringstream excpt_;
-            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "argument 1 (mem) must be either a binary string or an object of type MemBlock" << "')";
+            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "argument 1 (mem) must be either a Uint8Array or an object of type MemBlock" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         }
-        if (JSValueIsString(ctx, arguments[0]))
+        try
         {
-            size_t bytes = 0;
-            uint8* ptr = (uint8*) DecodeBinary(arguments[0], &bytes);
-            self->setDataPtr(ptr, bytes);
-        }
-        else
-        {
-            MemBlock* memBlock = 0;
-            if (JSValueIsObject(ctx, arguments[1 -1]))
+            if (IsUint8Array(arguments[0]))
             {
-                JSObjectRef memBlock_ = JSValueToObject(ctx, arguments[1 -1], exception);
-                memBlock = MemBlock_getCppObject(memBlock_);
+                size_t bytes = 0;
+                const uint8* ptr = nullptr;
+                if (!GetUint8ArrayData(arguments[0], ptr, bytes))
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "expected an attached, non-shared Uint8Array" << "')";
+                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+                }
+                if (bytes > UINT32_MAX)
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "byte array exceeds the supported size" << "')";
+                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+                }
+                self->setDataCopy(ptr, static_cast<uint32>(bytes));
             }
-            if (!memBlock)
-                return JSC_ThrowArgTypeException(ctx, exception, 1, "an object of type ""MemBlock"" (""memBlock"")");
-            self->setDataPtr(memBlock->ptr, memBlock->bytes);
+            else
+            {
+                if (!JSValueIsObjectOfClass(ctx, arguments[0], MemBlock_class()))
+                {
+                    std::ostringstream excpt_;
+                    excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "expected Uint8Array or MemBlock" << "')";
+                    JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+                    return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+                }
+                MemBlock* memBlock = 0;
+                if (JSValueIsObject(ctx, arguments[1 -1]))
+                {
+                    JSObjectRef memBlock_ = JSValueToObject(ctx, arguments[1 -1], exception);
+                    memBlock = MemBlock_getCppObject(memBlock_);
+                }
+                if (!memBlock)
+                    return JSC_ThrowArgTypeException(ctx, exception, 1, "an object of type ""MemBlock"" (""memBlock"")");
+                self->setDataPtr(memBlock->ptr, memBlock->bytes);
+            }
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         }
         return JSValueMakeUndefined(ctx);
     }
@@ -685,6 +716,15 @@ namespace pdg
             }
 #endif
             if (!obj) { return JSValueMakeNull(ctx); }
+            if (auto* camera = dynamic_cast<Camera*>(obj))
+            {
+#ifdef PDG_USING_V8
+                auto result = camera->mCameraScriptObj.IsEmpty() ? CameraWrap::NewFromCpp(isolate,camera) : v8::Local<v8::Object>::New(isolate,camera->mCameraScriptObj);
+#else
+                auto result = camera->mCameraScriptObj ? camera->mCameraScriptObj : Camera_newFromCpp(ctx,camera);
+#endif
+                camera->release(); return result;
+            }
             if (auto* sprite = dynamic_cast<Sprite*>(obj))
             {
 #ifdef PDG_USING_V8
@@ -694,6 +734,24 @@ namespace pdg
 #endif
                 sprite->release();
                 return result;
+            }
+            if (auto* troupe = dynamic_cast<Troupe*>(obj))
+            {
+#ifdef PDG_USING_V8
+                auto result = troupe->mAnimatedScriptObj.IsEmpty() ? TroupeWrap::NewFromCpp(isolate,troupe) : v8::Local<v8::Object>::New(isolate,troupe->mAnimatedScriptObj);
+#else
+                auto result = troupe->mAnimatedScriptObj ? troupe->mAnimatedScriptObj : Troupe_newFromCpp(ctx,troupe);
+#endif
+                troupe->release(); return result;
+            }
+            if (auto* animated = dynamic_cast<AnimatedBase*>(obj))
+            {
+#ifdef PDG_USING_V8
+                auto result = animated->mAnimatedScriptObj.IsEmpty() ? AnimatedBaseWrap::NewFromCpp(isolate,animated) : v8::Local<v8::Object>::New(isolate,animated->mAnimatedScriptObj);
+#else
+                auto result = animated->mAnimatedScriptObj ? animated->mAnimatedScriptObj : AnimatedBase_newFromCpp(ctx,animated);
+#endif
+                animated->release(); return result;
             }
 
             if (auto* image = dynamic_cast<ImageStrip*>(obj))
@@ -830,7 +888,7 @@ namespace pdg
             }
             JSObjectRef func = JSC_ValueToFunction(ctx, getMyClassTagVal, exception);
             JSValueRef classTagVal = JSObjectCallAsFunction(ctx, func, obj, 0, 0, exception);
-            classTag = (uint32)floor(fabs(JSValueToNumber(ctx, classTagVal, exception)));
+            classTag = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, classTagVal, exception));
         }
         else if (nativeSerializable)
         {

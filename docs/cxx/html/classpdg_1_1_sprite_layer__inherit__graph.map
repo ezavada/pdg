@@ -1,18 +1,13 @@
 <map id="SpriteLayer" name="SpriteLayer">
-<area shape="rect" id="Node000001" title="Collection of sprites with shared animation control and layer transforms." alt="" coords="166,300,254,326"/>
-<area shape="rect" id="Node000008" href="$classpdg_1_1_tile_layer.html" title=" " alt="" coords="173,374,247,399"/>
-<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="212,339,212,375,208,372,208,343"/>
-<area shape="rect" id="Node000002" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="5,226,103,252"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="95,256,186,298,181,301,94,261"/>
-<area shape="rect" id="Node000003" href="$classpdg_1_1_animated.html" title=" " alt="" coords="127,226,293,252"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="212,265,212,301,208,298,208,270"/>
-<area shape="rect" id="Node000004" href="$classpdg_1_1_animated_base.html" title=" " alt="" coords="145,153,251,178"/>
-<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="204,191,211,227,205,225,201,196"/>
-<area shape="rect" id="Node000005" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="234,79,327,105"/>
-<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="253,117,214,154,210,150,257,113"/>
-<area shape="rect" id="Node000007" href="$classpdg_1_1_serializable.html" title=" " alt="" coords="276,153,454,178"/>
-<area shape="poly" id="edge7_Node000007_Node000005" title=" " alt="" coords="307,112,353,152,348,153,306,117"/>
-<area shape="rect" id="Node000006" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="225,5,336,31"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="282,44,283,79,278,78,280,49"/>
-<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="353,190,333,224,306,254,271,281,236,302,234,297,268,277,303,250,328,221,349,194"/>
+<area shape="rect" id="Node000001" title="Collection of sprites with shared animation control and layer transforms." alt="" coords="90,226,178,252"/>
+<area shape="rect" id="Node000006" href="$classpdg_1_1_tile_layer.html" title=" " alt="" coords="97,300,171,326"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="136,266,136,301,132,298,132,269"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="5,153,103,178"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="79,186,123,225,118,227,78,191"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_serializable.html" title=" " alt="" coords="126,153,304,178"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="192,187,149,228,146,224,188,190"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_i_serializable.html" title="Represents an object which can be serialized." alt="" coords="169,79,262,105"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="217,118,218,153,213,151,214,123"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_ref_counted_obj.html" title=" " alt="" coords="160,5,271,31"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="216,44,218,79,213,78,214,49"/>
 </map>

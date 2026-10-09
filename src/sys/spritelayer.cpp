@@ -29,6 +29,7 @@
 
 
 #include "pdg/sys/events.h"
+#include "particletrail.h"
 #include <numbers>
 #include "pdg_project.h"
 #include <format>
@@ -51,6 +52,7 @@
 #include "pdg/sys/resource.h"
 
 #include "spritemanager.h"
+#include "pdg/sys/scene.h"
 #include "layer-snapshot-scope.h"
 #include "physics-graph-snapshot.h"
 #include "internals.h"
@@ -107,7 +109,7 @@
 #define PDG_SPRITE_LAYER_MAGIC_NUMBER   0x31008971
 #define PDG_SPRITE_LAYER_STREAM_V_1		0
 // add new versions here
-#define PDG_SPRITE_LAYER_STREAM_VERSION	5
+#define PDG_SPRITE_LAYER_STREAM_VERSION	6
 
 #ifndef PDG_UNSAFE_SERIALIZATION
 #define PDG_TAG_SERIALIZED_DATA
@@ -164,19 +166,42 @@ void SpriteCollideInfo_ReleaseSpritesAndFreeStrings(void* ptr) {
 // Used to create and track sets of sprites
 // -----------------------------------------------------------------------------------
 
+void SpriteLayer::setCamera(Camera* camera) {
+    if (camera==mCamera) return;
+#ifndef PDG_NO_GUI
+    if (camera && mPort) camera->ensureViewport(*mPort);
+#endif
+    Scene::claimCamera(camera,mManager?mManager->mScene:nullptr);
+    if (camera) camera->attach();
+    auto* previous=mCamera; mCamera=camera;
+    if (previous) {Scene::releaseCamera(previous,mManager?mManager->mScene:nullptr);previous->detach();}
+}
+Camera* SpriteLayer::getEffectiveCamera() const {
+#ifndef PDG_NO_GUI
+#endif
+    if (mCamera) return mCamera;
+    if (mManager && mManager->mScene) return mManager->mScene->getCamera();
+#ifndef PDG_NO_GUI
+    if (mPort) return mPort->getCamera();
+#endif
+    return nullptr;
+}
+void SpriteLayer::setCameraParallax(float movementRatio,float zoomRatio) {
+    if (!std::isfinite(movementRatio)||!std::isfinite(zoomRatio)) throw std::invalid_argument("Camera parallax ratios must be finite");
+    mCameraMoveRatio=movementRatio; mCameraZoomRatio=zoomRatio;
+}
+void SpriteLayer::setWorldBounds(const Rect& bounds) {
+    if (!std::isfinite(bounds.left)||!std::isfinite(bounds.top)||!std::isfinite(bounds.right)||!std::isfinite(bounds.bottom)||bounds.right<bounds.left||bounds.bottom<bounds.top)
+        throw std::invalid_argument("Layer world bounds must be finite and ordered");
+    mWorldBounds=bounds;
+}
+
 void SpriteLayer::setSerializationFlags(uint32 flags) {
 	mSerFlags = flags;
 }
 
 void SpriteLayer::validateInitialSnapshot() const {
-    if (mControlledBy || !mLinkedLayers.empty() || !mCollideLayers.empty())
-        throw std::runtime_error("Layer snapshots do not yet support links to other layers");
-    if (!mHelpers.empty()) throw std::runtime_error("Layer snapshots cannot save callback helpers");
-    for (const auto& animation : mAnimations) {
-        if (std::find(gEasingFunctions, gEasingFunctions + NUM_BUILTIN_EASINGS, animation.easing)
-                == gEasingFunctions + NUM_BUILTIN_EASINGS)
-            throw std::runtime_error("Layer snapshots cannot save custom easing callbacks");
-    }
+    if (!mCollideLayers.empty()) throw std::runtime_error("Layer snapshots do not yet support collision links to other layers");
     for (auto* sprite = mFirstSprite; sprite; sprite = sprite->mNextSprite)
         sprite->validateInitialSnapshot(true);
 }
@@ -232,50 +257,18 @@ uint32 SpriteLayer::getSerializedSize(ISerializer* serializer) const {
 #endif
             totalSize+=out.size();
 		}
-		SIZE_FLOAT_LIST_START(2, 15);
-		if (mSerFlags & ser_Positions) {
-			SIZE_NON_ZERO_F(mLocation.x, 0);
-			SIZE_NON_ZERO_F(mLocation.y, 1);
-			SIZE_NON_ZERO_F(mFacing, 2);
-		}
-		if (mSerFlags & ser_Sizes) {
-			SIZE_NON_ZERO_F(mHeight, 3);
-			SIZE_NON_ZERO_F(mWidth, 4);
-		}
-		if (mSerFlags & ser_LayerDraw) {
-		  #ifndef PDG_NO_GUI
-			SIZE_NON_ZERO_F(mOrigin.x, 5);
-			SIZE_NON_ZERO_F(mOrigin.y, 6);
-			SIZE_NON_ZERO_F(mZoom, 7);
-		  #endif
-		}
-		if (mSerFlags & (ser_Animations | ser_Motion) ) {
-			SIZE_NON_ZERO_F(mCenterOffset.x, 8);
-			SIZE_NON_ZERO_F(mCenterOffset.y, 9);
-		}
-		if (mSerFlags & ser_Motion) {
-			SIZE_NON_ZERO_F(mDeltaXPerMs, 10);
-			SIZE_NON_ZERO_F(mDeltaYPerMs, 11);
-			SIZE_NON_ZERO_F(mDeltaWidthPerMs, 12);
-			SIZE_NON_ZERO_F(mDeltaHeightPerMs, 13);
-			SIZE_NON_ZERO_F(mDeltaFacingPerMs, 14);
-		}
-		SIZE_FLOAT_LIST_END(totalSize);
-        if (mSerFlags & ser_Sizes) {
-            SnapshotWriter out(serializer,false);out.floating(mScaleX,1);out.floating(mScaleY,1);totalSize+=out.size();
+        if (mSerFlags & ser_LayerDraw) {
+            totalSize+=serializer->sizeof_obj(mCamera);
+            SnapshotWriter out(serializer,false); out.floating(mCameraMoveRatio,1); out.floating(mCameraZoomRatio,1); totalSize+=out.size();
         }
+        if (mSerFlags & ser_Sizes) { SnapshotWriter out(serializer,false); for (float value : {mWorldBounds.left,mWorldBounds.top,mWorldBounds.right,mWorldBounds.bottom}) out.floating(value); totalSize+=out.size(); }
 
-		if (mSerFlags & ser_Animations) totalSize += tweenSerializedSize(serializer);
+
 
 		if (mSerFlags & ser_Forces) {
 //			totalSize += 4;  // 1 float: mGravity
 		}
 		if (mSerFlags & ser_Physics) {
-		}
-
-		if (mSerFlags & ser_InitialData) {
-	//		mNextLayer(0), mPrevLayer(0), mFirstSprite(0), mLastSprite(0),
-	//		mControlledBy(0),
 		}
 
 		sprite = mFirstSprite;
@@ -343,17 +336,11 @@ void SpriteLayer::serialize(ISerializer* serializer) const {
 			(mDoCollisions ? 	1 << 2 : 0) |
 			(mWantsMouseOver ?	1 << 3 : 0) |
 			(mWantsClicks ? 	1 << 4 : 0) |
-	  #ifndef PDG_NO_GUI
-			(mAutoCenter ? 		1 << 5 : 0) |
-			(mFixedMoveAxis ? 	1 << 6 : 0) |
-	  #endif
 	  #ifdef PDG_USE_CHIPMUNK_PHYSICS
-			(mKeepGravityDownward ? 1 << 7 : 0) |
 			(mUseChipmunkPhysics ? 	1 << 8 : 0) |
 			(mIsStaticLayer ? 		1 << 9 : 0) |
 	  #endif
-            (1 << 10) | (mSchedulePaused ? 1 << 11 : 0) |
-            (mFlipX ? 1 << 12 : 0) | (mFlipY ? 1 << 13 : 0) | (1 << 14);
+            0;
 	  #ifdef PDG_TAG_SERIALIZED_DATA
 		serializer->serialize_4(PDG_SPRITE_LAYER_MAGIC_NUMBER);
 	  #endif
@@ -361,7 +348,7 @@ void SpriteLayer::serialize(ISerializer* serializer) const {
 		if (mSerFlags & ser_InitialData) {
 			serializer->serialize_uint(iid);
 			serializer->serialize_uint(layerId);
-            const auto now = OS::getMilliseconds();
+            const auto now = animationMilliseconds();
             for (auto deadline : {mDoneFadingInAt, mDoneFadingOutAt}) {
                 serializer->serialize_bool(deadline!=0);
                 if(deadline)serializer->serialize_d(std::max(0.0, (deadline-now)/1000.0));
@@ -373,42 +360,14 @@ void SpriteLayer::serialize(ISerializer* serializer) const {
             out.floating(0);
 #endif
 		}
-		SERIALIZE_FLOAT_LIST_START(2, 15);
-		if (mSerFlags & ser_Positions) {
-			SERIALIZE_NON_ZERO_F(mLocation.x, 0);
-			SERIALIZE_NON_ZERO_F(mLocation.y, 1);
-			SERIALIZE_NON_ZERO_F(mFacing, 2);
-		}
-		if (mSerFlags & ser_Sizes) {
-			SERIALIZE_NON_ZERO_F(mHeight, 3);
-			SERIALIZE_NON_ZERO_F(mWidth, 4);
-		}
-		if (mSerFlags & ser_LayerDraw) {
-		  #ifndef PDG_NO_GUI
-			SERIALIZE_NON_ZERO_F(mOrigin.x, 5);
-			SERIALIZE_NON_ZERO_F(mOrigin.y, 6);
-			SERIALIZE_NON_ZERO_F(mZoom, 7);
-		  #else
-			SERIALIZE_NON_ZERO_F(0.0f, 5);  // write zeroes so this stream will be readable by non-gui builds
-			SERIALIZE_NON_ZERO_F(0.0f, 6);
-			SERIALIZE_NON_ZERO_F(0.0f, 7);
-		  #endif
-		}
-		if (mSerFlags & (ser_Animations | ser_Motion) ) {
-			SERIALIZE_NON_ZERO_F(mCenterOffset.x, 8);
-			SERIALIZE_NON_ZERO_F(mCenterOffset.y, 9);
-		}
-		if (mSerFlags & ser_Motion) {
-			SERIALIZE_NON_ZERO_F(mDeltaXPerMs, 10);
-			SERIALIZE_NON_ZERO_F(mDeltaYPerMs, 11);
-			SERIALIZE_NON_ZERO_F(mDeltaWidthPerMs, 12);
-			SERIALIZE_NON_ZERO_F(mDeltaHeightPerMs, 13);
-			SERIALIZE_NON_ZERO_F(mDeltaFacingPerMs, 14);
-		}
-		SERIALIZE_FLOAT_LIST_END(2);
-        if (mSerFlags & ser_Sizes) { SnapshotWriter out(serializer,true);out.floating(mScaleX,1);out.floating(mScaleY,1); }
+        if (mSerFlags & ser_LayerDraw) {
+            serializer->serialize_obj(mCamera);
+            SnapshotWriter out(serializer,true); out.floating(mCameraMoveRatio,1); out.floating(mCameraZoomRatio,1);
+        }
+        if (mSerFlags & ser_Sizes) { SnapshotWriter out(serializer,true); for (float value : {mWorldBounds.left,mWorldBounds.top,mWorldBounds.right,mWorldBounds.bottom}) out.floating(value); }
+
 		
-		if (mSerFlags & ser_Animations) serializeTweens(serializer);
+
 
 		if (mSerFlags & ser_Forces) {
 		  #ifdef PDG_USE_CHIPMUNK_PHYSICS
@@ -449,7 +408,7 @@ void SpriteLayer::deserialize(IDeserializer* deserializer) {
     if (AnimationPipeline::isInsideCallback())
         throw std::logic_error("Layer snapshots must load outside animation modifiers");
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
-    auto* space = SpriteManager::getSingletonInstance()->mSpace;
+    auto* space = getSpace();
     if (space && cpSpaceIsLocked(space)) throw std::logic_error("Layer snapshots must load outside the physical solve");
 #endif
     const auto version = deserializer->deserialize_1u();
@@ -467,35 +426,21 @@ void SpriteLayer::deserialize(IDeserializer* deserializer) {
 }
 
 void SpriteLayer::adoptInitialSnapshot(SpriteLayer& staged) {
-    // Rebase tween pointers before replacing live state. The staging layer has
-    // no bodies in the shared solver and no application callbacks.
-    const auto from = staged.tweenFields(), to = tweenFields();
-    if (from.size() != to.size()) throw std::runtime_error("Incompatible Layer tween fields");
-    auto animations = staged.mAnimations;
-    for (auto& animation : animations) {
-        const auto field = std::find(from.begin(), from.end(), animation.value);
-        if (field == from.end()) throw std::runtime_error("Invalid Layer tween target");
-        animation.value = const_cast<float*>(to[field - from.begin()]);
-    }
     removeAllParticleEmitters();
     removeAllParticles();
     removeAllSprites();
-    for (size_t i = 0; i < from.size(); ++i)
-        if (from[i] && to[i]) *const_cast<float*>(to[i]) = *from[i];
-    mAnimations = std::move(animations);
-    mDelaySeconds = staged.mDelaySeconds; mSchedulePaused = staged.mSchedulePaused;
-    mAppendAnimation = staged.mAppendAnimation; mAnimationOperation = staged.mAnimationOperation; mWaitPending = staged.mWaitPending;
-    mFlipX = staged.mFlipX; mFlipY = staged.mFlipY;
+    mWorldBounds = staged.mWorldBounds;
+    setCamera(staged.mCamera); setCameraParallax(staged.mCameraMoveRatio,staged.mCameraZoomRatio);
     mHidden = staged.mHidden; mAnimating = staged.mAnimating; mDoCollisions = staged.mDoCollisions;
     mWantsMouseOver = staged.mWantsMouseOver; mWantsClicks = staged.mWantsClicks;
     iid = staged.iid; layerId = staged.layerId;
     mDoneFadingInAt = staged.mDoneFadingInAt; mDoneFadingOutAt = staged.mDoneFadingOutAt;
-    mFacingCos = std::cos(mFacing); mFacingSin = std::sin(mFacing);
+    rebaseFadeClock(staged.animationMilliseconds(),animationMilliseconds());
 #ifndef PDG_NO_GUI
-    mOrigin = staged.mOrigin; mAutoCenter = staged.mAutoCenter; mFixedMoveAxis = staged.mFixedMoveAxis;
+
 #endif
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
-    mKeepGravityDownward = staged.mKeepGravityDownward; mGravity = staged.mGravity;
+    mGravity = staged.mGravity;
     mUseChipmunkPhysics = staged.mUseChipmunkPhysics; mIsStaticLayer = staged.mIsStaticLayer;
 #endif
     while (auto* sprite = staged.mFirstSprite) {
@@ -552,19 +497,13 @@ void SpriteLayer::readSerializedState(IDeserializer* deserializer, uint32 flags)
 	  #endif
 		uint32 layerFlags = deserializer->deserialize_2u();
 		mHidden = ((layerFlags & 1 << 0) != 0);
-        mSchedulePaused = (layerFlags & (1 << 11)) != 0;
-        mFlipX = (layerFlags & (1 << 12)) != 0;
-        mFlipY = (layerFlags & (1 << 13)) != 0;
 		mAnimating = ((layerFlags & 1 << 1) != 0);
 		mDoCollisions = ((layerFlags & 1 << 2) != 0);
 		mWantsMouseOver = ((layerFlags & 1 << 3) != 0);
 		mWantsClicks = ((layerFlags & 1 << 4) != 0);
 	  #ifndef PDG_NO_GUI
-		mAutoCenter = ((layerFlags & 1 << 5) != 0);
-		mFixedMoveAxis = ((layerFlags & 1 << 6) != 0);
 	  #endif
 	  #ifdef PDG_USE_CHIPMUNK_PHYSICS
-		mKeepGravityDownward = ((layerFlags & 1 << 7) != 0);
 		mUseChipmunkPhysics = ((layerFlags & 1 << 8) != 0);
 		mIsStaticLayer = ((layerFlags & 1 << 9) != 0);
 	  #endif
@@ -574,7 +513,7 @@ void SpriteLayer::readSerializedState(IDeserializer* deserializer, uint32 flags)
             if (iid == 0 || iid == UINT32_MAX) throw std::runtime_error("Invalid Layer identity");
             sUniqueLayerId = std::max(sUniqueLayerId, iid + 1);
             if (layerId < std::numeric_limits<long>::max()) gNextLayerId = std::max(gNextLayerId, layerId + 1);
-            const auto now = OS::getMilliseconds();
+            const auto now = animationMilliseconds();
             for (auto* deadline : {&mDoneFadingInAt, &mDoneFadingOutAt}) {
                 const double seconds = deserializer->deserialize_bool() ? deserializer->deserialize_d() : -1;
                 if (!std::isfinite(seconds) || (seconds < 0 && seconds != -1) ||
@@ -588,52 +527,16 @@ void SpriteLayer::readSerializedState(IDeserializer* deserializer, uint32 flags)
             mGravity = gravity;
 #endif
         }
-		DESERIALIZE_FLOAT_LIST_START(2, 15);
-		if (mSerFlags & ser_Positions) {
-			mLocation.x = DESERIALIZE_NON_ZERO_F(0);
-			mLocation.y = DESERIALIZE_NON_ZERO_F(1);
-			mFacing = DESERIALIZE_NON_ZERO_F(2);
-		}
-		if (mSerFlags & ser_Sizes) {
-			mHeight = DESERIALIZE_NON_ZERO_F(3);
-			mWidth = DESERIALIZE_NON_ZERO_F(4);
-		}
-		if (mSerFlags & ser_LayerDraw) {
-		  #ifndef PDG_NO_GUI
-			mOrigin.x = DESERIALIZE_NON_ZERO_F(5);
-			mOrigin.y = DESERIALIZE_NON_ZERO_F(6);
-			mZoom = DESERIALIZE_NON_ZERO_F(7);
-		  #else
-			DESERIALIZE_NON_ZERO_F(5);  // mOrigin.x,  read in the values but ignore them
-			DESERIALIZE_NON_ZERO_F(6);  // mOrigin.y
-			DESERIALIZE_NON_ZERO_F(7);  // mZoom
-		  #endif
-		}
-		if (mSerFlags & (ser_Animations | ser_Motion) ) {
-			mCenterOffset.x = DESERIALIZE_NON_ZERO_F(8);
-			mCenterOffset.y = DESERIALIZE_NON_ZERO_F(9);
-		}
-		if (mSerFlags & ser_Motion) {
-			mDeltaXPerMs = DESERIALIZE_NON_ZERO_F(10);
-			mDeltaYPerMs = DESERIALIZE_NON_ZERO_F(11);
-			mDeltaWidthPerMs = DESERIALIZE_NON_ZERO_F(12);
-			mDeltaHeightPerMs = DESERIALIZE_NON_ZERO_F(13);
-			mDeltaFacingPerMs = DESERIALIZE_NON_ZERO_F(14);
-		}
-		DESERIALIZE_FLOAT_LIST_END(2);
-        if (mSerFlags & ser_Sizes) {
-            mScaleX = (layerFlags & (1 << 10)) ? SnapshotReader(deserializer).floating(1) : 1;
-            mScaleY = (layerFlags & (1 << 10)) ? SnapshotReader(deserializer).floating(1) : 1;
+        if (mSerFlags & ser_LayerDraw) {
+            auto* object=deserializer->deserialize_obj();
+            struct Release { ISerializable* object; ~Release() { if(object) object->release(); } } release{object};
+            auto* camera=dynamic_cast<Camera*>(object);
+            if (object && !camera) throw std::runtime_error("Layer camera record must contain a Camera");
+            SnapshotReader in(deserializer); float movement=in.floating(1), zoom=in.floating(1);
+            setCameraParallax(movement,zoom); setCamera(camera);
         }
-
-        if (mSerFlags & ser_Animations) {
-            if (layerFlags & (1 << 14)) deserializeTweens(deserializer);
-            else { mAnimations.clear(); mDelaySeconds = 0; }
-        }
-
-        for (const auto* field : tweenFields())
-            if (field && !std::isfinite(*field)) throw std::runtime_error("Non-finite Layer transform or rate");
-        mFacingCos = std::cos(mFacing); mFacingSin = std::sin(mFacing);
+        if (mSerFlags & ser_Sizes) { SnapshotReader in(deserializer); float v[4]; for(auto& value:v) value=in.floating(); mWorldBounds=Rect(v[0],v[1],v[2],v[3]); }
+        setWorldBounds(mWorldBounds);
         count = deserializer->deserialize_uint();
         if (mSerFlags & ser_InitialData) {
             if (count > 1000000) throw std::runtime_error("Too many sprites in Layer snapshot");
@@ -721,7 +624,7 @@ bool	SpriteLayer::isHidden() {
 
 void	SpriteLayer::fadeIn(double durationSeconds, EasingFunc easing) {
 	for (auto* particle : mParticles) particle->fadeTo(1, durationSeconds, easing);
-	mDoneFadingInAt = OS::getMilliseconds() + static_cast<ms_time>(std::ceil(durationSeconds * 1000.0));
+	mDoneFadingInAt = animationMilliseconds() + static_cast<ms_time>(std::ceil(durationSeconds * 1000.0));
 	Sprite* sprite = mFirstSprite;
 	while (sprite) {
 		sprite->fadeIn(durationSeconds, easing);
@@ -731,7 +634,7 @@ void	SpriteLayer::fadeIn(double durationSeconds, EasingFunc easing) {
 
 void	SpriteLayer::fadeOut(double durationSeconds, EasingFunc easing) {
 	for (auto* particle : mParticles) particle->fadeTo(0, durationSeconds, easing);
-	mDoneFadingOutAt = OS::getMilliseconds() + static_cast<ms_time>(std::ceil(durationSeconds * 1000.0));
+	mDoneFadingOutAt = animationMilliseconds() + static_cast<ms_time>(std::ceil(durationSeconds * 1000.0));
 	Sprite* sprite = mFirstSprite;
 	while (sprite) {
 		sprite->fadeOut(durationSeconds, easing);
@@ -739,81 +642,40 @@ void	SpriteLayer::fadeOut(double durationSeconds, EasingFunc easing) {
 	}
 }
 
-// arrange layers
-void	SpriteLayer::moveBehind( SpriteLayer* inLayer) {
-	SpriteLayer* layer = inLayer;
-	SpriteManager::getSingletonInstance()->removeLayer(this);
-	if (layer == 0) {
-		// behind everything = in front of list
-		layer = SpriteManager::getSingletonInstance()->mFirstLayer;
-	}
-	// update the layer before to point to us
-	if (layer && layer->mPrevLayer) {
-		layer->mPrevLayer->mNextLayer = this;
-		this->mPrevLayer = layer->mPrevLayer;
-	} else {
-		SpriteManager::getSingletonInstance()->mFirstLayer = this;
-		this->mPrevLayer = 0;
-	}
-	// update the layer after to point to us
-	if (layer) {
-		layer->mPrevLayer = this;
-	} else {
-		SpriteManager::getSingletonInstance()->mLastLayer = this;
-	}
-	mNextLayer = layer;
+ms_time SpriteLayer::animationMilliseconds() const {
+    if(mManager && mManager->mScene)return static_cast<ms_time>(mManager->mScene->getSimulationTime()*1000);
+    return mClockDetached?mDetachedClock:OS::getMilliseconds();
+}
+void SpriteLayer::rebaseFadeClock(ms_time oldTime,ms_time newTime) {
+    for(auto* deadline:{&mDoneFadingInAt,&mDoneFadingOutAt})if(*deadline)*deadline=newTime+std::max<ms_time>(0,*deadline-oldTime);
 }
 
-
-void	SpriteLayer::moveInFrontOf( SpriteLayer* inLayer) {
-	SpriteLayer* layer = inLayer;
-	SpriteManager::getSingletonInstance()->removeLayer(this);
-	if (layer == 0) {
-		// put after last layer
-		layer = SpriteManager::getSingletonInstance()->mLastLayer;
-	}
-	// update the layer after to point to us
-	if (layer && layer->mNextLayer) {
-		layer->mNextLayer->mPrevLayer = this;
-		this->mNextLayer = layer->mNextLayer;
-	} else {
-		SpriteManager::getSingletonInstance()->mLastLayer = this;
-		this->mNextLayer = 0;
-	}
-	// update the layer before to point to us
-	if (layer) {
-		layer->mNextLayer = this;
-	} else {
-		SpriteManager::getSingletonInstance()->mFirstLayer = this;
-	}
+// Reorder within the same manager without detaching physics or scene ownership.
+void SpriteLayer::moveBehind(SpriteLayer* other) {
+    if (!mManager || other==this || (!other && !mPrevLayer && !mNextLayer)) return;
+    if (other && other->mManager!=mManager) throw std::logic_error("Layer order is local to its scene");
+    auto* manager=mManager;
+    manager->removeLayer(this);
+    if (!other) other=manager->mFirstLayer;
+    mManager=manager; mNextLayer=other; mPrevLayer=other?other->mPrevLayer:manager->mLastLayer;
+    if(mPrevLayer)mPrevLayer->mNextLayer=this;else manager->mFirstLayer=this;
+    if(other)other->mPrevLayer=this;else manager->mLastLayer=this;
 }
-
+void SpriteLayer::moveInFrontOf(SpriteLayer* other) {
+    if (!mManager || other==this || (!other && !mPrevLayer && !mNextLayer)) return;
+    if (other && other->mManager!=mManager) throw std::logic_error("Layer order is local to its scene");
+    auto* manager=mManager;
+    manager->removeLayer(this);
+    if (!other) other=manager->mLastLayer;
+    mManager=manager; mPrevLayer=other; mNextLayer=other?other->mNextLayer:manager->mFirstLayer;
+    if(mNextLayer)mNextLayer->mPrevLayer=this;else manager->mLastLayer=this;
+    if(other)other->mNextLayer=this;else manager->mFirstLayer=this;
+}
 int SpriteLayer::getZOrder() {
-	int z = 0;
-	SpriteLayer* layer = SpriteManager::getSingletonInstance()->mFirstLayer;
-	while (layer) {
-		if (layer == this) {
-			return z;
-		} else {
-			z++;
-			layer = layer->mNextLayer;
-		}
-	}
-	return -1; // this shouldn't ever happen, all layers should be in the SpriteManager
+    int z=0;
+    for(auto* layer=mManager?mManager->mFirstLayer:nullptr;layer;layer=layer->mNextLayer,++z)if(layer==this)return z;
+    return -1;
 }
-
-void	SpriteLayer::moveWith(SpriteLayer* layer, float moveRatio, float zoomRatio) {
-	if (mControlledBy || (layer == 0) ) {
-		return;	// already controlled
-	}
-	mControlledBy = layer;
-	LinkedLayerInfo info;
-	info.moveRatio = moveRatio;
-	info.zoomRatio = zoomRatio;
-	info.linkedLayer = this;
-	layer->mLinkedLayers.push_back(info);
-}
-
 
 // add and remove sprites from the manager
 
@@ -1069,154 +931,53 @@ void SpriteLayer::removeAllSprites() {
 
 #ifndef PDG_NO_GUI
 
-void SpriteLayer::zoomChanged(float deltaZoom) {
-    // move any layers we are controlling
-    if (mLinkedLayers.size() > 0) {
-		for (std::vector<LinkedLayerInfo>::iterator itr = mLinkedLayers.begin(); itr != mLinkedLayers.end(); itr++) {
-			float targetZoom = (itr->linkedLayer->mZoom + deltaZoom) * itr->zoomRatio;
-			itr->linkedLayer->setZoom(targetZoom);
-		}
+void SpriteLayer::setSpritePort(Port* port) {
+    if (mCamera && port) mCamera->ensureViewport(*port);
+    if (mPort==port) return;
+    if (mPort) std::erase(mPort->mLayers,this);
+    mPort = port;
+    if (mPort) mPort->mLayers.push_back(this);
+    for (auto* sprite=mFirstSprite; sprite; sprite=sprite->mNextSprite) sprite->setPort(port);
+}
+
+namespace {
+RotatedRect transformRotatedRect(const SpatialTransform& t,const RotatedRect& r) {
+    const double scale=std::hypot(t.a,t.b), other=std::hypot(t.c,t.d);
+    if (t.a*t.d-t.b*t.c<=0 || std::abs(scale-other)>0.00001 || std::abs(t.a*t.c+t.b*t.d)>0.00001) {
+        Quad q=r.getQuad(); for(auto& p:q.points)p=t.transformPoint(p); return RotatedRect(q.getBounds());
     }
+    RotatedRect out=r;
+    const Point center=t.transformPoint(r.centerPoint());
+    const Offset offset(t.a*r.centerOffset.x+t.c*r.centerOffset.y,t.b*r.centerOffset.x+t.d*r.centerOffset.y);
+    const double angle=r.radians+std::atan2(t.b,t.a);
+    const double c=std::cos(r.radians), sn=std::sin(r.radians);
+    const Offset rotated(c*r.centerOffset.x-sn*r.centerOffset.y,sn*r.centerOffset.x+c*r.centerOffset.y);
+    const Offset mapped(t.a*rotated.x+t.c*rotated.y,t.b*rotated.x+t.d*rotated.y);
+    out.top*=scale;out.left*=scale;out.right*=scale;out.bottom*=scale;
+    out.center(Point(center.x-mapped.x+std::cos(angle)*offset.x-std::sin(angle)*offset.y,
+                     center.y-mapped.y+std::sin(angle)*offset.x+std::cos(angle)*offset.y));
+    out.radians=angle;out.centerOffset=offset;return out;
 }
-
-// this is the port that the sprites in this manager will render into
-// multiple managers can render into same port creating layers, drawn in order of creation
-void    SpriteLayer::setSpritePort(Port* port) {
-	mPort = port;
 }
-
-// zooming
-void
-SpriteLayer::setZoom(float zoomLevel) {
-    float deltaZoom = zoomLevel - mZoom;
-	mZoom = zoomLevel;
-    zoomChanged(deltaZoom);
+// Coordinate conversion uses exactly one effective camera.
+SpatialTransform SpriteLayer::getViewTransform() const {
+    auto* camera=getEffectiveCamera();
+    if (!camera) return {};
+    if (mPort) camera->ensureViewport(*mPort);
+    auto result=camera->viewportTransform(mCameraMoveRatio,mCameraZoomRatio);
+    if(mManager && mManager->mScene && mManager->mScene->mDrawingSprite)result=SpatialTransform::compose(result,mManager->mScene->presentationTransform(mManager->mScene->mDrawingSprite));
+    return result;
 }
-
-void
-SpriteLayer::zoomTo(float zoomLevel, double durationSeconds, EasingFunc easing, 
-					Rect keepInRect, const Point* centerOn) 
-{
-    validateAnimationDuration(durationSeconds);
-    if (!std::isfinite(zoomLevel) || !easing) throw std::invalid_argument("Invalid zoom target or easing");
-    double saveDelay = mDelaySeconds;
-    const bool append = mAppendAnimation, waiting = mWaitPending;
-    if (centerOn != 0) {
-        moveTo(*centerOn, durationSeconds, (zoomLevel < mZoom) ? easeOutExpo : easeInOutQuad);
-    }
-    mDelaySeconds = saveDelay; mAppendAnimation = append; mWaitPending = waiting;
-    if (!centerOn) beginAnimationRequest();
-    scheduleAnimation(&mZoom, zoomLevel, durationSeconds, easing);
-    finishAnimationRequest();
-}
-
-
-// coordinate conversions, adjusting for offset, zoom and rotation of layer
-Point
-SpriteLayer::layerToPort(const Point& p) const {
-    Point a = layerToPort(Offset(p - mCenterOffset));  // rotate and zoom point to match layer
-    // add in offset for layer's location
-    a += (mLocation + mCenterOffset)*mZoom + mOrigin;
-    return a;
-}
-
-Offset
-SpriteLayer::layerToPort(const Offset& o) const {
-    // rotate about layer center (0,0)
-    const float x = o.x * mScaleX * (mFlipX ? -1 : 1);
-    const float y = o.y * mScaleY * (mFlipY ? -1 : 1);
-    Offset a(x*mFacingCos - y*mFacingSin, x*mFacingSin + y*mFacingCos);
-    a *= mZoom;
-    return a;
-}
-
-RotatedRect
-SpriteLayer::layerToPort(const Rect& r) const {
-    if (mScaleX != 1 || mScaleY != 1 || mFlipX || mFlipY)
-        return RotatedRect(layerToPort(Quad(r)).getBounds());
-    RotatedRect rr(r);
-    Point cp = layerToPort(r.centerPoint());
-    rr.center(Point(0,0));
-    rr.top *= mZoom;
-    rr.left *= mZoom;
-    rr.right *= mZoom;
-    rr.bottom *= mZoom;
-    rr.center(cp);
-    rr.radians = mFacing;
-    return rr;
-}
-
-RotatedRect
-SpriteLayer::layerToPort(const RotatedRect& r) const {
-    if (mScaleX != 1 || mScaleY != 1 || mFlipX || mFlipY)
-        return RotatedRect(layerToPort(Quad(r)).getBounds());
-    RotatedRect rr = layerToPort(static_cast<const Rect&>(r));
-    rr.centerOffset = layerToPort(r.centerOffset);
-    rr.radians = r.radians + mFacing;
-    return rr;
-}
-
-Quad
-SpriteLayer::layerToPort(const Quad& q) const {
-    Quad nq;
-    for (int i = 0; i<4; i++) {
-        nq.points[i] = layerToPort(q.points[i]);
-    }
-    return nq;
-}
-
-
-Point
-SpriteLayer::portToLayer(const Point& p) const {
-    Point a = p - mOrigin;
-    a -= (mLocation + mCenterOffset)*mZoom;
-    Point b = portToLayer(Offset(a)) + mCenterOffset;
-    return b;
-}
-
-Offset
-SpriteLayer::portToLayer(const Offset& o) const {
-    if (mZoom == 0 || mScaleX == 0 || mScaleY == 0)
-        throw std::domain_error("Cannot invert a zero-scale layer transform");
-    Offset a = o / mZoom;
-    Point b(a.x*cos(-mFacing) - a.y*sin(-mFacing), a.x*sin(-mFacing) + a.y*cos(-mFacing));
-    return Offset(b.x / (mScaleX * (mFlipX ? -1 : 1)), b.y / (mScaleY * (mFlipY ? -1 : 1)));
-}
-    
-RotatedRect
-SpriteLayer::portToLayer(const Rect& r) const {
-    if (mScaleX != 1 || mScaleY != 1 || mFlipX || mFlipY)
-        return RotatedRect(portToLayer(Quad(r)).getBounds());
-    RotatedRect rr(r);
-    Point cp = portToLayer(r.centerPoint());
-    rr.center(Point(0,0));
-    rr.top /= mZoom;
-    rr.left /= mZoom;
-    rr.right /= mZoom;
-    rr.bottom /= mZoom;
-    rr.center(cp);
-    rr.radians = -mFacing;
-    return rr;
-}
-
-RotatedRect
-SpriteLayer::portToLayer(const RotatedRect& r) const {
-    if (mScaleX != 1 || mScaleY != 1 || mFlipX || mFlipY)
-        return RotatedRect(portToLayer(Quad(r)).getBounds());
-    RotatedRect rr = portToLayer(static_cast<const Rect&>(r));
-    rr.centerOffset = portToLayer(r.centerOffset);
-    rr.radians = r.radians - mFacing;
-    return rr;
-}
-
-Quad
-SpriteLayer::portToLayer(const Quad& q) const {
-    Quad nq;
-    for (int i = 0; i<4; i++) {
-        nq.points[i] = portToLayer(q.points[i]);
-    }
-    return nq;
-}
+Point SpriteLayer::layerToPort(const Point& p) const { return getViewTransform().transformPoint(p); }
+Offset SpriteLayer::layerToPort(const Offset& o) const { auto t=getViewTransform(); return Offset(t.a*o.x+t.c*o.y,t.b*o.x+t.d*o.y); }
+Quad SpriteLayer::layerToPort(const Quad& q) const { Quad result=q; for(auto& p:result.points) p=layerToPort(p); return result; }
+RotatedRect SpriteLayer::layerToPort(const Rect& r) const { return transformRotatedRect(getViewTransform(),RotatedRect(r)); }
+RotatedRect SpriteLayer::layerToPort(const RotatedRect& r) const { return transformRotatedRect(getViewTransform(),r); }
+Point SpriteLayer::portToLayer(const Point& p) const { return getViewTransform().inverse().transformPoint(p); }
+Offset SpriteLayer::portToLayer(const Offset& o) const { auto t=getViewTransform().inverse(); return Offset(t.a*o.x+t.c*o.y,t.b*o.x+t.d*o.y); }
+Quad SpriteLayer::portToLayer(const Quad& q) const { Quad result=q; for(auto& p:result.points) p=portToLayer(p); return result; }
+RotatedRect SpriteLayer::portToLayer(const Rect& r) const { return transformRotatedRect(getViewTransform().inverse(),RotatedRect(r)); }
+RotatedRect SpriteLayer::portToLayer(const RotatedRect& r) const { return transformRotatedRect(getViewTransform().inverse(),r); }
 
 #endif // ! PDG_NO_GUI
 
@@ -1237,14 +998,32 @@ void	SpriteLayer::disableCollisions() {
 #ifndef PDG_NO_GUI
 void	SpriteLayer::drawLayer() {
 	if (!mPort) return;	// can't draw without a port
+    auto* previousCamera=mPort->mLayerDrawingCamera;
+    mPort->mLayerDrawingCamera=getEffectiveCamera();
+    struct RestoreCamera {Port& port;Camera* previous;~RestoreCamera(){port.mLayerDrawingCamera=previous;}} restoreCamera{*mPort,previousCamera};
+    if (mPort->mLayerDrawingCamera && mPort->mLayerDrawingCamera->isHidden()) return;
+    const auto previousClip=mPort->getClipRect();
+    struct RestoreClip { Port& port; Rect clip; ~RestoreClip(){port.setClipRect(clip);} } restoreClip{*mPort,previousClip};
+    if (auto* camera=getEffectiveCamera()) {
+        camera->ensureViewport(*mPort);
+        mPort->setClipRect(previousClip.intersection(camera->getViewport()));
+        mPort->queueCameraEffects(camera);
+    }
+    Port::ScreenDrawingScope screenDrawing(*mPort);
 
 	Sprite* sprite = mFirstSprite;
 	while (sprite && !mHidden) {
-		sprite->draw();
+        auto* scene=mManager?mManager->mScene:nullptr;
+        struct Drawing {Scene* scene;Sprite* previous;~Drawing(){if(scene)scene->mDrawingSprite=previous;}} drawing{scene,scene?scene->mDrawingSprite:nullptr};
+        if(scene)scene->mDrawingSprite=sprite;
+        sprite->draw();
 		sprite = sprite->mNextSprite;
 	}
 
-    if (!mHidden) for (auto* particle : mParticles) particle->draw();
+    if (!mHidden) {
+        for(const auto& trail:mParticleTrails)drawParticleTrail(*mPort,*trail,getViewTransform());
+        for (auto* particle : mParticles) particle->draw();
+    }
 #ifdef SPRITELAYER_INTERNAL_DEBUG
     if (!mHidden) {
         Rect r(30, 30);
@@ -1255,7 +1034,7 @@ void	SpriteLayer::drawLayer() {
         mPort->drawLine(q.points[0], q.points[2], PDG_BLUE_COLOR);
         mPort->drawLine(q.points[1], q.points[3], PDG_BLUE_COLOR);
         r.setSize(20);
-        r.center(mCenterOffset);
+        r.center(Point());
         rr = layerToPort(r);
         q = rr.getQuad();
         mPort->drawLine(q.points[0], q.points[2], PDG_RED_COLOR);
@@ -1268,17 +1047,6 @@ void	SpriteLayer::drawLayer() {
 #endif // SPRITELAYER_INTERNAL_DEBUG
 }
 #endif // ! PDG_NO_GUI
-
-// Zoom keeps a stable channel ID even in headless readers.
-std::vector<const float*> SpriteLayer::tweenFields() const {
-    auto fields = AnimatedBase::tweenFields();
-#ifndef PDG_NO_GUI
-    fields.push_back(&mZoom);
-#else
-    fields.push_back(nullptr);
-#endif
-    return fields;
-}
 
 namespace {
 template<class T> struct ParticleFrame {
@@ -1308,11 +1076,27 @@ void SpriteLayer::removeParticle(Particle* particle) {
     if (!particle || particle->mLayer != this) return;
     if (particle->physics.isPresent()) particle->physics.disconnect();
     if (particle->collider.isPresent()) particle->collider->syncNative(nullptr);
+    if(particle->mTrail)particle->mTrail->reset(particle->getLocation(),particle->getOpacity());
     particle->mLayer = nullptr; particle->syncPhysicsSolver();
     if (particle->getParticleEmitter()) particle->getParticleEmitter()->stopEmitting();
     mParticles.erase(std::find(mParticles.begin(), mParticles.end(), particle)); particle->release();
 }
-void SpriteLayer::removeAllParticles() { while (!mParticles.empty()) removeParticle(mParticles.back()); }
+void SpriteLayer::removeAllParticles() { while (!mParticles.empty()) removeParticle(mParticles.back()); mParticleTrails.clear(); }
+void SpriteLayer::retireParticleTrail(std::unique_ptr<ParticleTrail> trail) {
+    if(!trail || trail->empty() || trail->samples().size()<2)return;
+    // Bound retained tails independently of emission rate. Discard oldest first.
+    size_t points=trail->ring.size();
+    for(const auto& old:mParticleTrails)points+=old->ring.size();
+    while(!mParticleTrails.empty() && (points>65536 || mParticleTrails.size()>=mMaxParticles)) {
+        points-=mParticleTrails.front()->ring.size();mParticleTrails.erase(mParticleTrails.begin());
+    }
+    if(mMaxParticles)mParticleTrails.push_back(std::move(trail));
+}
+uint32 SpriteLayer::getParticleTrailCount() const {
+    size_t count=mParticleTrails.size();
+    for(const auto* p:mParticles)if(p->mTrail && !p->mTrail->empty())++count;
+    return static_cast<uint32>(count);
+}
 ParticleEmitter* SpriteLayer::createParticleEmitter() {
     auto emitter = std::make_unique<ParticleEmitter>(); mParticleEmitters.push_back(emitter.get());
     emitter->mLayer = this; emitter->addRef(); return emitter.release();
@@ -1329,6 +1113,10 @@ void SpriteLayer::advanceParticles(double seconds) {
     mParticleStep = mParticles;
     for (auto* p : mParticleStep) p->addRef();
     mParticlesPrepared = true;
+    if(mAnimating) {
+        for(auto& trail:mParticleTrails)trail->age(seconds);
+        std::erase_if(mParticleTrails,[](const auto& trail){return trail->empty();});
+    }
     if (mAnimating) for (auto* p : mParticleStep) if (p->mLayer == this) p->advance(seconds);
 }
 void SpriteLayer::finishParticles(double seconds) {
@@ -1348,9 +1136,19 @@ bool SpriteLayer::allowsColliderWorld(const void* world) const {
     return std::find(mCollideLayers.begin(),mCollideLayers.end(),other)!=mCollideLayers.end() ||
         std::find(other->mCollideLayers.begin(),other->mCollideLayers.end(),this)!=other->mCollideLayers.end();
 }
+void SpriteLayer::collectQueryColliders(std::vector<Collider*>& out) const {
+    auto add = [&](const auto& association) {
+        if (association.isPresent()) out.push_back(association.operator->());
+    };
+    for (auto* sprite=mFirstSprite; sprite; sprite=sprite->mNextSprite) {
+        add(sprite->collider);
+        for (auto* part:sprite->mParts) add(part->collider);
+    }
+    for (auto* particle:mParticles) add(particle->collider);
+}
 void SpriteLayer::prepareColliders(void* space) {
     bool enabled=mDoCollisions || !mCollideLayers.empty();
-    if(!enabled)for(auto* layer=SpriteManager::getSingletonInstance()->mFirstLayer;layer;layer=layer->mNextLayer)
+    if(!enabled)for(auto* layer=(mManager ? mManager->mFirstLayer : nullptr);layer;layer=layer->mNextLayer)
         if(allowsColliderWorld(layer)) { enabled=true; break; }
     auto prepare=[&](Collider& collider) {
         collider.setWorldFilter([this](const void* other){return allowsColliderWorld(other);});
@@ -1393,7 +1191,7 @@ void SpriteLayer::solveColliders(double seconds) {
             if (particle->collider.isPresent()) colliders.push_back(particle->collider.operator->());
     };
     collect(this);
-    for(auto* other=SpriteManager::getSingletonInstance()->mFirstLayer;other;other=other->mNextLayer)
+    for(auto* other=(mManager ? mManager->mFirstLayer : nullptr);other;other=other->mNextLayer)
         if(other!=this && iid<other->iid && allowsColliderWorld(other))collect(other);
     if(colliders.empty()&&!mCollisionWorld)return;
     if(!mCollisionWorld)mCollisionWorld=std::make_unique<CollisionWorld>();
@@ -1403,20 +1201,19 @@ void SpriteLayer::solveColliders(double seconds) {
 }
 
 void
-SpriteLayer::animateLayer(ms_delta msElapsed) {
+SpriteLayer::animateLayer(double msElapsed) {
     // Contacts may request layer cleanup even when a native caller steps a layer directly.
     struct Traversal {
-        SpriteManager* manager = SpriteManager::getSingletonInstance();
-        Traversal() { ++manager->mLayerUpdateDepth; }
-        ~Traversal() { manager->finishLayerTraversal(); }
-    } traversal;
-	AnimatedBase::animate(static_cast<double>(msElapsed) / 1000.0);
+        SpriteManager* manager;
+        explicit Traversal(SpriteManager* value) : manager(value) { if(manager) ++manager->mLayerUpdateDepth; }
+        ~Traversal() { if(manager) manager->finishLayerTraversal(); }
+    } traversal(mManager);
 
-	mFacingCos = cos(mFacing); // cache these frequently used values
-	mFacingSin = sin(mFacing);
+
+
 	
 	SpriteLayerInfo evntInfo;
-	ms_time currMs = OS::getMilliseconds();
+	ms_time currMs = animationMilliseconds();
 	SPRITELAYER_DEBUG_ONLY( DEBUG_PRINT("%s", std::format("Animating layer [{}] @ {}", static_cast<const void*>(this), msElapsed).c_str()); )
 
 	if (mDoneFadingInAt && (currMs > mDoneFadingInAt)) {
@@ -1460,50 +1257,7 @@ SpriteLayer::animateLayer(ms_delta msElapsed) {
     finishParticles(double(msElapsed)/1000.0);
 }
 
-void
-SpriteLayer::locationChanged(const Offset& delta) {
-  #ifndef PDG_NO_GUI
-	if (!mControlledBy) {
-		if (mAutoCenter) {
-			if (mFixedMoveAxis) {
-				Offset a(delta.x*cos(-mFacing) - delta.y*sin(-mFacing), delta.x*sin(-mFacing) + delta.y*cos(-mFacing));
-				mLocation -= delta;
-				mLocation += a;
-				mCenterOffset -= a;
-			} else {
-				mCenterOffset -= delta;
-			}
-		} else if (mFixedMoveAxis) {
-			// TODO This mode is broken, fix it
-	        Offset a(delta.x*mFacingCos - delta.y*mFacingSin, delta.x*mFacingSin + delta.y*mFacingCos);
-	        mLocation -= delta;
-	        mLocation += a;
-		}
-    }
-  #endif // !PDG_NO_GUI
-    // move any layers we are controlling
-    if (mLinkedLayers.size() > 0) {
-		for (std::vector<LinkedLayerInfo>::iterator itr = mLinkedLayers.begin(); itr != mLinkedLayers.end(); itr++) {
-			Offset targetDelta = delta * itr->moveRatio;
-			itr->linkedLayer->moveBy(targetDelta);
-		}
-    }
-}
-
-    
 #ifndef PDG_NO_GUI
-void    
-SpriteLayer::easingCompleted(const Animation& a) {
-	SpriteLayerInfo evntInfo;
-    if (a.value == &mZoom) {
-        // this is a zoom operation, so send the proper notification
-        evntInfo.actingLayer = this;
-        evntInfo.action = SpriteLayer::action_ZoomComplete;
-        evntInfo.millisec = OS::getMilliseconds();
-        postEvent(eventType_SpriteLayer, &evntInfo);
-    }
-}
-
 void SpriteLayer::wantMouseOverEvents() {
 	mWantsMouseOver = true;
 }
@@ -1827,25 +1581,15 @@ void SpriteLayer::enableSpriterEvents(bool enable) {
 cpSpace*
 SpriteLayer::getSpace() {
 	if (!mUseChipmunkPhysics) return 0;
-    return SpriteManager::getSingletonInstance()->mSpace;
+    if (mManager) return mManager->mSpace;
+    if (!mDetachedSpace) mDetachedSpace=cpSpaceNew();
+    return mDetachedSpace;
 }
 
-void
-SpriteLayer::setGravity(float gravity, bool keepItDownward) {
-	if (!mUseChipmunkPhysics) return;
-    mGravity = gravity;
-    mKeepGravityDownward = keepItDownward;
-    if (mKeepGravityDownward) {
-        cpSpaceSetGravity(getSpace(), cpv(mGravity * mFacingSin, mGravity * mFacingCos));
-    } else {
-        cpSpaceSetGravity(getSpace(), cpv(0, mGravity));
-    }
-}
-
-void
-SpriteLayer::setKeepGravityDownward(bool keepItDownward) {
-	if (!mUseChipmunkPhysics) return;
-    setGravity(mGravity, keepItDownward);
+void SpriteLayer::setGravity(float gravity) {
+    if (!std::isfinite(gravity)) throw std::invalid_argument("Gravity must be finite");
+    mGravity=gravity;
+    if (mUseChipmunkPhysics) cpSpaceSetGravity(getSpace(),cpv(0,gravity));
 }
 
 void
@@ -1855,38 +1599,15 @@ SpriteLayer::setDamping(float damping) {
 }
 #endif // PDG_USE_CHIPMUNK_PHYSICS
 
-void	
-SpriteLayer::rotationChanged(float deltaRadians) {
-    mFacingCos = cos(mFacing);
-    mFacingSin = sin(mFacing);
-    // rotate any layers we are controlling
-    if (mLinkedLayers.size() > 0) {
-		for (std::vector<LinkedLayerInfo>::iterator itr = mLinkedLayers.begin(); itr != mLinkedLayers.end(); itr++) {
-			itr->linkedLayer->rotateBy(deltaRadians);
-		}
-    }
-  #ifdef PDG_USE_CHIPMUNK_PHYSICS
-    // do this anytime we change rotation
-    if (mUseChipmunkPhysics && mKeepGravityDownward) {
-        cpSpaceSetGravity(getSpace(), cpv(mGravity * mFacingSin, mGravity * mFacingCos));
-    }
-  #endif //PDG_USE_CHIPMUNK_PHYSICS
-}
-
 #ifndef PDG_NO_GUI
 SpriteLayer::SpriteLayer(Port* port): 
-    noZoom(1.0f),
-	mPort(port), mOrigin(0,0), 
+	mPort(nullptr),
 	mHidden(false), mAnimating(true), mDoCollisions(false), 
 	mWantsMouseOver(false), mWantsClicks(false),
-	mZoom(1.0), // mTargetZoom(1.0), mDeltaZoomPerMs(0.0),
-    mAutoCenter(false), mFixedMoveAxis(true), 
   #ifdef PDG_USE_CHIPMUNK_PHYSICS
-    mGravity(0.0), mKeepGravityDownward(false), mUseChipmunkPhysics(false), mIsStaticLayer(false),
+    mGravity(0.0), mUseChipmunkPhysics(false), mIsStaticLayer(false),
   #endif
 	mNextLayer(0), mPrevLayer(0), mFirstSprite(0), mLastSprite(0),
-	mControlledBy(0),
-	mFacingCos(1.0), mFacingSin(0.0),
 	mSerFlags(ser_Full),
 	iid(sUniqueLayerId++)
 {
@@ -1894,26 +1615,20 @@ SpriteLayer::SpriteLayer(Port* port):
 	INIT_SCRIPT_OBJECT(mSpriteLayerScriptObj);
 #endif
     layerId = gNextLayerId++;
+    setSpritePort(port);
 }
 #endif // ! PDG_NO_GUI
 
 SpriteLayer::SpriteLayer(): 
-    noZoom(1.0f),
   #ifndef PDG_NO_GUI
-	mPort(0), mOrigin(0,0), 
+	mPort(0),
   #endif // ! PDG_NO_GUI
 	mHidden(false), mAnimating(true), mDoCollisions(false), 
 	mWantsMouseOver(false), mWantsClicks(false),
-  #ifndef PDG_NO_GUI
-	mZoom(1.0), // mTargetZoom(1.0), mDeltaZoomPerMs(0.0),
-    mAutoCenter(false), mFixedMoveAxis(true), 
-  #endif // ! PDG_NO_GUI
   #ifdef PDG_USE_CHIPMUNK_PHYSICS
-    mGravity(0.0), mKeepGravityDownward(false), mUseChipmunkPhysics(false), mIsStaticLayer(false),
+    mGravity(0.0), mUseChipmunkPhysics(false), mIsStaticLayer(false),
   #endif
 	mNextLayer(0), mPrevLayer(0), mFirstSprite(0), mLastSprite(0),
-	mControlledBy(0),
-	mFacingCos(1.0), mFacingSin(0.0),
 	mSerFlags(ser_Full),
 	iid(sUniqueLayerId++)
 {
@@ -1924,6 +1639,10 @@ SpriteLayer::SpriteLayer():
 }
 
 SpriteLayer::~SpriteLayer() {
+    setCamera(nullptr);
+#ifndef PDG_NO_GUI
+    setSpritePort(nullptr);
+#endif
     removeAllParticleEmitters();
     removeAllParticles();
     for (auto* particle : mParticleStep) particle->release();
@@ -1966,17 +1685,20 @@ SpriteLayer::~SpriteLayer() {
     // Sprites retain their imported model independently of this cache. Removed
     // or transferred sprites keep playback, bindings, modifiers and artwork.
     removeAllSprites();
-    for(auto* layer=SpriteManager::getSingletonInstance()->mFirstLayer;layer;layer=layer->mNextLayer) {
+    for(auto* layer=(mManager ? mManager->mFirstLayer : nullptr);layer;layer=layer->mNextLayer) {
         auto& links=layer->mCollideLayers;
         std::erase(links, this);
     }
 #ifdef PDG_SPRITER_SUPPORT
     mModels.clear();
 #endif
-	SpriteManager::getSingletonInstance()->removeLayer(this);
+	if (mManager) mManager->removeLayer(this);
   #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 	CleanupSpriteLayerScriptObject(mSpriteLayerScriptObj);
   #endif
+#ifdef PDG_USE_CHIPMUNK_PHYSICS
+    if(mDetachedSpace)cpSpaceFree(mDetachedSpace);
+#endif
     SPRITELAYER_DEBUG_ONLY(OS::_DOUT("DONE SpriteLayer::~SpriteLayer %p", this));
 }
 
@@ -2051,7 +1773,7 @@ SpriteLayer* SpriteLayer::getLayer(long id) {
 	while (layer && (id != layer->layerId)) {
 		layer = layer->mNextLayer;
 	}
-	return layer;
+	return layer ? layer : Scene::findLayer(id);
 }
 
 	

@@ -216,6 +216,38 @@ if [[ "$MODE" == "ui" ]]; then
     exit 0
 fi
 
+# A desktop PDG server supplies real TCP/UDP endpoints to the client-only runtime.
+# Start it only when the iOS networking suite is selected (or the full suite runs).
+NETWORK_SUITE=no
+SELECTED_SUITE=no
+for ARG in "${APP_ARGS[@]}"; do
+    case "$ARG" in
+        net_ios|net_ios.spec.js|net_webtransport|net_webtransport.spec.js) NETWORK_SUITE=yes; SELECTED_SUITE=yes ;;
+        --*) ;;
+        *) SELECTED_SUITE=yes ;;
+    esac
+done
+if [[ "$SELECTED_SUITE" == no ]]; then NETWORK_SUITE=yes; fi
+if [[ "$NETWORK_SUITE" == yes ]]; then
+    ENDPOINT_FILE="$RESULT_DIR/network-endpoint.json"
+    rm -f "$ENDPOINT_FILE"
+    PDG_TEST_NETWORK_ENDPOINT_FILE="$ENDPOINT_FILE" "$PDG_ROOT/pdg" \
+        "$PDG_ROOT/test/spec/fixtures/ios_network/echo_host.js" >"$RESULT_DIR/network-host.log" 2>&1 &
+    NETWORK_HOST_PID=$!
+    trap 'kill "$NETWORK_HOST_PID" 2>/dev/null || true; wait "$NETWORK_HOST_PID" 2>/dev/null || true' EXIT
+    for ATTEMPT in {1..100}; do
+        [[ -s "$ENDPOINT_FILE" ]] && break
+        if ! kill -0 "$NETWORK_HOST_PID" 2>/dev/null; then break; fi
+        sleep 0.1
+    done
+    if [[ ! -s "$ENDPOINT_FILE" ]]; then
+        cat "$RESULT_DIR/network-host.log" >&2
+        echo "The desktop PDG networking test host did not start." >&2
+        exit 2
+    fi
+    export SIMCTL_CHILD_PDG_TEST_IOS_NETWORK_ENDPOINT="$(cat "$ENDPOINT_FILE")"
+fi
+
 echo "Running iOS unit tests..."
 set +e
 xcrun simctl launch --terminate-running-process --console-pty \

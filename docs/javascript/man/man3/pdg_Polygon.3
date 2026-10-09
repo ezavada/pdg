@@ -1,4 +1,4 @@
-.TH "Polygon" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Polygon" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -13,15 +13,24 @@ Polygon \- Geometric shape defined by a collection of points with support for tr
 
 .in +1c
 .ti -1c
-.RI "\fBaddPoint\fP (\fBPoint\fP point)"
+.RI "\fBPolygon\fP ()"
+.br
+.ti -1c
+.RI "\fBPolygon\fP (array object \fBPoint\fP points)"
+.br
+.ti -1c
+.RI "\fBPolygon\fP (array object \fBPoint\fP points)"
+.br
+.ti -1c
+.RI "\fBPolygon\fP \fBaddPoint\fP (\fBPoint\fP point)"
 .br
 .RI "adds a point to the end of the polygon "
 .ti -1c
-.RI "\fBaddSpline\fP (\fBSpline\fP spline)"
+.RI "\fBPolygon\fP \fBaddSpline\fP (\fBSpline\fP spline, number uStep=0\&.01)"
 .br
 .RI "adds a spline curve to the polygon "
 .ti -1c
-.RI "\fBcenter\fP (\fBPoint\fP point)"
+.RI "\fBPolygon\fP \fBcenter\fP (\fBPoint\fP point)"
 .br
 .RI "centers the polygon at the specified point "
 .ti -1c
@@ -29,7 +38,7 @@ Polygon \- Geometric shape defined by a collection of points with support for tr
 .br
 .RI "returns the center point of the polygon "
 .ti -1c
-.RI "\fBclearPoints\fP ()"
+.RI "\fBPolygon\fP \fBclearPoints\fP ()"
 .br
 .RI "removes all points from the polygon "
 .ti -1c
@@ -57,11 +66,11 @@ Polygon \- Geometric shape defined by a collection of points with support for tr
 .br
 .RI "returns the number of points in the polygon "
 .ti -1c
-.RI "\fBhorzScale\fP (number factor)"
+.RI "\fBPolygon\fP \fBhorzScale\fP (number factor)"
 .br
 .RI "scales the polygon horizontally by the specified factor "
 .ti -1c
-.RI "\fBinsertPoint\fP (uint index, \fBPoint\fP point)"
+.RI "\fBPolygon\fP \fBinsertPoint\fP (uint index, \fBPoint\fP point)"
 .br
 .RI "inserts a point at the specified index "
 .ti -1c
@@ -77,7 +86,7 @@ Polygon \- Geometric shape defined by a collection of points with support for tr
 .br
 .RI "moves the polygon down by the specified amount "
 .ti -1c
-.RI "\fBmoveLeft\fP (number delta)"
+.RI "\fBPolygon\fP \fBmoveLeft\fP (number delta)"
 .br
 .RI "moves the polygon left by the specified amount "
 .ti -1c
@@ -85,43 +94,47 @@ Polygon \- Geometric shape defined by a collection of points with support for tr
 .br
 .RI "moves the polygon right by the specified amount "
 .ti -1c
-.RI "\fBmoveTo\fP (number x, number y)"
+.RI "\fBPolygon\fP \fBmoveTo\fP (number x, number y)"
 .br
 .RI "moves the polygon to the specified coordinates "
+.ti -1c
+.RI "\fBPolygon\fP \fBmoveTo\fP (\fBPoint\fP point)"
+.br
+.RI "Moves the polygon so the top-left corner of its bounds is at point\&. "
 .ti -1c
 .RI "\fBPolygon\fP \fBmoveUp\fP (number delta)"
 .br
 .RI "moves the polygon up by the specified amount "
 .ti -1c
-.RI "\fBmoveXTo\fP (number x)"
+.RI "\fBPolygon\fP \fBmoveXTo\fP (number x)"
 .br
 .RI "moves the polygon to the specified x coordinate "
 .ti -1c
-.RI "\fBmoveYTo\fP (number y)"
+.RI "\fBPolygon\fP \fBmoveYTo\fP (number y)"
 .br
 .RI "moves the polygon to the specified y coordinate "
 .ti -1c
-.RI "\fBremovePoint\fP (uint index)"
+.RI "\fBPolygon\fP \fBremovePoint\fP (uint index)"
 .br
 .RI "removes the point at the specified index "
 .ti -1c
-.RI "\fBrotate\fP (number radians)"
+.RI "\fBPolygon\fP \fBrotate\fP (number radians)"
 .br
 .RI "rotates the polygon by the specified angle in radians "
 .ti -1c
-.RI "\fBrotateAround\fP (number radians, \fBPoint\fP centerPoint)"
+.RI "\fBPolygon\fP \fBrotateAround\fP (number radians, \fBPoint\fP centerPoint)"
 .br
 .RI "rotates the polygon around the specified center point "
 .ti -1c
-.RI "\fBscale\fP (number factor)"
+.RI "\fBPolygon\fP \fBscale\fP (number factor)"
 .br
 .RI "scales the polygon by the specified factor "
 .ti -1c
-.RI "\fBscaleAround\fP (number factor, \fBPoint\fP centerPoint)"
+.RI "\fBPolygon\fP \fBscaleAround\fP (number factor, \fBPoint\fP centerPoint)"
 .br
 .RI "scales the polygon around the specified center point "
 .ti -1c
-.RI "\fBsetPoint\fP (uint index, \fBPoint\fP point)"
+.RI "\fBPolygon\fP \fBsetPoint\fP (uint index, \fBPoint\fP point)"
 .br
 .RI "sets the point at the specified index "
 .ti -1c
@@ -129,7 +142,7 @@ Polygon \- Geometric shape defined by a collection of points with support for tr
 .br
 .RI "returns the union of this polygon with another polygon "
 .ti -1c
-.RI "\fBvertScale\fP (number factor)"
+.RI "\fBPolygon\fP \fBvertScale\fP (number factor)"
 .br
 .RI "scales the polygon vertically by the specified factor "
 .in -1c
@@ -145,30 +158,55 @@ Geometric shape defined by a collection of points with support for transformatio
 .RE
 .PP
 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "Polygon ()"
+
+.PP
+Referenced by \fBaddPoint()\fP, \fBaddSpline()\fP, \fBcenter()\fP, \fBclearPoints()\fP, \fBequals()\fP, \fBhorzScale()\fP, \fBinsertPoint()\fP, \fBintersection()\fP, \fBmove()\fP, \fBmoveDown()\fP, \fBmoveLeft()\fP, \fBmoveRight()\fP, \fBmoveTo()\fP, \fBmoveTo()\fP, \fBmoveUp()\fP, \fBmoveXTo()\fP, \fBmoveYTo()\fP, \fBremovePoint()\fP, \fBrotate()\fP, \fBrotateAround()\fP, \fBscale()\fP, \fBscaleAround()\fP, \fBsetPoint()\fP, \fBunionWith()\fP, and \fBvertScale()\fP\&.
+.SS "Polygon (array object \fBPoint\fP points)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRpoints:\fP Array of \fR\fBPoint\fP\fP or \fRnull\fP\&. 
+.RE
+.PP
+
+.SS "Polygon (array object \fBPoint\fP points)"
+
 .SH "Member Function Documentation"
 .PP 
-.SS "addPoint (\fBPoint\fP point)"
+.SS "\fBPolygon\fP addPoint (\fBPoint\fP point)"
 
 .PP
 adds a point to the end of the polygon 
-.SS "addSpline (\fBSpline\fP spline)"
+.PP
+References \fBPolygon()\fP\&.
+.SS "\fBPolygon\fP addSpline (\fBSpline\fP spline, number uStep = \fR0\&.01\fP)"
 
 .PP
 adds a spline curve to the polygon 
-.SS "center (\fBPoint\fP point)"
+.PP
+References \fBPolygon()\fP\&.
+.SS "\fBPolygon\fP center (\fBPoint\fP point)"
 
 .PP
 centers the polygon at the specified point 
+.PP
+References \fBPolygon()\fP\&.
 .SS "\fBPoint\fP centerPoint ()"
 
 .PP
 returns the center point of the polygon 
 .PP
 Referenced by \fBrotateAround()\fP, and \fBscaleAround()\fP\&.
-.SS "clearPoints ()"
+.SS "\fBPolygon\fP clearPoints ()"
 
 .PP
 removes all points from the polygon 
+.PP
+References \fBPolygon()\fP\&.
 .SS "boolean contains (\fBPoint\fP point)"
 
 .PP
@@ -181,6 +219,8 @@ returns true if the polygon has no points
 
 .PP
 returns true if this polygon equals another polygon 
+.PP
+References \fBPolygon()\fP\&.
 .SS "\fBRect\fP getBounds ()"
 
 .PP
@@ -193,86 +233,152 @@ gets the point at the specified index
 
 .PP
 returns the number of points in the polygon 
-.SS "horzScale (number factor)"
+.SS "\fBPolygon\fP horzScale (number factor)"
 
 .PP
 scales the polygon horizontally by the specified factor 
-.SS "insertPoint (uint index, \fBPoint\fP point)"
+.PP
+References \fBPolygon()\fP\&.
+.SS "\fBPolygon\fP insertPoint (uint index, \fBPoint\fP point)"
 
 .PP
 inserts a point at the specified index 
+.PP
+References \fBPolygon()\fP\&.
 .SS "\fBPolygon\fP intersection (\fBPolygon\fP other)"
 
 .PP
 returns the intersection of this polygon with another polygon 
+.PP
+References \fBPolygon()\fP\&.
 .SS "\fBPolygon\fP move (\fBOffset\fP offset)"
 
 .PP
 moves the polygon by the specified offset vector 
+.PP
+References \fBPolygon()\fP\&.
 .SS "\fBPolygon\fP moveDown (number delta)"
 
 .PP
 moves the polygon down by the specified amount 
-.SS "moveLeft (number delta)"
+.PP
+References \fBPolygon()\fP\&.
+.SS "\fBPolygon\fP moveLeft (number delta)"
 
 .PP
 moves the polygon left by the specified amount 
+.PP
+References \fBPolygon()\fP\&.
 .SS "\fBPolygon\fP moveRight (number delta)"
 
 .PP
 moves the polygon right by the specified amount 
-.SS "moveTo (number x, number y)"
+.PP
+References \fBPolygon()\fP\&.
+.SS "\fBPolygon\fP moveTo (number x, number y)"
 
 .PP
 moves the polygon to the specified coordinates 
+.PP
+\fBParameters\fP
+.RS 4
+\fIx\fP The new left edge of the polygon's bounds\&. 
+.br
+\fIy\fP The new top edge of the polygon's bounds\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPolygon\fP, for chaining\&. 
+.RE
+.PP
+
+.PP
+References \fBPolygon()\fP\&.
+.SS "\fBPolygon\fP moveTo (\fBPoint\fP point)"
+
+.PP
+Moves the polygon so the top-left corner of its bounds is at point\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIpoint\fP The new top-left corner of the polygon's bounds\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPolygon\fP, for chaining\&. 
+.RE
+.PP
+
+.PP
+References \fBPolygon()\fP\&.
 .SS "\fBPolygon\fP moveUp (number delta)"
 
 .PP
 moves the polygon up by the specified amount 
-.SS "moveXTo (number x)"
+.PP
+References \fBPolygon()\fP\&.
+.SS "\fBPolygon\fP moveXTo (number x)"
 
 .PP
 moves the polygon to the specified x coordinate 
-.SS "moveYTo (number y)"
+.PP
+References \fBPolygon()\fP\&.
+.SS "\fBPolygon\fP moveYTo (number y)"
 
 .PP
 moves the polygon to the specified y coordinate 
-.SS "removePoint (uint index)"
+.PP
+References \fBPolygon()\fP\&.
+.SS "\fBPolygon\fP removePoint (uint index)"
 
 .PP
 removes the point at the specified index 
-.SS "rotate (number radians)"
+.PP
+References \fBPolygon()\fP\&.
+.SS "\fBPolygon\fP rotate (number radians)"
 
 .PP
 rotates the polygon by the specified angle in radians 
-.SS "rotateAround (number radians, \fBPoint\fP centerPoint)"
+.PP
+References \fBPolygon()\fP\&.
+.SS "\fBPolygon\fP rotateAround (number radians, \fBPoint\fP centerPoint)"
 
 .PP
 rotates the polygon around the specified center point 
 .PP
-References \fBcenterPoint()\fP\&.
-.SS "scale (number factor)"
+References \fBPolygon()\fP, and \fBcenterPoint()\fP\&.
+.SS "\fBPolygon\fP scale (number factor)"
 
 .PP
 scales the polygon by the specified factor 
-.SS "scaleAround (number factor, \fBPoint\fP centerPoint)"
+.PP
+References \fBPolygon()\fP\&.
+.SS "\fBPolygon\fP scaleAround (number factor, \fBPoint\fP centerPoint)"
 
 .PP
 scales the polygon around the specified center point 
 .PP
-References \fBcenterPoint()\fP\&.
-.SS "setPoint (uint index, \fBPoint\fP point)"
+References \fBPolygon()\fP, and \fBcenterPoint()\fP\&.
+.SS "\fBPolygon\fP setPoint (uint index, \fBPoint\fP point)"
 
 .PP
 sets the point at the specified index 
+.PP
+References \fBPolygon()\fP\&.
 .SS "\fBPolygon\fP unionWith (\fBPolygon\fP other)"
 
 .PP
 returns the union of this polygon with another polygon 
-.SS "vertScale (number factor)"
+.PP
+References \fBPolygon()\fP\&.
+.SS "\fBPolygon\fP vertScale (number factor)"
 
 .PP
 scales the polygon vertically by the specified factor 
+.PP
+References \fBPolygon()\fP\&.
 
 .SH "Author"
 .PP 

@@ -1,5 +1,14 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.16)
-PROJECT(PDG VERSION 1.1.1 LANGUAGES C CXX)
+PROJECT(PDG VERSION 1.2.0 LANGUAGES C CXX)
+
+# Apple's linker resolves archives without repeated entries on the link line.
+IF(APPLE)
+    FOREACH(policy CMP0156 CMP0179)
+        IF(POLICY ${policy})
+            CMAKE_POLICY(SET ${policy} NEW)
+        ENDIF()
+    ENDFOREACH()
+ENDIF()
 
 INCLUDE(CTest)
 
@@ -113,18 +122,9 @@ IF(NOT MACOSX AND NOT WIN32)
 ENDIF()
 
 IF(NOT MACOSX AND NOT WIN32)
-    FIND_LIBRARY(
-        PDG_SYSTEM_JPEG_LIBRARY
-        NAMES jpeg libjpeg.so.8 jpeg.so.8
-        PATHS /usr/lib /usr/lib64 /usr/lib/${CMAKE_LIBRARY_ARCHITECTURE}
-              /lib /lib64 /lib/${CMAKE_LIBRARY_ARCHITECTURE}
-    )
-    IF(PDG_SYSTEM_JPEG_LIBRARY)
-        MESSAGE(STATUS "Using system JPEG library: ${PDG_SYSTEM_JPEG_LIBRARY}")
-    ELSE()
-        SET(PDG_SYSTEM_JPEG_LIBRARY jpeg)
-        MESSAGE(STATUS "Falling back to linker search for JPEG library: ${PDG_SYSTEM_JPEG_LIBRARY}")
-    ENDIF()
+    # Headers and runtime must describe the same libjpeg ABI (62/80/etc.).
+    FIND_PACKAGE(JPEG REQUIRED)
+    SET(PDG_SYSTEM_JPEG_LIBRARY JPEG::JPEG)
 ENDIF()
 
 IF(MACOSX)

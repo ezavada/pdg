@@ -1,0 +1,66 @@
+.TH "javascript_mvc_guide" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+javascript_mvc_guide \- JavaScript application framework 
+.PP
+The MVC interface inventory is generated separately in \fRpdg-mvc-js\&.h\fP and \fRpdg-mvc-js\&.json\fP\&. The core engine inventory remains in \fRpdg-js\&.h\fP and \fRpdg-js\&.json\fP\&. Run \fRtools/make-idl-javascript\&.sh\fP to regenerate both sets\&.
+
+.PP
+The optional MVC module provides Application, Controller, View, and controls such as Button, Dialog, ListBox, and EditText\&. It is separate from the main \fRpdg\fP export: importing \fRpdg\fP does not make \fRpdg\&.View\fP or \fRpdg\&.Controller\fP available\&. See \fBJavaScript MVC module inventory\fP for the exports and their own public members\&.
+
+.PP
+\fBNote\fP
+.RS 4
+API stability: Evolving\&. Rendering requires a graphics-capable runtime\&. The standard Node addon does not provide graphics merely because its package contains the JavaScript framework sources\&.
+.RE
+.PP
+.SH "Importing the framework"
+.PP
+In the repository control gallery, located under \fRtest/js\fP, the import is: 
+.PP
+.nf
+const pdg = require('pdg');
+const framework = require('\&.\&./\&.\&./src/js/mvc\-app');
+const { Controller } = framework\&.Controller;
+const { View } = framework\&.View;
+
+.fi
+.PP
+
+.PP
+Several index exports are module objects: for example, the View constructor is \fRframework\&.View\&.View\fP, not \fRframework\&.View\fP\&. The inventory preserves these nested paths\&.
+
+.PP
+The relative path is specific to that example's location\&. Adjust it for your application\&. The Node package copies these sources under \fRlib/mvc-app\fP, where the package import is \fRrequire\fP('pdg/lib/mvc-app')\&. That path does not enable GUI support in a headless runtime\&. Browser and iOS applications must include the framework files in their existing module loader; neither an ES module entry nor a \fRpdg/mvc\fP alias is implied by this documentation\&.
+.SH "Creating and using a View"
+.PP
+View extends AnimatedAttributes and inherits its animation and appearance operations\&. It has no physics body\&. Its constructor is \fRnew\\\fP View(controller,rect,binding), with binding defaulting to zero\&. The controller is required, and construction registers the View with it\&.
+
+.PP
+Given an existing controller attached to an application and graphics port: 
+.PP
+.nf
+const view = new View(controller, new pdg\&.Rect(0, 0, 200, 100));
+view\&.moveTo(150, 80, 0\&.5);
+view\&.changeFillOpacity(0\&.5, 0\&.25);
+
+.fi
+.PP
+
+.PP
+This creates a base View; subclass drawSelf() or use a concrete control to provide visible content\&. The controller advances view animations during its draw cycle\&. Do not advance registered views a second time manually\&. Durations are seconds and rotation is clockwise radians\&. View layout size is independent of scale, and its location is the center of the unrotated layout rectangle\&.
+
+.PP
+Use \fRview\&.setParentView(parent)\fP for a visual parent, and \fRnull\fP to detach\&. The link supplies inherited transforms, clipping, and visibility; it does not replace controller ownership\&. Nested views must belong to the same controller\&. \fRview\&.getParentView()\fP returns a View or null\&. \fRview\&.getController(Type)\fP returns the controller only when it is an instance of Type, otherwise null\&.
+.SH "Inventory coverage"
+.PP
+The generated inventory enumerates module exports, nested module exports, and own prototype/static members without constructing controls or invoking getters\&. Inherited operations are identified through the base class\&. It deliberately labels unresolved method signatures and does not infer instance fields from a dummy constructor call\&. Complete typed MVC signatures remain separate work; this inventory establishes coverage without inventing overloads or requiring a live application window\&.
+
+.PP
+\fBSee also\fP
+.RS 4
+AnimatedAttributes, \fBJavaScript MVC module inventory\fP 
+.RE
+.PP
+

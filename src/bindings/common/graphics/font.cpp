@@ -67,3 +67,17 @@ CPP_UNMANAGED_CONSTRUCTOR_IMPL(Font, cppPtr_ = nullptr; CR )
 %#endif //!PDG_NO_GUI
 
 } // pdg namespace
+
+// @pdg-class {"name":"Font","construction":{"kind":"factory","factory":"GraphicsManager.createFont"},"native_binding":{"browser":{"generate":true,"guard":"!PDG_NO_GUI","base":null}}}
+
+// @pdg-member {"name":"Font.getFontName","native_binding":{"adapter":"browser.emscriptenFontGetName"}}
+
+// @pdg-member {"name":"Font.getFontHeight","native_binding":{"adapter":"browser.emscriptenFontGetHeight","binding_name":"_getFontHeight"}}
+
+// @pdg-member {"name":"Font.getFontLeading","native_binding":{"adapter":"browser.emscriptenFontGetLeading","binding_name":"_getFontLeading"}}
+
+// @pdg-member {"name":"Font.getFontCapHeight","native_binding":{"adapter":"browser.emscriptenFontGetCapHeight","binding_name":"_getFontCapHeight"}}
+
+// @pdg-member {"name":"Font.getFontAscent","native_binding":{"adapter":"browser.emscriptenFontGetAscent","binding_name":"_getFontAscent"}}
+
+// @pdg-member {"name":"Font.getFontDescent","native_binding":{"adapter":"browser.emscriptenFontGetDescent","binding_name":"_getFontDescent"}}

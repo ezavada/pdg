@@ -1,7 +1,7 @@
 var searchData=
 [
   ['b_0',['b',['../structpdg_1_1_spatial_transform.html#a1510a66dacf9cf3586de5fc89ae2a073',1,'pdg::SpatialTransform']]],
-  ['benddirection_1',['bendDirection',['../structpdg_1_1_animation_two_bone_i_k.html#acfb13e8382c83050e229795431a4d703',1,'pdg::AnimationTwoBoneIK']]],
+  ['benddirection_1',['bendDirection',['../structpdg_1_1_animation_two_bone_i_k.html#acfb13e8382c83050e229795431a4d703',1,'pdg::AnimationTwoBoneIK::bendDirection'],['../structpdg_1_1_animation_f_a_b_r_i_k.html#acfb13e8382c83050e229795431a4d703',1,'pdg::AnimationFABRIK::bendDirection']]],
   ['binding_2',['binding',['../structpdg_1_1_animation_socket.html#a02cf30af7abd9a6483afd651a35ed10e',1,'pdg::AnimationSocket']]],
   ['blocksallocated_3',['blocksAllocated',['../structpdg_1_1_mem_stats.html#a471ad3d7f3c57781c15da73deaaa7f78',1,'pdg::MemStats']]],
   ['blocksfreed_4',['blocksFreed',['../structpdg_1_1_mem_stats.html#ab7a77fd7e403c82f9befba1a1e9bd8a0',1,'pdg::MemStats']]],
@@ -9,12 +9,13 @@ var searchData=
   ['bodies_6',['bodies',['../structpdg_1_1_animation_physics_definition.html#acf9261ae0fc77d0fb2a30ced238cd081',1,'pdg::AnimationPhysicsDefinition']]],
   ['body_7',['body',['../structpdg_1_1_sprite_joint_break_info.html#ab77800c88ee2917aca24f8814c065a1e',1,'pdg::SpriteJointBreakInfo::body'],['../structpdg_1_1_physics_body_break_info.html#ab77800c88ee2917aca24f8814c065a1e',1,'pdg::PhysicsBodyBreakInfo::body']]],
   ['bodycount_8',['bodyCount',['../structpdg_1_1_sprite_animation_physics_recovery_info.html#a38bc90a205797f8b87780cdc516798f1',1,'pdg::SpriteAnimationPhysicsRecoveryInfo']]],
-  ['bone_9',['bone',['../structpdg_1_1_animation_drawable_options.html#ac51329a42f6b0e66677b8f97606167e0',1,'pdg::AnimationDrawableOptions::bone'],['../structpdg_1_1_animation_physics_body.html#ac51329a42f6b0e66677b8f97606167e0',1,'pdg::AnimationPhysicsBody::bone'],['../structpdg_1_1_animation_binding.html#ac51329a42f6b0e66677b8f97606167e0',1,'pdg::AnimationBinding::bone'],['../structpdg_1_1_animation_socket.html#ac51329a42f6b0e66677b8f97606167e0',1,'pdg::AnimationSocket::bone'],['../structpdg_1_1_sprite_animation_physics_recovery_info.html#aabab73c2f1cff38f656d1151562c98e6',1,'pdg::SpriteAnimationPhysicsRecoveryInfo::bone']]],
+  ['bone_9',['bone',['../structpdg_1_1_animation_jiggle_joint.html#ac51329a42f6b0e66677b8f97606167e0',1,'pdg::AnimationJiggleJoint::bone'],['../structpdg_1_1_animation_drawable_options.html#ac51329a42f6b0e66677b8f97606167e0',1,'pdg::AnimationDrawableOptions::bone'],['../structpdg_1_1_animation_physics_body.html#ac51329a42f6b0e66677b8f97606167e0',1,'pdg::AnimationPhysicsBody::bone'],['../structpdg_1_1_animation_binding.html#ac51329a42f6b0e66677b8f97606167e0',1,'pdg::AnimationBinding::bone'],['../structpdg_1_1_animation_socket.html#ac51329a42f6b0e66677b8f97606167e0',1,'pdg::AnimationSocket::bone'],['../structpdg_1_1_sprite_animation_physics_recovery_info.html#aabab73c2f1cff38f656d1151562c98e6',1,'pdg::SpriteAnimationPhysicsRecoveryInfo::bone']]],
   ['boneid_5fnone_10',['boneId_None',['../namespacepdg.html#a459767d508c28479e2e23635b0514cdc',1,'pdg']]],
   ['bottom_11',['bottom',['../structpdg_1_1_animation_draw_bounds.html#a24c109489bdfad4b0937c2d19d9c0e20',1,'pdg::AnimationDrawBounds::bottom'],['../classpdg_1_1_rect_t.html#adacd636ce133312813693b22f6672aa1',1,'pdg::RectT::bottom']]],
   ['bounds_12',['bounds',['../structpdg_1_1_animation_drawable_options.html#a78b33cdd3a8543514117ca1c7bd0e02b',1,'pdg::AnimationDrawableOptions']]],
   ['bpp_13',['bpp',['../structpdg_1_1_graphics_manager_1_1_screen_mode.html#a00731ab471a2b38632427d0d80a82278',1,'pdg::GraphicsManager::ScreenMode']]],
   ['breakangularspeed_14',['breakAngularSpeed',['../structpdg_1_1_sprite_joint_break_info.html#a96a5c0ff341d46757ca5469f7aae2fc9',1,'pdg::SpriteJointBreakInfo::breakAngularSpeed'],['../structpdg_1_1_physics_body_break_info.html#a96a5c0ff341d46757ca5469f7aae2fc9',1,'pdg::PhysicsBodyBreakInfo::breakAngularSpeed']]],
-  ['breakforce_15',['breakForce',['../structpdg_1_1_sprite_joint_break_info.html#ae9ca5f786f58dd49a83577a634b25492',1,'pdg::SpriteJointBreakInfo']]],
-  ['buttonnumber_16',['buttonNumber',['../structpdg_1_1_mouse_info.html#a9a00efd8637dcd9896472808ffb42b12',1,'pdg::MouseInfo']]]
+  ['breakdistance_15',['breakDistance',['../structpdg_1_1_particle_trail_options.html#a29dbd6f941b7b71b16617c9e8986f137',1,'pdg::ParticleTrailOptions']]],
+  ['breakforce_16',['breakForce',['../structpdg_1_1_sprite_joint_break_info.html#ae9ca5f786f58dd49a83577a634b25492',1,'pdg::SpriteJointBreakInfo']]],
+  ['buttonnumber_17',['buttonNumber',['../structpdg_1_1_mouse_info.html#a9a00efd8637dcd9896472808ffb42b12',1,'pdg::MouseInfo']]]
 ];

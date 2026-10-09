@@ -1,4 +1,117 @@
 // -----------------------------------------------
+/* @pdg-contract
+{
+  "name": "AnimationContactTarget.update",
+  "value": {
+    "returns": {
+      "ownership": "owned"
+    },
+    "params": {
+      "frame": {
+        "condition": "Required and validated only while a platform lock remains active; otherwise ignored."
+      }
+    }
+  }
+}
+*/
+// @pdg-contract {"name":"AnimationContactTarget.getState","value":{"returns":{"ownership":"owned"}}}
+// @pdg-contract {"name":"AnimationSpringTarget.update","value":{"returns":{"ownership":"owned"}}}
+// @pdg-contract {"name":"AnimationSpringTarget.getState","value":{"returns":{"ownership":"owned"}}}
+// @pdg-member {"name":"pdg.argv","type":"string[]"}
+// @pdg-member {"name":"pdg.SharedSurface","type":"boolean","readonly":true}
+// @pdg-member {"name":"pdg.CopyPixels","type":"boolean","readonly":true}
+/* @pdg-member
+{
+  "name": "AnimationContactTarget.update",
+  "type": "function",
+  "brief": "update a contact lock or fade its influence",
+  "returns": "object AnimationContactState",
+  "params": [
+    {
+      "name": "deltaSeconds",
+      "type": "number"
+    },
+    {
+      "name": "contactActive",
+      "type": "boolean"
+    },
+    {
+      "name": "withinReach",
+      "type": "boolean"
+    },
+    {
+      "name": "support",
+      "type": "number",
+      "optional": true,
+      "default_value": "0"
+    },
+    {
+      "name": "frame",
+      "type": "object AnimationTransform",
+      "optional": true,
+      "default_value": "undefined"
+    },
+    {
+      "name": "releaseSeconds",
+      "type": "number",
+      "optional": true,
+      "default_value": "0"
+    }
+  ]
+}
+*/
+// @pdg-member {"name":"AnimationContactTarget.release","type":"function","brief":"release a contact with an optional fade","params":[{"name":"fadeSeconds","type":"number","optional":true,"default_value":"0"}]}
+/* @pdg-member
+{
+  "name": "AnimationContactTarget.lockPlatform",
+  "type": "function",
+  "brief": "lock a contact to a moving platform",
+  "params": [
+    {
+      "name": "x",
+      "type": "number"
+    },
+    {
+      "name": "y",
+      "type": "number"
+    },
+    {
+      "name": "support",
+      "type": "number"
+    },
+    {
+      "name": "frame",
+      "type": "object AnimationTransform"
+    }
+  ]
+}
+*/
+// @pdg-member {"name":"AnimationContactTarget.lockWorld","type":"function","brief":"lock a contact in world coordinates","params":[{"name":"x","type":"number"},{"name":"y","type":"number"}]}
+// @pdg-member {"name":"AnimationContactTarget.getState","type":"function","brief":"copy contact position and influence","returns":"object AnimationContactState","params":[]}
+/* @pdg-member
+{
+  "name": "AnimationSpringTarget.update",
+  "type": "function",
+  "brief": "advance the spring toward a target",
+  "returns": "object AnimationSpringState",
+  "params": [
+    {
+      "name": "targetX",
+      "type": "number"
+    },
+    {
+      "name": "targetY",
+      "type": "number"
+    },
+    {
+      "name": "deltaSeconds",
+      "type": "number"
+    }
+  ]
+}
+*/
+// @pdg-member {"name":"AnimationSpringTarget.setState","type":"function","brief":"replace spring position and velocity","params":[{"name":"state","type":"object AnimationSpringState"}]}
+// @pdg-member {"name":"AnimationSpringTarget.getState","type":"function","brief":"copy spring position and velocity","returns":"object AnimationSpringState","params":[]}
 // pdg.js
 //
 // main include file for Javascript version of PDG
@@ -57,18 +170,16 @@ if (embedded_pdg || jsc) {
 	_debug_log('[PDG] pdg.js: Using embedded process.pdg');
 	bindings = process.pdg;
 	//console.log('[PDG] pdg.js: bindings === process.pdg?', bindings === process.pdg);
-	methodSignature = require('dump').methodSignature;
+	require('dump');
 	coordinates = require('coordinates');
 	_debug_log('[PDG] pdg.js: Coordinates module loaded: ' + typeof coordinates);
 	_debug_log('[PDG] pdg.js: coordinates.Quad: ' + typeof coordinates.Quad);
 	color = require('color');
 	_debug_log('[PDG] pdg.js: Color module loaded: ' + typeof color);
 	_debug_log('[PDG] pdg.js: color.Color: ' + typeof color.Color);
-    if (!jsc) {  // these don't work on JavaScriptCore/iOS yet
-        netconnection = require('netconnection');
-        netclient = require('netclient');
-        netserver = require('netserver');
-    }
+    netconnection = require('netconnection');
+    netclient = require('netclient');
+    if (!jsc) netserver = require('netserver');
 	// DON'T delete process.pdg - we want to keep using it as our single source of truth
 	Module = global.module; // || publicRequire('module');
 } else if (inbrowser) {
@@ -77,17 +188,19 @@ if (embedded_pdg || jsc) {
     // everything is crammed into a single binding called pdg_bind
     
     bindings = pdg_bind;
+    netconnection = require('netconnection');
+    netclient = require('netclient');
     coordinates = require('coordinates');
     color = require('color');
     
-    // dump.js is embedded in our simulated file system
-	methodSignature = require('dump').methodSignature;
+    // dump.js installs console.dump from our simulated file system.
+    require('dump');
 	Module = require('module');
 } else {
 	// normal case, for pdg as a node JS add-on
 	_debug_log('[PDG] pdg.js: Using normal node.js add-on approach');
 	bindings = require('../build/Release/pdg');
-	methodSignature = require('./dump').methodSignature;
+	require('./dump');
 	coordinates = require('./coordinates');
 	color = require('./color');
 	netconnection = require('./netconnection');
@@ -139,28 +252,47 @@ bindings.TimerManager.superclass = bindings.EventEmitter;
 if (bindings.Particle) bindings.Particle.superclass = [bindings.Animated, bindings.EventEmitter];
 if (bindings.ParticleEmitter) bindings.ParticleEmitter.superclass = bindings.Animated;
 bindings.Sprite.superclass = new Array( bindings.Animated, bindings.EventEmitter, bindings.ISerializable );
-bindings.SpriteLayer.superclass = new Array( bindings.Animated, bindings.EventEmitter, bindings.ISerializable );
+bindings.SpriteLayer.superclass = new Array( bindings.EventEmitter, bindings.ISerializable );
+if (bindings._defineAnimationScript) {
+// @pdg-contract {"name":"Animated.defineScript","value":{"returns":{"type":"object AnimationScript","ownership":"library"}}}
+// @pdg-member {"name":"Animated.defineScript","type":"function","native":false,"static":true,"brief":"create a library-owned named animation recorder","returns":"object AnimationScript","params":[{"name":"name","type":"string"}]}
+    bindings.Animated.defineScript = function(name) { return bindings._defineAnimationScript(name); };
+// @pdg-member {"name":"Animated.deleteScript","type":"function","native":false,"static":true,"brief":"remove a named definition; running copies continue","returns":"boolean","params":[{"name":"name","type":"string"}]}
+    bindings.Animated.deleteScript = function(name) { return bindings._deleteAnimationScript(name); };
+    for (const className of ['AnimationScript','Camera','Sprite','Bone','Part','Particle','ParticleEmitter','AnimatedAttributes','Troupe']) {
+        if (bindings[className]) {
+            bindings[className].defineScript = bindings.Animated.defineScript;
+            bindings[className].deleteScript = bindings.Animated.deleteScript;
+        }
+    }
+    bindings.AnimationScript.superclass = bindings.Animated;
+}
+if (bindings.Camera) bindings.Camera.superclass = [bindings.Animated, bindings.EventEmitter];
+if (bindings.Bone) bindings.Bone.superclass = bindings.Animated;
+
 bindings.TileLayer.superclass = bindings.SpriteLayer;
 bindings.ImageStrip.superclass = bindings.Image;
 
 
+// @pdg-member {"name":"pdg.running","type":"boolean"}
 bindings.running = false;
+// @pdg-member {"name":"pdg.quitting","type":"boolean"}
 bindings.quitting = false;
 
 // Add a flag to track when pdg.run() is actively running
 bindings._pdgRunLoopActive = false;
 var performanceRunChannel = null;
 
+// @pdg-member {"name":"pdg.quit","type":"function","brief":"","params":[],"native_binding":{"adapter":"pdg.quit","browser":{"generate":true},"binding_name":"_quit"}}
 bindings.quit = function() {
-	var _sig = methodSignature("", arguments, "undefined", 0, "()"); if (_sig != null) return _sig;
 	pdg._debug_log("bindings.quit");
 	bindings.quitting = true;
 	// Clear the run loop active flag when quitting
 	bindings._pdgRunLoopActive = false;
 }
 
+// @pdg-member {"name":"pdg.run","type":"function","brief":"","params":[]}
 bindings.run = function() {
-	var _sig = methodSignature("", arguments, "undefined", 0, "()"); if (_sig != null) return _sig;
 	if (!bindings.running) {
 		bindings.__run();
 	}
@@ -202,8 +334,8 @@ bindings.__run = function() {
 	}
 }
 
+// @pdg-member {"name":"pdg.idle","type":"function","brief":"","params":[],"native_binding":{"adapter":"pdg.idle","browser":{"generate":true},"binding_name":"_idle"}}
 bindings.idle = function() {
-	var _sig = methodSignature("", arguments, "undefined", 0, "()"); if (_sig != null) return _sig;
 //	pdg._debug_log("bindings.idle");
 	bindings._idle();
 }
@@ -215,11 +347,10 @@ if (!jsc && !inbrowser) {
     //var exec = require('child_process').exec;
 	//var path = require('path');
     
+// @pdg-member {"name":"pdg.openDebugger","type":"function","brief":"start node-inspector and open a debugger window in your browser","params":[]}
     bindings.openDebugger = function() {
 		var exec = require('child_process').exec;
 		var path = require('path');
-		var _sig = methodSignature("start node-inspector and open a debugger window in your browser", 
-                                   arguments, "undefined", 0, "()"); if (_sig != null) return _sig;
         if (!_debuggerRunning) {
             _debuggerRunning = true;
             process._debugProcess(process.pid);
@@ -251,11 +382,10 @@ if (!jsc && !inbrowser) {
     bindings._commandPort = 0;
 
     // console support
+// @pdg-member {"name":"pdg.openConsole","type":"function","brief":"open a pdg console window","params":[]}
     bindings.openConsole = function() {
 		var exec = require('child_process').exec;
 		var path = require('path');
-		var _sig = methodSignature("open a pdg console window", 
-                arguments, "undefined", 0, "()"); if (_sig != null) return _sig;
                 
         if (!bindings._commandPort) {
         	bindings.openCommandPort();
@@ -290,9 +420,8 @@ if (!jsc && !inbrowser) {
     }
     
     // net/stream stuff not working on JSC yet
+// @pdg-member {"name":"pdg.openCommandPort","type":"function","brief":"start a REPL server on a TCP port","params":[{"name":"port","type":"number int","optional":true,"default_value":"5757"}]}
 	bindings.openCommandPort = function (port) {
-        var _sig = methodSignature("start a REPL server on a TCP port", 
-                arguments, "undefined", 0, "([number int] port = 5757)"); if (_sig != null) return _sig;
 
 		if (typeof(port) == 'undefined') {
 			port = 5757;
@@ -342,7 +471,9 @@ if (jsc) {
 		if ((extension === '.js' || extension === '.jsi') && scriptSize > 0) {
 			var cachedModule = JSCModule._cache[file];
 			if (cachedModule) return cachedModule.exports;
-			return bindings._loadScript(resourceManager.getResource(file), file);
+			return bindings._loadScript(decodeURIComponent(Array.prototype.map.call(resourceManager.getResource(file), function(byte) {
+                return "%" + byte.toString(16).padStart(2, "0");
+            }).join("")), file);
 		}
 
 		var relativeModule = new JSCModule(file, module);
@@ -370,13 +501,17 @@ console.binaryDump = function(buf, len, bytesPerLine) {
 if (inbrowser && typeof bindings.LogManager !== "undefined" &&
         typeof bindings.LogManager.prototype.binaryDump !== "function") {
     bindings.LogManager.prototype.binaryDump = function(buf, len, bytesPerLine) {
-        bytesPerLine = bytesPerLine || 20;
-        len = Math.min(typeof len === "number" ? len : buf.length, buf.length);
+        if (buf instanceof bindings.MemBlock) buf = buf.getData();
+        if (!(buf instanceof Uint8Array)) throw new TypeError("binaryDump requires Uint8Array or MemBlock");
+        bytesPerLine = bytesPerLine === undefined ? 20 : bytesPerLine;
+        if (!Number.isInteger(bytesPerLine) || bytesPerLine <= 0) throw new RangeError("invalid bytesPerLine");
+        len = len === undefined || len === 0 ? buf.length : len;
+        if (!Number.isInteger(len) || len < 0 || len > buf.length) throw new RangeError("invalid length");
         var lines = [];
         for (var offset = 0; offset < len; offset += bytesPerLine) {
             var bytes = [];
             for (var i = offset; i < Math.min(offset + bytesPerLine, len); ++i) {
-                bytes.push((buf.charCodeAt(i) & 0xff).toString(16).padStart(2, "0"));
+                bytes.push(buf[i].toString(16).padStart(2, "0"));
             }
             lines.push(offset.toString(16).padStart(6, "0") + ": " + bytes.join(" "));
         }
@@ -392,9 +527,13 @@ bindings.Rect = coordinates.Rect;
 bindings.Quad = coordinates.Quad;
 bindings.RotatedRect = coordinates.RotatedRect;
 
+// @pdg-member {"name":"pdg.lftTop","type":"number","readonly":true}
 bindings.lftTop = coordinates.lftTop;
+// @pdg-member {"name":"pdg.rgtTop","type":"number","readonly":true}
 bindings.rgtTop = coordinates.rgtTop;
+// @pdg-member {"name":"pdg.rgtBot","type":"number","readonly":true}
 bindings.rgtBot = coordinates.rgtBot;
+// @pdg-member {"name":"pdg.lftBot","type":"number","readonly":true}
 bindings.lftBot = coordinates.lftBot;
 Object.defineProperty(bindings, 'lftTop', { writable: false });
 Object.defineProperty(bindings, 'rgtTop', { writable: false });
@@ -403,6 +542,11 @@ Object.defineProperty(bindings, 'lftBot', { writable: false });
 
 // color
 bindings.Color = color.Color;
+
+// Type-level IDL rules supply public values and borrowed argument views before
+// browser adapters and mixins capture these methods. Policies are finalized below.
+var browserGeneratedBindings = inbrowser ? require('pdg_em_generated') : null;
+if (inbrowser) browserGeneratedBindings.installReturns(bindings);
 
 if (!inbrowser) {
 
@@ -420,57 +564,54 @@ process._pdgScriptClasses['MemBlock'] = bindings.MemBlock.prototype;
 
 } // !inbrowser
 
-function constructorSignature(name, paramcount, paramdoc) {
-	return methodSignature(name, [null], "undefined", paramcount, paramdoc);
+
+bindings._getRotatedRectConstructorSignature = function() {
+    return bindings.describeInterface("RotatedRect", "RotatedRect");
 }
 
 bindings._getRotatedRectConstructorSignature = function() {
-	return constructorSignature("create a new RotatedRect", 1, "([object Rect] rect = Rect(0,0), number rotationRadians = 0.0, [object Offset] cpOffset = null)");
-}
-
-bindings._getRotatedRectConstructorSignature = function() {
-	return constructorSignature("create a new RotatedRect", 1, "([object Rect] rect = Rect(0,0), number rotationRadians = 0.0, [object Offset] cpOffset = null)");
+    return bindings.describeInterface("RotatedRect", "RotatedRect");
 }
 
 bindings._getQuadConstructorSignature = function() {
-	return constructorSignature("create a new Quad", 4, "({|[object Quad] q|[object Rect] r|[object RotatedRect] r|[object Point] p1, [object Point] p2, [object Point] p3, [object Point] p4|[object Point[]] p})");
+    return bindings.describeInterface("Quad", "Quad");
 }
 
 bindings._getRectConstructorSignature = function() {
-	return constructorSignature("create a new Rect", 4, "({|number w, number h|[object Point] topLeft, number w, number h|[object Point] leftTop, [object Point] rightBottom|number left, number top, number right, number bottom})");
+    return bindings.describeInterface("Rect", "Rect");
 }
 
 bindings._getOffsetConstructorSignature = function() {
-	return constructorSignature("create and set x & y values", 2, "({|number x, number y|number[] xy|object xy})");
+    return bindings.describeInterface("Offset", "Offset");
 }
 
 bindings._getPointConstructorSignature = function() {
-	return constructorSignature("create and set x & y values", 2, "({|number x, number y|number[] xy|object xy})");
+    return bindings.describeInterface("Point", "Point");
 }
 
 bindings._getVectorConstructorSignature = function() {
-	return constructorSignature("create and set x & y values", 2, "({|number x, number y|number[] xy|object xy})");
+    return bindings.describeInterface("Vector", "Vector");
 }
 
 bindings._getColorConstructorSignature = function() {
-	return constructorSignature("create and color and set rgb values", 2, "({|number c|string colorstr|number r, number g, number b, number alpha = 1})");
+    return bindings.describeInterface("Color", "Color");
 }
 
 bindings._getNetConnectionConstructorSignature = function() {
-	return constructorSignature("create a NetConnection to manage a socket", 1, "(object socket)");
+    return bindings.describeInterface("NetConnection", "NetConnection");
 }
 
 bindings._getNetClientConstructorSignature = function() {
-	return constructorSignature("create a network client", 0, "(object opts = null)");
+    return bindings.describeInterface("NetClient", "NetClient");
 }
 
 bindings._getNetServerConstructorSignature = function() {
-	return constructorSignature("create a network server", 0, "(object opts = null)");
+    return bindings.describeInterface("NetServer", "NetServer");
 }
 
 // network
 
-if (!jsc && !inbrowser) { // not supported on iOS/JavaScriptCore currently
+if (!jsc && !inbrowser) {
 
 	bindings.NetConnection = netconnection.NetConnection;
 	bindings.NetClient = netclient.NetClient;
@@ -480,16 +621,21 @@ if (!jsc && !inbrowser) { // not supported on iOS/JavaScriptCore currently
 	process._pdgScriptClasses['NetClient'] = (new netclient.NetClient).__proto__;
 	process._pdgScriptClasses['NetServer'] = (new netserver.NetServer).__proto__;
 
-	bindings.MemBlock.prototype.toBuffer = function() {
-		var _sig = methodSignature("", arguments, "[object Buffer]", 0, "()"); if (_sig != null) return _sig;
-		return Buffer.from(this.getData(), 'binary');
-	}
 
 	bindings.openCommandPort = bindings.openCommandPort;
+// @pdg-member {"name":"pdg.hasNetwork","type":"boolean"}
 	bindings.hasNetwork = true;
+} else if (inbrowser || jsc) {
+    bindings.NetConnection = netconnection.NetConnection;
+    bindings.NetClient = netclient.NetClient;
+    bindings.hasNetwork = true;
 } else {
-	bindings.hasNetwork = false;
-}	
+    bindings.hasNetwork = false;
+}
+// @pdg-member {"name":"pdg.hasNetworkClient","type":"boolean"}
+bindings.hasNetworkClient = !!bindings.NetClient;
+// @pdg-member {"name":"pdg.hasNetworkServer","type":"boolean"}
+bindings.hasNetworkServer = !!bindings.NetServer;
 
 var _nativeGetFileManager = bindings.getFileManager;
 var _nativeGetEventManager = bindings.getEventManager;
@@ -498,11 +644,17 @@ var _nativeGetResourceManager = bindings.getResourceManager;
 var _nativeGetConfigManager = bindings.getConfigManager;
 var _nativeGetLogManager = bindings.getLogManager;
 
+// @pdg-member {"name":"pdg.fs","type":"object FileManager"}
 bindings.fs = _nativeGetFileManager();
+// @pdg-member {"name":"pdg.evt","type":"object EventManager"}
 bindings.evt = _nativeGetEventManager();
+// @pdg-member {"name":"pdg.tm","type":"object TimerManager"}
 bindings.tm = _nativeGetTimerManager();
+// @pdg-member {"name":"pdg.res","type":"object ResourceManager"}
 bindings.res = _nativeGetResourceManager();
+// @pdg-member {"name":"pdg.cfg","type":"object ConfigManager"}
 bindings.cfg = _nativeGetConfigManager();
+// @pdg-member {"name":"pdg.lm","type":"object LogManager"}
 bindings.lm = _nativeGetLogManager();
 
 // Embind creates a fresh JavaScript handle each time a singleton pointer is
@@ -528,49 +680,20 @@ bindings.getResourceManager = singletonGetter(_nativeGetResourceManager, binding
 bindings.getConfigManager = singletonGetter(_nativeGetConfigManager, bindings.cfg);
 bindings.getLogManager = singletonGetter(_nativeGetLogManager, bindings.lm);
 
-if ((inbrowser || jsc) && typeof bindings.MemBlock !== "undefined") {
-    bindings.MemBlock.prototype.toBuffer = function() {
-        var data = this.getData();
-        var bytes = new Uint8Array(data.length);
-        for (var i = 0; i < data.length; i++) bytes[i] = data.charCodeAt(i) & 0xff;
-        return bytes;
-    };
-}
-
-if (inbrowser && bindings.cfg) {
-    ["setConfigString", "setConfigLong", "setConfigFloat", "setConfigBool"].forEach(function(name) {
-        var original = bindings.ConfigManager.prototype[name];
-        bindings.ConfigManager.prototype[name] = function(key, value) {
-            if (value === null || typeof value === "undefined") {
-                throw new TypeError(name + " requires a value");
-            }
-            return original.call(this, key, value);
-        };
-    });
-}
 
 if (inbrowser && typeof bindings.Spline !== "undefined") {
     var NativeSpline = bindings.Spline;
-    var nativeSplineGetFirstOrder = NativeSpline.prototype.getFirstOrder;
-    var nativeSplineGetSecondOrder = NativeSpline.prototype.getSecondOrder;
-    var nativeSplineGetPoint = NativeSpline.prototype.getPoint;
-    var nativeSplineGetBounds = NativeSpline.prototype.getBounds;
+
 
     bindings.Spline = function Spline(type) {
         return new NativeSpline(typeof type === "undefined" ? bindings.spline_CubicBezier : type);
     };
     bindings.Spline.prototype = NativeSpline.prototype;
-    NativeSpline.prototype.getFirstOrder = function(u) { return new bindings.Point(nativeSplineGetFirstOrder.call(this, u)); };
-    NativeSpline.prototype.getSecondOrder = function(u) { return new bindings.Point(nativeSplineGetSecondOrder.call(this, u)); };
-    NativeSpline.prototype.getPoint = function(index) { return new bindings.Point(nativeSplineGetPoint.call(this, index)); };
-    NativeSpline.prototype.getBounds = function() { return new bindings.Rect(nativeSplineGetBounds.call(this)); };
 }
 
 if (inbrowser && typeof bindings.Polygon !== "undefined") {
     var NativePolygon = bindings.Polygon;
-    var nativePolygonGetPoint = NativePolygon.prototype.getPoint;
-    var nativePolygonGetBounds = NativePolygon.prototype.getBounds;
-    var nativePolygonCenterPoint = NativePolygon.prototype.centerPoint;
+
     var nativePolygonAddSpline = NativePolygon.prototype.addSpline;
 
     bindings.Polygon = function Polygon() {
@@ -581,9 +704,6 @@ if (inbrowser && typeof bindings.Polygon !== "undefined") {
         return polygon;
     };
     bindings.Polygon.prototype = NativePolygon.prototype;
-    NativePolygon.prototype.getPoint = function(index) { return new bindings.Point(nativePolygonGetPoint.call(this, index)); };
-    NativePolygon.prototype.getBounds = function() { return new bindings.Rect(nativePolygonGetBounds.call(this)); };
-    NativePolygon.prototype.centerPoint = function() { return new bindings.Point(nativePolygonCenterPoint.call(this)); };
     NativePolygon.prototype.addSpline = function(spline, step) {
         return nativePolygonAddSpline.call(this, spline, typeof step === "undefined" ? 0.01 : step);
     };
@@ -677,17 +797,6 @@ if (inbrowser && typeof bindings.Animated !== "undefined") {
         numberMethod("changeStretchingTo", 2, true, false, true, false);
         numberMethod("changeStretchingBy", 2, true, false, true, false);
         proto.setScale = function(x, y = x) { return chain(this, "_setScale", [finite(x), finite(y)]); };
-        proto.getBoundingBox = function() { return new bindings.Rect(this._getBoundingBox()); };
-        proto.getRotatedBounds = function() {
-            const b = this._getRotatedBounds(); return new bindings.RotatedRect(b, b.radians, b.centerOffset);
-        };
-        proto.getLocation = function() { return new bindings.Point(this._getLocation()); };
-        ["getSize", "getMovement", "getScale", "getStretching", "getCenterOffset"].forEach(function(name) {
-            proto[name] = function() { return new bindings.Offset(this["_" + name]()); };
-        });
-        ["stopMovement", "stopSpinning", "stopGrowing", "stopStretching", "pauseSchedule", "resumeSchedule", "cancelSchedule", "flipX", "flipY", "andThen"].forEach(function(name) {
-            proto[name] = function() { return chain(this, "_" + name, []); };
-        });
         proto.setFlipX = function(flip) { return chain(this, "_setFlipX", [flip]); };
         proto.setFlipY = function(flip) { return chain(this, "_setFlipY", [flip]); };
         proto.wait = function(seconds) { return chain(this, "_wait", [timing(seconds)]); };
@@ -729,17 +838,14 @@ if (inbrowser && typeof bindings.Image !== "undefined") {
         var proto = Image.prototype;
 
         function pointValue(first, second) {
-            if (first === null || typeof first === "undefined") return { x: 0, y: 0 };
+            if (first === null || typeof first === "undefined") throw new TypeError("Expected a Point or numeric coordinates");
             if (typeof first === "number") return { x: first, y: second };
             return { x: first.x, y: first.y };
         }
 
-        function colorValue(value) {
-            return new bindings.Color(value.red, value.green, value.blue, value.alpha);
-        }
 
         proto.getImageBounds = function(point) {
-            var bounds = arguments.length === 0 || point === null
+            var bounds = arguments.length === 0
                 ? this._getImageBounds()
                 : this._getImageBoundsAt(pointValue(point));
             return new bindings.Rect(bounds);
@@ -753,15 +859,13 @@ if (inbrowser && typeof bindings.Image !== "undefined") {
             this._setTransparentColor(value);
             return this;
         };
-        proto.getTransparentColor = function() {
-            return colorValue(this._getTransparentColor());
-        };
         proto.setOpacity = function(value) {
             var opacity = Number(value);
             if (!isFinite(opacity)) opacity = 0;
             if (opacity <= 1) opacity = Math.floor(255 * opacity);
             opacity = Math.max(0, Math.min(255, Math.round(opacity)));
             this._setOpacity(opacity);
+            return this;
         };
         proto.getOpacity = function() {
             return this._getOpacity() / 255;
@@ -770,12 +874,14 @@ if (inbrowser && typeof bindings.Image !== "undefined") {
             var point = pointValue(first, second);
             return this._getAlphaValue(point.x || 0, point.y || 0);
         };
+        var nativeGetPixel = proto.getPixel;
         proto.getPixel = function(first, second) {
             var point = pointValue(first, second);
-            return colorValue(this._getPixel(point.x || 0, point.y || 0));
+            return nativeGetPixel.call(this, point.x || 0, point.y || 0);
         };
     })(bindings.Image);
 }
+
 
 if (inbrowser && typeof bindings.ImageStrip !== "undefined") {
     bindings.ImageStrip.prototype.setFrameWidth = function(width) {
@@ -807,9 +913,6 @@ if (inbrowser && typeof bindings.Attributes !== "undefined") {
                 blue: converted.blue,
                 alpha: converted.alpha
             };
-        }
-        function publicColor(value) {
-            return new bindings.Color(value.red, value.green, value.blue, value.alpha);
         }
 
         proto.lineColor = function(value) { return chain(this, "_lineColor", [nativeColor(value)]); };
@@ -861,19 +964,6 @@ if (inbrowser && typeof bindings.Attributes !== "undefined") {
         proto.lightOffset = function(value) { return chain(this, "_lightOffset", [point(value)]); };
         proto.ambientLight = function(value) { return chain(this, "_ambientLight", [nativeColor(value)]); };
 
-        proto.getLineColor = function() { return publicColor(this._getLineColor()); };
-        proto.getFillColor = function() { return publicColor(this._getFillColor()); };
-        proto.getGradientStart = function() { return new bindings.Point(this._getGradientStart()); };
-        proto.getGradientEnd = function() { return new bindings.Point(this._getGradientEnd()); };
-        proto.getGradientStartColor = function() { return publicColor(this._getGradientStartColor()); };
-        proto.getGradientEndColor = function() { return publicColor(this._getGradientEndColor()); };
-        proto.getRadialGradientCenter = function() { return new bindings.Point(this._getRadialGradientCenter()); };
-        proto.getRadialGradientCenterColor = function() { return publicColor(this._getRadialGradientCenterColor()); };
-        proto.getRadialGradientEndColor = function() { return publicColor(this._getRadialGradientEndColor()); };
-        proto.getSubsection = function() { return new bindings.Rect(this._getSubsection()); };
-        proto.getPolarOffset = function() { return new bindings.Offset(this._getPolarOffset()); };
-        proto.getLightOffset = function() { return new bindings.Offset(this._getLightOffset()); };
-        proto.getAmbientLight = function() { return publicColor(this._getAmbientLight()); };
     })(bindings.Attributes.prototype);
 }
 
@@ -881,12 +971,7 @@ if (inbrowser && typeof bindings.Attributes !== "undefined") {
 // Attribute calls borrow its adjusted second-base pointer for the duration of
 // the call; no copied state and no independently owned Attributes allocation.
 function browserAttributes(value) {
-    if (bindings.AnimatedAttributes && value instanceof bindings.AnimatedAttributes) {
-        if (value.isDeleted()) throw new Error("AnimatedAttributes has been deleted");
-        return value._attributes();
-    }
-    if (value instanceof bindings.Attributes) return value;
-    throw new TypeError("Expected Attributes or AnimatedAttributes");
+    return browserGeneratedBindings.adaptArgument(bindings, 'Attributes', value);
 }
 
 if (inbrowser && bindings.AnimatedAttributes) {
@@ -986,59 +1071,24 @@ if (inbrowser && bindings.AnimatedAttributes) {
             return this;
         };
     })(bindings.AnimatedAttributes);
-
-    // Attribute-consuming native methods receive the correctly adjusted base.
-    function acceptsBrowserAttributes(proto, name) {
-        var native = proto[name];
-        proto[name] = function() {
-            var args = Array.prototype.slice.call(arguments);
-            args[args.length - 1] = browserAttributes(args[args.length - 1]);
-            return native.apply(this, args);
-        };
-    }
-    ["addLine", "addSpline", "addArc", "addRect", "addQuad", "addPolygon", "addEllipse",
-     "addImage", "addImageStrip", "addDrawing"].forEach(function(name) {
-        acceptsBrowserAttributes(bindings.Drawing.prototype, name);
-    });
-    acceptsBrowserAttributes(bindings.ElementRef.prototype, "setAttributes");
-    acceptsBrowserAttributes(bindings.ElementRef.prototype, "setLiveAttributes");
-    ["drawLine", "drawRect", "drawQuad", "drawPolygon", "drawSpline", "drawCircle",
-     "drawEllipse", "drawArc", "drawImage", "drawDrawing", "drawText", "drawSphere"].forEach(function(name) {
-        acceptsBrowserAttributes(bindings.Port.prototype, name);
-    });
 }
 
 if (inbrowser && typeof bindings.Drawing !== "undefined") {
-    bindings.Drawing.prototype.getBounds = function() {
-        return new bindings.Rect(this._getBounds());
-    };
-    bindings.Drawing.prototype.centerPoint = function() {
-        return new bindings.Point(this._centerPoint());
-    };
+
     bindings.ElementRef.prototype.getControlPoints = function() {
         return this._getControlPoints().map(function(value) { return new bindings.Point(value); });
     };
-    bindings.ElementRef.prototype.getControlPoint = function(index) {
-        return new bindings.Point(this._getControlPoint(index));
-    };
+
 }
 
 if (inbrowser && typeof bindings.SpriteLayer !== "undefined") {
     (function() {
         var layerSprites = new WeakMap();
-        var nativeObjects = new Map();
-        var weakObjects = typeof WeakRef === 'function';
-        function remember(object) {
-            if (object) nativeObjects.set(object._getNativeIdentity(),
-                weakObjects ? new WeakRef(object) : object);
-            return object;
-        }
+        const handles = require('pdg_em_runtime');
+        function remember(object) { return handles.rememberObject(bindings, object); }
         bindings._emscriptenRememberObject = remember;
         bindings._emscriptenObjectForIdentity = function(identity) {
-            var entry = nativeObjects.get(identity);
-            var object = weakObjects && entry ? entry.deref() : entry;
-            if (!object) nativeObjects.delete(identity);
-            return object || null;
+            return handles.objectForIdentity(bindings, identity);
         };
         var nativeCleanupLayer = bindings.cleanupLayer;
         bindings.cleanupLayer = function(layer) {
@@ -1048,37 +1098,11 @@ if (inbrowser && typeof bindings.SpriteLayer !== "undefined") {
             var spriteIdentities = sprites.filter(function(sprite) { return sprite && !sprite.isDeleted(); })
                 .map(function(sprite) { return sprite._getNativeIdentity(); });
             nativeCleanupLayer(layer);
-            nativeObjects.delete(identity);
-            spriteIdentities.forEach(function(id) { nativeObjects.delete(id); });
+            handles.forgetObject(bindings, identity);
+            spriteIdentities.forEach(function(id) { handles.forgetObject(bindings, id); });
             layerSprites.delete(layer);
         };
         var layerProto = bindings.SpriteLayer.prototype;
-        layerProto.zoomTo = function(zoom, seconds, easing, keepInRect, centerOn) {
-            this._zoomTo(zoom, seconds, easing === undefined ? bindings.easeInOutQuad : easing,
-                keepInRect === undefined ? {left: 0, top: 0, right: 0, bottom: 0} : keepInRect,
-                centerOn === undefined ? null : centerOn);
-            return this;
-        };
-        layerProto.zoom = function(factor, seconds, easing, keepInRect, centerOn) {
-            return this.zoomTo(this.getZoom() * factor, seconds, easing, keepInRect, centerOn);
-        };
-        layerProto.getOrigin = function() {
-            var p = this._getOrigin();
-            return new bindings.Point(p.x, p.y);
-        };
-        ['layerToPort', 'portToLayer'].forEach(function(direction) {
-            ['Point', 'Offset', 'Vector'].forEach(function(kind) {
-                layerProto[direction + kind] = function(value) {
-                    return new bindings[kind](this['_' + direction + kind](value));
-                };
-            });
-            layerProto[direction + 'Rect'] = function(rect) {
-                var value = this['_' + direction + 'Rect'](rect,
-                    rect.radians === undefined ? 0 : rect.radians,
-                    rect.centerOffset || {x: 0, y: 0});
-                return new bindings.RotatedRect(value, value.radians, value.centerOffset);
-            };
-        });
         var spriteProto = bindings.Sprite.prototype;
         spriteProto.addFramesImage = function(image, first, count) {
             this._addFramesImage(image, first === undefined ? -1 : first, count === undefined ? 0 : count);
@@ -1087,15 +1111,15 @@ if (inbrowser && typeof bindings.SpriteLayer !== "undefined") {
             this._startFrameAnimation(fps, first === undefined ? -1 : first,
                 count === undefined ? 0 : count, flags === undefined ? 4 : flags);
         };
+        var nativeGetFrameRotatedBounds = spriteProto.getFrameRotatedBounds;
         spriteProto.getFrameRotatedBounds = function(frame) {
-            var bounds = this._getFrameRotatedBounds(frame === undefined ? -1 : frame);
-            return new bindings.RotatedRect(bounds, bounds.radians, bounds.centerOffset);
+            return nativeGetFrameRotatedBounds.call(this, frame === undefined ? -1 : frame);
         };
 
 
+        var createSprite = layerProto.createSprite;
         layerProto.createSprite = function() {
-            remember(this);
-            var sprite = remember(this._createSprite());
+            var sprite = createSprite.call(this);
             var sprites = layerSprites.get(this);
             if (!sprites) {
                 sprites = [];
@@ -1103,16 +1127,6 @@ if (inbrowser && typeof bindings.SpriteLayer !== "undefined") {
             }
             sprites.push(sprite);
             return sprite;
-        };
-        layerProto.getNthSprite = function(index) {
-            // Layer order and membership may change through a mounted host.
-            // Query native order, then reuse a retained handle by identity.
-            var sprite = this._getNthSprite(index);
-            if (!sprite) return null;
-            if (bindings._canonicalPhysicsOwner) return bindings._canonicalPhysicsOwner(sprite);
-            var existing = bindings._emscriptenObjectForIdentity(sprite._getNativeIdentity());
-            if (existing && !existing.isDeleted()) { sprite.delete(); return existing; }
-            return remember(sprite);
         };
         if (typeof layerProto._createSpriteFromSpriterFile === "function") {
             layerProto.createSpriteFromSpriterFile = function(path, entity) {
@@ -1162,18 +1176,12 @@ if (inbrowser && typeof bindings.SpriteLayer !== "undefined") {
                 };
             });
 
-            var nativeGetSpriterCollisionBox = spriteProto.getSpriterCollisionBox;
             var nativeHasAttachPoint = spriteProto.hasAttachPoint;
             var nativeAttachSprite = spriteProto.attachSprite;
             var nativeActivateSubEntity = spriteProto.activateSubEntity;
-            spriteProto.getSpriterCollisionBox = function(name) {
-                var value = nativeGetSpriterCollisionBox.call(this, name);
-                return new bindings.RotatedRect(new bindings.Rect(value), value.radians,
-                    new bindings.Offset(value.centerOffset));
-            };
             spriteProto.hasAttachPoint = function(name) {
-                if (typeof name === "undefined") throw new TypeError("AttachPoint name is required");
-                return nativeHasAttachPoint.call(this, name === null ? "" : name);
+                if (typeof name !== "string") throw new TypeError("AttachPoint name must be a string");
+                return nativeHasAttachPoint.call(this, name);
             };
             spriteProto.attachSprite = function(sprite, name) {
                 if (typeof name === "undefined" || name === null) {
@@ -1191,7 +1199,7 @@ if (inbrowser && typeof bindings.SpriteLayer !== "undefined") {
         }
         if(typeof layerProto._setGravity==='function')layerProto.setGravity=function(gravity,keepItDownward){
             if(typeof gravity!=='number'||!isFinite(gravity))throw new TypeError('Gravity must be finite');
-            this._setGravity(gravity,typeof keepItDownward==='undefined'?true:!!keepItDownward);return this;
+            this._setGravity(gravity);return this;
         };
         layerProto.setUseChipmunkPhysics = function(useIt) {
             if (typeof this._setUseChipmunkPhysics === "function") {
@@ -1208,33 +1216,21 @@ if (inbrowser && typeof bindings.SpriteLayer !== "undefined") {
 }
 
 if (inbrowser && typeof bindings.TileLayer !== "undefined") {
-    bindings.TileLayer.prototype.defineTileSet = function(tileWidth, tileHeight, image) {
-        this._defineTileSet(tileWidth, tileHeight, image);
+    bindings.TileLayer.prototype.defineTileSet = function(tileWidth, tileHeight, image, hasTransparency, flipTiles) {
+        this._defineTileSet(tileWidth, tileHeight, image, hasTransparency===undefined?true:hasTransparency, flipTiles===undefined?false:flipTiles);
         return this;
     };
-    bindings.TileLayer.prototype.setWorldSize = function(width, height) {
-        this._setWorldSize(width, height);
+    bindings.TileLayer.prototype.setWorldSize = function(width, height, repeatingX, repeatingY) {
+        this._setWorldSize(width, height, repeatingX===undefined?false:repeatingX, repeatingY===undefined?false:repeatingY);
         return this;
     };
-    bindings.TileLayer.prototype.getWorldSize = function() {
-        return new bindings.Rect(this._getWorldSize());
-    };
-    bindings.TileLayer.prototype.getTileSize = function() {
-        return new bindings.Point(this._getTileSize());
-    };
+
 }
 
 if (inbrowser && typeof bindings.Serializer !== "undefined") {
     (function(proto) {
         function requireNumber(value, name) {
             if (typeof value !== "number") throw new TypeError(name + " requires a number");
-            return value;
-        }
-        function rangedInteger(value, min, max, name) {
-            requireNumber(value, name);
-            if (!Number.isInteger(value) || value < min || value > max) {
-                throw new RangeError(name + " value is outside its supported range");
-            }
             return value;
         }
         function fixedSize(size) {
@@ -1244,29 +1240,9 @@ if (inbrowser && typeof bindings.Serializer !== "undefined") {
             };
         }
 
-        proto.serialize_1 = function(value) { return this._serialize_1(rangedInteger(value, -128, 127, "serialize_1")); };
-        proto.serialize_1u = function(value) { return this._serialize_1u(rangedInteger(value, 0, 255, "serialize_1u")); };
-        proto.serialize_2 = function(value) { return this._serialize_2(rangedInteger(value, -32768, 32767, "serialize_2")); };
-        proto.serialize_2u = function(value) { return this._serialize_2u(rangedInteger(value, 0, 65535, "serialize_2u")); };
-        proto.serialize_3u = function(value) { return this._serialize_3u(rangedInteger(value, 0, 16777215, "serialize_3u")); };
-        proto.serialize_4 = function(value) { return this._serialize_4(rangedInteger(value, -2147483648, 2147483647, "serialize_4")); };
-        proto.serialize_4u = function(value) { return this._serialize_4u(rangedInteger(value, 0, 4294967295, "serialize_4u")); };
-        proto.serialize_8 = function(value) { return this._serialize_8(requireNumber(value, "serialize_8")); };
-        proto.serialize_f = function(value) { return this._serialize_f(requireNumber(value, "serialize_f")); };
-        proto.serialize_d = function(value) { return this._serialize_d(requireNumber(value, "serialize_d")); };
-        proto.serialize_uint = function(value) {
-            if (typeof value === "undefined") throw new TypeError("serialize_uint requires a number");
-            if (value === null || !Number.isFinite(value)) value = 0;
-            return this._serialize_uint(value);
-        };
         proto.serialize_str = function(value) {
-            if (value === null) return;
             if (typeof value !== "string") throw new TypeError("serialize_str requires a string");
             return this._serialize_str(value);
-        };
-        proto.serialize_mem = function(value) {
-            if (typeof value !== "string") throw new TypeError("serialize_mem requires a binary string");
-            return this._serialize_mem(value);
         };
         proto.serialize_rotr = function(value) { return this._serialize_rotr(value); };
         proto.serialize_quad = function(value) { return this._serialize_quad(value); };
@@ -1279,42 +1255,12 @@ if (inbrowser && typeof bindings.Serializer !== "undefined") {
             this._pdgSizedObjects = [];
             return this;
         };
-        proto.sizeof_1 = proto.sizeof_1u = fixedSize(1);
-        proto.sizeof_2 = proto.sizeof_2u = fixedSize(2);
-        proto.sizeof_3u = fixedSize(3);
-        proto.sizeof_4 = proto.sizeof_4u = proto.sizeof_f = fixedSize(4);
-        proto.sizeof_8 = proto.sizeof_8u = proto.sizeof_d = fixedSize(8);
+        proto.sizeof_8 = proto.sizeof_8u = fixedSize(8);
         proto.sizeof_str = function(value) { return this._sizeof_str(value); };
-        proto.sizeof_mem = function(value) { return this._sizeof_mem(value); };
         proto.sizeof_rotr = function(value) { return this._sizeof_rotr(value); };
         proto.sizeof_quad = function(value) { return this._sizeof_quad(value); };
     })(bindings.Serializer.prototype);
 
-    (function(proto) {
-        var nativeColor = proto.deserialize_color;
-        var nativeOffset = proto.deserialize_offset;
-        var nativePoint = proto.deserialize_point;
-        var nativeVector = proto.deserialize_vector;
-        var nativeRect = proto.deserialize_rect;
-
-        proto.deserialize_color = function() {
-            var value = nativeColor.call(this);
-            return new bindings.Color(value.red, value.green, value.blue, value.alpha);
-        };
-        proto.deserialize_offset = function() { return new bindings.Offset(nativeOffset.call(this)); };
-        proto.deserialize_point = function() { return new bindings.Point(nativePoint.call(this)); };
-        proto.deserialize_vector = function() { return new bindings.Vector(nativeVector.call(this)); };
-        proto.deserialize_rect = function() { return new bindings.Rect(nativeRect.call(this)); };
-        proto.deserialize_rotr = function() {
-            var value = this._deserialize_rotr();
-            return new bindings.RotatedRect(new bindings.Rect(value), value.radians,
-                new bindings.Offset(value.centerOffset));
-        };
-        proto.deserialize_quad = function() {
-            var value = this._deserialize_quad();
-            return new bindings.Quad(value.points);
-        };
-    })(bindings.Deserializer.prototype);
 
     // Embind cannot directly instantiate the V8-specific ScriptSerializable
     // implementation. Keep the native byte stream, but bridge JavaScript-owned
@@ -1385,6 +1331,35 @@ if (inbrowser && typeof bindings.Serializer !== "undefined") {
 
         bindings.registerSerializableClass = function(constructor) {
             if (typeof constructor !== "function") throw new TypeError("Serializable constructor must be a function");
+// @pdg-member {"name":"AnimationContactTarget.AnimationContactTarget","type":"constructor","brief":"create an unlocked contact target","returns":"object AnimationContactTarget","params":[]}
+/* @pdg-member
+{
+  "name": "AnimationSpringTarget.AnimationSpringTarget",
+  "type": "constructor",
+  "brief": "create a damped spring target",
+  "returns": "object AnimationSpringTarget",
+  "params": [
+    {
+      "name": "mass",
+      "type": "number",
+      "optional": true,
+      "default_value": "1"
+    },
+    {
+      "name": "stiffness",
+      "type": "number",
+      "optional": true,
+      "default_value": "100"
+    },
+    {
+      "name": "damping",
+      "type": "number",
+      "optional": true,
+      "default_value": "20"
+    }
+  ]
+}
+*/
             var instance = new constructor();
             if (!instance) throw new TypeError("Serializable constructor must return an object");
             var tag = classTagOf(instance);
@@ -1402,19 +1377,52 @@ if (inbrowser && typeof bindings.Serializer !== "undefined") {
             serializableClasses[0xffffff08] = function() { return bindings._createSnapshotImage(); };
         }
 
+        if (bindings.Animated) {
+            serializableClasses[0xffffff04] = function() { return new bindings.Animated(); };
+        }
         if (bindings.Sprite) {
             serializableClasses[0xffffff01] = function() { return new bindings.Sprite(); };
         }
 
+        function snapshotIndex(objects, value) {
+            for(var i=0;i<objects.length;++i) {
+                var candidate=objects[i];
+                if(candidate===value || (candidate && value && candidate.$$ && value.$$ && candidate.isAliasOf(value))) return i;
+            }
+            return -1;
+        }
+        function mergeSnapshotObjects(known, nativeObjects) {
+            for(var i=0;i<nativeObjects.length;++i) if(!known[i]) known[i]=nativeObjects[i];
+            return known;
+        }
+        if(bindings.Troupe) serializableClasses[0xffffff0c]=function(){return new bindings.Troupe();};
+        [bindings.SpriteLayer,bindings.TileLayer].forEach(function(type) {
+            if(!type) return;
+            ['serialize','deserialize','getSerializedSize'].forEach(function(name) {
+                if(!Object.prototype.hasOwnProperty.call(type.prototype,name)) return;
+                var native=type.prototype[name];
+                type.prototype[name]=function(stream) {
+                    var reading=name==='deserialize', sizing=name==='getSerializedSize';
+                    var key=reading?'_pdgDeserializedObjects':sizing?'_pdgSizedObjects':'_pdgSerializedObjects';
+                    var objects=stream[key] || (stream[key]=[]);
+                    if(reading) stream._syncSnapshotObjects(objects); else stream._syncSnapshotObjects(objects,sizing);
+                    var result=native.call(this,stream);
+                    mergeSnapshotObjects(objects,reading?stream._snapshotObjects():stream._snapshotObjects(sizing));
+                    return result;
+                };
+            });
+        });
         var serializerProto = bindings.Serializer.prototype;
         serializerProto.sizeof_obj = function(obj) {
             if (obj === null) return 3;
             classTagOf(obj);
             this._pdgSizedObjects = this._pdgSizedObjects || [];
-            var referenceIndex = this._pdgSizedObjects.indexOf(obj);
+            var referenceIndex = snapshotIndex(this._pdgSizedObjects,obj);
             if (referenceIndex >= 0) return 3 + this.sizeof_uint(referenceIndex);
             this._pdgSizedObjects.push(obj);
+            this._syncSnapshotObjects(this._pdgSizedObjects,true);
             var objectSize = getSizeOf(obj, this);
+            mergeSnapshotObjects(this._pdgSizedObjects,this._snapshotObjects(true));
             return 3 + 4 + 2 + this.sizeof_uint(objectSize) + objectSize;
         };
         serializerProto.serialize_obj = function(obj) {
@@ -1424,19 +1432,21 @@ if (inbrowser && typeof bindings.Serializer !== "undefined") {
             }
             classTagOf(obj);
             this._pdgSerializedObjects = this._pdgSerializedObjects || [];
-            var referenceIndex = this._pdgSerializedObjects.indexOf(obj);
+            var referenceIndex = snapshotIndex(this._pdgSerializedObjects,obj);
             if (referenceIndex >= 0) {
                 this.serialize_3u(tagObjectRef);
                 this.serialize_uint(referenceIndex);
                 return;
             }
             this._pdgSerializedObjects.push(obj);
+            this._syncSnapshotObjects(this._pdgSerializedObjects,false);
             this.serialize_3u(tagObject);
             this.serialize_4u(classTagOf(obj));
             this.serialize_2u(obj._pdgRequiresExplicitRegistration && !obj._pdgRegistered
                 ? 0 : this._pdgSerializedObjects.length);
             var writer = this, priorSized = this._pdgSizedObjects, objectSize;
             this._pdgSizedObjects = this._pdgSerializedObjects.slice();
+            this._syncSnapshotObjects(this._pdgSizedObjects,true);
             try {
                 objectSize = this._measureObjectBody(function() { return getSizeOf(obj, writer); });
             } finally {
@@ -1444,6 +1454,7 @@ if (inbrowser && typeof bindings.Serializer !== "undefined") {
             }
             this.serialize_uint(objectSize);
             serializeObjectData(obj, this);
+            mergeSnapshotObjects(this._pdgSerializedObjects,this._snapshotObjects(false));
         };
 
         var deserializerProto = bindings.Deserializer.prototype;
@@ -1473,20 +1484,26 @@ if (inbrowser && typeof bindings.Serializer !== "undefined") {
             var obj = new constructor();
             if (!obj) throw new TypeError("Serializable constructor must return an object");
             this._pdgDeserializedObjects.push(obj);
+            this._syncSnapshotObjects(this._pdgDeserializedObjects);
             deserializeObjectData(obj, this);
+            mergeSnapshotObjects(this._pdgDeserializedObjects,this._snapshotObjects());
             return obj;
         };
     })();
 }
 
 if (typeof bindings.GraphicsManager != "undefined") {  // might be non-gui build
+// @pdg-member {"name":"pdg.gfx","type":"object GraphicsManager"}
 	bindings.gfx = bindings.getGraphicsManager();
+// @pdg-member {"name":"pdg.hasGraphics","type":"boolean"}
 	bindings.hasGraphics = true;
 } else {
 	bindings.hasGraphics = false;
 }
 if (typeof bindings.SoundManager != "undefined") {  // might be non-gui build
+// @pdg-member {"name":"pdg.snd","type":"object SoundManager"}
 	bindings.snd = bindings.getSoundManager();
+// @pdg-member {"name":"pdg.hasSound","type":"boolean"}
 	bindings.hasSound = true;
 } else {
 	bindings.hasSound = false;
@@ -1556,23 +1573,26 @@ fixManagerConstructorAndToString(bindings.res, bindings.ResourceManager, 'Resour
 fixManagerConstructorAndToString(bindings.cfg, bindings.ConfigManager, 'ConfigManager');
 fixManagerConstructorAndToString(bindings.lm, bindings.LogManager, 'LogManager');
 
+// @pdg-member {"name":"LogManager.init_CreateUniqueNewFile","type":"number","readonly":true,"value":0}
 bindings.lm.init_CreateUniqueNewFile = bindings.init_CreateUniqueNewFile;
+// @pdg-member {"name":"LogManager.init_OverwriteExisting","type":"number","readonly":true,"value":1}
 bindings.lm.init_OverwriteExisting = bindings.init_OverwriteExisting;
+// @pdg-member {"name":"LogManager.init_AppendToExisting","type":"number","readonly":true,"value":2}
 bindings.lm.init_AppendToExisting = bindings.init_AppendToExisting;
+// @pdg-member {"name":"LogManager.init_StdOut","type":"number","readonly":true,"value":3}
 bindings.lm.init_StdOut = bindings.init_StdOut;
+// @pdg-member {"name":"LogManager.init_StdErr","type":"number","readonly":true,"value":4}
 bindings.lm.init_StdErr = bindings.init_StdErr;
 
 if (inbrowser) {
     (function(proto) {
         proto.setLanguage = function(language) {
-            if (language === null) return this;
-            if (typeof language === "undefined") throw new TypeError("language is required");
+            if (typeof language !== "string") throw new TypeError("language must be a string");
             this._setLanguage(language);
             return this;
         };
         proto.openResourceFile = function(filename) {
-            if (filename === null) return 0;
-            if (typeof filename === "undefined") throw new TypeError("filename is required");
+            if (typeof filename !== "string") throw new TypeError("filename must be a string");
             return this._openResourceFile(filename);
         };
         proto.getString = function(id, substring) {
@@ -1631,8 +1651,8 @@ if (bindings.hasGraphics) {
                     typeof screenNum === "undefined" ? -1 : screenNum);
             };
             graphicsProto.getScreenBounds = function(screenNum) {
-                return new bindings.Rect(nativeGetScreenBounds.call(this,
-                    typeof screenNum === "undefined" ? -1 : screenNum));
+                return nativeGetScreenBounds.call(this,
+                    typeof screenNum === "undefined" ? -1 : screenNum);
             };
             graphicsProto.getNumSupportedScreenModes = function(screenNum) {
                 return nativeGetNumSupportedScreenModes.call(this,
@@ -1643,8 +1663,8 @@ if (bindings.hasGraphics) {
                     typeof screenNum === "undefined" ? -1 : screenNum);
             };
             graphicsProto.getMouse = function(mouseNumber) {
-                return new bindings.Point(nativeGetMouse.call(this,
-                    typeof mouseNumber === "undefined" ? 0 : mouseNumber));
+                return nativeGetMouse.call(this,
+                    typeof mouseNumber === "undefined" ? 0 : mouseNumber);
             };
             graphicsProto.setTargetFPS = function(fps) {
                 nativeSetTargetFPS.call(this, fps);
@@ -1654,19 +1674,13 @@ if (bindings.hasGraphics) {
             var portProto = bindings.Port.prototype;
             portProto.clear = function(color) { this._clear(color || new bindings.Color(0,0,0,0)); };
             portProto.setDrawingOrigin = function(origin) { this._setDrawingOrigin(origin); };
-            var nativeGetDrawingArea = portProto.getDrawingArea;
-            var nativeGetClipRect = portProto.getClipRect;
+
             var nativeGetTextWidth = portProto._getTextWidth;
             var nativeSetClipRect = portProto.setClipRect;
             var nativeGetCurrentFont = portProto.getCurrentFont;
             var nativeSetFontForStyle = portProto.setFontForStyle;
             var nativeSetFont = portProto.setFont;
-            portProto.getDrawingArea = function() {
-                return new bindings.Rect(nativeGetDrawingArea.call(this));
-            };
-            portProto.getClipRect = function() {
-                return new bindings.Rect(nativeGetClipRect.call(this));
-            };
+
             portProto.getTextWidth = function(text, size, style, len) {
                 return nativeGetTextWidth.call(this, text, size,
                     typeof style === "undefined" ? bindings.textStyle_Plain : style,
@@ -1688,15 +1702,6 @@ if (bindings.hasGraphics) {
                 nativeSetClipRect.call(this, rect);
                 return this;
             };
-            ["drawLine", "drawRect", "drawQuad", "drawPolygon", "drawSpline",
-             "drawCircle", "drawEllipse", "drawArc", "drawImage", "drawDrawing",
-             "drawText", "drawSphere"].forEach(function(method) {
-                var nativeDraw = portProto[method];
-                portProto[method] = function() {
-                    nativeDraw.apply(this, arguments);
-                    return this;
-                };
-            });
 
             var fontProto = bindings.Font.prototype;
             ["Height", "Leading", "Ascent", "Descent", "CapHeight"].forEach(function(metric) {
@@ -1749,6 +1754,8 @@ if (inbrowser) {
             bindings.TimerManager,
             bindings.Sprite,
             bindings.Particle,
+            bindings.Camera,
+            bindings.Scene,
             bindings.SpriteLayer,
             bindings.TileLayer
         ];
@@ -1876,69 +1883,7 @@ function postEvent(eventType, event) {
             EmitterType.prototype.__dispatchNativeEvent = postEvent;
         });
 
-        function installConvenienceHandler(proto, name, eventType, discriminator, expectedValue) {
-            proto[name] = function(callback) {
-                if (typeof callback !== "function") throw new TypeError(name + " requires a callback");
-                var emitter = this;
-                var handler = new BrowserEventHandler(function(event) {
-                    if (event && typeof event[discriminator] !== "undefined" && event[discriminator] !== expectedValue) {
-                        return false;
-                    }
-                    return callback.call(emitter, event);
-                });
-                emitter.addHandler(handler, eventType);
-                handler.cancel = function() { emitter.removeHandler(handler, eventType); };
-                return handler;
-            };
-        }
-
-        var spriteActions = {
-            onCollideSprite: [bindings.eventType_SpriteCollide, 0],
-            onCollideWall: [bindings.eventType_SpriteCollide, 1],
-            onOffscreen: [bindings.eventType_SpriteAnimate, 2],
-            onOnscreen: [bindings.eventType_SpriteAnimate, 3],
-            onExitLayer: [bindings.eventType_SpriteAnimate, 4],
-            onAnimationLoop: [bindings.eventType_SpriteAnimate, 8],
-            onAnimationEnd: [bindings.eventType_SpriteAnimate, 9],
-            onFadeComplete: [bindings.eventType_SpriteAnimate, 10],
-            onFadeInComplete: [bindings.eventType_SpriteAnimate, 11],
-            onFadeOutComplete: [bindings.eventType_SpriteAnimate, 12],
-            onAnimationBlendComplete: [bindings.eventType_SpriteAnimate, 15],
-            onAnimationPhysicsRecoveryComplete: [bindings.eventType_SpriteAnimate, 17]
-        };
-        var touchActions = {
-            onMouseEnter: 20,
-            onMouseLeave: 21,
-            onMouseDown: 22,
-            onMouseUp: 23,
-            onMouseClick: 24
-        };
-        var layerActions = {
-            onErasePort: 40,
-            onPreDrawLayer: 41,
-            onPostDrawLayer: 42,
-            onDrawPortComplete: 43,
-            onAnimationStart: 44,
-            onPreAnimateLayer: 45,
-            onPostAnimateLayer: 46,
-            onAnimationComplete: 47,
-            onZoomComplete: 48,
-            onLayerFadeInComplete: 49,
-            onLayerFadeOutComplete: 50
-        };
-
-        [bindings.Sprite.prototype, bindings.SpriteLayer.prototype].forEach(function(proto) {
-            Object.keys(spriteActions).forEach(function(name) {
-                installConvenienceHandler(proto, name, spriteActions[name][0], "action", spriteActions[name][1]);
-            });
-            Object.keys(touchActions).forEach(function(name) {
-                installConvenienceHandler(proto, name, bindings.eventType_SpriteTouch, "touchType", touchActions[name]);
-            });
-        });
-        Object.keys(layerActions).forEach(function(name) {
-            installConvenienceHandler(bindings.SpriteLayer.prototype, name,
-                bindings.eventType_SpriteLayer, "action", layerActions[name]);
-        });
+        browserGeneratedBindings.installEvents(bindings);
 
         var spriterEventStates = new WeakMap();
         var nativeSpriteEnableSpriterEvents = bindings.Sprite.prototype.enableSpriterEvents;
@@ -1987,8 +1932,8 @@ function compareFoundNodeNames(left, right) {
 }
 
 // file system manager
+// @pdg-member {"name":"FileManager.findFiles","type":"function","brief":"","returns":"string[]","params":[{"name":"name","type":"string"}]}
 fileManagerProto.findFiles = function(name) {
-	var _sig = methodSignature("", arguments, "string[]", 0, "(string name)"); if (_sig != null) return _sig;
 	var files = new Array;
 	var fileMgr = bindings.getFileManager();
 	var findInfo = fileMgr.findFirst(name);
@@ -2005,8 +1950,8 @@ fileManagerProto.findFiles = function(name) {
 }
 bindings.FileManager.prototype.findFiles = fileManagerProto.findFiles;
 
+// @pdg-member {"name":"FileManager.findDirs","type":"function","brief":"","returns":"string[]","params":[{"name":"name","type":"string"}]}
 fileManagerProto.findDirs = function(name) {
-	var _sig = methodSignature("", arguments, "string[]", 0, "(string name)"); if (_sig != null) return _sig;
 	var dirs = new Array; 
 	var fileMgr = bindings.getFileManager();
 	var findInfo = fileMgr.findFirst(name);
@@ -2025,38 +1970,38 @@ fileManagerProto.findDirs = function(name) {
 bindings.FileManager.prototype.findDirs = fileManagerProto.findDirs;
 
 // simple log writer
+// @pdg-member {"name":"pdg.log","type":"function","brief":"","params":[{"name":"msg","type":"string"}]}
 bindings.log = function(msg) {
-	var _sig = methodSignature("", arguments, "undefined", 1, "(string msg)"); if (_sig != null) return _sig;
 	bindings.getLogManager().writeLogEntry(4, "LOG", msg);
 }
+// @pdg-member {"name":"pdg.info","type":"function","brief":"","params":[{"name":"msg","type":"string"}]}
 bindings.info = function(msg) {
-	var _sig = methodSignature("", arguments, "undefined", 1, "(string msg)"); if (_sig != null) return _sig;
 	bindings.getLogManager().writeLogEntry(5, "INFO", msg);
 }
+// @pdg-member {"name":"pdg.warn","type":"function","brief":"","params":[{"name":"msg","type":"string"}]}
 bindings.warn = function(msg) {
-	var _sig = methodSignature("", arguments, "undefined", 1, "(string msg)"); if (_sig != null) return _sig;
 	bindings.getLogManager().writeLogEntry(3, "WARN", msg);
 }
+// @pdg-member {"name":"pdg.fatal","type":"function","brief":"","params":[{"name":"msg","type":"string"}]}
 bindings.fatal = function(msg) {
-	var _sig = methodSignature("", arguments, "undefined", 1, "(string msg)"); if (_sig != null) return _sig;
 	bindings.getLogManager().writeLogEntry(0, "FATAL", msg);
 }
+// @pdg-member {"name":"pdg.error","type":"function","brief":"","params":[{"name":"msg","type":"string"}]}
 bindings.error = function(msg) {
-	var _sig = methodSignature("", arguments, "undefined", 1, "(string msg)"); if (_sig != null) return _sig;
 	bindings.getLogManager().writeLogEntry(1, "ERROR", msg);
 }
+// @pdg-member {"name":"pdg.debug","type":"function","brief":"","params":[{"name":"msg","type":"string"}]}
 bindings.debug = function(msg) {
-	var _sig = methodSignature("", arguments, "undefined", 1, "(string msg)"); if (_sig != null) return _sig;
 	bindings.getLogManager().writeLogEntry(7, "DEBUG", msg);
 }
+// @pdg-member {"name":"pdg.trace","type":"function","brief":"","params":[{"name":"msg","type":"string"}]}
 bindings.trace = function(msg) {
-	var _sig = methodSignature("", arguments, "undefined", 1, "(string msg)"); if (_sig != null) return _sig;
 	bindings.getLogManager().writeLogEntry(9, "TRACE", msg);
 }
 
 // replace console log
+// @pdg-member {"name":"pdg.captureConsole","type":"function","brief":"","params":[]}
 bindings.captureConsole = function() {
-	var _sig = methodSignature("", arguments, "undefined", 1, "()"); if (_sig != null) return _sig;
 	console.log = bindings.log
 	console.info = bindings.info
 	console.warn = bindings.warn
@@ -2084,8 +2029,25 @@ bindings.captureConsole = function() {
 //   };
 //   var serializable = pdg.createSerializableObject(obj, 0x12345678);
 //   pdg.registerSerializableClass(function() { return serializable; });
+/* @pdg-member
+{
+  "name": "pdg.createSerializableObject",
+  "type": "function",
+  "brief": "Creates a pdg.ISerializable object from a JavaScript object with serialization methods",
+  "returns": "object ISerializable",
+  "params": [
+    {
+      "name": "obj",
+      "type": "object"
+    },
+    {
+      "name": "classTag",
+      "type": "number uint"
+    }
+  ]
+}
+*/
 bindings.createSerializableObject = function(obj, classTag) {
-	var _sig = methodSignature("Creates a pdg.ISerializable object from a JavaScript object with serialization methods", arguments, "[object ISerializable]", 2, "(object obj, [number uint] classTag)"); if (_sig != null) return _sig;
 	
 	// Validate the object parameter
 	if (obj === null || typeof obj !== 'object') {
@@ -2149,8 +2111,38 @@ bindings.createSerializableObject = function(obj, classTag) {
 // event manager
 
 // create an IEventHandler with the function and add it to the Event Manager
+/* @pdg-member
+{
+  "name": "pdg.on",
+  "type": "function",
+  "brief": "",
+  "returns": "object IEventHandler",
+  "params": [
+    {
+      "name": "eventType",
+      "type": "number int"
+    },
+    {
+      "name": "func",
+      "type": "function"
+    }
+  ],
+  "event_map": {
+    "schema": "EventMap",
+    "selector": "eventType",
+    "callback": "func",
+    "returns": {
+      "type": "boolean"
+    },
+    "fallback": {
+      "schema": "Event"
+    }
+  }
+}
+*/
+// @pdg-member {"name":"SoundManager.on","type":"function","brief":"","returns":"object IEventHandler","params":[{"name":"eventCode","type":"number int"},{"name":"func","type":"function"}]}
+// @pdg-member {"name":"Sound.on","type":"function","brief":"","returns":"object IEventHandler","params":[{"name":"eventCode","type":"number int"},{"name":"func","type":"function"}]}
 bindings.on = function(eventType, func) {
-	var _sig = methodSignature("", arguments, "[object IEventHandler]", 2, "([number int] eventType, function func)"); if (_sig != null) return _sig;
 	var handler = new bindings.IEventHandler(func);
 	bindings.getEventManager().addHandler(handler, eventType);
 	handler.cancel = function() {
@@ -2161,47 +2153,46 @@ bindings.on = function(eventType, func) {
 
 // onStartup(function)
 // module.exports.onStartup = function(func) {
-// 	var _sig = methodSignature("", arguments, "[object IEventHandler]", 1, "(function func)"); if (_sig != null) return _sig;
 // 	return this.on(bindings.eventType_Startup, func);
 // }
 // onShutdown(function)
+// @pdg-member {"name":"pdg.onShutdown","type":"function","brief":"","returns":"object IEventHandler","params":[{"name":"func","type":"function"}]}
 bindings.onShutdown = function(func) {
-	var _sig = methodSignature("", arguments, "[object IEventHandler]", 1, "(function func)"); if (_sig != null) return _sig;
 	return bindings.on(bindings.eventType_Shutdown, func);
 }
 // onTimer(function)
+// @pdg-member {"name":"pdg.onTimer","type":"function","brief":"","returns":"object IEventHandler","params":[{"name":"func","type":"function"}]}
 bindings.onTimer = function(func) {
-	var _sig = methodSignature("", arguments, "[object IEventHandler]", 1, "(function func)"); if (_sig != null) return _sig;
 	return bindings.on(bindings.eventType_Timer, func);
 }
 // onKeyDown(function)
+// @pdg-member {"name":"pdg.onKeyDown","type":"function","brief":"","returns":"object IEventHandler","params":[{"name":"func","type":"function"}]}
 bindings.onKeyDown = function(func) {
-	var _sig = methodSignature("", arguments, "[object IEventHandler]", 1, "(function func)"); if (_sig != null) return _sig;
 	return bindings.on(bindings.eventType_KeyDown, func);
 }
 // onKeyUp(function)
+// @pdg-member {"name":"pdg.onKeyUp","type":"function","brief":"","returns":"object IEventHandler","params":[{"name":"func","type":"function"}]}
 bindings.onKeyUp = function(func) {
-	var _sig = methodSignature("", arguments, "[object IEventHandler]", 1, "(function func)"); if (_sig != null) return _sig;
 	return bindings.on(bindings.eventType_KeyUp, func);
 }
 // onKeyPress(function)
+// @pdg-member {"name":"pdg.onKeyPress","type":"function","brief":"","returns":"object IEventHandler","params":[{"name":"func","type":"function"}]}
 bindings.onKeyPress = function(func) {
-	var _sig = methodSignature("", arguments, "[object IEventHandler]", 1, "(function func)"); if (_sig != null) return _sig;
 	return bindings.on(bindings.eventType_KeyPress, func);
 }
 // onMouseDown(function)
+// @pdg-member {"name":"pdg.onMouseDown","type":"function","brief":"","returns":"object IEventHandler","params":[{"name":"func","type":"function"}]}
 bindings.onMouseDown = function(func) {
-	var _sig = methodSignature("", arguments, "[object IEventHandler]", 1, "(function func)"); if (_sig != null) return _sig;
 	return bindings.on(bindings.eventType_MouseDown, func);
 }
 // onMouseUp(function)
+// @pdg-member {"name":"pdg.onMouseUp","type":"function","brief":"","returns":"object IEventHandler","params":[{"name":"func","type":"function"}]}
 bindings.onMouseUp = function(func) {
-	var _sig = methodSignature("", arguments, "[object IEventHandler]", 1, "(function func)"); if (_sig != null) return _sig;
 	return bindings.on(bindings.eventType_MouseUp, func);
 }
 // onMouseMove(function)
+// @pdg-member {"name":"pdg.onMouseMove","type":"function","brief":"","returns":"object IEventHandler","params":[{"name":"func","type":"function"}]}
 bindings.onMouseMove = function(func) {
-	var _sig = methodSignature("", arguments, "[object IEventHandler]", 1, "(function func)"); if (_sig != null) return _sig;
 	return bindings.on(bindings.eventType_MouseMove, func);
 }
 
@@ -2239,8 +2230,8 @@ timerManagerProto.cancelAllTimers._pdgNativeWrapper = true;
 
 // add methods to the timer manager prototypes
 // TimerManager.onTimeout(function, delayMs)
+// @pdg-member {"name":"TimerManager.onTimeout","type":"function","brief":"setup handler to be called once after delay ms","returns":"object IEventHandler","params":[{"name":"func","type":"function"},{"name":"delay","type":"number int"}]}
 timerManagerProto.onTimeout = function(func, delay) {
-	var _sig = methodSignature("setup handler to be called once after delay ms", arguments, "[object IEventHandler]", 2, "(function func, [number int] delay)"); if (_sig != null) return _sig;
 	var timerId = _lastAutoTimerId++;
 	this.startTimer(timerId, delay, bindings.timer_OneShot);
 	var handler = new bindings.IEventHandler(function(event) {
@@ -2263,8 +2254,25 @@ timerManagerProto.onTimeout = function(func, delay) {
 bindings.TimerManager.prototype.onTimeout = timerManagerProto.onTimeout;
 
 // TimerManager.onInterval(function, intervalMs)
+/* @pdg-member
+{
+  "name": "TimerManager.onInterval",
+  "type": "function",
+  "brief": "setup handler to be called regularly at interval ms",
+  "returns": "object IEventHandler",
+  "params": [
+    {
+      "name": "func",
+      "type": "function"
+    },
+    {
+      "name": "interval",
+      "type": "number int"
+    }
+  ]
+}
+*/
 timerManagerProto.onInterval = function(func, interval) {
-	var _sig = methodSignature("setup handler to be called regularly at interval ms", arguments, "[object IEventHandler]", 2, "(function func, [number int] interval)"); if (_sig != null) return _sig;
 	var timerId = _lastAutoTimerId++;
 	this.startTimer(timerId, interval, bindings.timer_Repeating);
 	var handler = new bindings.IEventHandler(function(event) {
@@ -2281,6 +2289,93 @@ timerManagerProto.onInterval = function(func, interval) {
 	return handler;
 }
 bindings.TimerManager.prototype.onInterval = timerManagerProto.onInterval;
+
+// Scene helpers register native logical timers, never host-time timers.
+if (bindings.Scene) {
+    (function(proto) {
+        var nextTimer = 1000000;
+        if (inbrowser) {
+            var browserStartTimer=proto.startTimer;
+            proto.startTimer=function(id,delayMs,oneShot) {
+                if (!Number.isInteger(id) || !id || !Number.isFinite(delayMs) || delayMs<0 || (oneShot!==undefined && typeof oneShot!=='boolean')) throw new TypeError('Expected timer ID, finite delay and optional boolean');
+                browserStartTimer.call(this,id,delayMs,oneShot===undefined?true:oneShot);
+            };
+        }
+        var nativeCancel = proto.cancelTimer, nativeCancelAll = proto.cancelAllTimers;
+        var nativeDispose = proto.dispose;
+        function removeTimerHandler(scene, id) {
+            var handlers = scene._sceneTimerHandlers;
+            if (handlers && handlers[id]) {
+                scene.removeHandler(handlers[id], bindings.eventType_Timer);
+                delete handlers[id];
+            }
+        }
+        proto.cancelTimer = function(id) { nativeCancel.call(this, id); removeTimerHandler(this, id); };
+        proto.cancelAllTimers = function() {
+            nativeCancelAll.call(this);
+            var scene = this;
+            Object.keys(this._sceneTimerHandlers || {}).forEach(function(id) { removeTimerHandler(scene, id); });
+        };
+        function timer(scene, callback, delay, once) {
+            if (typeof callback !== 'function') throw new TypeError('Expected timer callback');
+            var id = ++nextTimer;
+            scene.startTimer(id, delay, once);
+            var handler = new bindings.IEventHandler(function(event) {
+                if (event.id !== id || scene.isDisposed()) return false;
+                try { callback(event); }
+                finally { if (once) removeTimerHandler(scene, id); }
+                return true;
+            });
+            if (!scene._sceneTimerHandlers) scene._sceneTimerHandlers = Object.create(null);
+            scene._sceneTimerHandlers[id] = handler;
+            scene.addHandler(handler, bindings.eventType_Timer);
+            handler.timer = id;
+            handler.cancel = function() { scene.cancelTimer(id); };
+            return handler;
+        }
+// @pdg-member {"name":"Scene.onTimeout","type":"function","native":false,"brief":"Create a scene-owned one-shot timer; pause and scale follow the scene.","returns":"object IEventHandler","params":[{"name":"callback","type":"function"},{"name":"delayMs","type":"number"}]}
+        proto.onTimeout = function(callback, delayMs) { return timer(this, callback, delayMs, true); };
+// @pdg-member {"name":"Scene.onInterval","type":"function","native":false,"brief":"Create a scene-owned repeating timer, cancelled on scene disposal.","returns":"object IEventHandler","params":[{"name":"callback","type":"function"},{"name":"intervalMs","type":"number"}]}
+        proto.onInterval = function(callback, intervalMs) { return timer(this, callback, intervalMs, false); };
+// @pdg-member {"name":"Scene.on","type":"function","native":false,"brief":"Subscribe to scene events with an idempotent cancellation handle.","returns":"object IEventHandler","params":[{"name":"eventType","type":"number int"},{"name":"callback","type":"function"}]}
+        proto.on = function(eventType, callback) {
+            if (this.isDisposed()) throw new Error('Scene is disposed');
+            var scene = this, cancelled = false;
+            var handler = new bindings.IEventHandler(function(event) {
+                return !cancelled && !scene.isDisposed() && !!callback(event);
+            });
+            this.addHandler(handler, eventType);
+            handler.cancel = function() { if (!cancelled) { cancelled = true; scene.removeHandler(handler, eventType); } };
+            return handler;
+        };
+// @pdg-member {"name":"Scene.subscribe","type":"function","native":false,"brief":"Own an exact subscription to an external emitter; raw events can run while paused.","returns":"object IEventHandler","params":[{"name":"emitter","type":"object EventEmitter"},{"name":"eventType","type":"number int"},{"name":"callback","type":"function"}]}
+        proto.subscribe = function(emitter, eventType, callback) {
+            if (this.isDisposed()) throw new Error('Scene is disposed');
+            var scene = this, cancelled = false;
+            var handler = new bindings.IEventHandler(function(event) {
+                return !cancelled && !scene.isDisposed() && !!callback(event);
+            });
+            emitter.addHandler(handler, eventType);
+            handler.cancel = function() { if (!cancelled) { cancelled = true; emitter.removeHandler(handler, eventType); } };
+            if (!this._sceneSubscriptions) this._sceneSubscriptions = [];
+            this._sceneSubscriptions.push(handler);
+            return handler;
+        };
+        proto.dispose = function() {
+            var subscriptions = this._sceneSubscriptions || [];
+            this._sceneSubscriptions = [];
+            try { nativeDispose.call(this); }
+            finally {
+                this._sceneTimerHandlers = Object.create(null);
+                subscriptions.forEach(function(handler) { handler.cancel(); });
+            }
+        };
+    }(bindings.Scene.prototype));
+}
+// @pdg-contract {"name":"Scene.onTimeout","value":{"params":{"callback":{"schema":"TimerNotification"}},"returns":{"schema":"TimerSubscription"}}}
+// @pdg-contract {"name":"Scene.onInterval","value":{"params":{"callback":{"schema":"TimerNotification"}},"returns":{"schema":"TimerSubscription"}}}
+// @pdg-contract {"name":"Scene.on","value":{"params":{"callback":{"schema":"EventCallback"}},"returns":{"schema":"EventSubscription"}}}
+// @pdg-contract {"name":"Scene.subscribe","value":{"params":{"callback":{"schema":"EventCallback"}},"returns":{"schema":"EventSubscription"}}}
 
 if (inbrowser) {
     (function(timerManager) {
@@ -2317,7 +2412,8 @@ if (inbrowser) {
             var generation = timer.generation;
             timer.firing = true;
             if (timer.callback) {
-                timer.callback({ id: timer.id, millisec: firedAt, msElapsed: elapsed });
+                timer.callback({ emitter: timerManager, eventType: bindings.eventType_Timer,
+                    id: timer.id, millisec: firedAt, msElapsed: elapsed });
             }
             timer.firing = false;
             if (timers[id] !== timer) return;
@@ -2463,7 +2559,6 @@ if (typeof bindings.Sound != "undefined") {  // might be non-gui build
     // creates an IEventHander for the sound events with the function
     // and add it to the sound.
     soundManagerProto.on = function(eventCode, func) {
-        var _sig = methodSignature("", arguments, "[object IEventHandler]", 2, "([number int] eventCode, function func)"); if (_sig != null) return _sig;
         var handler = new bindings.IEventHandler(function(event) {
                                                  if (event.eventCode != eventCode) return false;
                                                  return func(event);
@@ -2477,22 +2572,25 @@ if (typeof bindings.Sound != "undefined") {  // might be non-gui build
 	bindings.Sound.prototype.on = soundManagerProto.on;
     
     // Sound.onDonePlaying(function)
+// @pdg-member {"name":"SoundManager.onDonePlaying","type":"function","brief":"","returns":"object IEventHandler","params":[{"name":"func","type":"function"}]}
+// @pdg-member {"name":"Sound.onDonePlaying","type":"function","brief":"","returns":"object IEventHandler","params":[{"name":"func","type":"function"}]}
     soundManagerProto.onDonePlaying = function(func) {
-        var _sig = methodSignature("", arguments, "[object IEventHandler]", 1, "(function func)"); if (_sig != null) return _sig;
         return this.on(bindings.soundEvent_DonePlaying, func);
     }
 	bindings.Sound.prototype.onDonePlaying = soundManagerProto.onDonePlaying;
 
     // Sound.onLooping(function)
+// @pdg-member {"name":"SoundManager.onLooping","type":"function","brief":"","returns":"object IEventHandler","params":[{"name":"func","type":"function"}]}
+// @pdg-member {"name":"Sound.onLooping","type":"function","brief":"","returns":"object IEventHandler","params":[{"name":"func","type":"function"}]}
     soundManagerProto.onLooping = function(func) {
-        var _sig = methodSignature("", arguments, "[object IEventHandler]", 1, "(function func)"); if (_sig != null) return _sig;
         return this.on(bindings.soundEvent_Looping, func);
     }
 	bindings.Sound.prototype.onLooping = soundManagerProto.onLooping;
 
     // Sound.onFailedToPlay(function)
+// @pdg-member {"name":"SoundManager.onFailedToPlay","type":"function","brief":"","returns":"object IEventHandler","params":[{"name":"func","type":"function"}]}
+// @pdg-member {"name":"Sound.onFailedToPlay","type":"function","brief":"","returns":"object IEventHandler","params":[{"name":"func","type":"function"}]}
     soundManagerProto.onFailedToPlay = function(func) {
-        var _sig = methodSignature("", arguments, "[object IEventHandler]", 1, "(function func)"); if (_sig != null) return _sig;
         return this.on(bindings.soundEvent_FailedToPlay, func);
     }
 	bindings.Sound.prototype.onFailedToPlay = soundManagerProto.onFailedToPlay;
@@ -2585,6 +2683,7 @@ function positiveTime(value) {
     if (value < 0) throw new RangeError('Seconds must be nonnegative');
     return value;
 }
+// @pdg-class {"name":"AnimationSpringTarget"}
 bindings.AnimationSpringTarget = function AnimationSpringTarget(mass, stiffness, damping) {
     if (!(this instanceof bindings.AnimationSpringTarget))
         return new bindings.AnimationSpringTarget(mass, stiffness, damping);
@@ -2659,6 +2758,7 @@ bindings.AnimationSpringTarget = function AnimationSpringTarget(mass, stiffness,
         }
     });
 };
+// @pdg-class {"name":"AnimationContactTarget"}
 bindings.AnimationContactTarget = function AnimationContactTarget() {
     if (!(this instanceof bindings.AnimationContactTarget))
         return new bindings.AnimationContactTarget();
@@ -2726,6 +2826,28 @@ bindings.AnimationContactTarget = function AnimationContactTarget() {
         }
     });
 };
+/* @pdg-member
+{
+  "name": "pdg.animationHasTag",
+  "type": "function",
+  "brief": "test an authored tag in an owned pose snapshot",
+  "returns": "boolean",
+  "params": [
+    {
+      "name": "pose",
+      "type": "object"
+    },
+    {
+      "name": "object",
+      "type": "string"
+    },
+    {
+      "name": "tag",
+      "type": "string"
+    }
+  ]
+}
+*/
 bindings.animationHasTag = function(pose, object, tag) {
     if (!pose || !Array.isArray(pose.tags) || typeof object !== 'string' || typeof tag !== 'string')
         throw new TypeError('Expected owned pose metadata and tag names');
@@ -3188,7 +3310,7 @@ if (inbrowser && bindings.Animated) {
             return this;
         };
         proto.clearAnimationHelpers = function() {
-            this._clearBrowserAnimationHelpers();
+            this._clearAnimationHelpers();
             const active = registrations.get(this);
             if (active) active.clear();
             return this;
@@ -3217,22 +3339,7 @@ if (inbrowser && bindings.Animated) {
 // retained handles; discard duplicate handles, never the owner's reference.
 if (inbrowser && bindings.Part && bindings.PhysicsBody) {
     (function() {
-        const handles = new Map();
-        function canonical(value) {
-            if (!value) return null;
-            const id = value._getNativeIdentity();
-            const entry = handles.get(id);
-            let existing = entry && entry.deref();
-            if (existing && existing.isDeleted()) existing = null;
-            if (!existing && bindings._emscriptenObjectForIdentity)
-                existing = bindings._emscriptenObjectForIdentity(id);
-            if (existing && !existing.isDeleted()) {
-                if (existing !== value) value.delete();
-                return existing;
-            }
-            handles.set(id, new WeakRef(value));
-            return value;
-        }
+        function canonical(value) { return require('pdg_em_runtime').canonicalRetained(bindings, value); }
         bindings._canonicalPhysicsOwner = canonical;
         const NativeSprite = bindings.Sprite;
         function Sprite() {
@@ -3261,7 +3368,6 @@ if (inbrowser && bindings.Part && bindings.PhysicsBody) {
             this._setBreakAngularSpeed(speed, reference == null ? null : reference);
             return this;
         };
-        body.getBreakAngularSpeedReference = function() { return canonical(this._getBreakAngularSpeedReference()); };
         body.setDriveTarget = function(point, radians, maxForce, maxTorque, frequency, dampingRatio, direction) {
             if (arguments.length < 4) throw new TypeError('setDriveTarget requires position, angle and both force limits');
             [radians, maxForce, maxTorque, frequency === undefined ? 4 : frequency, dampingRatio === undefined ? 1 : dampingRatio].forEach(function(value) {
@@ -3279,15 +3385,9 @@ if (inbrowser && bindings.Part && bindings.PhysicsBody) {
         };
         sprite.removePart = function(value) { return removePart.call(this, id(value)); };
         body.removeForce = function(value) { return removeForce.call(this, id(value)); };
-        ['createPart', 'getPart', 'findPart', 'getAttachmentPart'].forEach(function(name) {
-            sprite[name] = function(value) { return canonical(name === 'getAttachmentPart' ? this['_' + name]() : this['_' + name](name === 'getPart' ? id(value) : value)); };
-        });
-        ['getSprite', 'getAttachedSprite', 'getParentPart'].forEach(function(name) {
-            part[name] = function() { return canonical(this['_' + name]()); };
-        });
-        ['bindToAnimationBinding', 'bindToAnimationSocket', 'setDrawing', 'setImage', 'unbindFromBone', 'clearContent', 'detachSprite'].forEach(function(name) {
-            part[name] = function() { this['_' + name].apply(this, arguments); return this; };
-        });
+        const getPart = sprite.getPart;
+        sprite.getPart = function(value) { return getPart.call(this, id(value)); };
+
         part.bindToBone = function(value) { this._bindToBone(id(value)); return this; };
         part.setParentPart = function(parent) { this._setParentPart(parent || null); return this; };
         part.getTransform = function(value) { return this._getTransform(space(value)); };
@@ -3311,7 +3411,7 @@ if (inbrowser && bindings.Part && bindings.PhysicsBody) {
                 throw new TypeError('Expected finite IK limit angles');
             this._setIKLimits(lo,hi); return this;
         };
-        part.clearIKLimits = function() { this._clearIKLimits(); return this; };
+
         part.setIKDriveTarget = function(middle,tip,target,force,torque,targetSpace,bend,influence,frequency,damping) {
             if(arguments.length<5) throw new TypeError('setIKDriveTarget requires a chain, target and both force limits');
             [force,torque,influence===undefined?1:influence,frequency===undefined?4:frequency,damping===undefined?1:damping].forEach(function(value) {
@@ -3322,22 +3422,16 @@ if (inbrowser && bindings.Part && bindings.PhysicsBody) {
                 frequency===undefined?4:frequency,damping===undefined?1:damping);
             return this;
         };
-        part.clearIKTarget = function() { this._clearIKTarget(); return this; };
+
         [sprite, part, bindings.Particle && bindings.Particle.prototype].filter(Boolean).forEach(function(proto) {
             const read = proto._readPhysics;
             proto._readPhysics = function() { return canonical(read.call(this)); };
-            proto.setupPhysicsBody = function(mass, inertia) {
-                return canonical(this._setupPhysicsBody(mass === undefined ? 1 : mass, inertia === undefined ? 1 : inertia));
-            };
         });
-        ['setMass', 'setMomentOfInertia', 'setSpeed', 'setAngularVelocity', 'setLinearDamping', 'setAngularDamping',
-         'setFriction', 'setRestitution', 'applyAngularImpulse', 'stopMoving', 'stopSpinning', 'stopAllForces', 'clearDrive',
-         'setVelocityInRadians', 'teleport'].forEach(function(name) {
-            body[name] = function() { this['_' + name].apply(this, arguments); return this; };
-        });
+
         body.setMode = function(mode) { this._setMode(integer(mode, 1, 3, 'body mode')); return this; };
-        body.getVelocity = function() { return new bindings.Vector(this._getVelocity()); };
+
         body.setVelocity = function(x, y) { this._setVelocity(typeof x === 'number' ? { x: x, y: y } : x); return this; };
+// @pdg-member {"name":"AnimationSpringTarget.applyImpulse","type":"function","brief":"apply an impulse to the spring target","params":[{"name":"x","type":"number"},{"name":"y","type":"number"}]}
         body.applyImpulse = function(value, point) {
             if (point === undefined) this._applyImpulse(value); else this._applyImpulseAt(value, point);
             return this;
@@ -3361,16 +3455,14 @@ if (inbrowser && bindings.Collider) {
     [bindings.Sprite, bindings.Part, bindings.Particle].filter(Boolean).forEach(function(type) {
         const read = type.prototype._readCollider;
         type.prototype._readCollider = function() { return canonical(read.call(this)); };
-        type.prototype.setupCollider = function() { return canonical(this._setupCollider()); };
     });
-    ['setFriction','setRestitution','useBodyMaterial','setEnabled','setSensor','setWantsContactEvents','setCategory','setCollisionMask','setGroup',
-     'setCapsule','setBox','setPolygon','clearShapes','setPhysicsBody','useOwnerPhysics'].forEach(function(name) {
+    ["setCategory", "setCollisionMask", "setGroup", "setPolygon"].forEach(function(name) {
         collider[name] = function() { this['_' + name].apply(this, arguments); return this; };
     });
     ['setCircle','addCircle'].forEach(function(name) {
         collider[name] = function(radius, center) { const result = this['_' + name](radius, center === undefined ? {x:0,y:0} : center); return name === 'setCircle' ? this : result; };
     });
-    ['addCapsule','addBox','addPolygon','removeShape','getShapeId','contains','overlaps'].forEach(function(name) {
+    ["addPolygon", "removeShape", "getShapeId"].forEach(function(name) {
         collider[name] = function() { return this['_' + name].apply(this, arguments); };
     });
     ['setCategory','setCollisionMask','setGroup'].forEach(function(name) {
@@ -3400,15 +3492,13 @@ if (inbrowser && bindings.Collider) {
     bindings.Part.prototype.setupFrameCollider=bindings.Sprite.prototype.setupFrameCollider=function(mode,threshold) {
         return canonical(this._setupFrameCollider(mode===undefined?1:unsigned(mode),alphaThreshold(threshold)));
     };
-    bindings.Part.prototype.setupAnimationCollider=function(name) {
-        if(typeof name!=='string')throw new TypeError('Expected a collision box name');
-        return canonical(this._setupAnimationCollider(name));
-    };
-    bindings.Sprite.prototype.setupAnimationCollider=function() { return canonical(this._setupAnimationCollider()); };
     bindings.Sprite.prototype.setFrameCollisionMask=function(image,mask) { this._setFrameCollisionMask(image,mask);return this; };
     collider.setContactHandler=function(callback) {
         if(callback!==null && typeof callback!=='function') throw new TypeError('Expected a function or null');
         this._setContactHandler(callback===null?null:function(event) {
+// @pdg-member {"name":"Sprite.collider","type":"object Collider","readonly":true}
+// @pdg-member {"name":"Particle.collider","type":"object Collider","readonly":true}
+// @pdg-member {"name":"Part.collider","type":"object Collider","readonly":true}
             event.collider=canonical(event.collider);event.other=canonical(event.other);callback(event);
         });return this;
     };
@@ -3416,11 +3506,8 @@ if (inbrowser && bindings.Collider) {
         if(callback!==null && typeof callback!=='function') throw new TypeError('Expected a function or null');
         this._setCollisionFilter(callback===null?null:function(a,b) {return callback(canonical(a),canonical(b));});return this;
     };
-    collider.getBounds = function() { return new bindings.Rect(this._getBounds()); };
-    collider.getPhysicsBody = function() { return canonical(this._getPhysicsBody()); };
-    ['setMaxForce','setBreakForce','setCollideBodies'].forEach(function(name) {
-        constraint[name] = function(value) { this['_' + name](value); return this; };
-    });
+
+
     ['getAnchorA','getAnchorB','getGrooveStart','getGrooveEnd'].forEach(function(name) {
         constraint[name] = function() {
             if(arguments.length!==0) throw new TypeError('Expected no arguments');
@@ -3443,17 +3530,7 @@ if (inbrowser && bindings.Collider) {
             throw new TypeError('Expected two finite angle limits');
         this._setAngleLimits(lo,hi);return this;
     };
-    ['getBodyA','getBodyB'].forEach(function(name) { constraint[name] = function() { return canonical(this['_' + name]()); }; });
     const body = bindings.PhysicsBody.prototype;
-    ['createPinJoint','createPivotJoint'].forEach(function(name) {
-        body[name] = function(other, a, b) { return canonical(this['_' + name](other, a === undefined ? {x:0,y:0} : a, b === undefined ? {x:0,y:0} : b)); };
-    });
-    ['createSlideJoint','createGrooveJoint','createSpring','createRotarySpring','createRotaryLimit','createMotor','getConstraint'].forEach(function(name) {
-        body[name] = function() { return canonical(this['_' + name].apply(this, arguments)); };
-    });
-    ['createRatchet','createGear'].forEach(function(name) { body[name] = function(other, value, phase) { return canonical(this['_' + name](other, value, phase === undefined ? 0 : phase)); }; });
-    body.getConstraint = function(index) { return canonical(this._getConstraint(unsigned(index))); };
-    body.disconnect = function(other) { this._disconnect(other || null); return this; };
 }
 
 // Particle constructors and factories preserve one identity per live native object.
@@ -3471,35 +3548,19 @@ if (bindings.Particle && bindings.ParticleEmitter) {
                 return canonical(new Native());
             };
             Construct.prototype = Native.prototype; Object.setPrototypeOf(Construct, Native); bindings[name] = Construct;
-            Native.prototype.getLayer = function() { return bindings._emscriptenObjectForIdentity(this._getLayerIdentity()); };
         });
         const particle = bindings.Particle.prototype, emitter = bindings.ParticleEmitter.prototype;
-        ['setOpacity','setLifetime','setImage','setDrawing','clearContent'].forEach(function(name) {
-            if (particle['_' + name]) particle[name] = function() { this['_' + name].apply(this, arguments); return this; };
-        });
-        particle.fadeTo = function(opacity, seconds, easing) {
-            this._fadeTo(opacity, seconds, uint(easing === undefined ? bindings.linearTween : easing)); return this;
-        };
-        ['setupParticleEmitter','getParticleEmitter'].forEach(function(name) {
-            particle[name] = function() { return canonical(this['_' + name]()); };
-        });
-        ['setParticleTemplate','setEmissionRate','setSpread','setVelocityInheritance','startEmitting','stopEmitting'].forEach(function(name) {
-            emitter[name] = function() { this['_' + name].apply(this, arguments); return this; };
-        });
+
+
         emitter.setSeed = function(seed) { this._setSeed(uint(seed)); return this; };
         emitter.setParticleSpeed = function(min, max) { this._setParticleSpeed(min, max === undefined ? min : max); return this; };
         emitter.emit = function(count) { return this._emit(uint(count === undefined ? 1 : count)); };
-        emitter.getParticle = function() { return canonical(this._getParticle()); };
         const layer = bindings.SpriteLayer.prototype;
-        ['createParticle','createParticleEmitter'].forEach(function(name) {
-            layer[name] = function() { bindings._emscriptenRememberObject(this); return canonical(this['_' + name]()); };
-        });
-        ['addParticle','removeParticle','removeParticleEmitter'].forEach(function(name) {
-            layer[name] = function(value) { bindings._emscriptenRememberObject(this); return this['_' + name](value); };
-        });
-        layer.getNthParticle = function(index) { return canonical(this._getNthParticle(uint(index))); };
+        const getNthParticle = layer.getNthParticle;
+        layer.getNthParticle = function(index) { return getNthParticle.call(this, uint(index)); };
         layer.setMaxParticles = function(count) { this._setMaxParticles(uint(count)); return this; };
     }
+// @pdg-member {"name":"Particle.emitter","type":"object ParticleEmitter","readonly":true}
     Object.defineProperty(bindings.Particle.prototype, 'emitter', {
         get: function() { return this.getParticleEmitter(); }, enumerable: true
     });
@@ -3508,6 +3569,7 @@ if (bindings.Particle && bindings.ParticleEmitter) {
 // Collision ownership is optional and read-only, like body ownership.
 if (bindings.Collider && bindings.Sprite) {
     const noCollider = new bindings.Sprite()._readCollider();
+// @pdg-member {"name":"Collider.NoCollider","type":"object Collider","readonly":true,"static":true}
     Object.defineProperty(bindings.Collider, 'NoCollider', { value: noCollider, enumerable: true });
     [bindings.Sprite, bindings.Part, bindings.Particle].filter(Boolean).forEach(function(type) {
         if (!type) return;
@@ -3519,6 +3581,7 @@ if (bindings.Collider && bindings.Sprite) {
 // Body ownership is deliberately absent from Animated and SpriteLayer.
 if (bindings.PhysicsBody && bindings.Sprite) {
     const noPhysics = new bindings.Sprite()._readPhysics();
+// @pdg-member {"name":"PhysicsBody.NoPhysics","type":"object PhysicsBody","readonly":true,"static":true}
     Object.defineProperty(bindings.PhysicsBody, 'NoPhysics', {
         value: noPhysics, enumerable: true
     });
@@ -3526,6 +3589,9 @@ if (bindings.PhysicsBody && bindings.Sprite) {
     [bindings.Sprite, bindings.Part, bindings.Particle].filter(Boolean).forEach(function(type) {
         if (!type) return;
         const read = type.prototype._readPhysics;
+// @pdg-member {"name":"Sprite.physics","type":"object PhysicsBody","readonly":true}
+// @pdg-member {"name":"Particle.physics","type":"object PhysicsBody","readonly":true}
+// @pdg-member {"name":"Part.physics","type":"object PhysicsBody","readonly":true}
         Object.defineProperty(type.prototype, 'physics', {
             get: function() { return read.call(this); },
             enumerable: true
@@ -3577,3 +3643,2066 @@ if(bindings.Collider) {
         };
     });
 }
+
+// Camera browser handles share native identity across port attachments.
+if (inbrowser && bindings.Camera) {
+    (function() {
+        const Native = bindings.Camera;
+        function canonical(handle) { return require('pdg_em_runtime').canonicalRetained(bindings, handle); }
+        function Camera() { return canonical(new Native()); }
+        Camera.prototype=Native.prototype; Object.setPrototypeOf(Camera,Native); bindings.Camera=Camera;
+
+        Camera.prototype.cutTo=function(destination) {
+            if (arguments.length!==1 || !(destination instanceof Camera)) throw new TypeError('Expected one destination Camera');
+            this._cutTo(destination);return this;
+        };
+        Camera.prototype.matchCutTo=function(destination,options) {
+            if (!(destination instanceof Camera) || !options || typeof options!=='object') throw new TypeError('Expected destination Camera and matching options');
+            if (!(options.matchSource instanceof bindings.Sprite) || !(options.matchTarget instanceof bindings.Sprite)) throw new TypeError('Expected matchSource and matchTarget Sprites');
+            function number(name,fallback) {var value=options[name]===undefined?fallback:options[name];if(typeof value!=='number' || !Number.isFinite(value))throw new TypeError('Expected finite '+name);return value;}
+            function boolean(name) {var value=options[name]===undefined?false:options[name];if(typeof value!=='boolean')throw new TypeError('Expected boolean '+name);return value;}
+            var mode=number('mode',bindings.matchSource);
+            if (!Number.isInteger(mode) || mode<bindings.matchSource || mode>bindings.matchTargetAndSize) throw new TypeError('Invalid camera match mode');
+            var approach=number('approachEasing',bindings.easeInQuad),settle=number('settleEasing',bindings.easeOutQuad);
+            if (!Number.isInteger(approach) || !Number.isInteger(settle)) throw new TypeError('Expected integer easing identifiers');
+            this._matchCutTo(destination,options.matchSource,options.matchTarget,mode,number('approachSeconds',.4),number('settleSeconds',.4),boolean('settleReturnsCamera'),approach,settle);return this;
+        };
+        Camera.prototype.matchFadeTo=function(destination,options) {
+            if (!(destination instanceof Camera) || !options || typeof options!=='object') throw new TypeError('Expected destination Camera and matching options');
+            if (!(options.matchSource instanceof bindings.Sprite) || !(options.matchTarget instanceof bindings.Sprite)) throw new TypeError('Expected matchSource and matchTarget Sprites');
+            function number(name,fallback) {var value=options[name]===undefined?fallback:options[name];if(typeof value!=='number' || !Number.isFinite(value))throw new TypeError('Expected finite '+name);return value;}
+            function boolean(name) {var value=options[name]===undefined?false:options[name];if(typeof value!=='boolean')throw new TypeError('Expected boolean '+name);return value;}
+            var mode=number('mode',bindings.matchSource);
+            if (!Number.isInteger(mode) || mode<bindings.matchSource || mode>bindings.matchTargetAndSize) throw new TypeError('Invalid camera match mode');
+            var approach=number('approachEasing',bindings.easeInQuad),settle=number('settleEasing',bindings.easeOutQuad);
+            if (!Number.isInteger(approach) || !Number.isInteger(settle)) throw new TypeError('Expected integer easing identifiers');
+            var fade=number('fadeEasing',bindings.linearTween);if (!Number.isInteger(fade)) throw new TypeError('Expected integer fadeEasing');
+            this._matchFadeTo(destination,options.matchSource,options.matchTarget,mode,number('approachSeconds',.4),number('settleSeconds',.4),boolean('settleReturnsCamera'),approach,settle,number('fadeSeconds',.4),fade);return this;
+        };
+        Camera.prototype.transitionTo=function(destination,seconds,style,easing) {
+            if (!(destination instanceof Camera)) throw new TypeError('Expected a destination Camera');
+            if (typeof seconds!=='number') throw new TypeError('Expected numeric seconds');
+            style=style===undefined?bindings.camera_Crossfade:style;
+            easing=easing===undefined?bindings.easeInOutQuad:easing;
+            if (!Number.isInteger(style) || !Number.isInteger(easing)) throw new TypeError('Expected integer style and easing');
+            this._transitionTo(destination,seconds,style,easing);return this;
+        };
+        Camera.prototype.lumaFadeTo=function(destination,seconds,mask,softness,darkFirst,easing) {
+            if (!(destination instanceof Camera)) throw new TypeError('Expected a destination Camera');
+            mask=mask===undefined?null:mask; softness=softness===undefined?.1:softness; darkFirst=darkFirst===undefined?false:darkFirst; easing=easing===undefined?bindings.easeInOutQuad:easing;
+            if (typeof seconds!=='number' || typeof softness!=='number' || typeof darkFirst!=='boolean' || !Number.isInteger(easing)) throw new TypeError('Invalid luma arguments');
+            this._lumaFadeTo(destination,seconds,mask,softness,darkFirst,easing);return this;
+        };
+        Camera.prototype.whipPanTo=function(destination,seconds,style,blur,easing) {
+            if (!(destination instanceof Camera)) throw new TypeError('Expected a destination Camera');
+            style=style===undefined?bindings.camera_WhipLeft:style; blur=blur===undefined?0:blur; easing=easing===undefined?bindings.easeInOutQuad:easing;
+            if (typeof seconds!=='number' || typeof blur!=='number' || !Number.isInteger(style) || !Number.isInteger(easing)) throw new TypeError('Invalid whip arguments');
+            this._whipPanTo(destination,seconds,style,blur,easing);return this;
+        };
+        Camera.prototype.stopIt=function() {this._cameraStopIt();return this;};
+        Camera.prototype.restartIt=function() {this._cameraRestartIt();return this;};
+        Camera.prototype.setPixelSnapping=function(snap) {
+            snap=snap===undefined?true:snap;
+            if (typeof snap!=='boolean') throw new TypeError('Expected boolean pixel snapping');
+            this._setPixelSnapping(snap); return this;
+        };
+
+        const setLayerCamera = bindings.SpriteLayer.prototype.setCamera;
+        bindings.SpriteLayer.prototype.setCamera=function(camera) {
+            if (camera!=null && !(camera instanceof Camera)) throw new TypeError('Expected a Camera or null');
+            setLayerCamera.call(this, camera || null);
+        };
+        ['setCameraAnchor','setCameraDrawingEnabled'].forEach(function(name) {
+            const native=bindings.Port.prototype[name];
+            bindings.Port.prototype[name]=function(value) { native.call(this,value); return this; };
+        });
+
+        bindings.registerSerializableClass(Camera);
+    })();
+}
+
+if (bindings.Camera) {
+// @pdg-member {"name":"Camera.onZoomComplete","type":"function","brief":"listen for completion of camera zoom operations","returns":"object IEventHandler","params":[{"name":"callback","type":"function"}]}
+    bindings.Camera.prototype.onZoomComplete = function(callback) {
+        if (typeof callback !== 'function') throw new TypeError('onZoomComplete requires a callback');
+        var camera = this;
+        var handler = new bindings.IEventHandler(function(event) { return callback.call(camera, event); });
+        camera.addHandler(handler, bindings.eventType_ZoomComplete);
+        handler.cancel = function() { camera.removeHandler(handler, bindings.eventType_ZoomComplete); };
+        return handler;
+    };
+}
+
+// Named definitions and collective recorders share the native command inventory.
+// Argument values are captured by C++ before a graph is modified. No live target
+// is manufactured merely to validate or record a subclass operation.
+if (bindings.AnimationScript && bindings.Troupe) {
+    const commands = require((embedded_pdg || jsc || inbrowser) ? 'interface_metadata_data' : './interface_metadata_data').animation_commands;
+    function acceptsRecorderArgument(value, param) {
+        if (value === null) return param.type.includes('*');
+        if (param.kind === 'number' || param.kind === 'EasingFunc') return typeof value === 'number' && Number.isFinite(value);
+        if (param.kind === 'boolean' || param.kind === 'string') return typeof value === param.kind;
+        if (param.kind === 'Color' && (typeof value === 'string' || typeof value === 'number')) return true;
+        if (['AffineTransform','CameraMatchOptions','AnimationPhysicsDriveSettings','ParticleTrailOptions'].includes(param.kind)) return typeof value === 'object' && value !== null;
+        return typeof bindings[param.kind] === 'function' && value instanceof bindings[param.kind];
+    }
+    for (const Type of [bindings.AnimationScript, bindings.Troupe]) {
+        for (const name of new Set(commands.map(command => command.name))) {
+            if (typeof Type.prototype[name] === 'function') continue;
+            const variants = commands.filter(command => command.name === name);
+            Type.prototype[name] = function() {
+                const args=Array.from(arguments);
+                // Omitted trailing optionals keep each playback target's native defaults.
+                while(args.length && args[args.length-1] === undefined) args.pop();
+                const command=variants.find(command => args.length <= command.params.length &&
+                    command.params.every((param,index) => index < args.length
+                        ? acceptsRecorderArgument(args[index],param) : !!param.default));
+                if (!command) throw new TypeError(name + ': arguments do not match a recorder overload');
+                if (inbrowser) {
+                    const values=args.map((value,i)=>command.params[i].kind==='Color' && (typeof value==='string' || typeof value==='number') ? new bindings.Color(value) : value);
+                    bindings._recordAnimationCommand(this,command.id,values);
+                } else this._recordAnimationCommand.apply(this,[command.id].concat(args));
+                return this;
+            };
+        }
+    }
+}
+
+// Browser scripts bind the same native graph executor as the native runtimes.
+if (inbrowser && bindings.AnimationScript) {
+    (function() {
+        var prototype=bindings.Animated.prototype;
+        var remember=require('pdg_em_runtime').rememberAnimationOwner;
+        prototype.playScript=function(name) { remember(this)._playScript(name); return this; };
+        ['batch','endBatch','series','endSeries','andAlso','otherwise','endWhen','endOtherwise','yoyo',
+         'stopIt','restartIt','pauseIt','resumeIt'].forEach(function(name) {
+            prototype[name]=function() { remember(this)['_' + name](); return this; };
+        });
+        ['mark','jumpToMark'].forEach(function(name) {
+            prototype[name]=function(label, state) {
+                if (arguments.length<1 || arguments.length>2 || typeof label!=='string' || (arguments.length===2 && typeof state!=='boolean'))
+                    throw new TypeError(name+' requires a name and an optional boolean');
+                remember(this)['_'+name](label, arguments.length===1?true:state); return this;
+            };
+        });
+        if(bindings.Troupe) {
+            var add=bindings.Troupe.prototype.add;
+            bindings.Troupe.prototype.add=function(member) {
+                var result=add.apply(this,arguments);
+                remember(this); remember(member); return result;
+            };
+        }
+        prototype.repeat=function(count) {
+            if (arguments.length>1 || (arguments.length && (!Number.isInteger(count) || count<0 || count>2147483647))) throw new TypeError('repeat count must be a nonnegative integer');
+            this._repeat(arguments.length?count:-1); return this;
+        };
+        ['getLocation','getBoundingBox','getRotatedBounds','getSize','getWidth','getHeight','getScale','getRotation','getCenterOffset','getMovement','getStretching','getSpin','isFlippedX','isFlippedY','isSchedulePaused','hasScheduledAnimations'].forEach(function(name) {
+            bindings.AnimationScript.prototype[name]=function() { throw new Error('Animation definitions have no live target state'); };
+        });
+
+    })();
+}
+
+// Apply IDL-generated browser defaults, overload checks and receiver returns.
+if (inbrowser) browserGeneratedBindings.install(bindings);
+if (inbrowser && bindings.Bone) {
+    bindings.Bone.prototype.setIKLimits=function(first,second){
+        if(arguments.length!==1 && arguments.length!==2)throw new TypeError('Expected a rotary limit or minimum and maximum angles');
+        if(arguments.length===1 && !(first instanceof bindings.PhysicsConstraint))throw new TypeError('Expected a PhysicsConstraint');
+        this._setIKLimits(first,second);return this;
+    };
+}
+
+// Install after all helpers and wrappers have registered their public exports.
+var interfaceMetadata = require((embedded_pdg || jsc || inbrowser) ? 'interface_metadata' : './interface_metadata');
+var interfaceMetadataData = require((embedded_pdg || jsc || inbrowser) ? 'interface_metadata_data' : './interface_metadata_data');
+interfaceMetadata.install(bindings, interfaceMetadataData, {
+    runtime: inbrowser ? 'browser' : jsc ? 'ios' : embedded_pdg ? 'native' : 'node',
+    capabilities: {graphics: bindings.hasGraphics, sound: bindings.hasSound, network: bindings.hasNetwork},
+    scope: 'Root exports and build capabilities of the runtime generating this inventory; instance members are declared contracts.'
+});
+if (typeof module !== 'undefined' && module.exports && module.exports !== bindings) {
+    module.exports.getInterfaceMetadata = bindings.getInterfaceMetadata;
+    module.exports.describeInterface = bindings.describeInterface;
+}
+
+/* @pdg-schema
+{
+  "name": "EventSubscription",
+  "value": {
+    "kind": "record",
+    "fields": {},
+    "extends": [
+      "object IEventHandler"
+    ],
+    "methods": {
+      "cancel": {
+        "params": [],
+        "returns": {
+          "type": "void"
+        },
+        "description": "Unregister this handler."
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "TimerSubscription",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "timer": {
+        "type": "number"
+      }
+    },
+    "extends": [
+      "EventSubscription"
+    ]
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "pdg.on",
+  "value": {
+    "returns": {
+      "schema": "EventSubscription"
+    },
+    "params": {
+      "func": {
+        "schema": "EventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "pdg.onShutdown",
+  "value": {
+    "returns": {
+      "schema": "EventSubscription"
+    },
+    "params": {
+      "func": {
+        "schema": "ShutdownEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "pdg.onTimer",
+  "value": {
+    "returns": {
+      "schema": "EventSubscription"
+    },
+    "params": {
+      "func": {
+        "schema": "TimerEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "pdg.onKeyDown",
+  "value": {
+    "returns": {
+      "schema": "EventSubscription"
+    },
+    "params": {
+      "func": {
+        "schema": "KeyEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "pdg.onKeyUp",
+  "value": {
+    "returns": {
+      "schema": "EventSubscription"
+    },
+    "params": {
+      "func": {
+        "schema": "KeyEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "pdg.onKeyPress",
+  "value": {
+    "returns": {
+      "schema": "EventSubscription"
+    },
+    "params": {
+      "func": {
+        "schema": "KeyPressEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "pdg.onMouseDown",
+  "value": {
+    "returns": {
+      "schema": "EventSubscription"
+    },
+    "params": {
+      "func": {
+        "schema": "MouseEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "pdg.onMouseUp",
+  "value": {
+    "returns": {
+      "schema": "EventSubscription"
+    },
+    "params": {
+      "func": {
+        "schema": "MouseEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "pdg.onMouseMove",
+  "value": {
+    "returns": {
+      "schema": "EventSubscription"
+    },
+    "params": {
+      "func": {
+        "schema": "MouseEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "TimerManager.onTimeout",
+  "value": {
+    "returns": {
+      "schema": "TimerSubscription"
+    },
+    "params": {
+      "func": {
+        "schema": "TimerNotification"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "TimerManager.onInterval",
+  "value": {
+    "returns": {
+      "schema": "TimerSubscription"
+    },
+    "params": {
+      "func": {
+        "schema": "TimerNotification"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sound.on",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SoundEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sound.onDonePlaying",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SoundEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sound.onFailedToPlay",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SoundEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sound.onLooping",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SoundEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SoundManager.on",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SoundEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SoundManager.onDonePlaying",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SoundEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SoundManager.onFailedToPlay",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SoundEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SoundManager.onLooping",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SoundEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-member
+{
+  "name": "Sprite.on",
+  "type": "function",
+  "brief": "Register a numeric Sprite event or a string animation lifecycle event.",
+  "returns": "object IEventHandler",
+  "returns_contract": {
+    "one_of": [
+      {
+        "type": "object IEventHandler"
+      },
+      {
+        "type": "this"
+      }
+    ],
+    "by_parameter": {
+      "eventCode": {
+        "type": "object IEventHandler"
+      },
+      "event": {
+        "type": "this"
+      }
+    }
+  }
+}
+*/
+/* @pdg-contract
+{
+  "name": "Sprite.on",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "EventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.onAnimationBlendComplete",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteAnimationEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.onAnimationEnd",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteAnimationEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.onAnimationLoop",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteAnimationEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.onAnimationPhysicsRecoveryComplete",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteRecoveryEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.onCollideSprite",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteCollisionEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.onCollideWall",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteCollisionEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.onExitLayer",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteAnimationEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.onFadeComplete",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteAnimationEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.onFadeInComplete",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteAnimationEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.onFadeOutComplete",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteAnimationEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.onMouseClick",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteTouchNotificationCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.onMouseDown",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteTouchNotificationCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.onMouseEnter",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteTouchNotificationCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.onMouseLeave",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteTouchNotificationCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.onMouseUp",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteTouchNotificationCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.onOffscreen",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteAnimationEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.onOnscreen",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteAnimationEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.on",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "EventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onAnimationComplete",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteLayerEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onAnimationEnd",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteAnimationEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onAnimationLoop",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteAnimationEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onAnimationStart",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteLayerEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onCollideSprite",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteCollisionEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onCollideWall",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteCollisionEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onDrawPortComplete",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteLayerEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onErasePort",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteLayerEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onExitLayer",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteAnimationEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onFadeComplete",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteAnimationEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onFadeInComplete",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteAnimationEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onFadeOutComplete",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteAnimationEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onLayerFadeInComplete",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteLayerEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onLayerFadeOutComplete",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteLayerEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onMouseClick",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteTouchNotificationCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onMouseDown",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteTouchNotificationCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onMouseEnter",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteTouchNotificationCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onMouseLeave",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteTouchNotificationCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onMouseUp",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteTouchNotificationCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onOffscreen",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteAnimationEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onOnscreen",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteAnimationEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onPostAnimateLayer",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteLayerEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onPostDrawLayer",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteLayerEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onPreAnimateLayer",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteLayerEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "SpriteLayer.onPreDrawLayer",
+  "value": {
+    "params": {
+      "func": {
+        "schema": "SpriteLayerEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Camera.onZoomComplete",
+  "value": {
+    "returns": {
+      "schema": "EventSubscription"
+    },
+    "params": {
+      "callback": {
+        "schema": "CameraZoomEventCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "pdg.animationHasTag",
+  "value": {
+    "params": {
+      "pose": {
+        "schema": "AnimationPose"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.setAnimationBoneTransform",
+  "value": {
+    "params": {
+      "transform": {
+        "schema": "AnimationTransform"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "AnimationIKOptions",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "root": {
+        "one_of": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          }
+        ]
+      },
+      "middle": {
+        "one_of": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          }
+        ]
+      },
+      "tip": {
+        "one_of": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          }
+        ]
+      },
+      "rootLength": {
+        "type": "number",
+        "optional": true
+      },
+      "middleLength": {
+        "type": "number",
+        "optional": true
+      },
+      "targetX": {
+        "type": "number",
+        "optional": true
+      },
+      "targetY": {
+        "type": "number",
+        "optional": true
+      },
+      "influence": {
+        "type": "number",
+        "optional": true
+      },
+      "space": {
+        "type": "number",
+        "optional": true
+      },
+      "bendDirection": {
+        "type": "number",
+        "optional": true
+      },
+      "stretch": {
+        "type": "number",
+        "optional": true
+      },
+      "targetRotation": {
+        "type": "number",
+        "optional": true
+      },
+      "rootMin": {
+        "type": "number",
+        "optional": true
+      },
+      "rootMax": {
+        "type": "number",
+        "optional": true
+      },
+      "middleMin": {
+        "type": "number",
+        "optional": true
+      },
+      "middleMax": {
+        "type": "number",
+        "optional": true
+      },
+      "matchOrientation": {
+        "type": "boolean",
+        "optional": true
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.addAnimationIK",
+  "value": {
+    "params": {
+      "config": {
+        "schema": "AnimationIKOptions"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "AnimationModifierContext",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "simulationDeltaSeconds": {"type": "number"},
+      "deltaSeconds": {
+        "type": "number"
+      },
+      "root": {
+        "schema": "AnimationTransform"
+      },
+      "revision": {
+        "type": "string"
+      }
+    },
+    "lifetime": "Borrowed and frozen for the duration of the synchronous callback."
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "AnimationPoseView",
+  "value": {
+    "kind": "context",
+    "fields": {},
+    "lifetime": "Valid only during the modifier callback. Retain copy() instead.",
+    "methods": {
+      "copy": {
+        "params": [],
+        "returns": {
+          "schema": "AnimationPose"
+        }
+      },
+      "getLocalTransform": {
+        "params": [
+          {
+            "name": "id",
+            "one_of": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          }
+        ],
+        "returns": {
+          "schema": "AnimationTransform"
+        }
+      },
+      "setLocalTransform": {
+        "params": [
+          {
+            "name": "id",
+            "one_of": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          {
+            "name": "transform",
+            "schema": "AnimationTransform"
+          }
+        ],
+        "returns": {
+          "type": "void"
+        }
+      },
+      "rotateLocal": {
+        "params": [
+          {
+            "name": "id",
+            "one_of": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          {
+            "name": "angle",
+            "type": "number"
+          }
+        ],
+        "returns": {
+          "type": "void"
+        }
+      },
+      "getTransform": {
+        "params": [
+          {
+            "name": "id",
+            "one_of": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          {
+            "name": "space",
+            "type": "number",
+            "optional": true
+          }
+        ],
+        "returns": {
+          "schema": "AnimationTransform"
+        }
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "AnimationModifierCallback",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "pose",
+        "schema": "AnimationPoseView"
+      },
+      {
+        "name": "context",
+        "schema": "AnimationModifierContext"
+      }
+    ],
+    "returns": {
+      "type": "undefined"
+    },
+    "synchronous": true
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.addAnimationModifier",
+  "value": {
+    "params": {
+      "callback": {
+        "schema": "AnimationModifierCallback"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "AnimationPhysicsBodyDefinition",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "bone": {
+        "one_of": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          }
+        ]
+      },
+      "mass": {
+        "type": "number"
+      },
+      "length": {
+        "type": "number"
+      },
+      "radius": {
+        "type": "number"
+      },
+      "mode": {
+        "type": "number",
+        "optional": true
+      },
+      "offsetX": {
+        "type": "number",
+        "optional": true
+      },
+      "offsetY": {
+        "type": "number",
+        "optional": true
+      },
+      "offsetRotation": {
+        "type": "number",
+        "optional": true
+      },
+      "friction": {
+        "type": "number",
+        "optional": true
+      },
+      "elasticity": {
+        "type": "number",
+        "optional": true
+      },
+      "categories": {
+        "type": "number",
+        "optional": true
+      },
+      "mask": {
+        "type": "number",
+        "optional": true
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "AnimationPhysicsJointDefinition",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "parent": {
+        "type": "number"
+      },
+      "child": {
+        "type": "number"
+      },
+      "parentX": {
+        "type": "number",
+        "optional": true
+      },
+      "parentY": {
+        "type": "number",
+        "optional": true
+      },
+      "childX": {
+        "type": "number",
+        "optional": true
+      },
+      "childY": {
+        "type": "number",
+        "optional": true
+      },
+      "minAngle": {
+        "type": "number",
+        "optional": true
+      },
+      "maxAngle": {
+        "type": "number",
+        "optional": true
+      },
+      "maxForce": {
+        "type": "number",
+        "optional": true
+      },
+      "collide": {
+        "type": "boolean",
+        "optional": true
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "AnimationPhysicsDefinition",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "version": {
+        "literal": 1,
+        "optional": true
+      },
+      "rootMode": {
+        "type": "number",
+        "optional": true
+      },
+      "rootBody": {
+        "type": "number",
+        "optional": true
+      },
+      "selfCollisions": {
+        "type": "boolean",
+        "optional": true
+      },
+      "bodies": {
+        "items": {
+          "schema": "AnimationPhysicsBodyDefinition"
+        }
+      },
+      "joints": {
+        "items": {
+          "schema": "AnimationPhysicsJointDefinition"
+        },
+        "optional": true
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.setupAnimationPhysics",
+  "value": {
+    "params": {
+      "definition": {
+        "schema": "AnimationPhysicsDefinition"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "AnimationPhysicsDriveOptions",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "maxForce": {
+        "type": "number"
+      },
+      "maxTorque": {
+        "type": "number"
+      },
+      "frequency": {
+        "type": "number",
+        "optional": true
+      },
+      "dampingRatio": {
+        "type": "number",
+        "optional": true
+      },
+      "direction": {
+        "type": "number",
+        "optional": true
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "AnimationPhysicsDriveSettings",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "maxForce": {
+        "type": "number"
+      },
+      "maxTorque": {
+        "type": "number"
+      },
+      "frequency": {
+        "type": "number"
+      },
+      "dampingRatio": {
+        "type": "number"
+      },
+      "direction": {
+        "type": "number"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.setAnimationPhysicsDriveSettings",
+  "value": {
+    "params": {
+      "settings": {
+        "schema": "AnimationPhysicsDriveOptions"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Sprite.getAnimationPhysicsDriveSettings",
+  "value": {
+    "returns": {
+      "schema": "AnimationPhysicsDriveSettings",
+      "nullable": true
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "SerializableImplementation",
+  "value": {
+    "kind": "record",
+    "fields": {},
+    "methods": {
+      "getSerializedSize": {
+        "params": [
+          {
+            "name": "serializer",
+            "type": "object Serializer"
+          }
+        ],
+        "returns": {
+          "type": "number"
+        }
+      },
+      "serialize": {
+        "params": [
+          {
+            "name": "serializer",
+            "type": "object Serializer"
+          }
+        ],
+        "returns": {
+          "type": "void"
+        }
+      },
+      "deserialize": {
+        "params": [
+          {
+            "name": "deserializer",
+            "type": "object Deserializer"
+          }
+        ],
+        "returns": {
+          "type": "void"
+        }
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "pdg.createSerializableObject",
+  "value": {
+    "params": {
+      "obj": {
+        "schema": "SerializableImplementation"
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "TimerNotification",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "event",
+        "schema": "TimerEvent"
+      }
+    ],
+    "returns": {
+      "type": "void"
+    }
+  }
+}
+*/
+
+// Each scene reuses one result array and a pool of hit records.
+if (bindings.Scene && bindings.CollisionQueryBuffer) {
+    (function() {
+        var NativeBuffer = bindings.CollisionQueryBuffer, states = new WeakMap(), ALL = 4294967295;
+        function mask(value, fallback) {
+            if (value === undefined) return fallback;
+            if (typeof value !== 'number' || !Number.isInteger(value) || value < 0 || value > ALL)
+                throw new RangeError('Expected an unsigned 32-bit query mask');
+            return value;
+        }
+        function reset(state) {
+            for (var i = 0; i < state.active; ++i) state.pool[i].collider = null;
+            state.active = 0; state.hits.length = 0; state.buffer.clear();
+        }
+        function prepare(scene, capacity) {
+            var state = states.get(scene);
+            if (!state) {
+                state = {buffer: new NativeBuffer(capacity), capacity: capacity, pool: [], hits: [], active: 0, busy: false};
+                states.set(scene, state);
+            }
+            if (state.busy) throw new Error('Cannot query a scene from a query predicate');
+            reset(state);
+            if (capacity > state.capacity) {
+                if (inbrowser) state.buffer.delete();
+                state.buffer = new NativeBuffer(capacity); state.capacity = capacity;
+            }
+            while (state.pool.length < capacity) state.pool.push({collider: null, shapeId: 0,
+                point: new bindings.Point(), normal: new bindings.Vector(), fraction: 0, distance: 0, initialOverlap: false});
+            return state;
+        }
+        var methods = {raycast: ['raycast', 2, true], sweepCircle: ['sweepCircle', 3, true],
+            overlapPoint: ['overlapPoint', 1, false], overlapCircle: ['overlapCircle', 2, false],
+            overlapBox: ['overlapBox', 1, false], overlapCapsule: ['overlapCapsule', 3, false],
+            nearestPoint: ['nearestPoint', 2, true]};
+        Object.keys(methods).forEach(function(name) {
+            var entry = methods[name], nativeQuery = bindings.Scene.prototype['_' + entry[0]], arity = entry[1];
+            bindings.Scene.prototype[name] = function() {
+                var cast = name === 'raycast' || name === 'sweepCircle';
+                var multiple = cast && typeof arguments[arity] === 'number';
+                var single = entry[2] && !multiple;
+                if (arguments.length < arity || arguments.length > arity + (multiple ? 2 : 1))
+                    throw new TypeError('Expected geometry, optional maxHits for casts, and optional query options');
+                var options = arguments[arity + (multiple ? 1 : 0)];
+                if (options === undefined) options = {};
+                if (!options || typeof options !== 'object' || Array.isArray(options) || options instanceof NativeBuffer)
+                    throw new TypeError('Expected query options');
+                var maxHits = multiple ? arguments[arity] : (single ? 1 : (options.maxHits === undefined ? 16 : options.maxHits));
+                if (!Number.isInteger(maxHits) || maxHits < 0 || maxHits > 1048576) throw new RangeError('maxHits must be an integer from 0 to 1048576');
+                var sensors = options.includeSensors === undefined ? true : options.includeSensors;
+                if (typeof sensors !== 'boolean') throw new TypeError('includeSensors must be boolean');
+                var layerMask = mask(options.layerMask, ALL), categoryMask = mask(options.categoryMask, ALL);
+                var state = prepare(this, single ? 1 : maxHits), results = state.buffer;
+                results.configure(layerMask, categoryMask, sensors); state.busy = true;
+                var predicateFailure;
+                try {
+                    if (options.layers !== undefined) {
+                        if (!Array.isArray(options.layers)) throw new TypeError('layers must be an array');
+                        results.selectLayers(); options.layers.forEach(function(layer) { results.addLayer(layer); });
+                    }
+                    [['excludedColliders','excludeCollider'],['excludedBodies','excludeBody']].forEach(function(pair) {
+                        var values = options[pair[0]];
+                        if (values === undefined) return;
+                        if (!Array.isArray(values)) throw new TypeError(pair[0] + ' must be an array');
+                        values.forEach(function(value) { results[pair[1]](value); });
+                    });
+                    if (options.predicate !== undefined) {
+                        if (typeof options.predicate !== 'function') throw new TypeError('predicate must be a function');
+                        results.setPredicate(function(collider) {
+                            if (predicateFailure) return false;
+                            try {
+                                if (inbrowser) collider = require('pdg_em_runtime').canonicalRetained(bindings, collider);
+                                var accepted = options.predicate(collider);
+                                if (typeof accepted !== 'boolean') throw new TypeError('Query predicate must return a boolean');
+                                return accepted;
+                            } catch (error) { predicateFailure = error; return false; }
+                        });
+                    }
+                    var args = Array.prototype.slice.call(arguments, 0, arity); args.push(results);
+                    var count = nativeQuery.apply(this, args);
+                    if (predicateFailure) throw predicateFailure;
+                    count = Math.min(count, single ? 1 : maxHits);
+                    for (var i = 0; i < count; ++i) {
+                        var hit = state.pool[i], collider = results.getCollider(i);
+                        if (inbrowser) collider = require('pdg_em_runtime').canonicalRetained(bindings, collider);
+                        hit.collider = collider; hit.shapeId = results.getShapeId(i);
+                        hit.point.x = results.getPointX(i); hit.point.y = results.getPointY(i);
+                        hit.normal.x = results.getNormalX(i); hit.normal.y = results.getNormalY(i);
+                        hit.fraction = results.getFraction(i); hit.distance = results.getDistance(i);
+                        hit.initialOverlap = results.getInitialOverlap(i); state.hits.push(hit); state.active++;
+                    }
+                    return single ? (count ? state.pool[0] : null) : state.hits;
+                } catch (error) { reset(state); throw error; }
+                finally { results.configure(ALL, ALL, true); results.clear(); state.busy = false; }
+            };
+        });
+        var nativeDispose = bindings.Scene.prototype.dispose;
+        bindings.Scene.prototype.dispose = function() {
+            nativeDispose.call(this);
+            var state = states.get(this);
+            if (state) {
+                reset(state);
+                if (inbrowser) state.buffer.delete();
+                states.delete(this);
+            }
+        };
+        delete bindings.CollisionQueryBuffer;
+        if (typeof module !== 'undefined' && module.exports) delete module.exports.CollisionQueryBuffer;
+    }());
+}
+// @pdg-member {"name":"Scene.raycast","type":"function","native":false,"brief":"Return scene-owned query results, valid until the next query or disposal.","returns":"object CollisionQueryHit","params":[[{"name":"start","type":"object Point"},{"name":"end","type":"object Point"},{"name":"options","type":"object CollisionQueryOptions","optional":true}],[{"name":"start","type":"object Point"},{"name":"end","type":"object Point"},{"name":"maxHits","type":"number uint"},{"name":"options","type":"object CollisionQueryOptions","optional":true}]],"returns_contract":{"schema":"CollisionQueryHit","nullable":true,"by_parameter":{"maxHits":{"type":"array","items":{"schema":"CollisionQueryHit"}}}}}
+// @pdg-contract {"name":"Scene.raycast","value":{"params":{"options":{"schema":"CollisionQueryOptions"}}}}
+// @pdg-member {"name":"Scene.sweepCircle","type":"function","native":false,"brief":"Return scene-owned query results, valid until the next query or disposal.","returns":"object CollisionQueryHit","params":[[{"name":"center","type":"object Point"},{"name":"radius","type":"number"},{"name":"delta","type":"object Vector"},{"name":"options","type":"object CollisionQueryOptions","optional":true}],[{"name":"center","type":"object Point"},{"name":"radius","type":"number"},{"name":"delta","type":"object Vector"},{"name":"maxHits","type":"number uint"},{"name":"options","type":"object CollisionQueryOptions","optional":true}]],"returns_contract":{"schema":"CollisionQueryHit","nullable":true,"by_parameter":{"maxHits":{"type":"array","items":{"schema":"CollisionQueryHit"}}}}}
+// @pdg-contract {"name":"Scene.sweepCircle","value":{"params":{"options":{"schema":"CollisionQueryOptions"}}}}
+// @pdg-member {"name":"Scene.overlapPoint","type":"function","native":false,"brief":"Return scene-owned query results, valid until the next query or disposal.","returns":"object CollisionQueryHit[]","params":[{"name":"point","type":"object Point"},{"name":"options","type":"object CollisionQueryOptions","optional":true}],"returns_contract":{"type":"array","items":{"schema":"CollisionQueryHit"}}}
+// @pdg-contract {"name":"Scene.overlapPoint","value":{"params":{"options":{"schema":"CollisionQueryOptions"}}}}
+// @pdg-member {"name":"Scene.overlapCircle","type":"function","native":false,"brief":"Return scene-owned query results, valid until the next query or disposal.","returns":"object CollisionQueryHit[]","params":[{"name":"center","type":"object Point"},{"name":"radius","type":"number"},{"name":"options","type":"object CollisionQueryOptions","optional":true}],"returns_contract":{"type":"array","items":{"schema":"CollisionQueryHit"}}}
+// @pdg-contract {"name":"Scene.overlapCircle","value":{"params":{"options":{"schema":"CollisionQueryOptions"}}}}
+// @pdg-member {"name":"Scene.overlapBox","type":"function","native":false,"brief":"Return scene-owned query results, valid until the next query or disposal.","returns":"object CollisionQueryHit[]","params":[{"name":"box","type":"object RotatedRect"},{"name":"options","type":"object CollisionQueryOptions","optional":true}],"returns_contract":{"type":"array","items":{"schema":"CollisionQueryHit"}}}
+// @pdg-contract {"name":"Scene.overlapBox","value":{"params":{"options":{"schema":"CollisionQueryOptions"}}}}
+// @pdg-member {"name":"Scene.overlapCapsule","type":"function","native":false,"brief":"Return scene-owned query results, valid until the next query or disposal.","returns":"object CollisionQueryHit[]","params":[{"name":"start","type":"object Point"},{"name":"end","type":"object Point"},{"name":"radius","type":"number"},{"name":"options","type":"object CollisionQueryOptions","optional":true}],"returns_contract":{"type":"array","items":{"schema":"CollisionQueryHit"}}}
+// @pdg-contract {"name":"Scene.overlapCapsule","value":{"params":{"options":{"schema":"CollisionQueryOptions"}}}}
+// @pdg-member {"name":"Scene.nearestPoint","type":"function","native":false,"brief":"Return scene-owned query results, valid until the next query or disposal.","returns":"object CollisionQueryHit","params":[{"name":"point","type":"object Point"},{"name":"maxDistance","type":"number"},{"name":"options","type":"object CollisionQueryOptions","optional":true}],"returns_contract":{"schema":"CollisionQueryHit","nullable":true}}
+// @pdg-contract {"name":"Scene.nearestPoint","value":{"params":{"options":{"schema":"CollisionQueryOptions"}}}}
+
+/* @pdg-schema
+{
+  "name": "CollisionQueryOptions",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "maxHits": {"type":"number uint","optional":true,"default_value":16},
+      "layerMask": {
+        "type": "number uint",
+        "optional": true
+      },
+      "categoryMask": {
+        "type": "number uint",
+        "optional": true
+      },
+      "includeSensors": {
+        "type": "boolean",
+        "optional": true
+      },
+      "layers": {
+        "items": {
+          "type": "object SpriteLayer"
+        },
+        "optional": true
+      },
+      "excludedColliders": {
+        "items": {
+          "type": "object Collider"
+        },
+        "optional": true
+      },
+      "excludedBodies": {
+        "items": {
+          "type": "object PhysicsBody"
+        },
+        "optional": true
+      },
+      "predicate": {
+        "schema": "CollisionQueryPredicate",
+        "optional": true
+      }
+    }
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "CollisionQueryPredicate",
+  "value": {
+    "kind": "callback",
+    "params": [
+      {
+        "name": "collider",
+        "type": "object Collider"
+      }
+    ],
+    "returns": {
+      "type": "boolean"
+    },
+    "lifetime": "Synchronous; do not mutate geometry or scene membership, advance scenes, or recursively query."
+  }
+}
+*/
+
+/* @pdg-schema
+{
+  "name": "CollisionQueryHit",
+  "value": {
+    "kind": "record",
+    "fields": {
+      "collider": {
+        "type": "object Collider"
+      },
+      "shapeId": {
+        "type": "number uint"
+      },
+      "point": {
+        "type": "object Point"
+      },
+      "normal": {
+        "type": "object Vector"
+      },
+      "fraction": {
+        "type": "number"
+      },
+      "distance": {
+        "type": "number"
+      },
+      "initialOverlap": {
+        "type": "boolean"
+      }
+    }
+  }
+}
+*/
+
+// Native procedural animation: public records stay portable across V8, JSC and Wasm.
+(function() {
+    'use strict';
+    var jiggleKeys=['frequency','dampingRatio','influence','inertia','maxAngle','length','gravityX','gravityY','maxDistance','maxSpeed','maxAngularSpeed','maxStepSeconds','teleportDistance','teleportAngle','maxSubsteps','enabled','resetOnSeek','resetOnTeleport'];
+    var jiggleDefaults=[3,.4,1,.5,Math.PI/3,0,0,0,32,1000,20,1/120,128,Math.PI/2,16,true,true,true];
+    bindings.jiggleMode_Chain=0;bindings.jiggleMode_IKTarget=1;
+    if(typeof module!=="undefined"&&module.exports){module.exports.jiggleMode_Chain=0;module.exports.jiggleMode_IKTarget=1;}
+    function number(v, fallback){if(v===undefined)v=fallback;if(typeof v!=='number'||!isFinite(v))throw new TypeError('Expected finite procedural number');return v;}
+    function integer(v, fallback){v=number(v,fallback);if(!Number.isInteger(v)||v<0||v>4294967295)throw new RangeError('Expected procedural ID');return v;}
+    function boolean(v,fallback){if(v===undefined)v=fallback;if(typeof v!=='boolean')throw new TypeError('Expected boolean');return v?1:0;}
+    function members(owner,chain,part){if(!Array.isArray(chain))throw new TypeError('Expected chain array');return chain.map(function(item){if(part){if(!(item instanceof bindings.Part)||item.getSprite()!==owner.getSprite())throw new TypeError('Expected Part from same Sprite');return item.getId();}var names=owner.getAnimationBoneNames();if(typeof item==='string')item=names.indexOf(item);return integer(item);});}
+    var jointKeys=['length','frequency','dampingRatio','inertia','maxAngle','maxAngularSpeed','gravityX','gravityY'];
+    function encodeJ(owner,c,part){if(!c||typeof c!=='object')throw new TypeError('Jiggle options required');Object.keys(c).forEach(function(k){if(jiggleKeys.indexOf(k)<0&&['mode','ik','chain','joints'].indexOf(k)<0)throw new TypeError('Unknown jiggle option '+k);});var mode=integer(c.mode);if(mode>1)throw new RangeError('Invalid jiggle mode');var ids=members(owner,c.chain===undefined?[]:c.chain,part);var data=[mode,integer(c.ik,0),ids.length].concat(ids);jiggleKeys.forEach(function(k,i){data.push(i>=15?boolean(c[k],jiggleDefaults[i]):number(c[k],jiggleDefaults[i]));});var joints=c.joints||[];if(!Array.isArray(joints))throw new TypeError("Expected joint overrides array");data.push(joints.length);joints.forEach(function(j){if(part&&j.part!==undefined&&(!(j.part instanceof bindings.Part)||j.part.getSprite()!==owner.getSprite()))throw new TypeError('Override must use a Part from the same Sprite');Object.keys(j).forEach(function(k){if(jointKeys.indexOf(k)<0&&k!=='bone'&&k!=='part')throw new TypeError('Unknown joint setting '+k);});var id=part?(j.part instanceof bindings.Part?j.part.getId():integer(j.bone)):members(owner,[j.bone],false)[0];data.push(id);jointKeys.forEach(function(k){data.push(j[k]===undefined?0:1);if(j[k]!==undefined)data.push(number(j[k]));});});return data;}
+    function decodeJ(data){var c={mode:data[0],ik:data[1]},n=data[2];c.chain=data.slice(3,3+n);jiggleKeys.forEach(function(k,i){c[k]=i>=15?!!data[3+n+i]:data[3+n+i];});var at=3+n+jiggleKeys.length,count=data[at++];c.joints=[];for(var i=0;i<count;++i){var j={bone:data[at++]};jointKeys.forEach(function(k){if(data[at++])j[k]=data[at++];});c.joints.push(j);}return c;}
+    function encodeF(owner,c,part){if(!c||typeof c!=='object')throw new TypeError('FABRIK options required');Object.keys(c).forEach(function(k){if(['chain','targetX','targetY','space','influence','tolerance','maxIterations','bendDirection'].indexOf(k)<0&&(part||['minimum','maximum'].indexOf(k)<0))throw new TypeError('Unknown FABRIK option '+k);});var ids=members(owner,c.chain,part),lo=c.minimum||[],hi=c.maximum||[];if(!Array.isArray(lo)||!Array.isArray(hi)||lo.length!==hi.length)throw new TypeError('FABRIK limits must be matching arrays');return [number(c.targetX,0),number(c.targetY,0),number(c.influence,1),number(c.tolerance,.01),integer(c.space,part?2:1),integer(c.maxIterations,16),number(c.bendDirection,1),ids.length].concat(ids,[lo.length],lo.map(function(x){return number(x);}),hi.map(function(x){return number(x);}));}
+    function fabrikResult(v){return {solveError:v[0],reachError:v[1],iterations:v[2],converged:!!v[3],reached:!!v[4],limited:!!v[5],withinGeometricReach:!!v[6]};}
+    function jiggleResult(v){return {lagDistance:v[0],influence:v[1],simulatedSeconds:v[2],desiredTarget:{x:v[3],y:v[4]},filteredTarget:{x:v[5],y:v[6]},effectiveTarget:{x:v[7],y:v[8]},substeps:v[9],limited:!!v[10],reset:!!v[11]};}
+    var stateKeys=['angle','velocity','desired','pivotX','pivotY','pivotVelocityX','pivotVelocityY'];
+    function decodeState(v){var state={version:1,initialized:!!v[0],x:v[1],y:v[2],velocityX:v[3],velocityY:v[4],joints:[]};for(var i=0;i<v[5];++i){var j={};stateKeys.forEach(function(k,n){j[k]=v[6+i*7+n];});state.joints.push(j);}return state;}
+    function stateIdentity(owner,c,part){return {mode:c.mode,chain:(part?[owner.getId()].concat(c.chain):c.chain).slice(),ik:c.ik,rigRevision:part?'0':owner.getAnimationPose().rigRevision};}
+    function ownedState(owner,c,v,part){return Object.assign(decodeState(v),stateIdentity(owner,c,part));}
+    function checkedState(owner,c,s,part){var identity=stateIdentity(owner,c,part);if(!s||s.mode!==identity.mode||s.ik!==identity.ik||s.rigRevision!==identity.rigRevision||!Array.isArray(s.chain)||s.chain.length!==identity.chain.length||s.chain.some(function(id,i){return id!==identity.chain[i];}))throw new TypeError('Jiggle state topology mismatch');return encodeState(s);}
+    function encodeState(s){if(!s||s.version!==1||!Array.isArray(s.joints))throw new TypeError('Unsupported jiggle state');var v=[boolean(s.initialized),number(s.x),number(s.y),number(s.velocityX),number(s.velocityY),s.joints.length];s.joints.forEach(function(j){stateKeys.forEach(function(k){v.push(number(j[k]));});});return v;}
+    function patchJ(owner,old,patch,part){if(!patch||typeof patch!=='object')throw new TypeError('Jiggle settings required');Object.keys(patch).forEach(function(k){if(jiggleKeys.indexOf(k)<0&&k!=="joints")throw new TypeError('Unknown or immutable jiggle setting '+k);});var next=Object.assign({},old,patch);if(part)next.chain=next.chain.map(function(id){return owner.getSprite().getPart(id);});return encodeJ(owner,next,part);}
+    if(bindings.Sprite&&bindings.Sprite.prototype._procedural){var s=bindings.Sprite.prototype;
+        s.addAnimationFABRIK=function(c,order){return this._procedural(1,encodeF(this,c,false).concat(number(order,0)))[0];};
+        s.getAnimationFABRIKResult=function(id){return fabrikResult(this._procedural(2,[integer(id)]));};
+        s.addAnimationJiggle=function(c,order){return this._procedural(3,encodeJ(this,c,false).concat(number(order,0)))[0];};
+        s.getAnimationJiggleOptions=function(id){return decodeJ(this._procedural(4,[integer(id)]));};
+        s.setAnimationJiggleSettings=function(id,patch){this._procedural(5,[integer(id)].concat(patchJ(this,this.getAnimationJiggleOptions(id),patch,false)));};
+        s.setAnimationJiggleEnabled=function(id,enabled){this._procedural(6,[integer(id),boolean(enabled)]);};
+        s.isAnimationJiggleEnabled=function(id){return !!this._procedural(7,[integer(id)])[0];};
+        s.setAnimationJiggleInfluence=function(id,influence,seconds){this._procedural(8,[integer(id),number(influence),number(seconds,0)]);};
+        s.resetAnimationJiggle=function(id){this._procedural(9,[integer(id)]);};
+        s.kickAnimationJiggle=function(id,kick){var c=this.getAnimationJiggleOptions(id),joint=-1,x,y;if(c.mode===0){var bone=kick.joint;if(typeof bone==='string')bone=this.getAnimationBoneNames().indexOf(bone);joint=c.chain.indexOf(integer(bone));if(joint<0)throw new RangeError('Unknown jiggle joint');x=number(kick.angularVelocity);y=0;}else{x=number(kick.velocityX,0);y=number(kick.velocityY,0);}this._procedural(10,[integer(id),x,y,joint]);};
+        s.getAnimationJiggleResult=function(id){return jiggleResult(this._procedural(11,[integer(id)]));};
+        s.getAnimationJiggleState=function(id){return ownedState(this,this.getAnimationJiggleOptions(id),this._procedural(12,[integer(id)]),false);};
+        s.setAnimationJiggleState=function(id,state){this._procedural(13,[integer(id)].concat(checkedState(this,this.getAnimationJiggleOptions(id),state,false)));};
+        s.removeAnimationJiggle=function(id){this._procedural(14,[integer(id)]);};
+    }
+    if(bindings.Part&&bindings.Part.prototype._procedural){var p=bindings.Part.prototype;
+        p.solveFABRIK=function(chain,target,options){return fabrikResult(this._procedural(1,encodeF(this,Object.assign({},options,{chain:chain,targetX:target.x,targetY:target.y}),true)));};
+        p.setFABRIKTarget=function(chain,target,options){this._procedural(2,encodeF(this,Object.assign({},options,{chain:chain,targetX:target.x,targetY:target.y}),true));return this;};
+        p.getFABRIKResult=function(){return fabrikResult(this._procedural(3,[]));};
+        p.setJiggle=function(c){this._procedural(4,encodeJ(this,c,true));return this;};
+        p.clearJiggle=function(){this._procedural(5,[]);return this;};
+        p.hasJiggle=function(){return !!this._procedural(6,[])[0];};
+        p.getJiggleOptions=function(){return decodeJ(this._procedural(7,[]));};
+        p.setJiggleSettings=function(patch){this._procedural(8,patchJ(this,this.getJiggleOptions(),patch,true));return this;};
+        p.setJiggleEnabled=function(enabled){this._procedural(9,[boolean(enabled)]);return this;};
+        p.isJiggleEnabled=function(){return !!this._procedural(10,[])[0];};
+        p.setJiggleInfluence=function(influence,seconds){this._procedural(11,[number(influence),number(seconds,0)]);return this;};
+        p.resetJiggle=function(){this._procedural(12,[]);return this;};
+        p.kickJiggle=function(kick){var c=this.getJiggleOptions(),joint=0,x,y;if(c.mode===0){var ids=[this.getId()].concat(c.chain);joint=kick.joint===undefined?0:ids.indexOf(kick.joint.getId());if(joint<0)throw new RangeError('Unknown jiggle joint');x=number(kick.angularVelocity);y=0;}else{x=number(kick.velocityX,0);y=number(kick.velocityY,0);}this._procedural(13,[x,y,joint]);return this;};
+        p.getJiggleResult=function(){return jiggleResult(this._procedural(14,[]));};
+        p.getJiggleState=function(){return ownedState(this,this.getJiggleOptions(),this._procedural(15,[]),true);};
+        p.setJiggleState=function(state){this._procedural(16,checkedState(this,this.getJiggleOptions(),state,true));return this;};
+    }
+})();
+
+// Procedural animation contracts (consumed by IDL and TypeScript generation).
+// @pdg-schema {"name":"AnimationJiggleJointOptions","value":{"kind":"record","fields":{"length":{"type":"number","optional":true},"frequency":{"type":"number","optional":true},"dampingRatio":{"type":"number","optional":true},"inertia":{"type":"number","optional":true},"maxAngle":{"type":"number","optional":true},"maxAngularSpeed":{"type":"number","optional":true},"gravityX":{"type":"number","optional":true},"gravityY":{"type":"number","optional":true},"bone":{"one_of":[{"type":"string"},{"type":"number uint"}],"optional":true}}}}
+// @pdg-schema {"name":"AnimationJiggleSettings","value":{"kind":"record","fields":{"frequency":{"type":"number","optional":true},"dampingRatio":{"type":"number","optional":true},"influence":{"type":"number","optional":true},"inertia":{"type":"number","optional":true},"maxAngle":{"type":"number","optional":true},"length":{"type":"number","optional":true},"gravityX":{"type":"number","optional":true},"gravityY":{"type":"number","optional":true},"maxDistance":{"type":"number","optional":true},"maxSpeed":{"type":"number","optional":true},"maxAngularSpeed":{"type":"number","optional":true},"maxStepSeconds":{"type":"number","optional":true},"teleportDistance":{"type":"number","optional":true},"teleportAngle":{"type":"number","optional":true},"maxSubsteps":{"type":"number","optional":true},"enabled":{"type":"boolean","optional":true},"resetOnSeek":{"type":"boolean","optional":true},"resetOnTeleport":{"type":"boolean","optional":true},"joints":{"items":{"schema":"AnimationJiggleJointOptions"},"optional":true}}}}
+// @pdg-schema {"name":"AnimationJiggleOptions","value":{"kind":"record","fields":{"frequency":{"type":"number","optional":true},"dampingRatio":{"type":"number","optional":true},"influence":{"type":"number","optional":true},"inertia":{"type":"number","optional":true},"maxAngle":{"type":"number","optional":true},"length":{"type":"number","optional":true},"gravityX":{"type":"number","optional":true},"gravityY":{"type":"number","optional":true},"maxDistance":{"type":"number","optional":true},"maxSpeed":{"type":"number","optional":true},"maxAngularSpeed":{"type":"number","optional":true},"maxStepSeconds":{"type":"number","optional":true},"teleportDistance":{"type":"number","optional":true},"teleportAngle":{"type":"number","optional":true},"maxSubsteps":{"type":"number","optional":true},"enabled":{"type":"boolean","optional":true},"resetOnSeek":{"type":"boolean","optional":true},"resetOnTeleport":{"type":"boolean","optional":true},"joints":{"items":{"schema":"AnimationJiggleJointOptions"},"optional":true},"mode":{"type":"number uint"},"chain":{"items":{"one_of":[{"type":"string"},{"type":"number uint"}]},"optional":true},"ik":{"type":"number uint","optional":true}}}}
+// @pdg-schema {"name":"AnimationJiggleKick","value":{"kind":"record","fields":{"angularVelocity":{"type":"number","optional":true},"velocityX":{"type":"number","optional":true},"velocityY":{"type":"number","optional":true},"joint":{"one_of":[{"type":"string"},{"type":"number uint"}],"optional":true}}}}
+// @pdg-schema {"name":"AnimationFABRIKOptions","value":{"kind":"record","fields":{"influence":{"type":"number","optional":true},"tolerance":{"type":"number","optional":true},"space":{"type":"number","optional":true},"maxIterations":{"type":"number","optional":true},"bendDirection":{"type":"number","optional":true},"chain":{"items":{"one_of":[{"type":"string"},{"type":"number uint"}]}},"targetX":{"type":"number","optional":true},"targetY":{"type":"number","optional":true},"minimum":{"items":{"type":"number"},"optional":true},"maximum":{"items":{"type":"number"},"optional":true}}}}
+// @pdg-schema {"name":"PartJiggleJointOptions","value":{"kind":"record","fields":{"length":{"type":"number","optional":true},"frequency":{"type":"number","optional":true},"dampingRatio":{"type":"number","optional":true},"inertia":{"type":"number","optional":true},"maxAngle":{"type":"number","optional":true},"maxAngularSpeed":{"type":"number","optional":true},"gravityX":{"type":"number","optional":true},"gravityY":{"type":"number","optional":true},"bone":{"type":"number uint","optional":true},"part":{"type":"object Part","optional":true}}}}
+// @pdg-schema {"name":"PartJiggleSettings","value":{"kind":"record","fields":{"frequency":{"type":"number","optional":true},"dampingRatio":{"type":"number","optional":true},"influence":{"type":"number","optional":true},"inertia":{"type":"number","optional":true},"maxAngle":{"type":"number","optional":true},"length":{"type":"number","optional":true},"gravityX":{"type":"number","optional":true},"gravityY":{"type":"number","optional":true},"maxDistance":{"type":"number","optional":true},"maxSpeed":{"type":"number","optional":true},"maxAngularSpeed":{"type":"number","optional":true},"maxStepSeconds":{"type":"number","optional":true},"teleportDistance":{"type":"number","optional":true},"teleportAngle":{"type":"number","optional":true},"maxSubsteps":{"type":"number","optional":true},"enabled":{"type":"boolean","optional":true},"resetOnSeek":{"type":"boolean","optional":true},"resetOnTeleport":{"type":"boolean","optional":true},"joints":{"items":{"schema":"PartJiggleJointOptions"},"optional":true}}}}
+// @pdg-schema {"name":"PartJiggleOptions","value":{"kind":"record","fields":{"frequency":{"type":"number","optional":true},"dampingRatio":{"type":"number","optional":true},"influence":{"type":"number","optional":true},"inertia":{"type":"number","optional":true},"maxAngle":{"type":"number","optional":true},"length":{"type":"number","optional":true},"gravityX":{"type":"number","optional":true},"gravityY":{"type":"number","optional":true},"maxDistance":{"type":"number","optional":true},"maxSpeed":{"type":"number","optional":true},"maxAngularSpeed":{"type":"number","optional":true},"maxStepSeconds":{"type":"number","optional":true},"teleportDistance":{"type":"number","optional":true},"teleportAngle":{"type":"number","optional":true},"maxSubsteps":{"type":"number","optional":true},"enabled":{"type":"boolean","optional":true},"resetOnSeek":{"type":"boolean","optional":true},"resetOnTeleport":{"type":"boolean","optional":true},"joints":{"items":{"schema":"PartJiggleJointOptions"},"optional":true},"mode":{"type":"number uint"},"chain":{"items":{"type":"object Part"},"optional":true}}}}
+// @pdg-schema {"name":"PartJiggleKick","value":{"kind":"record","fields":{"angularVelocity":{"type":"number","optional":true},"velocityX":{"type":"number","optional":true},"velocityY":{"type":"number","optional":true},"joint":{"type":"object Part","optional":true}}}}
+// @pdg-schema {"name":"PartFABRIKOptions","value":{"kind":"record","fields":{"influence":{"type":"number","optional":true},"tolerance":{"type":"number","optional":true},"space":{"type":"number","optional":true},"maxIterations":{"type":"number","optional":true},"bendDirection":{"type":"number","optional":true}}}}
+// @pdg-schema {"name":"FABRIKResult","value":{"kind":"record","fields":{"solveError":{"type":"number"},"reachError":{"type":"number"},"iterations":{"type":"number"},"converged":{"type":"boolean"},"reached":{"type":"boolean"},"limited":{"type":"boolean"},"withinGeometricReach":{"type":"boolean"}}}}
+// @pdg-schema {"name":"JiggleTarget","value":{"kind":"record","fields":{"x":{"type":"number"},"y":{"type":"number"}}}}
+// @pdg-schema {"name":"JiggleResult","value":{"kind":"record","fields":{"lagDistance":{"type":"number"},"influence":{"type":"number"},"simulatedSeconds":{"type":"number"},"substeps":{"type":"number"},"desiredTarget":{"schema":"JiggleTarget"},"filteredTarget":{"schema":"JiggleTarget"},"effectiveTarget":{"schema":"JiggleTarget"},"limited":{"type":"boolean"},"reset":{"type":"boolean"}}}}
+// @pdg-schema {"name":"JiggleJointState","value":{"kind":"record","fields":{"angle":{"type":"number"},"velocity":{"type":"number"},"desired":{"type":"number"},"pivotX":{"type":"number"},"pivotY":{"type":"number"},"pivotVelocityX":{"type":"number"},"pivotVelocityY":{"type":"number"}}}}
+// @pdg-schema {"name":"JiggleState","value":{"kind":"record","fields":{"version":{"literal":1},"initialized":{"type":"boolean"},"x":{"type":"number"},"y":{"type":"number"},"velocityX":{"type":"number"},"velocityY":{"type":"number"},"joints":{"items":{"schema":"JiggleJointState"}},"mode":{"type":"number uint"},"chain":{"items":{"type":"number uint"}},"ik":{"type":"number uint"},"rigRevision":{"type":"string"}}}}
+// @pdg-member {"name":"Sprite.addAnimationFABRIK","type":"function","native":false,"returns":"number uint","params":[{"name":"options","type":"AnimationFABRIKOptions"},{"name":"order","type":"number","optional":true}],"brief":"Register a procedural pose modifier; requires an enabled animation pose."}
+// @pdg-member {"name":"Sprite.addAnimationJiggle","type":"function","native":false,"returns":"number uint","params":[{"name":"options","type":"AnimationJiggleOptions"},{"name":"order","type":"number","optional":true}],"brief":"Register a procedural pose modifier; requires an enabled animation pose."}
+// @pdg-member {"name":"Sprite.getAnimationFABRIKResult","type":"function","native":false,"returns":"FABRIKResult","params":[{"name":"id","type":"number uint"}],"brief":"Return the latest FABRIK solve diagnostics."}
+// @pdg-member {"name":"Sprite.getAnimationJiggleOptions","type":"function","native":false,"returns":"AnimationJiggleOptions","params":[{"name":"id","type":"number uint"}],"brief":"Return an independent configuration record."}
+// @pdg-member {"name":"Sprite.setAnimationJiggleSettings","type":"function","native":false,"returns":"void","params":[{"name":"id","type":"number uint"},{"name":"settings","type":"AnimationJiggleSettings"}],"brief":"Patch tuning without changing topology."}
+// @pdg-member {"name":"Sprite.setAnimationJiggleEnabled","type":"function","native":false,"returns":"void","params":[{"name":"id","type":"number uint"},{"name":"enabled","type":"boolean"}],"brief":"Enable or freeze jiggle; reenabling reseeds from the current pose."}
+// @pdg-member {"name":"Sprite.isAnimationJiggleEnabled","type":"function","native":false,"returns":"boolean","params":[{"name":"id","type":"number uint"}],"brief":"Return whether jiggle is enabled."}
+// @pdg-member {"name":"Sprite.setAnimationJiggleInfluence","type":"function","native":false,"returns":"void","params":[{"name":"id","type":"number uint"},{"name":"influence","type":"number"},{"name":"seconds","type":"number","optional":true}],"brief":"Set or linearly fade influence using simulation seconds."}
+// @pdg-member {"name":"Sprite.resetAnimationJiggle","type":"function","native":false,"returns":"void","params":[{"name":"id","type":"number uint"}],"brief":"Reseed jiggle from the desired pose or target."}
+// @pdg-member {"name":"Sprite.kickAnimationJiggle","type":"function","native":false,"returns":"void","params":[{"name":"id","type":"number uint"},{"name":"kick","type":"AnimationJiggleKick"}],"brief":"Add angular or target velocity."}
+// @pdg-member {"name":"Sprite.getAnimationJiggleResult","type":"function","native":false,"returns":"JiggleResult","params":[{"name":"id","type":"number uint"}],"brief":"Return the most recently evaluated jiggle diagnostics."}
+// @pdg-member {"name":"Sprite.getAnimationJiggleState","type":"function","native":false,"returns":"JiggleState","params":[{"name":"id","type":"number uint"}],"brief":"Return an independent numerical state snapshot."}
+// @pdg-member {"name":"Sprite.setAnimationJiggleState","type":"function","native":false,"returns":"void","params":[{"name":"id","type":"number uint"},{"name":"state","type":"JiggleState"}],"brief":"Restore validated numerical state on the same topology."}
+// @pdg-member {"name":"Sprite.removeAnimationJiggle","type":"function","native":false,"returns":"void","params":[{"name":"id","type":"number uint"}],"brief":"Remove a jiggle controller."}
+// @pdg-member {"name":"Part.solveFABRIK","type":"function","native":false,"returns":"FABRIKResult","params":[{"name":"chain","type":"object Part[]","contract":{"items":{"type":"object Part"}}},{"name":"target","type":"object Point"},{"name":"options","type":"PartFABRIKOptions","optional":true}],"brief":"Solve or schedule a contiguous independent Part chain; chain excludes the receiver."}
+// @pdg-member {"name":"Part.setFABRIKTarget","type":"function","native":false,"returns":"this","params":[{"name":"chain","type":"object Part[]","contract":{"items":{"type":"object Part"}}},{"name":"target","type":"object Point"},{"name":"options","type":"PartFABRIKOptions","optional":true}],"brief":"Solve or schedule a contiguous independent Part chain; chain excludes the receiver."}
+// @pdg-member {"name":"Part.getFABRIKResult","type":"function","native":false,"returns":"FABRIKResult","params":[],"brief":"Return the latest scheduled FABRIK diagnostics."}
+// @pdg-member {"name":"Part.setJiggle","type":"function","native":false,"returns":"this","params":[{"name":"options","type":"PartJiggleOptions"}],"brief":"Install chain jiggle or decorate an existing Part IK target."}
+// @pdg-member {"name":"Part.clearJiggle","type":"function","native":false,"returns":"this","params":[],"brief":"Remove jiggle and restore the underlying programmed rotations."}
+// @pdg-member {"name":"Part.hasJiggle","type":"function","native":false,"returns":"boolean","params":[],"brief":"Return whether this Part owns a jiggle controller."}
+// @pdg-member {"name":"Part.getJiggleOptions","type":"function","native":false,"returns":"PartJiggleOptions","params":[],"brief":"Return an independent configuration record."}
+// @pdg-member {"name":"Part.setJiggleSettings","type":"function","native":false,"returns":"this","params":[{"name":"settings","type":"PartJiggleSettings"}],"brief":"Patch tuning without changing topology."}
+// @pdg-member {"name":"Part.setJiggleEnabled","type":"function","native":false,"returns":"this","params":[{"name":"enabled","type":"boolean"}],"brief":"Enable or freeze jiggle; reenabling reseeds from the current pose."}
+// @pdg-member {"name":"Part.isJiggleEnabled","type":"function","native":false,"returns":"boolean","params":[],"brief":"Return whether jiggle is enabled."}
+// @pdg-member {"name":"Part.setJiggleInfluence","type":"function","native":false,"returns":"this","params":[{"name":"influence","type":"number"},{"name":"seconds","type":"number","optional":true}],"brief":"Set or linearly fade influence using simulation seconds."}
+// @pdg-member {"name":"Part.resetJiggle","type":"function","native":false,"returns":"this","params":[],"brief":"Reseed jiggle from the desired pose or target."}
+// @pdg-member {"name":"Part.kickJiggle","type":"function","native":false,"returns":"this","params":[{"name":"kick","type":"PartJiggleKick"}],"brief":"Add angular or target velocity."}
+// @pdg-member {"name":"Part.getJiggleResult","type":"function","native":false,"returns":"JiggleResult","params":[],"brief":"Return the most recently evaluated jiggle diagnostics."}
+// @pdg-member {"name":"Part.getJiggleState","type":"function","native":false,"returns":"JiggleState","params":[],"brief":"Return an independent numerical state snapshot."}
+// @pdg-member {"name":"Part.setJiggleState","type":"function","native":false,"returns":"this","params":[{"name":"state","type":"JiggleState"}],"brief":"Restore validated numerical state on the same topology."}
+
+// @pdg-member {"name":"Part.getJiggleError","native_binding":{"method":"getJiggleError","browser":{"generate":true}}}
+// @pdg-member {"name":"pdg.jiggleMode_Chain","type":"number int","native":false,"readonly":true}
+// @pdg-member {"name":"pdg.jiggleMode_IKTarget","type":"number int","native":false,"readonly":true}

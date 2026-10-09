@@ -4,6 +4,9 @@ namespace pdg { /**
 
 \brief stop listening for new connections 
 
+Stops every requested native and WebSocket listener and cancels incomplete handshakes.
+server.listeners entries become null. shutdown() may be called repeatedly.
+
 This will also do a clean shutdown of all existing connections made through it, unless you tell it not to by passing false for closeExisting.
 
 To stop receiving incoming connections, but leave existing connections intact, call shutdown(false). The kill parameter is ignored when closeExisting is false.

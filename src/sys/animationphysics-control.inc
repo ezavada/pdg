@@ -542,3 +542,29 @@ std::vector<AnimationPhysicsRecovery> AnimationPhysicsRig::finishStep(const Anim
     }
     return completed;
 }
+
+bool AnimationPhysicsRig::resizeBone(AnimationBoneId bone,double widthFactor,double heightFactor) {
+    if(!mControl || cpSpaceIsLocked(mStorage->space))return false;
+    if(!std::isfinite(widthFactor)||!std::isfinite(heightFactor)||widthFactor<0||heightFactor<0)throw std::invalid_argument("Invalid physical bone dimensions");
+    const auto found=std::find_if(mDefinition.bodies.begin(),mDefinition.bodies.end(),[bone](const auto& body){return body.bone==bone;});
+    if(found==mDefinition.bodies.end())return false;
+    const auto index=static_cast<size_t>(found-mDefinition.bodies.begin());
+    if(mGeometryReference.empty()){mGeometryReference=mDefinition.bodies;mGeometryFactors.assign(mDefinition.bodies.size(),Offset(1,1));}
+    if(mGeometryFactors[index]==Offset(widthFactor,heightFactor))return false;
+    for(auto& entry:mControl->bodies)for(uint32_t i=0;i<entry.body->getConstraintCount();++i){auto& c=entry.body->getConstraint(i);
+        if(c.getType()!=constraint_Pivot && c.getType()!=constraint_Pin && c.getType()!=constraint_Slide && c.getType()!=constraint_Spring)continue;
+        if(std::any_of(mGeometryJoints.begin(),mGeometryJoints.end(),[&](const auto& g){return g.constraint.get()==&c;}))continue;
+        c.addRef();mGeometryJoints.push_back({std::shared_ptr<PhysicsConstraint>(&c,[](PhysicsConstraint* p){p->release();}),c.getAnchorA(),c.getAnchorB()});
+    }
+    mGeometryFactors[index]=Offset(widthFactor,heightFactor);
+    const auto& reference=mGeometryReference[index];auto& body=mDefinition.bodies[index];
+    body.radius=std::max(1e-6,reference.radius*widthFactor);
+    body.length=std::max(0.0,(reference.length+2*reference.radius)*heightFactor-2*body.radius);
+    const double c=std::cos(reference.offsetRotation),s=std::sin(reference.offsetRotation);
+    const double along=reference.offsetX*c+reference.offsetY*s,across=-reference.offsetX*s+reference.offsetY*c;
+    body.offsetX=along*heightFactor*c-across*widthFactor*s;body.offsetY=along*heightFactor*s+across*widthFactor*c;
+    mControl->bodies[index].body->setMomentOfInertia(std::max(1e-9,cpMomentForSegment(reference.mass,cpv(-body.length/2,0),cpv(body.length/2,0),body.radius)));
+    const auto anchor=[&](PhysicsBody& endpoint,Point point){for(size_t i=0;i<mControl->bodies.size();++i)if(mControl->bodies[i].body==&endpoint)return Point(point.x*mGeometryFactors[i].y,point.y*mGeometryFactors[i].x);return point;};
+    for(auto& joint:mGeometryJoints)if(joint.constraint->isActive())joint.constraint->setAnchors(anchor(joint.constraint->getBodyA(),joint.a),anchor(joint.constraint->getBodyB(),joint.b));
+    return true;
+}

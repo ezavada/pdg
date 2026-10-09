@@ -1,4 +1,4 @@
-.TH "ImageStrip" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "ImageStrip" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -14,6 +14,9 @@ Inherits \fBImage\fP\&.
 .SS "Public Member Functions"
 
 .in +1c
+.ti -1c
+.RI "\fBImageStrip\fP (string filename)"
+.br
 .ti -1c
 .RI "\fBImage\fP \fBgetFrame\fP (int frameNum)"
 .br
@@ -63,7 +66,7 @@ Public Member Functions inherited from \fBImage\fP
 .br
 .RI "get the height in pixels of the image "
 .ti -1c
-.RI "\fBRect\fP \fBgetImageBounds\fP (\fBPoint\fP at)"
+.RI "\fBRect\fP \fBgetImageBounds\fP (\fBPoint\fP at=\fBPoint\fP(0, 0))"
 .br
 .RI "get image boundary rect, optionally with top left at given point "
 .ti -1c
@@ -103,7 +106,7 @@ Public Member Functions inherited from \fBImage\fP
 .br
 .RI "get the width in pixels of the image "
 .ti -1c
-.RI "number \fBprepareToRasterize\fP ()"
+.RI "\fBprepareToRasterize\fP ()"
 .br
 .RI "bind the image into an OpenGL texture and free image data from main memory "
 .ti -1c
@@ -119,11 +122,11 @@ Public Member Functions inherited from \fBImage\fP
 .br
 .RI "Save this image with pixels or a resolvable resource reference\&. "
 .ti -1c
-.RI "\fBsetEdgeClamping\fP (boolean inUseEdgeClamp)"
+.RI "\fBImage\fP \fBsetEdgeClamping\fP (boolean inUseEdgeClamp)"
 .br
 .RI "set whether image uses edge clamping or not "
 .ti -1c
-.RI "\fBsetOpacity\fP (number opacity)"
+.RI "\fBImage\fP \fBsetOpacity\fP (number opacity)"
 .br
 .RI "set opacity of this image "
 .ti -1c
@@ -143,6 +146,12 @@ bitmap image containing a number of frames that can be blitted onto the screen
 .RE
 .PP
 You can create an image strip directly from a file, or by loading it from resource files with the \fBResourceManager\fP\&. 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "ImageStrip (string filename)"
+
+.PP
+Referenced by \fBsetFrameWidth()\fP, and \fBsetNumFrames()\fP\&.
 .SH "Member Function Documentation"
 .PP 
 .SS "\fBImage\fP getFrame (int frameNum)"
@@ -239,6 +248,8 @@ getFrameHeight()
 .RE
 .PP
 
+.PP
+References \fBImageStrip()\fP\&.
 .SS "\fBImageStrip\fP setNumFrames (int inNumFrames)"
 
 .PP
@@ -267,6 +278,8 @@ this is an alternative to \fBsetFrameWidth()\fP, for use when it is more conveni
 .RE
 .PP
 
+.PP
+References \fBImageStrip()\fP\&.
 
 .SH "Author"
 .PP 

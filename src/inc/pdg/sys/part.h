@@ -5,6 +5,7 @@
 #include "pdg/sys/physicsbody.h"
 #include "pdg/sys/collider.h"
 #include "pdg/sys/spatialtransform.h"
+#include "pdg/sys/animationcontroller.h"
 #include <cstdint>
 #include <limits>
 #include <memory>
@@ -36,6 +37,7 @@ enum PartSpace : int { partSpace_Local = 0, partSpace_Sprite = 1, partSpace_Worl
  * Artwork, controllers and physics are separate associations.
  */
 class Part : public Animated<Part> {
+    friend class Bone;
     friend class PhysicsBodyRef<Part>;
     friend class ColliderRef<Part>;
     void initializePhysicsBody(PhysicsBody& body, bool restoring = false);
@@ -79,6 +81,10 @@ public:
     PartId getId() const { return mId; }
     const std::string& getName() const { return mName; }
     Sprite* getSprite() const { return mSprite; }
+    /// @cond INTERNAL
+    ISerializable* snapshotAnimationOwner() const override;
+    uint32 snapshotAnimationId() const override { return mId; }
+    /// @endcond
     bool isAttached() const { return mSprite != nullptr; }
     BoneId getBoneId() const;
     bool isBoundToBone() const { return getBoneId() != boneId_None; }
@@ -119,7 +125,7 @@ public:
     Part& setIKTarget(Part* middle, Part* tip, const Point& target,
                      int space = partSpace_World, int bendDirection = 1, double influence = 1);
     Part& clearIKTarget();
-    bool hasIKTarget() const { return bool(mIKTarget); }
+    bool hasIKTarget() const { return bool(mIKTarget)||bool(mFABRIK); }
     bool isIKTargetReached() const;
     /** Limit this joint's local IK rotation in radians; does not constrain physics itself. */
     Part& setIKLimits(double minAngle, double maxAngle);
@@ -142,6 +148,43 @@ public:
         int bendDirection = 1, double influence = 1, double frequency = 4, double dampingRatio = 1);
     bool isIKDriven() const { return mIKTarget && mIKTarget->physical; }
     const std::string& getIKError() const { return mIKError; }
+    /// Solve or schedule a contiguous independent Part chain; chain excludes the receiver. See \ref native_procedural_animation.
+    AnimationFABRIKResult solveFABRIK(const std::vector<Part*>& following, const Point& target, const AnimationFABRIK& options = {});
+    /// Solve or schedule a contiguous independent Part chain; chain excludes the receiver. See \ref native_procedural_animation.
+    Part& setFABRIKTarget(const std::vector<Part*>& following, const Point& target, const AnimationFABRIK& options = {});
+    /// Return the latest scheduled FABRIK diagnostics. See \ref native_procedural_animation.
+    AnimationFABRIKResult getFABRIKResult() const;
+    /// Install chain jiggle or decorate an existing Part IK target. See \ref native_procedural_animation.
+    Part& setJiggle(const AnimationJiggle& config, const std::vector<Part*>& following = {});
+    /// Remove jiggle and restore the underlying programmed rotations. See \ref native_procedural_animation.
+    Part& clearJiggle();
+    /// Return whether this Part owns a jiggle controller. See \ref native_procedural_animation.
+    bool hasJiggle() const { return bool(mJiggle); }
+    /// Return an independent configuration record. See \ref native_procedural_animation.
+    AnimationJiggle getJiggleOptions() const;
+    /// Replace tuning from a complete configuration without changing topology. See \ref native_procedural_animation.
+    Part& setJiggleSettings(const AnimationJiggle& settings);
+    /// Enable or freeze jiggle; reenabling reseeds from the current pose. See \ref native_procedural_animation.
+    Part& setJiggleEnabled(bool);
+    /// Return whether jiggle is enabled. See \ref native_procedural_animation.
+    bool isJiggleEnabled() const;
+    /// Set or linearly fade influence using simulation seconds. See \ref native_procedural_animation.
+    Part& setJiggleInfluence(double influence, double seconds = 0);
+    /// Reseed jiggle from the desired pose or target. See \ref native_procedural_animation.
+    Part& resetJiggle();
+    /// Add angular or target velocity. See \ref native_procedural_animation.
+    Part& kickJiggle(double x, double y = 0, int joint = 0);
+    /// Return the most recently evaluated jiggle diagnostics. See \ref native_procedural_animation.
+    JiggleResult getJiggleResult() const;
+    /// Return an independent numerical state snapshot. See \ref native_procedural_animation.
+    JiggleState getJiggleState() const;
+    /// Restore validated numerical state on the same topology. See \ref native_procedural_animation.
+    Part& setJiggleState(const JiggleState&);
+    const std::string& getJiggleError() const { return mProceduralError; }
+    /// @cond INTERNAL
+    /// \internal Numeric binding transport.
+    std::vector<double> proceduralControl(int operation, const std::vector<double>& values);
+    /// @endcond
     /** Create an animated mounting Part below this Part and retain a child Sprite.
      * The optional childMount is sampled once in the child's frame. Both Sprites
      * must be in the same layer, or both off-layer. The child may have no body or
@@ -197,11 +240,26 @@ private:
         double tolerance;
     };
     std::unique_ptr<IKTarget> mIKTarget;
+    struct PartFABRIKState { AnimationFABRIK config; std::vector<PartId> chain; AnimationFABRIKResult result; };
+    std::unique_ptr<PartFABRIKState> mFABRIK;
+    std::shared_ptr<SpriteJiggleState> mJiggle;
+    std::vector<PartId> mJiggleChain;
+    Part* mProceduralOwner = nullptr;
+    float mProceduralBase = 0;
+    bool mApplyingProcedural = false;
+    std::string mProceduralError;
+    std::vector<Part*> proceduralParts(const std::vector<PartId>&) const;
+    AnimationPose proceduralPose(const std::vector<Part*>&, AnimationTransform&) const;
+    void applyProceduralPose(const std::vector<Part*>&, const AnimationPose&, size_t count);
+    void claimProcedural(const std::vector<Part*>&);
+    void releaseProcedural();
+    bool stepProcedural(double seconds);
+    void restoreProceduralBase();
     std::string mIKError;
     IKSolution calculateIK(Part* middle, Part* tip, const Point& target,
                            int space, int bendDirection, double influence, const IKTarget* drive = nullptr) const;
     void validateIKOverlap(Part* middle, Part* tip, bool physical) const;
-    bool applyIKTarget();
+    bool applyIKTarget(double seconds = 0);
     void stepPhysics(double seconds);
     Part(Sprite* sprite, PartId id, const std::string& name);
     void validateSnapshot(bool layerGraph) const;

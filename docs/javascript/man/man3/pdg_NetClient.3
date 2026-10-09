@@ -1,4 +1,4 @@
-.TH "NetClient" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "NetClient" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -13,11 +13,11 @@ NetClient \- a network endpoint that can initiate a connection
 
 .in +1c
 .ti -1c
-.RI "\fBNetClient\fP (object opts=null)"
+.RI "\fBNetClient\fP (\fBNetClientOptions\fP opt=null)"
 .br
 .RI "constructor for \fBNetClient\fP, sets client options "
 .ti -1c
-.RI "\fBNetClient\fP \fBconnect\fP (object serverInfo, function callback, string clientKey='')"
+.RI "\fBNetClient\fP \fBconnect\fP (\fBNetServerAddress\fP serverInfo, function callback, string clientKey='')"
 .br
 .RI "connect to a server for your game "
 .ti -1c
@@ -29,7 +29,7 @@ NetClient \- a network endpoint that can initiate a connection
 
 .in +1c
 .ti -1c
-.RI "boolean \fBconnection\fP"
+.RI "object \fBconnection\fP"
 .br
 .RI "reference to the \fBNetConnection\fP, or boolean false if not yet connected "
 .in -1c
@@ -46,6 +46,20 @@ a network endpoint that can initiate a connection
 .PP
 \fBNetClient\fP is part of the PDG Engine's custom protocol for games\&. It handles protocol negotiation and optional connections\&. It establishes both a TCP connection (reliable transport with guaranteed delivery) and UDP communications (small and unreliable but fast) with the server\&.
 
+.PP
+On iOS JavaScriptCore, \fBNetClient\fP connects to existing PDG TCP/UDP servers using host and port\&. hasNetwork and hasNetworkClient are true; hasNetworkServer is false and \fBNetServer\fP is unavailable\&. UDP uses the TCP local endpoint; sendDgram() uses TCP until UDP negotiation succeeds, when UDP becomes unavailable, or for serialized messages larger than 1492 bytes\&. Pass {noDatagram: true} to the constructor to disable UDP\&.
+
+.PP
+Callbacks run on the engine's JavaScript thread\&. Entering the background closes connections and reports ERR_NETWORK_BACKGROUND through \fBonError()\fP; onClose() runs when the engine resumes\&. Reconnect explicitly when the application becomes active\&. No automatic reconnect occurs\&. Native TCP/UDP is unencrypted; \fBNetConnection\&.secure\fP is false for native transport\&. iOS also supports WebSocket: pass webSocketUrl or transportPolicy: "websocket-only" to connect to a PDG WebSocket listener\&. WSS uses the iOS certificate trust store and reports secure as true; ws:// requires secure: false\&. Custom tls options are unsupported on iOS\&. WebSocket sendDgram() uses reliable delivery and hasDgram remains false\&. The server must allow clients without a browser Origin header\&.
+
+.PP
+Desktop, Node and iOS also support WebTransport\&. Supply webTransportUrl and transportPolicy:"webtransport-required" to require its TLS reliable stream and optional datagrams\&. Browser auto mode attempts WebTransport before WebSocket\&. See \fBwebsocket_client_options\fP for deadlines, fallback and certificate hashes\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Apps connecting to a server on the local network must supply an NSLocalNetworkUsageDescription in their Info\&.plist\&. The OS controls permission\&.
+.RE
 .PP
 \fBNetClient\fP doesn't actually handle network communication, it only establishes the connection\&. Once established, it creates \fBNetConnection\fP objects you can use to send and receive data\&.
 
@@ -72,7 +86,7 @@ a network endpoint that can initiate a connection
 
 .SH "Constructor & Destructor Documentation"
 .PP 
-.SS "NetClient (object opts = \fRnull\fP)"
+.SS "NetClient (\fBNetClientOptions\fP opt = \fRnull\fP)"
 
 .PP
 constructor for \fBNetClient\fP, sets client options Construct a new \fBNetClient\fP with particular options or using default values if no options are specified\&.
@@ -88,12 +102,12 @@ noDatagram - flag to indicate that we should not try to establish UDP communicat
 .PP
 \fBParameters\fP
 .RS 4
-\fIopts\fP a Javascript object with the options above
+\fIopt\fP A \fBNetClientOptions\fP record, or null to use the defaults\&.
 .RE
 .PP
 .PP
 .nf
-var myClient = new pdg\&.NetClient( {noDatagram = true} );
+var myClient = new pdg\&.NetClient( {noDatagram: true} );
 .fi
 .PP
  
@@ -101,56 +115,76 @@ var myClient = new pdg\&.NetClient( {noDatagram = true} );
 Referenced by \fBconnect()\fP, and \fBonError()\fP\&.
 .SH "Member Function Documentation"
 .PP 
-.SS "\fBNetClient\fP connect (object serverInfo, function callback, string clientKey = \fR''\fP)"
+.SS "\fBNetClient\fP connect (\fBNetServerAddress\fP serverInfo, function callback, string clientKey = \fR''\fP)"
 
 .PP
-connect to a server for your game establish a connection to a server
+connect to a server for your game Connect to a PDG server and complete its authentication and version handshake\&.
 
 .PP
-Attempts to connect to the given server, and if it succeeds it invokes your callback with a new \fBNetConnection\fP object as the parameter\&. The If the connection fails, you'll get an error callback if you set one up using the \fBonError()\fP call\&.
-
+\fBNote\fP
+.RS 4
+Parameter \fRcallback:\fP \fBNetConnectCallback\fP\&.
+.RE
 .PP
-An option key is passed in to do authentication if the server requires connection reservations\&. See \fBNetServer\&.expectClient\fP for more about client reservations\&.
+The callback receives one \fBNetConnection\fP after the handshake completes\&. Errors go to \fBonError()\fP\&. WebSocket and WebTransport connections carry the same serialized messages as native TCP\&. sendDgram() uses reliable delivery on WebSocket\&. Authentication failures close the attempt; they never start another connection automatically\&.
 
 .PP
 \fBParameters\fP
 .RS 4
-\fIserverInfo\fP an object with host and port that tells us where to find the \fBNetServer\fP 
+\fIserverInfo\fP Connection settings in \fBwebsocket_client_options\fP\&. 
 .br
-\fIcallback\fP the connection established handler for this connection 
+\fIcallback\fP Function receiving the established \fBNetConnection\fP\&. 
 .br
-\fIclientKey\fP [optional] the reservation key to send to the server
+\fIclientKey\fP Optional reservation key sent before protocol negotiation\&. 
 .RE
 .PP
+\fBReturns\fP
+.RS 4
+This \fBNetClient\fP for chaining\&.
+.RE
+.PP
+ 
+.PP
+\fBClient connection options\fP
+.RS 4
+
+.RE
+.PP
+Field  Default  Meaning  host, port  Required for native TCP  Native server hostname and port\&. For WebSocket, host may be used to derive the URL\&.  transportPolicy  "auto"  Desktop, Node and iOS preserve TCP unless a web URL is supplied\&. Browsers try WebTransport, then WebSocket\&. An explicit webTransportUrl selects WebTransport in native auto mode\&. "webtransport-required" forbids fallback; "websocket-only" selects WebSocket; "native-only" rejects browser use\&.  webSocketUrl  Derived  Explicit wss:// URL\&. Native auto mode selects WebSocket when only this web URL is supplied\&. Browser auto mode derives its initial HTTPS WebTransport URL from this URL when webTransportUrl is omitted\&.  webTransportUrl  Derived  HTTPS WebTransport URL\&. Derived from host, webPort and webPath, or the browser webSocketUrl\&. Requires an HTTP/3 WebTransport listener\&.  serverCertificateHashes  Omitted  Optional array of {algorithm:"sha-256", value:Uint8Array or ArrayBuffer} entries, each containing a 32-byte SHA-256 DER certificate digest from a trusted bootstrap\&. Requires a currently valid EC certificate with validity no longer than 14 days\&. These hashes authenticate the server certificate; the PDG client key still authenticates the client\&.  webTransportTimeout  1500  Milliseconds allocated to the initial WebTransport attempt in auto mode, within the overall timeout\&.  capabilityCacheTimeout  30000  Milliseconds to cache an unsupported or timed-out WebTransport endpoint\&. 0 disables caching\&. The cache is bounded and keyed by endpoint and trust configuration\&.  webPort, webPath  5443, "/pdg"  Derived endpoint is wss://host:webPort/webPath\&.  secure  true  false permits an explicit ws:// development endpoint\&. HTTPS pages always require wss://\&.  timeout  5000 for web transports and iOS  Overall connection and PDG handshake deadline in milliseconds for web transports\&. On desktop/Node TCP, applies only when supplied\&.  handshakeTimeout  timeout or 5000  PDG handshake deadline in milliseconds; web transports also respect the remaining overall timeout\&.  maxFrameSize  1048576  Maximum reliable payload size in bytes\&.  maxPendingBytes  4194304  Maximum retained input and pending transport output bytes\&. WebSocket output overflow reports ERR_BACKPRESSURE; WebTransport overflow reports ERR_BACKPRESSURE; iOS TCP/WebSocket overflow reports ERR_NETWORK_BACKPRESSURE\&. iOS accepts 1024 to 67108864 bytes and also bounds queued events and writes to 256 each\&.  tls  Platform defaults  Native WebSocket client TLS settings, such as ca for a private certificate authority\&. WebTransport uses the platform trust store on Apple/Windows and the system CA bundle on Linux, or native tls\&.caFile for a private CA\&. Browser TLS uses platform trust\&. iOS WebSocket rejects custom tls options\&.  
+
+.PP
+
+.PP
+\fBNote\fP
+.RS 4
+The server must permit the page's origin and offer the pdg-net-v1 WebSocket subprotocol\&. Production endpoints need a trusted certificate and a proxy that forwards WebSocket upgrades\&. WebTransport requires UDP access to the HTTPS endpoint port\&. WebSocket uses TCP\&. Native WebTransport clients have no browser Origin; permit the empty string in the listener allowedOrigins\&.
+.RE
+.PP
+Auto mode falls back only for unavailable WebTransport, an explicitly unsupported endpoint, or establishment timeout, before the PDG handshake begins\&. Certificate, pin, authentication, and protocol failures are terminal\&. Browsers often report opaque failures; these are terminal rather than treated as unsupported\&. No fallback occurs after a transport has been selected or a session has connected\&.
+
+.PP
+\fBExample\fP
+.RS 4
+
 .PP
 .nf
-// start trying to connect
-var myConnection = false;
-var myKey = '23dj3C340efp';
-myClient\&.connect( { host: 208\&.122\&.0\&.12, port: 5000 }, function(connection) {
-    myConnection = connection;
-}, myKey);
+const client = new pdg\&.NetClient();
+client\&.onError(error => console\&.error(error\&.code, error\&.message));
+client\&.connect({webSocketUrl: "wss://game\&.example\&.com/pdg"}, connection => {
+    connection\&.onMessage((message, connection, delivery) => {
+        console\&.log(message, delivery, connection\&.transport);
+    });
+    connection\&.send({join: "lobby"});
+}, "reservation\-key");
 
-// now wait for the connection to happen
-var t = pdg\&.tm\&.onInterval( function() {
-    if (myConnection) {
-        console\&.log('Got connection to '+myConnection\&.remoteAddr);
-        t\&.cancel();  // stop checking
-    }
-}, 100);  // check every 100 milleseconds
 .fi
 .PP
-
+ 
+.RE
 .PP
 \fBSee also\fP
 .RS 4
-\fBonError\fP 
-
-.PP
-\fBNetConnection\fP 
-
-.PP
-\fBNetServer\&.expectClient\fP 
+\fBNetConnection\fP, \fBonError()\fP, \fBNetServer::expectClient()\fP 
 .RE
 .PP
 
@@ -159,7 +193,14 @@ References \fBNetClient()\fP\&.
 .SS "\fBNetClient\fP onError (function callback)"
 
 .PP
-set the callback function that will handle errors This function will be called whenever a call to \fBconnect()\fP fails\&. The function will be called with a single parameter, a string of the error message\&.
+set the callback function that will handle errors 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRcallback:\fP \fBNetClientErrorCallback\fP\&.
+.RE
+.PP
+This function will be called whenever a call to \fBconnect()\fP fails\&. The function will be called with a single parameter, a string of the error message\&.
 
 .PP
 \fBParameters\fP
@@ -191,10 +232,30 @@ myClient\&.onError( function(msg) {
 References \fBNetClient()\fP\&.
 .SH "Member Data Documentation"
 .PP 
-.SS "boolean connection"
+.SS "object connection"
 
 .PP
 reference to the \fBNetConnection\fP, or boolean false if not yet connected 
+.PP
+\fBJavaScript value\fP
+.RS 4
+\fR\fBNetConnection\fP\fP or \fRfalse\fP\&.
+.RE
+.PP
+The property starts as the literal \fRfalse\fP\&. After the underlying socket connects, it holds a \fBNetConnection\fP\&. It is not a general boolean flag, and assigning a connection does not by itself mean the PDG protocol handshake has completed\&. Use the connect callback to know when the connection is ready for application messages\&.
+
+.PP
+\fBNote\fP
+.RS 4
+A retained connection object is not proof that its socket is still open\&. Use the connection callbacks to track disconnection and errors\&.
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBNetClient::connect()\fP, \fBNetConnection\fP 
+.RE
+.PP
+
 
 .SH "Author"
 .PP 

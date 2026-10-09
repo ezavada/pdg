@@ -402,15 +402,15 @@ function runFontMetricsTest(port) {
         metricsText.forEach(function(text) {
             j++;
             var textPoint = new pdg.Point(leftMargin, currentY);
-            var textAttrs = new pdg.Attributes().textSize(16).textStyle(pdg.textStyle_Plain).fillColor("white");
+            var textAttrs = new pdg.Attributes().font(testFonts[0].font).textSize(16).textStyle(pdg.textStyle_Plain).fillColor("white");
         port.drawText(text, textPoint, textAttrs);
             currentY += 25;
             if (j == 3) {
                 currentY -= 75;
-                leftMargin += 180;
+                leftMargin += 210;
             }
         });
-        leftMargin -= 180;
+        leftMargin -= 210;
         
         // Draw a visual representation of the metrics
         currentY += 20;
@@ -422,17 +422,17 @@ function runFontMetricsTest(port) {
         var attrs = new pdg.Attributes().lineStyle(pdg.lineStyle_Solid).lineColor(new pdg.Color("cyan"));
         port.drawLine(new pdg.Point(leftMargin, baselineY), new pdg.Point(leftMargin + 300, baselineY), attrs);
 
-        var textAttrs = new pdg.Attributes().textSize(12).textStyle(pdg.textStyle_Plain).fillColor("cyan");
+        var textAttrs = new pdg.Attributes().font(testFonts[0].font).textSize(12).textStyle(pdg.textStyle_Plain).fillColor("cyan");
         port.drawText("Baseline", new pdg.Point(leftMargin + 310, baselineY), textAttrs);
         
         // Draw ascent line
         port.drawLine(new pdg.Point(leftMargin, topY), new pdg.Point(leftMargin + 300, topY), attrs.lineColor(new pdg.Color("green")));
-        var textAttrs = new pdg.Attributes().textSize(12).textStyle(pdg.textStyle_Plain).fillColor("green");
+        var textAttrs = new pdg.Attributes().font(testFonts[0].font).textSize(12).textStyle(pdg.textStyle_Plain).fillColor("green");
         port.drawText("Ascent", new pdg.Point(leftMargin + 310, topY - 5), textAttrs);
         
         // Draw descent line
         port.drawLine(new pdg.Point(leftMargin, bottomY), new pdg.Point(leftMargin + 300, bottomY), attrs.lineColor(new pdg.Color("red")));
-        var textAttrs = new pdg.Attributes().textSize(12).textStyle(pdg.textStyle_Plain).fillColor("red");
+        var textAttrs = new pdg.Attributes().font(testFonts[0].font).textSize(12).textStyle(pdg.textStyle_Plain).fillColor("red");
         port.drawText("Descent", new pdg.Point(leftMargin + 310, bottomY + 12), textAttrs);
         
         // Draw sample text on the baseline

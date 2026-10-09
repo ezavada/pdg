@@ -2,14 +2,14 @@
 <area shape="rect" id="Node000001" title="Lightweight whole&#45;body artwork and optional physics." alt="" coords="212,177,278,203"/>
 <area shape="rect" id="Node000002" href="$classpdg_1_1_animated.html" title="something that can be automatically moved, spun or resized over time." alt="" coords="5,5,82,31"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="40,44,44,76,55,105,70,122,89,137,131,160,174,174,214,185,209,185,173,179,129,165,86,141,67,126,51,107,39,77,39,49"/>
-<area shape="rect" id="Node000004" href="$classpdg_1_1_particle_emitter.html" title="A configurable point source of independent particles." alt="" coords="64,80,172,106"/>
-<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="67,39,109,79,104,81,67,45"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_particle_emitter.html" title="A configurable point source of independent particles." alt="" coords="64,80,172,106"/>
+<area shape="poly" id="edge6_Node000005_Node000002" title=" " alt="" coords="67,39,109,79,104,81,67,45"/>
 <area shape="rect" id="Node000003" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="196,80,294,106"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="247,119,247,178,243,175,243,123"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="145,113,193,151,228,177,223,176,190,155,143,119"/>
-<area shape="rect" id="Node000005" href="$classpdg_1_1_collider.html" title="Optional shapes, filtering, sensors and contacts for a Sprite, Part or Particle." alt="" coords="318,80,383,106"/>
-<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="328,116,260,179,257,174,323,117"/>
-<area shape="poly" id="edge6_Node000005_Node000005" title=" " alt="" coords="399,85,409,93,401,101,384,103,383,98,399,96,404,93,398,90"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_collider.html" title="Optional shapes, filtering, sensors and contacts for a Sprite, Part or Particle." alt="" coords="318,80,383,106"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="328,116,260,179,257,174,323,117"/>
+<area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="399,85,409,93,401,101,384,103,383,98,399,96,404,93,398,90"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="145,113,193,151,228,177,223,176,190,155,143,119"/>
 <area shape="rect" id="Node000006" href="$classpdg_1_1_physics_body.html" title="Optional physical motion for a Sprite or Part, using seconds." alt="" coords="500,80,598,106"/>
 <area shape="poly" id="edge7_Node000001_Node000006" title=" " alt="" coords="500,111,366,156,279,181,277,176,364,150,495,112"/>
 <area shape="poly" id="edge8_Node000006_Node000006" title=" " alt="" coords="614,85,625,93,616,101,599,103,598,98,614,96,619,93,613,90"/>

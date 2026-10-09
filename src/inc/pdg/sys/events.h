@@ -62,6 +62,7 @@ namespace pdg {
 class Sound;
 class Sprite;
 class SpriteLayer;
+class Camera;
 class Part;
 class PhysicsBody;
 class Port;
@@ -102,6 +103,8 @@ enum {
 
     eventType_ColliderContact = 26, //!< Collider begin/stay/end; payload: ColliderContact.
     eventType_ParticleBreak = 27, //!< Particle body angular-speed threshold; payload: PhysicsBodyBreakInfo.
+
+    eventType_ZoomComplete = 28, //!< Camera zoom finished; payload: CameraZoomInfo.
 
     eventType_last
 };
@@ -422,6 +425,14 @@ struct SoundEventInfo {
 PDG_CLASS_TYPEDEF(SoundEventInfo)
 
 extern long gNextSpriteEventId;
+
+//! Completion payload for eventType_ZoomComplete, emitted by the camera.
+//! \ingroup Events
+struct CameraZoomInfo {
+    Camera* camera; //!< Camera whose zoom operation completed.
+    float zoom; //!< Magnification at the end of that operation.
+};
+PDG_CLASS_TYPEDEF(CameraZoomInfo)
 
 //! Event Data for eventType_SpriteAnimate.
 //! \ingroup Events

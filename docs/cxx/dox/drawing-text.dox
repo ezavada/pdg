@@ -1,0 +1,42 @@
+/**
+\fn pdg::ElementRef* pdg::Drawing::addText(const char* text, const Rect& rect, const Attributes& attrs)
+\brief Add owned, editable UTF-8 text to drawing artwork.
+
+Copies the text and attributes. Font, text size/style, fill color and fill opacity
+follow Port::drawText(). Newlines are supported. The rectangle supplies the local
+layout bounds and four corner control points; hit tests use its box. Element and
+parent transforms and opacities apply normally, including live attributes.
+
+Part/Sprite artwork snapshots preserve text and styling. Fonts are saved by name
+and scaling factor, without embedding font files; the receiving system must supply
+the font for the same appearance. Older drawing snapshots remain readable.
+
+\param text Non-null, null-terminated UTF-8 text of at most 1 MiB; may be empty.
+\param rect Finite local rectangle with right >= left and bottom >= top.
+\param attrs Text appearance and transform to copy.
+\return An owned ElementRef of type type_Text; the caller deletes this handle.
+
+\note Rendering requires a graphics build. Attach the drawing with Part::setDrawing()
+to include it in that owner's saved artwork.
+\par Example
+\code{.cpp}
+std::unique_ptr<pdg::Drawing> drawing(pdg::Drawing::create());
+pdg::Attributes attrs;
+attrs.textSize(24).textStyle(pdg::textStyle_Bold).fillColor(pdg::Color(1.f, 1.f, 1.f));
+std::unique_ptr<pdg::ElementRef> label(drawing->addText("Player 1", pdg::Rect(0, 0, 180, 40), attrs));
+label->setText("Player 2");
+\endcode
+\see ElementRef::getText(), ElementRef::setText(), Part::setDrawing()
+*/
+/**
+\fn const char* pdg::ElementRef::getText() const
+\brief Get the text of a text element.
+\return Borrowed null-terminated UTF-8 text, valid until the element's text changes
+or its contents are removed. Throws for a non-text or removed element.
+*/
+/**
+\fn void pdg::ElementRef::setText(const char* text)
+\brief Copy new text into an element while retaining its rectangle and styling.
+\param text Non-null, null-terminated UTF-8 text of at most 1 MiB; may be empty.
+Throws for a non-text or removed element.
+*/

@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Pixel Dust Game Engine
-   &#160;<span id="projectnumber">v1.1.1</span>
+   &#160;<span id="projectnumber">v1.2.0</span>
    </div>
   </td>
  </tr>
@@ -142,8 +142,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:adb4036d451c1cb6abbf07f4bd0a04454"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read the pipeline configuration revision.  <br /></td></tr>
 <tr class="memitem:afc3e8d084e88ed14ee4657554f3990d3" id="r_afc3e8d084e88ed14ee4657554f3990d3"><td class="memItemLeft">bool&#160;</td><td class="memItemRight"><a class="el" href="#afc3e8d084e88ed14ee4657554f3990d3">isEvaluating</a> () const</td></tr>
 <tr class="memdesc:afc3e8d084e88ed14ee4657554f3990d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test whether an evaluation is in progress.  <br /></td></tr>
-<tr class="memitem:a0e952a2a6715e53b0e3372601b50cc71" id="r_a0e952a2a6715e53b0e3372601b50cc71"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animation_pose.html">AnimationPose</a>&#160;</td><td class="memItemRight"><a class="el" href="#a0e952a2a6715e53b0e3372601b50cc71">evaluate</a> (const <a class="el" href="classpdg_1_1_animation_pose.html">AnimationPose</a> &amp;base, const <a class="el" href="structpdg_1_1_animation_transform.html">AnimationTransform</a> &amp;root, double deltaSeconds, const std::map&lt; <a class="el" href="group___animation_poses.html#gac38765b035611b24e9d12d438006b29d">AnimationBoneId</a>, <a class="el" href="structpdg_1_1_animation_transform.html">AnimationTransform</a> &gt; &amp;overrides={})</td></tr>
-<tr class="memdesc:a0e952a2a6715e53b0e3372601b50cc71"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluate a fresh pose through the modifier stages.  <br /></td></tr>
+<tr class="memitem:afee290b252f338db5d1309d7b2a0d759" id="r_afee290b252f338db5d1309d7b2a0d759"><td class="memItemLeft"><a class="el" href="classpdg_1_1_animation_pose.html">AnimationPose</a>&#160;</td><td class="memItemRight"><a class="el" href="#afee290b252f338db5d1309d7b2a0d759">evaluate</a> (const <a class="el" href="classpdg_1_1_animation_pose.html">AnimationPose</a> &amp;base, const <a class="el" href="structpdg_1_1_animation_transform.html">AnimationTransform</a> &amp;root, double deltaSeconds, const std::map&lt; <a class="el" href="group___animation_poses.html#gac38765b035611b24e9d12d438006b29d">AnimationBoneId</a>, <a class="el" href="structpdg_1_1_animation_transform.html">AnimationTransform</a> &gt; &amp;overrides={}, const std::function&lt; void(<a class="el" href="classpdg_1_1_animation_pose.html">AnimationPose</a> &amp;, bool)&gt; &amp;controls={}, double simulationDeltaSeconds=-1)</td></tr>
+<tr class="memdesc:afee290b252f338db5d1309d7b2a0d759"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluate a fresh pose through the modifier stages.  <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-static-methods" class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -203,7 +203,7 @@ Static Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A nonzero modifier ID.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a0e952a2a6715e53b0e3372601b50cc71" title="Evaluate a fresh pose through the modifier stages.">evaluate()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#afee290b252f338db5d1309d7b2a0d759" title="Evaluate a fresh pose through the modifier stages.">evaluate()</a> </dd></dl>
 
 <p class="reference">References <a class="el" href="group___animation_modifiers.html#gga18f35dd918c150e502864fc987e0260eac3d07052f311eb7a425244808f24355b">pdg::animationStage_PreConstraint</a>.</p>
 
@@ -226,12 +226,12 @@ Static Public Member Functions</h2></td></tr>
 
 <p>Remove every registered modifier. </p>
 <p>Releases callbacks and diagnostics. A request made during evaluation is applied afterward.</p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a0e952a2a6715e53b0e3372601b50cc71" title="Evaluate a fresh pose through the modifier stages.">evaluate()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#afee290b252f338db5d1309d7b2a0d759" title="Evaluate a fresh pose through the modifier stages.">evaluate()</a> </dd></dl>
 
 </div>
 </div>
-<a id="a0e952a2a6715e53b0e3372601b50cc71" name="a0e952a2a6715e53b0e3372601b50cc71"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0e952a2a6715e53b0e3372601b50cc71">&#9670;&#160;</a></span>evaluate()</h2>
+<a id="afee290b252f338db5d1309d7b2a0d759" name="afee290b252f338db5d1309d7b2a0d759"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afee290b252f338db5d1309d7b2a0d759">&#9670;&#160;</a></span>evaluate()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -254,7 +254,17 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::map&lt; <a class="el" href="group___animation_poses.html#gac38765b035611b24e9d12d438006b29d">AnimationBoneId</a>, <a class="el" href="structpdg_1_1_animation_transform.html">AnimationTransform</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>overrides</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>&#160;)</td>
+          <td class="paramtype">const std::map&lt; <a class="el" href="group___animation_poses.html#gac38765b035611b24e9d12d438006b29d">AnimationBoneId</a>, <a class="el" href="structpdg_1_1_animation_transform.html">AnimationTransform</a> &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>overrides</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::function&lt; void(<a class="el" href="classpdg_1_1_animation_pose.html">AnimationPose</a> &amp;, bool)&gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>controls</em></span><span class="paramdefsep"> = </span><span class="paramdefval">{}</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double</td>          <td class="paramname"><span class="paramname"><em>simulationDeltaSeconds</em></span><span class="paramdefsep"> = </span><span class="paramdefval">-1</span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -266,7 +276,8 @@ Static Public Member Functions</h2></td></tr>
     <tr><td class="paramname">base</td><td>Freshly sampled pose supplying the rig and clip source. </td></tr>
     <tr><td class="paramname">root</td><td>Valid owner root transform in owning-layer coordinates. </td></tr>
     <tr><td class="paramname">deltaSeconds</td><td>Finite nonnegative elapsed seconds. Zero requests reevaluation without advancing controller time. </td></tr>
-    <tr><td class="paramname">overrides</td><td>Absolute parent-local transforms indexed by bone ID.</td></tr>
+    <tr><td class="paramname">overrides</td><td>Absolute parent-local transforms indexed by bone ID. </td></tr>
+    <tr><td class="paramname">controls</td><td>Optional owner controls, called before modifiers with false and afterwards with true to enforce final constraints.</td></tr>
   </table>
   </dd>
 </dl>
@@ -298,7 +309,7 @@ Static Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>An empty string if no failure is recorded, otherwise its diagnostic. Throws for an unknown ID.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a0e952a2a6715e53b0e3372601b50cc71" title="Evaluate a fresh pose through the modifier stages.">evaluate()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#afee290b252f338db5d1309d7b2a0d759" title="Evaluate a fresh pose through the modifier stages.">evaluate()</a> </dd></dl>
 
 </div>
 </div>
@@ -327,7 +338,7 @@ Static Public Member Functions</h2></td></tr>
 
 <p>Read the pipeline configuration revision. </p>
 <dl class="section return"><dt>Returns</dt><dd>The revision counter; changes when queued mutations are applied or a modifier fails.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a0e952a2a6715e53b0e3372601b50cc71" title="Evaluate a fresh pose through the modifier stages.">evaluate()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#afee290b252f338db5d1309d7b2a0d759" title="Evaluate a fresh pose through the modifier stages.">evaluate()</a> </dd></dl>
 
 </div>
 </div>
@@ -356,7 +367,7 @@ Static Public Member Functions</h2></td></tr>
 
 <p>Read the selected pose source. </p>
 <dl class="section return"><dt>Returns</dt><dd>The selected <a class="el" href="group___animation_modifiers.html#ga3b3cc1e1e1d1a276b25f288fbd757387">AnimationSource</a> constant; initially animationSource_Clip.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a0e952a2a6715e53b0e3372601b50cc71" title="Evaluate a fresh pose through the modifier stages.">evaluate()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#afee290b252f338db5d1309d7b2a0d759" title="Evaluate a fresh pose through the modifier stages.">evaluate()</a> </dd></dl>
 
 </div>
 </div>
@@ -385,7 +396,7 @@ Static Public Member Functions</h2></td></tr>
 
 <p>Test whether an evaluation is in progress. </p>
 <dl class="section return"><dt>Returns</dt><dd>True inside this pipeline's evaluation; recursive evaluation is rejected.</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a0e952a2a6715e53b0e3372601b50cc71" title="Evaluate a fresh pose through the modifier stages.">evaluate()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#afee290b252f338db5d1309d7b2a0d759" title="Evaluate a fresh pose through the modifier stages.">evaluate()</a> </dd></dl>
 
 </div>
 </div>
@@ -469,7 +480,7 @@ Static Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a0e952a2a6715e53b0e3372601b50cc71" title="Evaluate a fresh pose through the modifier stages.">evaluate()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#afee290b252f338db5d1309d7b2a0d759" title="Evaluate a fresh pose through the modifier stages.">evaluate()</a> </dd></dl>
 
 </div>
 </div>
@@ -528,7 +539,7 @@ Static Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a0e952a2a6715e53b0e3372601b50cc71" title="Evaluate a fresh pose through the modifier stages.">evaluate()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#afee290b252f338db5d1309d7b2a0d759" title="Evaluate a fresh pose through the modifier stages.">evaluate()</a> </dd></dl>
 
 </div>
 </div>

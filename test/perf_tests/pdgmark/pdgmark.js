@@ -7,6 +7,8 @@ if (quickOptions.quick) quick.uncap();
 var quickSampler = new quick.Sampler(quickOptions);
 var quickBaseline = quickOptions.quick ? quick.baseline('pdgmark/pdgmark_baseline.json').tests : {};
 var quickResults = {};
+var changingText = !!(process.env && process.env.PDG_TEXT_WORKLOAD === 'changing');
+var textSequence = 0;
 
 // -----------------------------------------------
 // PDGMark Performance Test
@@ -410,7 +412,8 @@ function TextObject(bounds) {
     this.color = new pdg.Color(Math.random(), Math.random(), Math.random(), 0.9);
     this.rotation = (Math.random() - 0.5) * 0.5;
     this.rotationSpeed = (Math.random() - 0.5) * 0.01;
-    this.style = [pdg.textStyle_Plain, pdg.textStyle_Bold, pdg.textStyle_Italic][Math.floor(Math.random() * 3)];
+    this.style = changingText ? pdg.textStyle_Plain
+        : [pdg.textStyle_Plain, pdg.textStyle_Bold, pdg.textStyle_Italic][Math.floor(Math.random() * 3)];
     // Text and styling are fixed. Avoid recreating native Attributes and Point
     // wrappers or repeating native style setters inside the drawing loop.
     this.position = new pdg.Point(this.x, this.y);
@@ -420,6 +423,7 @@ function TextObject(bounds) {
 }
 
 TextObject.prototype.update = function() {
+    if (changingText) this.text = "Score " + (++textSequence);
     this.rotation += this.rotationSpeed;
 };
 
@@ -645,7 +649,7 @@ function startNextTest() {
     cleanupTestObjects();
     if (currentTestIndex >= tests.length) {
         finishBenchmark();
-        if (quickOptions.quick) quick.write(quickOptions, 'pdgmark', quickResults);
+        if (quickOptions.quick) quick.write(quickOptions, 'pdgmark', quickResults, {textWorkload: changingText ? 'changing' : 'fixed'});
         else { printFinalResults(); pdg.gfx.closeGraphicsPort(port); }
         pdg.quit();
         return;

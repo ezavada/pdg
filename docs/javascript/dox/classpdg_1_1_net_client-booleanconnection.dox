@@ -1,7 +1,18 @@
 namespace pdg { /**
 
-\fn pdg::NetClient::connection
+\var object pdg::NetClient::connection
 
 \brief reference to the NetConnection, or boolean false if not yet connected
+
+The property starts as the literal \c false. After the underlying socket connects,
+it holds a NetConnection. It is not a general boolean flag, and assigning a
+connection does not by itself mean the PDG protocol handshake has completed.
+Use the connect callback to know when the connection is ready for application
+messages.
+
+\note A retained connection object is not proof that its socket is still open.
+Use the connection callbacks to track disconnection and errors.
+
+\see NetClient::connect(), NetConnection
 
 **/ }

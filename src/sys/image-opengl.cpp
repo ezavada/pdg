@@ -122,8 +122,9 @@ namespace pdg {
     Image* ImageOpenGL::createImageScaled(float xscale, float yscale, FilterType filterType) {
         syncOffscreenPixels(); return ImageImpl::createImageScaled(xscale, yscale, filterType);
     }
-    void ImageOpenGL::setTransparentColor(Color rgb) {
+    ImageOpenGL& ImageOpenGL::setTransparentColor(Color rgb) {
         syncOffscreenPixels(); mOffscreen.reset(); ImageImpl::setTransparentColor(rgb);
+        return *this;
     }
 
 	Port*
@@ -360,17 +361,24 @@ namespace pdg {
             GLfloat model_ambient[] = { ambientLight.red, ambientLight.green, ambientLight.blue, ambientLight.alpha };
             glLightModelfv(GL_LIGHT_MODEL_AMBIENT, model_ambient);
             
-            // Set white material colors so texture shows properly without colorization
-            GLfloat mat_diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+            // Use neutral material colors so the texture retains its own colors
+            // Allow modest highlight headroom while keeping diffuse shading. Fixed
+            // function lighting clamps before texture modulation, so ambient
+            // plus full-strength diffuse otherwise washes out the maps.
+            GLfloat mat_diffuse[] = { 1.0f - 0.75f * std::clamp(ambientLight.red, 0.0f, 1.0f),
+                1.0f - 0.75f * std::clamp(ambientLight.green, 0.0f, 1.0f),
+                1.0f - 0.75f * std::clamp(ambientLight.blue, 0.0f, 1.0f), 1.0f };
             GLfloat mat_ambient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-            GLfloat mat_specular[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+            GLfloat mat_specular[] = { 0.0f, 0.0f, 0.0f, 1.0f };
             GLfloat mat_shininess[] = { 20.0f };
             
-            glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-            glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-            glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-            glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+            glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse);
+            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambient);
+            glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular);
+            glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess);
 
+            const GLboolean normalizeWasEnabled = glIsEnabled(GL_NORMALIZE);
+            glEnable(GL_NORMALIZE);
             glEnable(GL_LIGHTING);
             glEnable(GL_LIGHT0);
             glEnable(GL_DEPTH_TEST);
@@ -407,7 +415,9 @@ namespace pdg {
             gluQuadricNormals(qobj, GLU_SMOOTH);
             gluSphere(qobj, 1.0f, slices, slices);
  
+            gluDeleteQuadric(qobj);
             glPopMatrix();
+            if (!normalizeWasEnabled) glDisable(GL_NORMALIZE);
             glDisable(GL_LIGHTING);
             glDisable(GL_LIGHT0);
             glDisable(GL_TEXTURE_2D);
@@ -584,6 +594,7 @@ namespace pdg {
 
 	void    
 	ImageOpenGL::bindTexture(GLint mipMode) {
+        graphics_flushText();
 		if (mSuperImage) return;  // don't do for subimage
         if (usesPremultipliedAlpha()) {
             auto& port = *static_cast<PortImpl*>(mPort);

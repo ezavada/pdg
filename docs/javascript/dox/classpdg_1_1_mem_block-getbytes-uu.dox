@@ -1,16 +1,9 @@
 namespace pdg { /**
+\fn Uint8Array pdg::MemBlock::getBytes(uint start, uint len)
+\brief Copy a bounded byte range into a plain Uint8Array.
 
-\fn pdg::MemBlock::getBytes
-
-\brief get a subset of the memory block
-
-The data is returned as a JavaScript string with binary data (values from 0..255 represented in JavaScript's native 2 byte per char string format). Use pdg.log.binaryDump() to see the data contents in a human readable hex-dump form.
-
-\param start the offset in the block to start from
-\param len the maximum number of bytes to fetch; clamped to the bytes remaining in the block
-
-\return a JavaScript string with binary data, or an empty string if start is outside the block
-
-\sa LogManager.binaryDump
-
+The requested length is clamped to the remaining bytes. An offset at or beyond the end returns an empty array.
+\param start Zero-based byte offset.
+\param len Maximum number of bytes to copy.
+\return A fresh, independently owned Uint8Array.
 **/ }

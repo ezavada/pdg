@@ -31,6 +31,47 @@
 
 namespace pdg
 {
+#ifdef PDG_USING_JAVASCRIPT_CORE
+#define PROCEDURAL_PARAMETERS JSContextRef ctx, JSValueRef* exception
+#define PROCEDURAL_ARGUMENTS ctx, exception
+#else
+#define PROCEDURAL_PARAMETERS v8::Isolate* isolate
+#define PROCEDURAL_ARGUMENTS isolate
+#endif
+
+    static std::vector<double> proceduralBindingValues(PROCEDURAL_PARAMETERS, JSValueRef input)
+    {
+        std::vector<double> values;
+#ifdef PDG_USING_JAVASCRIPT_CORE
+        if(!JSValueIsArray(ctx,input)) { throw std::invalid_argument("Expected procedural array"); }
+        auto a=JSValueToObject(ctx,input,exception);auto key=JSStringCreateWithUTF8CString("length");
+        double n=JSValueToNumber(ctx,JSObjectGetProperty(ctx,a,key,exception),exception);JSStringRelease(key);
+        if(*exception||n>50000) { throw std::invalid_argument("Invalid procedural array"); }
+        for(unsigned i=0;i<n;++i)
+        {
+            auto item=JSObjectGetPropertyAtIndex(ctx,a,i,exception);if(*exception||!JSValueIsNumber(ctx,item))
+            {
+                throw std::invalid_argument("Invalid procedural number");
+            }
+            values.push_back(JSValueToNumber(ctx,item,exception));
+        }
+#else
+        if(!input->IsArray()) { throw std::invalid_argument("Expected procedural array"); }
+        auto a=input.As<v8::Array>();if(a->Length()>50000)
+        {
+            throw std::invalid_argument("Procedural array too long");
+        }
+        for(unsigned i=0;i<a->Length();++i)
+        {
+            v8::Local<v8::Value> item;if(!a->Get(isolate->GetCurrentContext(),i).ToLocal(&item)||!item->IsNumber())
+            {
+                throw std::invalid_argument("Invalid procedural number");
+            }
+            values.push_back(item.As<v8::Number>()->Value());
+        }
+#endif
+        return values;
+    }
 
 #ifndef PDG_NO_GUI
 
@@ -248,15 +289,29 @@ namespace pdg
     {
         std::vector<double> result;
 #ifdef PDG_USING_JAVASCRIPT_CORE
-        if(!JSValueIsArray(ctx,input))throw std::invalid_argument("Expected physical rig array");
+        if(!JSValueIsArray(ctx,input)) { throw std::invalid_argument("Expected physical rig array"); }
         auto array=JSValueToObject(ctx,input,exception);auto key=JSStringCreateWithUTF8CString("length");
         const auto length=JSValueToNumber(ctx,JSObjectGetProperty(ctx,array,key,exception),exception);JSStringRelease(key);
-        if(*exception||length>1500000)throw std::invalid_argument("Invalid physical rig array length");
-        for(unsigned i=0;i<length;++i){auto value=JSObjectGetPropertyAtIndex(ctx,array,i,exception);if(*exception||!JSValueIsNumber(ctx,value))throw std::invalid_argument("Invalid physical rig number");result.push_back(JSValueToNumber(ctx,value,exception));}
+        if(*exception||length>1500000) { throw std::invalid_argument("Invalid physical rig array length"); }
+        for(unsigned i=0;i<length;++i)
+        {
+            auto value=JSObjectGetPropertyAtIndex(ctx,array,i,exception);if(*exception||!JSValueIsNumber(ctx,value))
+            {
+                throw std::invalid_argument("Invalid physical rig number");
+            }
+            result.push_back(JSValueToNumber(ctx,value,exception));
+        }
 #else
-        if(!input->IsArray())throw std::invalid_argument("Expected physical rig array");
-        auto array=input.As<v8::Array>();if(array->Length()>1500000)throw std::invalid_argument("Invalid physical rig array length");
-        for(unsigned i=0;i<array->Length();++i){v8::Local<v8::Value> value;if(!array->Get(isolate->GetCurrentContext(),i).ToLocal(&value)||!value->IsNumber())throw std::invalid_argument("Invalid physical rig number");result.push_back(value.As<v8::Number>()->Value());}
+        if(!input->IsArray()) { throw std::invalid_argument("Expected physical rig array"); }
+        auto array=input.As<v8::Array>();if(array->Length()>1500000) { throw std::invalid_argument("Invalid physical rig array length"); }
+        for(unsigned i=0;i<array->Length();++i)
+        {
+            v8::Local<v8::Value> value;if(!array->Get(isolate->GetCurrentContext(),i).ToLocal(&value)||!value->IsNumber())
+            {
+                throw std::invalid_argument("Invalid physical rig number");
+            }
+            result.push_back(value.As<v8::Number>()->Value());
+        }
 #endif
         return result;
     }
@@ -264,7 +319,7 @@ namespace pdg
     static AnimationTwoBoneIK animationScriptIKConfig(PDG_POSE_SCRIPT_PARAMETERS, JSValueRef value)
     {
         AnimationTwoBoneIK config;
-        if (!JSValueIsObject(ctx, value)) throw std::invalid_argument("Expected IK configuration");
+        if (!JSValueIsObject(ctx, value)) { throw std::invalid_argument("Expected IK configuration"); }
 #ifdef PDG_USING_JAVASCRIPT_CORE
         auto object=JSValueToObject(ctx,value,exception);
 #else
@@ -274,28 +329,70 @@ namespace pdg
         {
 #ifdef PDG_USING_JAVASCRIPT_CORE
             auto key=JSStringCreateWithUTF8CString(name);auto item=JSObjectGetProperty(ctx,object,key,exception);JSStringRelease(key);
-            if (*exception || !JSValueIsNumber(ctx,item)) throw std::invalid_argument("Invalid IK configuration field");
+            if (*exception || !JSValueIsNumber(ctx,item)) { throw std::invalid_argument("Invalid IK configuration field"); }
             double number=JSValueToNumber(ctx,item,exception);
 #else
             v8::Local<v8::Value> item;
-            if (!object->Get(isolate->GetCurrentContext(),v8::String::NewFromUtf8(isolate,name).ToLocalChecked()).ToLocal(&item) || !item->IsNumber()) throw std::invalid_argument("Invalid IK configuration field");
+            if (!object->Get(isolate->GetCurrentContext(),v8::String::NewFromUtf8(isolate,name).ToLocalChecked()).ToLocal(&item) || !item->IsNumber()) { throw std::invalid_argument("Invalid IK configuration field"); }
             double number=item.As<v8::Number>()->Value();
 #endif
-            if (!std::isfinite(number)) throw std::invalid_argument("Nonfinite IK configuration field");
+            if (!std::isfinite(number)) { throw std::invalid_argument("Nonfinite IK configuration field"); }
             return number;
         };
-        {double n=read("root");if(n<0 || n>=animation_NoBone || n!=std::floor(n))throw std::invalid_argument("Invalid IK bone ID");config.root=static_cast<AnimationBoneId>(n);}
-        {double n=read("middle");if(n<0 || n>=animation_NoBone || n!=std::floor(n))throw std::invalid_argument("Invalid IK bone ID");config.middle=static_cast<AnimationBoneId>(n);}
-        {double n=read("tip");if(n<0 || n>=animation_NoBone || n!=std::floor(n))throw std::invalid_argument("Invalid IK bone ID");config.tip=static_cast<AnimationBoneId>(n);}
+        {
+            double n=read("root");if(n<0 || n>=animation_NoBone || n!=std::floor(n))
+            {
+                throw std::invalid_argument("Invalid IK bone ID");
+            }
+            config.root=static_cast<AnimationBoneId>(n);
+        }
+        {
+            double n=read("middle");if(n<0 || n>=animation_NoBone || n!=std::floor(n))
+            {
+                throw std::invalid_argument("Invalid IK bone ID");
+            }
+            config.middle=static_cast<AnimationBoneId>(n);
+        }
+        {
+            double n=read("tip");if(n<0 || n>=animation_NoBone || n!=std::floor(n))
+            {
+                throw std::invalid_argument("Invalid IK bone ID");
+            }
+            config.tip=static_cast<AnimationBoneId>(n);
+        }
         config.rootLength=read("rootLength");
         config.middleLength=read("middleLength");
         config.targetX=read("targetX");
         config.targetY=read("targetY");
         config.influence=read("influence");
-        {double n=read("space");if(n<-1 || n>2 || n!=std::floor(n))throw std::invalid_argument("Invalid IK enum");config.space=static_cast<int>(n);}
-        {double n=read("bendDirection");if(n<-1 || n>2 || n!=std::floor(n))throw std::invalid_argument("Invalid IK enum");config.bendDirection=static_cast<int>(n);}
-        {double n=read("stretch");if(n<-1 || n>2 || n!=std::floor(n))throw std::invalid_argument("Invalid IK enum");config.stretch=static_cast<int>(n);}
-        {double n=read("matchOrientation");if(n<-1 || n>2 || n!=std::floor(n))throw std::invalid_argument("Invalid IK enum");config.matchOrientation=static_cast<int>(n);}
+        {
+            double n=read("space");if(n<-1 || n>2 || n!=std::floor(n))
+            {
+                throw std::invalid_argument("Invalid IK enum");
+            }
+            config.space=static_cast<int>(n);
+        }
+        {
+            double n=read("bendDirection");if(n<-1 || n>2 || n!=std::floor(n))
+            {
+                throw std::invalid_argument("Invalid IK enum");
+            }
+            config.bendDirection=static_cast<int>(n);
+        }
+        {
+            double n=read("stretch");if(n<-1 || n>2 || n!=std::floor(n))
+            {
+                throw std::invalid_argument("Invalid IK enum");
+            }
+            config.stretch=static_cast<int>(n);
+        }
+        {
+            double n=read("matchOrientation");if(n<-1 || n>2 || n!=std::floor(n))
+            {
+                throw std::invalid_argument("Invalid IK enum");
+            }
+            config.matchOrientation=static_cast<int>(n);
+        }
         config.targetRotation=read("targetRotation");
         config.rootMin=read("rootMin");
         config.rootMax=read("rootMax");
@@ -320,12 +417,14 @@ namespace pdg
     }
 
     static JSStringRef symbol_deltaSeconds = 0;
+    static JSStringRef symbol_simulationDeltaSeconds = 0;
     static JSStringRef symbol_root = 0;
     static JSStringRef symbol_revision = 0;
     static JSObjectRef animationModifierContextValue(PDG_POSE_SCRIPT_PARAMETERS, const AnimationModifierContext& context)
     {
         JSObjectRef result = JSC_ObjectCreateEmpty(ctx, 0);
         JSObjectSetProperty(ctx, result, ((symbol_deltaSeconds) ? symbol_deltaSeconds : symbol_deltaSeconds = JSStringCreateWithUTF8CString("deltaSeconds")), JSValueMakeNumber(ctx, context.deltaSeconds), kJSPropertyAttributeNone, exception);
+        JSObjectSetProperty(ctx, result, ((symbol_simulationDeltaSeconds) ? symbol_simulationDeltaSeconds : symbol_simulationDeltaSeconds = JSStringCreateWithUTF8CString("simulationDeltaSeconds")), JSValueMakeNumber(ctx, context.simulationDeltaSeconds), kJSPropertyAttributeNone, exception);
         JSObjectSetProperty(ctx, result, ((symbol_root) ? symbol_root : symbol_root = JSStringCreateWithUTF8CString("root")), animationTransformValue(PDG_POSE_SCRIPT_ARGUMENTS,context.root), kJSPropertyAttributeNone, exception);
         JSObjectSetProperty(ctx, result, ((symbol_revision) ? symbol_revision : symbol_revision = JSStringCreateWithUTF8CString("revision")), JSC_MakeValueFromCString(ctx, std::to_string(context.revision).c_str()), kJSPropertyAttributeNone, exception);
         return result;
@@ -344,13 +443,13 @@ namespace pdg
         const auto count = view.copy().getRig()->getBoneCount();
         const char* fields[] = {"x","y","rotation","scaleX","scaleY","alpha"};
 #ifdef PDG_USING_JAVASCRIPT_CORE
-        if (!edits || !JSValueIsArray(ctx,edits)) throw std::invalid_argument("Modifier bridge must return bone transforms");
+        if (!edits || !JSValueIsArray(ctx,edits)) { throw std::invalid_argument("Modifier bridge must return bone transforms"); }
         auto array = JSValueToObject(ctx,edits,exception);
         auto lengthKey = JSStringCreateWithUTF8CString("length");
         auto lengthValue = JSObjectGetProperty(ctx,array,lengthKey,exception); JSStringRelease(lengthKey);
-        if (*exception || JSValueToNumber(ctx,lengthValue,exception) != count) throw std::invalid_argument("Wrong modifier bone count");
+        if (*exception || JSValueToNumber(ctx,lengthValue,exception) != count) { throw std::invalid_argument("Wrong modifier bone count"); }
 #else
-        if (edits.IsEmpty() || !edits->IsArray() || edits.As<v8::Array>()->Length() != count) throw std::invalid_argument("Wrong modifier bone count");
+        if (edits.IsEmpty() || !edits->IsArray() || edits.As<v8::Array>()->Length() != count) { throw std::invalid_argument("Wrong modifier bone count"); }
         auto array = edits.As<v8::Array>();
 #endif
         for (uint32_t id=0;id<count;++id)
@@ -359,11 +458,11 @@ namespace pdg
             double* values[] = {&transform.x,&transform.y,&transform.rotation,&transform.scaleX,&transform.scaleY,&transform.alpha};
 #ifdef PDG_USING_JAVASCRIPT_CORE
             auto item=JSObjectGetPropertyAtIndex(ctx,array,id,exception);
-            if (*exception || !JSValueIsObject(ctx,item)) throw std::invalid_argument("Invalid modifier transform");
+            if (*exception || !JSValueIsObject(ctx,item)) { throw std::invalid_argument("Invalid modifier transform"); }
             auto object=JSValueToObject(ctx,item,exception);
 #else
             v8::Local<v8::Value> item;
-            if (!array->Get(isolate->GetCurrentContext(),id).ToLocal(&item) || !item->IsObject()) throw std::invalid_argument("Invalid modifier transform");
+            if (!array->Get(isolate->GetCurrentContext(),id).ToLocal(&item) || !item->IsObject()) { throw std::invalid_argument("Invalid modifier transform"); }
             auto object=item.As<v8::Object>();
 #endif
             for (int field=0;field<6;++field)
@@ -371,12 +470,11 @@ namespace pdg
 #ifdef PDG_USING_JAVASCRIPT_CORE
                 auto key=JSStringCreateWithUTF8CString(fields[field]);
                 auto value=JSObjectGetProperty(ctx,object,key,exception);JSStringRelease(key);
-                if (*exception || !JSValueIsNumber(ctx,value)) throw std::invalid_argument("Modifier transform fields must be numbers");
+                if (*exception || !JSValueIsNumber(ctx,value)) { throw std::invalid_argument("Modifier transform fields must be numbers"); }
                 *values[field]=JSValueToNumber(ctx,value,exception);
 #else
                 v8::Local<v8::Value> value;
-                if (!object->Get(isolate->GetCurrentContext(),v8::String::NewFromUtf8(isolate,fields[field]).ToLocalChecked()).ToLocal(&value) || !value->IsNumber())
-                    throw std::invalid_argument("Modifier transform fields must be numbers");
+                if (!object->Get(isolate->GetCurrentContext(),v8::String::NewFromUtf8(isolate,fields[field]).ToLocalChecked()).ToLocal(&value) || !value->IsNumber()) { throw std::invalid_argument("Modifier transform fields must be numbers"); }
                 *values[field]=value.As<v8::Number>()->Value();
 #endif
             }
@@ -444,7 +542,7 @@ namespace pdg
                 }
             }
         };
-        if(!result)throw std::invalid_argument("Animation drawing callback must return a Drawing or null");
+        if(!result) { throw std::invalid_argument("Animation drawing callback must return a Drawing or null"); }
         return result->share();
     }
     struct AnimationScriptDrawing : AnimationScriptModifier
@@ -494,6 +592,7 @@ namespace pdg
 #else
 #define SPRITE_SAVE_WEAK(sprite, obj) sprite->mSpriteScriptObj.Reset(isolate,obj); sprite->mSpriteScriptObj.SetWeak(); sprite->mAnimatedScriptObj.Reset(isolate,obj); sprite->mAnimatedScriptObj.SetWeak(); sprite->mEventEmitterScriptObj.Reset(isolate,obj); sprite->mEventEmitterScriptObj.SetWeak(); sprite->mISerializableScriptObj.Reset(isolate,obj); sprite->mISerializableScriptObj.SetWeak()
 #endif
+
     JSObjectRef Sprite_newFromCpp(JSContextRef ctx, Sprite* cppObj)
     {
         JSObjectRef obj = JSObjectMake(ctx, Sprite_class(), cppObj);
@@ -551,6 +650,39 @@ namespace pdg
             { "clear", Sprite_Clear, kJSPropertyAttributeDontDelete },
             { "blockEvent", Sprite_BlockEvent, kJSPropertyAttributeDontDelete },
             { "unblockEvent", Sprite_UnblockEvent, kJSPropertyAttributeDontDelete },
+            { "playScript", Sprite_PlayScript, kJSPropertyAttributeDontDelete },
+            { "batch", Sprite_Batch, kJSPropertyAttributeDontDelete },
+            { "endBatch", Sprite_EndBatch, kJSPropertyAttributeDontDelete },
+            { "series", Sprite_Series, kJSPropertyAttributeDontDelete },
+            { "endSeries", Sprite_EndSeries, kJSPropertyAttributeDontDelete },
+            { "andAlso", Sprite_AndAlso, kJSPropertyAttributeDontDelete },
+            { "stagger", Sprite_Stagger, kJSPropertyAttributeDontDelete },
+            { "mark", Sprite_Mark, kJSPropertyAttributeDontDelete },
+            { "jumpToMark", Sprite_JumpToMark, kJSPropertyAttributeDontDelete },
+            { "on", Sprite_ScriptOn, kJSPropertyAttributeDontDelete },
+            { "triggerEvent", Sprite_TriggerEvent, kJSPropertyAttributeDontDelete },
+            { "onStarted", Sprite_OnStarted, kJSPropertyAttributeDontDelete },
+            { "onFinished", Sprite_OnFinished, kJSPropertyAttributeDontDelete },
+            { "onScriptFinished", Sprite_OnScriptFinished, kJSPropertyAttributeDontDelete },
+            { "onMark", Sprite_OnMark, kJSPropertyAttributeDontDelete },
+            { "onYoyo", Sprite_OnYoyo, kJSPropertyAttributeDontDelete },
+            { "onRepeat", Sprite_OnRepeat, kJSPropertyAttributeDontDelete },
+            { "onUntilFired", Sprite_OnUntilFired, kJSPropertyAttributeDontDelete },
+            { "when", Sprite_When, kJSPropertyAttributeDontDelete },
+            { "otherwise", Sprite_Otherwise, kJSPropertyAttributeDontDelete },
+            { "endWhen", Sprite_EndWhen, kJSPropertyAttributeDontDelete },
+            { "endOtherwise", Sprite_EndOtherwise, kJSPropertyAttributeDontDelete },
+            { "until", Sprite_Until, kJSPropertyAttributeDontDelete },
+            { "yoyo", Sprite_Yoyo, kJSPropertyAttributeDontDelete },
+            { "repeat", Sprite_Repeat, kJSPropertyAttributeDontDelete },
+            { "diminish", Sprite_Diminish, kJSPropertyAttributeDontDelete },
+            { "increase", Sprite_Increase, kJSPropertyAttributeDontDelete },
+            { "slowDown", Sprite_SlowDown, kJSPropertyAttributeDontDelete },
+            { "speedUp", Sprite_SpeedUp, kJSPropertyAttributeDontDelete },
+            { "stopIt", Sprite_StopIt, kJSPropertyAttributeDontDelete },
+            { "restartIt", Sprite_RestartIt, kJSPropertyAttributeDontDelete },
+            { "pauseIt", Sprite_PauseIt, kJSPropertyAttributeDontDelete },
+            { "resumeIt", Sprite_ResumeIt, kJSPropertyAttributeDontDelete },
             { "getBoundingBox", Sprite_GetBoundingBox, kJSPropertyAttributeDontDelete },
             { "getRotatedBounds", Sprite_GetRotatedBounds, kJSPropertyAttributeDontDelete },
             { "getLocation", Sprite_GetLocation, kJSPropertyAttributeDontDelete },
@@ -664,6 +796,7 @@ namespace pdg
             { "setAnimationDrawableEnabled", Sprite_SetAnimationDrawableEnabled, kJSPropertyAttributeDontDelete },
             { "getAnimationDrawableError", Sprite_GetAnimationDrawableError, kJSPropertyAttributeDontDelete },
             { "getAnimationDrawBounds", Sprite_GetAnimationDrawBounds, kJSPropertyAttributeDontDelete },
+            { "_procedural", Sprite_ProceduralControl, kJSPropertyAttributeDontDelete },
             { "addAnimationIK", Sprite_AddAnimationIK, kJSPropertyAttributeDontDelete },
             { "setAnimationIKTarget", Sprite_SetAnimationIKTarget, kJSPropertyAttributeDontDelete },
             { "getAnimationIKResult", Sprite_GetAnimationIKResult, kJSPropertyAttributeDontDelete },
@@ -680,6 +813,7 @@ namespace pdg
             { "disableAnimationPose", Sprite_DisableAnimationPose, kJSPropertyAttributeDontDelete },
             { "isAnimationPoseEnabled", Sprite_IsAnimationPoseEnabled, kJSPropertyAttributeDontDelete },
             { "getAnimationRigError", Sprite_GetAnimationRigError, kJSPropertyAttributeDontDelete },
+            { "getBone", Sprite_GetBone, kJSPropertyAttributeDontDelete },
             { "getAnimationBoneNames", Sprite_GetAnimationBoneNames, kJSPropertyAttributeDontDelete },
             { "getAnimationBindingNames", Sprite_GetAnimationBindingNames, kJSPropertyAttributeDontDelete },
             { "getAnimationBoneTransform", Sprite_GetAnimationBoneTransform, kJSPropertyAttributeDontDelete },
@@ -795,7 +929,7 @@ namespace pdg
         SCRIPT_DEBUG_ONLY( JSC_DebugPrintValue(ctx, arguments[0], "Dumping " "IEventHandler" " object:") );
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""inType"")");
-        long inType = (argumentCount<2) ? pdg::all_events : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long inType = (argumentCount<2) ? pdg::all_events : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         self->addHandler(inHandler, inType);
         return JSValueMakeUndefined(ctx);
     }
@@ -815,7 +949,7 @@ namespace pdg
             return JSC_ThrowArgTypeException(ctx, exception, 1, "an object derived from ""IEventHandler"" (""inHandler"")");
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""inType"")");
-        long inType = (argumentCount<2) ? pdg::all_events : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long inType = (argumentCount<2) ? pdg::all_events : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         self->removeHandler(inHandler, inType);
         return JSValueMakeUndefined(ctx);
     }
@@ -836,7 +970,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""inEventType"")");
-        int32 inEventType = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 inEventType = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->blockEvent(inEventType);
         return JSValueMakeUndefined(ctx);
     }
@@ -848,118 +982,1131 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""inEventType"")");
-        int32 inEventType = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 inEventType = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->unblockEvent(inEventType);
         return JSValueMakeUndefined(ctx);
+    }
+
+    JSValueRef Sprite_PlayScript(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            if (!JSValueIsString(ctx, arguments[1 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a string (""name"")");
+            JSStringRef name_Str = JSValueToStringCopy(ctx, arguments[1 -1], exception);
+            MemBlock name_Mem(JSStringGetMaximumUTF8CStringSize(name_Str));
+            JSStringGetUTF8CString(name_Str, name_Mem.ptr, name_Mem.bytes);
+            const char* name = (const char*)name_Mem.ptr;
+            JSStringRelease(name_Str);
+            self->playScript(name); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_Batch(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            self->batch(); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_EndBatch(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            self->endBatch(); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_Series(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            self->series(); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_EndSeries(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            self->endSeries(); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_AndAlso(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            self->andAlso(); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_Stagger(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1); if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""intervalSeconds"")");
+            double intervalSeconds = JSValueToNumber(ctx, arguments[1 -1], exception);
+            self->stagger(intervalSeconds); return thisObject;
+        }
+        catch(const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_Mark(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount < 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
+            if(argumentCount>2)
+            {
+                if (argumentCount != 2)
+                    return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2);
+            }
+            if (!JSValueIsString(ctx, arguments[1 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a string (""name"")");
+            JSStringRef name_Str = JSValueToStringCopy(ctx, arguments[1 -1], exception);
+            MemBlock name_Mem(JSStringGetMaximumUTF8CStringSize(name_Str));
+            JSStringGetUTF8CString(name_Str, name_Mem.ptr, name_Mem.bytes);
+            const char* name = (const char*)name_Mem.ptr;
+            JSStringRelease(name_Str);
+            if (argumentCount >= 2 && !JSValueIsBoolean(ctx, arguments[2 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 2, "a boolean (""saveState"")");
+            bool saveState = (argumentCount<2) ? true : JSValueToBoolean(ctx, arguments[2 -1]);
+            self->mark(name, saveState); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_JumpToMark(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount < 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
+            if(argumentCount>2)
+            {
+                if (argumentCount != 2)
+                    return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2);
+            }
+            if (!JSValueIsString(ctx, arguments[1 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a string (""name"")");
+            JSStringRef name_Str = JSValueToStringCopy(ctx, arguments[1 -1], exception);
+            MemBlock name_Mem(JSStringGetMaximumUTF8CStringSize(name_Str));
+            JSStringGetUTF8CString(name_Str, name_Mem.ptr, name_Mem.bytes);
+            const char* name = (const char*)name_Mem.ptr;
+            JSStringRelease(name_Str);
+            if (argumentCount >= 2 && !JSValueIsBoolean(ctx, arguments[2 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 2, "a boolean (""restoreState"")");
+            bool restoreState = (argumentCount<2) ? true : JSValueToBoolean(ctx, arguments[2 -1]);
+            self->jumpToMark(name, restoreState); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_When(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            JSObjectRef evaluator = JSValueToObject(ctx, arguments[1 -1], exception);
+            if (!evaluator || !JSObjectIsFunction(ctx, evaluator) )
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a function (""evaluator"")");
+            self->when(MakeAnimationEvaluator(evaluator)); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_ScriptOn(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            self->mAnimatedScriptObj = thisObject;
+            ;
+            if (argumentCount != 2)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2);
+            if (!JSValueIsString(ctx, arguments[1 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a string (""event"")");
+            JSStringRef event_Str = JSValueToStringCopy(ctx, arguments[1 -1], exception);
+            MemBlock event_Mem(JSStringGetMaximumUTF8CStringSize(event_Str));
+            JSStringGetUTF8CString(event_Str, event_Mem.ptr, event_Mem.bytes);
+            const char* event = (const char*)event_Mem.ptr;
+            JSStringRelease(event_Str);
+            JSObjectRef handler = JSValueToObject(ctx, arguments[2 -1], exception);
+            if (!handler || !JSObjectIsFunction(ctx, handler) )
+                return JSC_ThrowArgTypeException(ctx, exception, 2, "a function (""handler"")");
+            self->on(event, MakeAnimationEventHandler(handler)); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+
+    JSValueRef Sprite_OnStarted(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            self->mAnimatedScriptObj = thisObject;
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            JSObjectRef handler = JSValueToObject(ctx, arguments[1 -1], exception);
+            if (!handler || !JSObjectIsFunction(ctx, handler) )
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a function (""handler"")");
+            self->onStarted(MakeAnimationEventHandler(handler)); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_TriggerEvent(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            self->mAnimatedScriptObj = thisObject;
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            if (!JSValueIsString(ctx, arguments[1 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a string (""name"")");
+            JSStringRef name_Str = JSValueToStringCopy(ctx, arguments[1 -1], exception);
+            MemBlock name_Mem(JSStringGetMaximumUTF8CStringSize(name_Str));
+            JSStringGetUTF8CString(name_Str, name_Mem.ptr, name_Mem.bytes);
+            const char* name = (const char*)name_Mem.ptr;
+            JSStringRelease(name_Str);
+            self->triggerEvent(name); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+
+    JSValueRef Sprite_OnFinished(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            self->mAnimatedScriptObj = thisObject;
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            JSObjectRef handler = JSValueToObject(ctx, arguments[1 -1], exception);
+            if (!handler || !JSObjectIsFunction(ctx, handler) )
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a function (""handler"")");
+            self->onFinished(MakeAnimationEventHandler(handler)); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+
+    JSValueRef Sprite_OnScriptFinished(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            self->mAnimatedScriptObj = thisObject;
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            JSObjectRef handler = JSValueToObject(ctx, arguments[1 -1], exception);
+            if (!handler || !JSObjectIsFunction(ctx, handler) )
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a function (""handler"")");
+            self->onScriptFinished(MakeAnimationEventHandler(handler)); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+
+    JSValueRef Sprite_OnMark(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            self->mAnimatedScriptObj = thisObject;
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            JSObjectRef handler = JSValueToObject(ctx, arguments[1 -1], exception);
+            if (!handler || !JSObjectIsFunction(ctx, handler) )
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a function (""handler"")");
+            self->onMark(MakeAnimationEventHandler(handler)); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+
+    JSValueRef Sprite_OnYoyo(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            self->mAnimatedScriptObj = thisObject;
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            JSObjectRef handler = JSValueToObject(ctx, arguments[1 -1], exception);
+            if (!handler || !JSObjectIsFunction(ctx, handler) )
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a function (""handler"")");
+            self->onYoyo(MakeAnimationEventHandler(handler)); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+
+    JSValueRef Sprite_OnRepeat(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            self->mAnimatedScriptObj = thisObject;
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            JSObjectRef handler = JSValueToObject(ctx, arguments[1 -1], exception);
+            if (!handler || !JSObjectIsFunction(ctx, handler) )
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a function (""handler"")");
+            self->onRepeat(MakeAnimationEventHandler(handler)); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+
+    JSValueRef Sprite_OnUntilFired(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            self->mAnimatedScriptObj = thisObject;
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            JSObjectRef handler = JSValueToObject(ctx, arguments[1 -1], exception);
+            if (!handler || !JSObjectIsFunction(ctx, handler) )
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a function (""handler"")");
+            self->onUntilFired(MakeAnimationEventHandler(handler)); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_Otherwise(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            self->otherwise(); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_EndWhen(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            self->endWhen(); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_EndOtherwise(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            self->endOtherwise(); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_Until(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount != 1)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            JSObjectRef evaluator = JSValueToObject(ctx, arguments[1 -1], exception);
+            if (!evaluator || !JSObjectIsFunction(ctx, evaluator) )
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a function (""evaluator"")");
+            self->until(MakeAnimationEvaluator(evaluator)); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_Yoyo(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            self->yoyo(); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_Repeat(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount < 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0, true);
+            if (argumentCount>1)
+            {
+                if (argumentCount != 1)
+                    return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+            }
+            if (argumentCount >= 1 && !JSValueIsNumber(ctx, arguments[1 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""countValue"")");
+            double countValue = (argumentCount<1) ? -1 : JSValueToNumber(ctx, arguments[1 -1], exception);
+            if (argumentCount && (!std::isfinite(countValue) || countValue<0 || countValue>INT32_MAX || std::floor(countValue)!=countValue)) throw std::invalid_argument("Repeat count must be a nonnegative integer");
+            self->repeat(static_cast<int>(countValue)); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_Diminish(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount < 2)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
+            if (argumentCount>3)
+            {
+                if (argumentCount != 3)
+                    return JSC_ThrowArgCountException(ctx, exception, argumentCount, 3);
+            }
+            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""factor"")");
+            double factor = JSValueToNumber(ctx, arguments[1 -1], exception);
+            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""seconds"")");
+            double seconds = JSValueToNumber(ctx, arguments[2 -1], exception);
+            if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easing"")");
+            long easing = (argumentCount<3) ? 0 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[3 -1], exception));
+            self->diminish(factor, seconds, easingIdToFunc(easing)); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_Increase(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount < 2)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
+            if (argumentCount>3)
+            {
+                if (argumentCount != 3)
+                    return JSC_ThrowArgCountException(ctx, exception, argumentCount, 3);
+            }
+            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""factor"")");
+            double factor = JSValueToNumber(ctx, arguments[1 -1], exception);
+            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""seconds"")");
+            double seconds = JSValueToNumber(ctx, arguments[2 -1], exception);
+            if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easing"")");
+            long easing = (argumentCount<3) ? 0 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[3 -1], exception));
+            self->increase(factor, seconds, easingIdToFunc(easing)); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_SlowDown(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount < 2)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
+            if (argumentCount>3)
+            {
+                if (argumentCount != 3)
+                    return JSC_ThrowArgCountException(ctx, exception, argumentCount, 3);
+            }
+            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""factor"")");
+            double factor = JSValueToNumber(ctx, arguments[1 -1], exception);
+            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""seconds"")");
+            double seconds = JSValueToNumber(ctx, arguments[2 -1], exception);
+            if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easing"")");
+            long easing = (argumentCount<3) ? 0 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[3 -1], exception));
+            self->slowDown(factor, seconds, easingIdToFunc(easing)); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_SpeedUp(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount < 2)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
+            if (argumentCount>3)
+            {
+                if (argumentCount != 3)
+                    return JSC_ThrowArgCountException(ctx, exception, argumentCount, 3);
+            }
+            if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""factor"")");
+            double factor = JSValueToNumber(ctx, arguments[1 -1], exception);
+            if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""seconds"")");
+            double seconds = JSValueToNumber(ctx, arguments[2 -1], exception);
+            if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easing"")");
+            long easing = (argumentCount<3) ? 0 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[3 -1], exception));
+            self->speedUp(factor, seconds, easingIdToFunc(easing)); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_StopIt(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            self->stopIt(); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_RestartIt(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            self->restartIt(); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_PauseIt(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            self->pauseIt(); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
+    }
+    JSValueRef Sprite_ResumeIt(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            self->resumeIt(); return thisObject;
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
     }
 
     JSValueRef Sprite_GetBoundingBox(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        pdg::Rect theBoundingBox = self->getBoundingBox();
-        return JSC_RectToValue(ctx, theBoundingBox, exception);
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            pdg::Rect value=self->getBoundingBox(); return JSC_RectToValue(ctx, value, exception);
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
     }
+
     JSValueRef Sprite_GetRotatedBounds(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        pdg::RotatedRect theRotatedBounds = self->getRotatedBounds();
-        return JSC_RectToValue(ctx, theRotatedBounds, exception);
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            pdg::RotatedRect value=self->getRotatedBounds(); return JSC_RectToValue(ctx, value, exception);
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
     }
+
     JSValueRef Sprite_GetLocation(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        pdg::Point theLocation = self->getLocation();
-        return JSC_PointToValue(ctx, theLocation, exception);
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            pdg::Point value=self->getLocation(); return JSC_PointToValue(ctx, value, exception);
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
     }
+
     JSValueRef Sprite_GetMovement(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        pdg::Offset theMovement = self->getMovement();
-        return JSC_OffsetToValue(ctx, theMovement, exception);
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            pdg::Offset value=self->getMovement(); return JSC_OffsetToValue(ctx, value, exception);
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
     }
+
     JSValueRef Sprite_GetSize(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        pdg::Offset theSize = self->getSize();
-        return JSC_OffsetToValue(ctx, theSize, exception);
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            pdg::Offset value=self->getSize(); return JSC_OffsetToValue(ctx, value, exception);
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
     }
+
     JSValueRef Sprite_GetWidth(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        double theWidth = self->getWidth();
-        return JSValueMakeNumber(ctx, theWidth);
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            double value=self->getWidth(); return JSValueMakeNumber(ctx, value);
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
     }
+
     JSValueRef Sprite_GetHeight(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        double theHeight = self->getHeight();
-        return JSValueMakeNumber(ctx, theHeight);
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            double value=self->getHeight(); return JSValueMakeNumber(ctx, value);
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
     }
+
     JSValueRef Sprite_GetScale(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        pdg::Offset theScale = self->getScale();
-        return JSC_OffsetToValue(ctx, theScale, exception);
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            pdg::Offset value=self->getScale(); return JSC_OffsetToValue(ctx, value, exception);
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
     }
+
     JSValueRef Sprite_GetStretching(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        pdg::Offset theStretching = self->getStretching();
-        return JSC_OffsetToValue(ctx, theStretching, exception);
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            pdg::Offset value=self->getStretching(); return JSC_OffsetToValue(ctx, value, exception);
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
     }
+
     JSValueRef Sprite_GetRotation(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        double theRotation = self->getRotation();
-        return JSValueMakeNumber(ctx, theRotation);
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            double value=self->getRotation(); return JSValueMakeNumber(ctx, value);
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
     }
+
     JSValueRef Sprite_GetCenterOffset(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        pdg::Offset theCenterOffset = self->getCenterOffset();
-        return JSC_OffsetToValue(ctx, theCenterOffset, exception);
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            pdg::Offset value=self->getCenterOffset(); return JSC_OffsetToValue(ctx, value, exception);
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
     }
+
     JSValueRef Sprite_GetSpin(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
-
-        if (argumentCount != 0)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        double theSpin = self->getSpin();
-        return JSValueMakeNumber(ctx, theSpin);
+        try
+        {
+            ;
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+            double value=self->getSpin(); return JSValueMakeNumber(ctx, value);
+        }
+        catch (const std::exception& error)
+        {
+            {
+                JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                JSStringRelease(errorMessage);
+                *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                return JSValueMakeNull(ctx);
+            };
+        }
     }
     JSValueRef Sprite_SetLocation(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -2703,10 +3850,23 @@ namespace pdg
         Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
         try
         {
-            ;
-            if (argumentCount != 0)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-            return JSValueMakeBoolean(ctx, self->isFlippedX());
+            try
+            {
+                ;
+                if (argumentCount != 0)
+                    return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+                return JSValueMakeBoolean(ctx, self->isFlippedX());
+            }
+            catch (const std::exception& error)
+            {
+                {
+                    JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                    JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                    JSStringRelease(errorMessage);
+                    *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                    return JSValueMakeNull(ctx);
+                };
+            }
         }
         catch (const std::exception& error)
         {
@@ -2724,10 +3884,23 @@ namespace pdg
         Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
         try
         {
-            ;
-            if (argumentCount != 0)
-                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-            return JSValueMakeBoolean(ctx, self->isFlippedY());
+            try
+            {
+                ;
+                if (argumentCount != 0)
+                    return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+                return JSValueMakeBoolean(ctx, self->isFlippedY());
+            }
+            catch (const std::exception& error)
+            {
+                {
+                    JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                    JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                    JSStringRelease(errorMessage);
+                    *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                    return JSValueMakeNull(ctx);
+                };
+            }
         }
         catch (const std::exception& error)
         {
@@ -3081,7 +4254,7 @@ namespace pdg
         ;
         if (argumentCount >= 1 && !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""frameNum"")");
-        long frameNum = (argumentCount<1) ? -1 : (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        long frameNum = (argumentCount<1) ? -1 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         pdg::RotatedRect r = self->getFrameRotatedBounds(frameNum);
         return JSC_RectToValue(ctx, r, exception);
     }
@@ -3093,7 +4266,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""frame"")");
-        int32 frame = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 frame = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->setFrame(frame);
         return thisObject;
     }
@@ -3128,13 +4301,13 @@ namespace pdg
         double fps = JSValueToNumber(ctx, arguments[1 -1], exception);
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""startingFrame"")");
-        long startingFrame = (argumentCount<2) ? Sprite::start_FromFirstFrame : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long startingFrame = (argumentCount<2) ? Sprite::start_FromFirstFrame : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""numFrames"")");
-        long numFrames = (argumentCount<3) ? Sprite::all_Frames : (int32)floor(JSValueToNumber(ctx, arguments[3 -1], exception));
+        long numFrames = (argumentCount<3) ? Sprite::all_Frames : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[3 -1], exception));
         if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""animateFlags"")");
-        long animateFlags = (argumentCount<4) ? Sprite::animate_Looping : (int32)floor(JSValueToNumber(ctx, arguments[4 -1], exception));
+        long animateFlags = (argumentCount<4) ? Sprite::animate_Looping : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[4 -1], exception));
         self->startFrameAnimation(fps, startingFrame, numFrames, animateFlags);
         return JSValueMakeUndefined(ctx);
     }
@@ -3193,10 +4366,10 @@ namespace pdg
             return JSC_ThrowArgTypeException(ctx, exception, 1, "an object of type ""Image"" (""image"")");
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""startingFrame"")");
-        long startingFrame = (argumentCount<2) ? Sprite::start_FromFirstFrame : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long startingFrame = (argumentCount<2) ? Sprite::start_FromFirstFrame : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""numFrames"")");
-        long numFrames = (argumentCount<3) ? Sprite::all_Frames : (int32)floor(JSValueToNumber(ctx, arguments[3 -1], exception));
+        long numFrames = (argumentCount<3) ? Sprite::all_Frames : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[3 -1], exception));
         self->addFramesImage(image, startingFrame, numFrames);
         return JSValueMakeUndefined(ctx);
     }
@@ -3250,7 +4423,7 @@ namespace pdg
         {
             if (!JSValueIsNumber(ctx, arguments[1 -1]))
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""animationId"")");
-            uint32 animationId = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+            uint32 animationId = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
             self->startAnimation(animationId);
         }
         return JSValueMakeUndefined(ctx);
@@ -3369,7 +4542,7 @@ namespace pdg
         {
             if (!JSValueIsNumber(ctx, arguments[1 -1]))
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""animationId"")");
-            uint32 animationId = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+            uint32 animationId = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
             self->blendToAnimation(animationId, blendTime);
         }
         return JSValueMakeUndefined(ctx);
@@ -3666,10 +4839,10 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""offsetX"")");
-        int32 offsetX = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 offsetX = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (!JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""offsetY"")");
-        int32 offsetY = (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        int32 offsetY = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         Image* image = 0;
         if (argumentCount >= 3)
         {
@@ -3685,10 +4858,10 @@ namespace pdg
         };
         if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""startingFrame"")");
-        long startingFrame = (argumentCount<4) ? Sprite::start_FromFirstFrame : (int32)floor(JSValueToNumber(ctx, arguments[4 -1], exception));
+        long startingFrame = (argumentCount<4) ? Sprite::start_FromFirstFrame : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[4 -1], exception));
         if (argumentCount >= 5 && !JSValueIsNumber(ctx, arguments[5 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 5, "a number (""numFrames"")");
-        long numFrames = (argumentCount<5) ? Sprite::all_Frames : (int32)floor(JSValueToNumber(ctx, arguments[5 -1], exception));
+        long numFrames = (argumentCount<5) ? Sprite::all_Frames : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[5 -1], exception));
         self->offsetFrameCenters(offsetX, offsetY, image, startingFrame, numFrames);
         return JSValueMakeUndefined(ctx);
     }
@@ -3711,7 +4884,7 @@ namespace pdg
         };
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""frameNum"")");
-        long frameNum = (argumentCount<2) ? 0 : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long frameNum = (argumentCount<2) ? 0 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         pdg::Offset offset = self->getFrameCenterOffset(image, frameNum);
         return JSC_OffsetToValue(ctx, offset, exception);
     }
@@ -3750,7 +4923,7 @@ namespace pdg
         double durationSeconds = JSValueToNumber(ctx, arguments[2 -1], exception);
         if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""easing"")");
-        long easing = (argumentCount<3) ? EasingFuncRef::linearTween : (int32)floor(JSValueToNumber(ctx, arguments[3 -1], exception));
+        long easing = (argumentCount<3) ? EasingFuncRef::linearTween : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[3 -1], exception));
         if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
         {
             self->fadeTo(targetOpacity, durationSeconds, gEasingFunctions[easing]);
@@ -3759,7 +4932,7 @@ namespace pdg
         {
             self->fadeTo(targetOpacity, durationSeconds);
         }
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
     JSValueRef Sprite_FadeIn(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -3772,7 +4945,7 @@ namespace pdg
         double durationSeconds = JSValueToNumber(ctx, arguments[1 -1], exception);
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""easing"")");
-        long easing = (argumentCount<2) ? EasingFuncRef::linearTween : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long easing = (argumentCount<2) ? EasingFuncRef::linearTween : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
         {
             self->fadeIn(durationSeconds, gEasingFunctions[easing]);
@@ -3781,7 +4954,7 @@ namespace pdg
         {
             self->fadeIn(durationSeconds);
         }
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
     JSValueRef Sprite_FadeOut(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -3794,7 +4967,7 @@ namespace pdg
         double durationSeconds = JSValueToNumber(ctx, arguments[1 -1], exception);
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""easing"")");
-        long easing = (argumentCount<2) ? EasingFuncRef::linearTween : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long easing = (argumentCount<2) ? EasingFuncRef::linearTween : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (easing >= 0 && easing < NUM_EASING_FUNCTIONS)
         {
             self->fadeOut(durationSeconds, gEasingFunctions[easing]);
@@ -3803,7 +4976,7 @@ namespace pdg
         {
             self->fadeOut(durationSeconds);
         }
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
     JSValueRef Sprite_IsBehind(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -4015,7 +5188,7 @@ namespace pdg
         ;
         if (argumentCount >= 1 && !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""collisionType"")");
-        long collisionType = (argumentCount<1) ? Sprite::collide_BoundingBox : (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        long collisionType = (argumentCount<1) ? Sprite::collide_BoundingBox : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->setMouseDetectMode(collisionType);
         return thisObject;
     }
@@ -4043,9 +5216,34 @@ namespace pdg
         ;
         if (argumentCount != 2)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2);
+        if(JSValueIsString(ctx, arguments[0]))
+        {
+            self->mAnimatedScriptObj = thisObject;
+            if (!JSValueIsString(ctx, arguments[1 -1]))
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "a string (""event"")");
+            JSStringRef event_Str = JSValueToStringCopy(ctx, arguments[1 -1], exception);
+            MemBlock event_Mem(JSStringGetMaximumUTF8CStringSize(event_Str));
+            JSStringGetUTF8CString(event_Str, event_Mem.ptr, event_Mem.bytes);
+            const char* event = (const char*)event_Mem.ptr;
+            JSStringRelease(event_Str);
+            JSObjectRef handler = JSValueToObject(ctx, arguments[2 -1], exception);
+            if (!handler || !JSObjectIsFunction(ctx, handler) )
+                return JSC_ThrowArgTypeException(ctx, exception, 2, "a function (""handler"")");
+            try { self->on(event,MakeAnimationEventHandler(handler)); return thisObject; }
+            catch(const std::exception& error)
+            {
+                {
+                    JSStringRef errorMessage = JSStringCreateWithUTF8CString(error.what());
+                    JSValueRef errorValue = JSValueMakeString(ctx, errorMessage);
+                    JSStringRelease(errorMessage);
+                    *exception = JSObjectMakeError(ctx, 1, &errorValue, nullptr);
+                    return JSValueMakeNull(ctx);
+                };
+            }
+        }
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""eventCode"")");
-        int32 eventCode = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 eventCode = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         JSObjectRef func = JSValueToObject(ctx, arguments[2 -1], exception);
         if (!func || !JSObjectIsFunction(ctx, func) )
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a function (""func"")");
@@ -4523,7 +5721,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""index"")");
-        int32 index = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 index = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         const char* name = self->getSpriterCollisionBoxName(index);
         if (name)
         {
@@ -4753,7 +5951,7 @@ namespace pdg
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1); if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""bone"")");
-        uint32 bone = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+        uint32 bone = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
         try { self->setAnimationPhysicsRoot(bone); }
         catch(const std::exception& error)
         {
@@ -4818,7 +6016,7 @@ namespace pdg
         if (argumentCount != 5)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 5); if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""mode"")");
-        int32 mode = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception)); if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
+        int32 mode = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception)); if (argumentCount < 2 || !JSValueIsNumber(ctx, arguments[2 -1]))
         return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""bone"")");
         double bone = JSValueToNumber(ctx, arguments[2 -1], exception); if (!JSValueIsBoolean(ctx, arguments[3 -1]))
         return JSC_ThrowArgTypeException(ctx, exception, 3, "a boolean (""descendants"")");
@@ -4826,7 +6024,7 @@ namespace pdg
         return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""seconds"")");
         double seconds = JSValueToNumber(ctx, arguments[4 -1], exception); if (!JSValueIsNumber(ctx, arguments[5 -1]))
         return JSC_ThrowArgTypeException(ctx, exception, 5, "a number (""direction"")");
-        int32 direction = (int32)floor(JSValueToNumber(ctx, arguments[5 -1], exception));
+        int32 direction = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[5 -1], exception));
         try { if(bone<0)self->setAnimationPhysicsMode(mode,seconds,direction);else self->setAnimationPhysicsMode(mode,AnimationBoneId(bone),descendants,seconds,direction); }
         catch(const std::exception& error)
         {
@@ -4870,7 +6068,7 @@ namespace pdg
         return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""damping"")");
         double damping = JSValueToNumber(ctx, arguments[4 -1], exception); if (!JSValueIsNumber(ctx, arguments[5 -1]))
         return JSC_ThrowArgTypeException(ctx, exception, 5, "a number (""direction"")");
-        int32 direction = (int32)floor(JSValueToNumber(ctx, arguments[5 -1], exception)); if (argumentCount < 6 || !JSValueIsNumber(ctx, arguments[6 -1]))
+        int32 direction = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[5 -1], exception)); if (argumentCount < 6 || !JSValueIsNumber(ctx, arguments[6 -1]))
         return JSC_ThrowArgTypeException(ctx, exception, 6, "a number (""bone"")");
         double bone = JSValueToNumber(ctx, arguments[6 -1], exception); if (!JSValueIsBoolean(ctx, arguments[7 -1]))
         return JSC_ThrowArgTypeException(ctx, exception, 7, "a boolean (""descendants"")");
@@ -4898,7 +6096,7 @@ namespace pdg
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1); if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""bone"")");
-        uint32 bone = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+        uint32 bone = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
         try
         {
             const auto settings=self->getAnimationPhysicsDriveSettings(bone);
@@ -4931,7 +6129,7 @@ namespace pdg
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""seconds"")");
         double seconds = (argumentCount<1) ? 0.5 : JSValueToNumber(ctx, arguments[1 -1], exception); if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
         return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""direction"")");
-        long direction = (argumentCount<2) ? rotationDirection_AsSpecified : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long direction = (argumentCount<2) ? rotationDirection_AsSpecified : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         try{self->disableAnimationPhysics(seconds,direction);}
         catch(const std::exception& error)
         {
@@ -5097,6 +6295,34 @@ namespace pdg
         {
             std::ostringstream excpt_;
             excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);return JSValueMakeNull(ctx);
+        }
+    }
+
+    JSValueRef Sprite_ProceduralControl(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        ;
+        if (argumentCount != 2)
+            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2); if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
+            return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""operation"")");
+        double operation = JSValueToNumber(ctx, arguments[1 -1], exception);
+        try
+        {
+            if(!std::isfinite(operation)||operation!=std::floor(operation)||operation<1||operation>16) { throw std::invalid_argument("Invalid procedural operation"); }
+            auto result=self->proceduralControl(int(operation),proceduralBindingValues(PROCEDURAL_ARGUMENTS,arguments[1]));
+#ifdef PDG_USING_JAVASCRIPT_CORE
+            auto a=JSObjectMakeArray(ctx,0,nullptr,exception);for(unsigned i=0;i<result.size();++i)JSObjectSetPropertyAtIndex(ctx,a,i,JSValueMakeNumber(ctx, result[i]),exception);
+#else
+            auto a=v8::Array::New(isolate);for(unsigned i=0;i<result.size();++i)(void)a->Set(isolate->GetCurrentContext(),i,JSValueMakeNumber(ctx, result[i])).ToChecked();
+#endif
+            return a;
+        }
+        catch(const std::exception& e)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << e.what() << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
             return JSValueMakeNull(ctx);return JSValueMakeNull(ctx);
         }
@@ -5377,6 +6603,49 @@ namespace pdg
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
         return JSC_MakeValueFromCString(ctx, self->getAnimationRigError().c_str());
+    }
+    JSValueRef Sprite_GetBone(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        ;
+        if (argumentCount != 1)
+            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+        try
+        {
+            Bone* bone;
+            if(JSValueIsString(ctx, arguments[0]))
+            {
+                if (!JSValueIsString(ctx, arguments[1 -1]))
+                    return JSC_ThrowArgTypeException(ctx, exception, 1, "a string (""name"")");
+                JSStringRef name_Str = JSValueToStringCopy(ctx, arguments[1 -1], exception);
+                MemBlock name_Mem(JSStringGetMaximumUTF8CStringSize(name_Str));
+                JSStringGetUTF8CString(name_Str, name_Mem.ptr, name_Mem.bytes);
+                const char* name = (const char*)name_Mem.ptr;
+                JSStringRelease(name_Str);bone=self->getBone(name);
+            }
+            else
+            {
+                if (!JSValueIsNumber(ctx, arguments[1 -1]))
+                    return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""id"")");
+                uint32 id = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));bone=self->getBone(id);
+            }
+            if (!bone) return JSValueMakeNull(ctx);
+            if (!bone->mBoneScriptObj)
+            {
+                return Bone_newFromCpp(ctx, bone);
+            }
+            else
+            {
+                return bone->mBoneScriptObj;
+            };
+        }
+        catch(const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+        }
     }
     JSValueRef Sprite_GetAnimationBoneNames(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -5755,6 +7024,7 @@ namespace pdg
             return part->mPartScriptObj;
         };
     }
+
     JSValueRef Sprite_FindPart(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
@@ -5934,4 +7204,72 @@ namespace pdg
             return JSValueMakeNull(ctx);
         }
     }
+    JSValueRef Sprite_ReadCollider(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        ;
+        try
+        {
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0); auto* result=&static_cast<Collider&>(self->collider); if (!result) return JSValueMakeNull(ctx);
+            if (!result->mColliderScriptObj)
+            {
+                return Collider_newFromCpp(ctx, result);
+            }
+            else
+            {
+                return result->mColliderScriptObj;
+            };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+        }
+    }
+    JSValueRef Sprite_SetupCollider(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        ;
+        try
+        {
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0); auto* result=&self->setupCollider(); if (!result) return JSValueMakeNull(ctx);
+            if (!result->mColliderScriptObj)
+            {
+                return Collider_newFromCpp(ctx, result);
+            }
+            else
+            {
+                return result->mColliderScriptObj;
+            };
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+        }
+    }
+    JSValueRef Sprite_RemoveCollider(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Sprite* self = static_cast<Sprite*>(JSObjectGetPrivate(thisObject));
+        ;
+        try
+        {
+            if (argumentCount != 0)
+                return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0); self->removeCollider(); return JSValueMakeUndefined(ctx);
+        }
+        catch (const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+        }
+    }
+
 }

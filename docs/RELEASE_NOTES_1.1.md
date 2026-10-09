@@ -325,8 +325,7 @@ not a promise that every build exposes the same tests.
 Linux Ubuntu ARM64 validation includes headless native C++, embedded Node and
 the addon. Windows scripts were checked, but Windows runtime acceptance and
 Linux GUI validation remain outstanding. Simulator results do not establish
-physical-device acceptance. See the [Node upgrade validation](note-ai/NODE_24_21_UPGRADE.md)
-and [physics validation](note-ai/PHYSICS_RIG_VALIDATION.md) for configurations and limits.
+physical-device acceptance.
 
 - Imported physical animation rigs require **Chipmunk**; Basic remains available
   for shared simple bodies/constraints. Graphics-dependent APIs are unavailable

@@ -1,17 +1,21 @@
 <map id="EventEmitter" name="EventEmitter">
-<area shape="rect" id="Node000001" title="Distributes events to event handlers." alt="" coords="244,5,341,31"/>
-<area shape="rect" id="Node000002" href="$classpdg_1_1_event_manager.html" title="Distributes events to event handlers." alt="" coords="5,79,111,105"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="238,38,99,81,97,76,239,33"/>
-<area shape="rect" id="Node000003" href="$classpdg_1_1_particle.html" title="Lightweight whole&#45;body artwork and optional physics." alt="" coords="135,79,200,105"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="261,38,190,81,187,76,256,40"/>
-<area shape="rect" id="Node000004" href="$classpdg_1_1_sound.html" title="handles both short sounds and music (GUI Only)" alt="" coords="224,79,282,105"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="281,43,261,80,258,77,276,46"/>
-<area shape="rect" id="Node000005" href="$classpdg_1_1_sprite.html" title="animated, moving image that is automatically moved, animated, and drawn" alt="" coords="306,79,362,105"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="308,42,330,79,324,78,306,47"/>
-<area shape="rect" id="Node000006" href="$classpdg_1_1_sprite_layer.html" title="creates and tracks collections of sprites" alt="" coords="386,79,474,105"/>
-<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="330,36,409,78,404,79,329,41"/>
-<area shape="rect" id="Node000008" href="$classpdg_1_1_timer_manager.html" title="manages timers that can fire at a particular time, or repeatedly at an interval" alt="" coords="498,79,602,105"/>
-<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="351,33,509,78,504,79,351,38"/>
-<area shape="rect" id="Node000007" href="$classpdg_1_1_tile_layer.html" title="efficiently handles large tile datasets, useful for backgrounds, terrains, etc..." alt="" coords="393,153,467,178"/>
-<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="432,118,432,154,428,151,428,122"/>
+<area shape="rect" id="Node000001" title="Distributes events to event handlers." alt="" coords="337,5,434,31"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_camera.html" title="Animated view owned by a Port or shared by layers." alt="" coords="5,79,73,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="322,34,86,82,74,84,72,80,85,76,322,29"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_event_manager.html" title="Distributes events to event handlers." alt="" coords="97,79,202,105"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="329,37,191,81,189,76,333,34"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_particle.html" title="Lightweight whole&#45;body artwork and optional physics." alt="" coords="226,79,292,105"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="354,38,282,81,279,76,349,40"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_scene.html" title="Own layers, an isolated physics world, a camera, timers and simulation time." alt="" coords="315,79,374,105"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="373,43,353,81,350,77,369,46"/>
+<area shape="rect" id="Node000006" href="$classpdg_1_1_sound.html" title="handles both short sounds and music (GUI Only)" alt="" coords="398,79,456,105"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="401,42,423,79,417,78,399,47"/>
+<area shape="rect" id="Node000007" href="$classpdg_1_1_sprite.html" title="animated, moving image that is automatically moved, animated, and drawn" alt="" coords="481,79,536,105"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="420,36,490,78,485,78,419,41"/>
+<area shape="rect" id="Node000008" href="$classpdg_1_1_sprite_layer.html" title="creates and tracks collections of sprites" alt="" coords="561,79,648,105"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="438,34,570,78,564,79,437,39"/>
+<area shape="rect" id="Node000010" href="$classpdg_1_1_timer_manager.html" title="manages timers that can fire at a particular time, or repeatedly at an interval" alt="" coords="672,79,776,105"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="450,30,674,79,669,80,449,36"/>
+<area shape="rect" id="Node000009" href="$classpdg_1_1_tile_layer.html" title="efficiently handles large tile datasets, useful for backgrounds, terrains, etc..." alt="" coords="567,153,642,178"/>
+<area shape="poly" id="edge8_Node000008_Node000009" title=" " alt="" coords="606,118,606,154,602,150,602,122"/>
 </map>

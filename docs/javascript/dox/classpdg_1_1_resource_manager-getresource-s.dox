@@ -1,10 +1,10 @@
 namespace pdg { /**
 
-\fn pdg::ResourceManager::getResource
+\fn Uint8Array or false pdg::ResourceManager::getResource(string resourceName, int maxSize = -1)
 
-\brief get an untyped resource by name
+\brief Load a resource as a Uint8Array, or return false if loading fails.
 
-Get a resource by name. The resource is returned as a block of data in a MemBlock object. If the resource doesn't exits, false is returned, so you can check for the resource loading with:
+Get a resource by name. The resource is returned as a Uint8Array. If loading fails, false is returned, so you can check for the resource loading with:
 
 \code
 	var res = pdg.res.getResource('myRes');
@@ -16,8 +16,9 @@ Get a resource by name. The resource is returned as a block of data in a MemBloc
 \endcode
 
 \param resourceName the name of the resource
+\param maxSize The requested buffer size in bytes. Omit it or pass a negative value to use the resource's full size.
 
-\return a MemBlock with the resource data, or **false** if not found
+\return a Uint8Array with the resource data, or **false** if loading fails
 
 \note the entire resource is loaded into memory, so you might want to check the size before loading it using getResourceSize() if you are concerned about how large it could be.
 

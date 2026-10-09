@@ -224,7 +224,7 @@ namespace pdg
         }
         if (opacity > 255) opacity = 255;
         self->setOpacity(opacity);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
     JSValueRef Image_SetEdgeClamping(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -236,7 +236,7 @@ namespace pdg
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a boolean (""inUseEdgeClamp"")");
         bool inUseEdgeClamp = JSValueToBoolean(ctx, arguments[1 -1]);
         self->setEdgeClamping(inUseEdgeClamp);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
     JSValueRef Image_RetainData(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -276,10 +276,10 @@ namespace pdg
         {
             if (!JSValueIsNumber(ctx, arguments[1 -1]))
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""x"")");
-            int32 x = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+            int32 x = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
             if (!JSValueIsNumber(ctx, arguments[2 -1]))
                 return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""y"")");
-            int32 y = (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+            int32 y = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
             a = self->getAlphaValue(x, y);
         }
         else
@@ -306,10 +306,10 @@ namespace pdg
         {
             if (!JSValueIsNumber(ctx, arguments[1 -1]))
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""x"")");
-            int32 x = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+            int32 x = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
             if (!JSValueIsNumber(ctx, arguments[2 -1]))
                 return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""y"")");
-            int32 y = (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+            int32 y = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
             c = self->getPixel(x, y);
         }
         else
@@ -683,7 +683,7 @@ namespace pdg
         }
         if (opacity > 255) opacity = 255;
         self->setOpacity(opacity);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
     JSValueRef ImageStrip_SetEdgeClamping(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -695,7 +695,7 @@ namespace pdg
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a boolean (""inUseEdgeClamp"")");
         bool inUseEdgeClamp = JSValueToBoolean(ctx, arguments[1 -1]);
         self->setEdgeClamping(inUseEdgeClamp);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
     JSValueRef ImageStrip_RetainData(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -735,10 +735,10 @@ namespace pdg
         {
             if (!JSValueIsNumber(ctx, arguments[1 -1]))
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""x"")");
-            int32 x = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+            int32 x = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
             if (!JSValueIsNumber(ctx, arguments[2 -1]))
                 return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""y"")");
-            int32 y = (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+            int32 y = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
             a = self->getAlphaValue(x, y);
         }
         else
@@ -765,10 +765,10 @@ namespace pdg
         {
             if (!JSValueIsNumber(ctx, arguments[1 -1]))
                 return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""x"")");
-            int32 x = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+            int32 x = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
             if (!JSValueIsNumber(ctx, arguments[2 -1]))
                 return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""y"")");
-            int32 y = (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+            int32 y = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
             c = self->getPixel(x, y);
         }
         else
@@ -917,7 +917,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""theNumFrames"")");
-        int32 theNumFrames = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 theNumFrames = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->setNumFrames(theNumFrames);
         return thisObject;
     }
@@ -938,7 +938,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""theFrameWidth"")");
-        int32 theFrameWidth = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 theFrameWidth = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->setFrameWidth(theFrameWidth);
         return thisObject;
     }
@@ -951,7 +951,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""frameNum"")");
-        int32 frameNum = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 frameNum = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         Image* image = self->getFrame(frameNum);
         if (!image) return JSValueMakeNull(ctx);
         if (!image->mImageScriptObj)

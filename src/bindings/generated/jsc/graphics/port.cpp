@@ -73,6 +73,13 @@ namespace pdg
         };
         static JSStaticFunction Port_staticFunctions[] =
         {
+            { "getCamera", Port_GetCamera, kJSPropertyAttributeDontDelete },
+            { "get""CameraAnchor", Port_GetCameraAnchor, kJSPropertyAttributeDontDelete },
+            { "set""CameraAnchor", Port_SetCameraAnchor, kJSPropertyAttributeDontDelete },
+            { "get""CameraDrawingEnabled", Port_GetCameraDrawingEnabled, kJSPropertyAttributeDontDelete },
+            { "set""CameraDrawingEnabled", Port_SetCameraDrawingEnabled, kJSPropertyAttributeDontDelete },
+            { "worldToPort", Port_WorldToPort, kJSPropertyAttributeDontDelete },
+            { "portToWorld", Port_PortToWorld, kJSPropertyAttributeDontDelete },
             { "get""ClipRect", Port_GetClipRect, kJSPropertyAttributeDontDelete },
             { "set""ClipRect", Port_SetClipRect, kJSPropertyAttributeDontDelete },
             { "resetClipRect", Port_ResetClipRect, kJSPropertyAttributeDontDelete },
@@ -119,6 +126,110 @@ namespace pdg
         return jsClass;
 
     }
+    JSValueRef Port_GetCameraAnchor(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Port* self = static_cast<Port*>(JSObjectGetPrivate(thisObject));
+
+        if (argumentCount != 0)
+            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+        pdg::Point theCameraAnchor = self->getCameraAnchor();
+        return JSC_PointToValue(ctx, theCameraAnchor, exception);
+    }
+    JSValueRef Port_SetCameraAnchor(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Port* self = static_cast<Port*>(JSObjectGetPrivate(thisObject));
+        ;
+        if (argumentCount != 1)
+            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1); pdg::Point value;
+        auto value_isPoint = JSC_ValueIsPoint(ctx, arguments[1 -1], value, exception);
+        if (!value_isPoint.has_value()) { return JSValueMakeNull(ctx); }
+        if (!*value_isPoint)
+        {
+            return JSC_ThrowArgTypeException(ctx, exception, 1, "Point", arguments[1 -1]);
+        };
+        self->setCameraAnchor(value); return thisObject;
+    }
+    JSValueRef Port_GetCameraDrawingEnabled(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Port* self = static_cast<Port*>(JSObjectGetPrivate(thisObject));
+
+        if (argumentCount != 0)
+            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
+        bool theCameraDrawingEnabled = self->getCameraDrawingEnabled();
+        return JSValueMakeBoolean(ctx, theCameraDrawingEnabled);
+    }
+    JSValueRef Port_SetCameraDrawingEnabled(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Port* self = static_cast<Port*>(JSObjectGetPrivate(thisObject));
+
+        if (argumentCount != 1)
+            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
+        if (!JSValueIsBoolean(ctx, arguments[1 -1]))
+            return JSC_ThrowArgTypeException(ctx, exception, 1, "a boolean (""theCameraDrawingEnabled"")");
+        bool theCameraDrawingEnabled = JSValueToBoolean(ctx, arguments[1 -1]);
+        self->setCameraDrawingEnabled(theCameraDrawingEnabled);
+        return thisObject;
+    }
+    JSValueRef Port_GetCamera(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Port* self = static_cast<Port*>(JSObjectGetPrivate(thisObject));
+        ;
+        auto* camera=self->getCamera(); if (!camera) return JSValueMakeNull(ctx);
+        if (!camera->mCameraScriptObj)
+        {
+            return Camera_newFromCpp(ctx, camera);
+        }
+        else
+        {
+            return camera->mCameraScriptObj;
+        };
+    }
+    JSValueRef Port_WorldToPort(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Port* self = static_cast<Port*>(JSObjectGetPrivate(thisObject));
+        ;
+        try
+        {
+            pdg::Point point;
+            auto point_isPoint = JSC_ValueIsPoint(ctx, arguments[1 -1], point, exception);
+            if (!point_isPoint.has_value()) { return JSValueMakeNull(ctx); }
+            if (!*point_isPoint)
+            {
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "Point", arguments[1 -1]);
+            };
+            auto result=self->worldToPort(point); return JSC_PointToValue(ctx, result, exception);
+        }
+        catch(const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+        }
+    }
+    JSValueRef Port_PortToWorld(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+    {
+        Port* self = static_cast<Port*>(JSObjectGetPrivate(thisObject));
+        ;
+        try
+        {
+            pdg::Point point;
+            auto point_isPoint = JSC_ValueIsPoint(ctx, arguments[1 -1], point, exception);
+            if (!point_isPoint.has_value()) { return JSValueMakeNull(ctx); }
+            if (!*point_isPoint)
+            {
+                return JSC_ThrowArgTypeException(ctx, exception, 1, "Point", arguments[1 -1]);
+            };
+            auto result=self->portToWorld(point); return JSC_PointToValue(ctx, result, exception);
+        }
+        catch(const std::exception& error)
+        {
+            std::ostringstream excpt_;
+            excpt_ << "throw "<< "Error" << "('" << "Error: " << error.what() << "')";
+            JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+            return JSValueMakeNull(ctx);
+        }
+    }
     JSValueRef Port_GetDrawingArea(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Port* self = static_cast<Port*>(JSObjectGetPrivate(thisObject));
@@ -140,18 +251,16 @@ namespace pdg
     JSValueRef Port_SetClipRect(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Port* self = static_cast<Port*>(JSObjectGetPrivate(thisObject));
-
+        ;
         if (argumentCount != 1)
-            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-        pdg::Rect theClipRect;
-        auto theClipRect_isRect = JSC_ValueIsRect(ctx, arguments[1 -1], theClipRect, exception);
-        if (!theClipRect_isRect.has_value()) { return JSValueMakeNull(ctx); }
-        if (!*theClipRect_isRect)
+            return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1); pdg::Rect value;
+        auto value_isRect = JSC_ValueIsRect(ctx, arguments[1 -1], value, exception);
+        if (!value_isRect.has_value()) { return JSValueMakeNull(ctx); }
+        if (!*value_isRect)
         {
             return JSC_ThrowArgTypeException(ctx, exception, 1, "Rect", arguments[1 -1]);
         };
-        self->setClipRect(theClipRect);
-        return thisObject;
+        self->setClipRect(value); return thisObject;
     }
     JSValueRef Port_Clear(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -172,7 +281,7 @@ namespace pdg
             }
         };
         self->clear(color);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
     JSValueRef Port_SetDrawingOrigin(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -195,7 +304,7 @@ namespace pdg
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
             return JSValueMakeNull(ctx);
         }
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
     JSValueRef Port_ResetClipRect(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -204,7 +313,7 @@ namespace pdg
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
         self->resetClipRect();
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
     JSValueRef Port_DrawLine(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -236,7 +345,7 @@ namespace pdg
             return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         };
         self->drawLine(from, to, *attrs);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
     JSValueRef Port_DrawSpline(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -262,7 +371,7 @@ namespace pdg
             return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         };
         self->drawSpline(*spline, *attrs);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
     JSValueRef Port_GetTextWidth(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -279,13 +388,13 @@ namespace pdg
         JSStringRelease(text_Str);
         if (!JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""size"")");
-        int32 size = (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        int32 size = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""style"")");
-        unsigned long style = (argumentCount<3) ? textStyle_Plain : (uint32)floor(fabs(JSValueToNumber(ctx, arguments[3 -1], exception)));
+        unsigned long style = (argumentCount<3) ? textStyle_Plain : pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[3 -1], exception));
         if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""len"")");
-        long len = (argumentCount<4) ? -1 : (int32)floor(JSValueToNumber(ctx, arguments[4 -1], exception));
+        long len = (argumentCount<4) ? -1 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[4 -1], exception));
         int width = self->getTextWidth(text, size, style, len);
         return JSValueMakeNumber(ctx, width);
     }
@@ -295,7 +404,7 @@ namespace pdg
         ;
         if (argumentCount >= 1 && !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""style"")");
-        unsigned long style = (argumentCount<1) ? textStyle_Plain : (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+        unsigned long style = (argumentCount<1) ? textStyle_Plain : pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
         Font* font = self->getCurrentFont(style);
         if (!font) return JSValueMakeNull(ctx);
         if (!font->mFontScriptObj)
@@ -325,7 +434,7 @@ namespace pdg
             }
         };
         self->setFont(font);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
     JSValueRef Port_SetFontForStyle(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -335,7 +444,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1, true);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""style"")");
-        uint32 style = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+        uint32 style = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
         Font* font = 0;
         if (argumentCount >= 2)
         {
@@ -350,7 +459,7 @@ namespace pdg
             }
         };
         self->setFontForStyle(font, style);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
     JSValueRef Port_SetFontScalingFactor(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -362,7 +471,7 @@ namespace pdg
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""scaleBy"")");
         double scaleBy = JSValueToNumber(ctx, arguments[1 -1], exception);
         self->setFontScalingFactor(scaleBy);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
     JSValueRef Port_StartTrackingMouse(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -388,9 +497,9 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""trackingRef"")");
-        int32 trackingRef = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 trackingRef = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->stopTrackingMouse(trackingRef);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
     JSValueRef Port_SetCursor(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -414,7 +523,7 @@ namespace pdg
             return JSC_ThrowArgTypeException(ctx, exception, 2, "Point", arguments[2 -1]);
         };
         self->setCursor(cursorImage, hotSpot);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
     JSValueRef Port_GetCursor(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
@@ -437,12 +546,11 @@ namespace pdg
     JSValueRef Port_ResetCursor(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Port* self = static_cast<Port*>(JSObjectGetPrivate(thisObject));
-
         ;
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
         self->resetCursor();
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
 
     JSValueRef Port_DrawRect(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -468,7 +576,7 @@ namespace pdg
             return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         };
         self->drawRect(rect, *attrs);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
 
     JSValueRef Port_DrawQuad(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -494,7 +602,7 @@ namespace pdg
             return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         };
         self->drawQuad(quad, *attrs);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
 
     JSValueRef Port_DrawPolygon(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -521,7 +629,7 @@ namespace pdg
             return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         };
         self->drawPolygon(*polygon, *attrs);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
 
     JSValueRef Port_DrawEllipse(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -553,7 +661,7 @@ namespace pdg
             return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         };
         self->drawEllipse(center, xRadius, yRadius, *attrs);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
 
     JSValueRef Port_DrawArc(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -591,7 +699,7 @@ namespace pdg
             return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         };
         self->drawArc(center, xRadius, yRadius, startAngle, endAngle, *attrs);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
 
     JSValueRef Port_DrawBezier(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -638,7 +746,7 @@ namespace pdg
             return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         };
         self->drawBezier(from, control1, control2, to, *attrs);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
 
     JSValueRef Port_DrawCircle(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -667,7 +775,7 @@ namespace pdg
             return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         };
         self->drawCircle(center, radius, *attrs);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
 
     JSValueRef Port_DrawVector(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -693,7 +801,7 @@ namespace pdg
             return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         };
         self->drawVector(vector, *attrs);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
 
     JSValueRef Port_DrawRoundedRect(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -722,7 +830,7 @@ namespace pdg
             return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         };
         self->drawRoundedRect(rect, radius, *attrs);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
 
     JSValueRef Port_DrawImage(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -767,7 +875,7 @@ namespace pdg
             };
             self->drawImage(img, quad, *attrs);
         }
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
 
     JSValueRef Port_DrawDrawing(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -812,7 +920,7 @@ namespace pdg
             };
             self->drawDrawing(*drawing, rect, *attrs);
         }
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
 
     JSValueRef Port_DrawText(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -856,7 +964,7 @@ namespace pdg
             };
             self->drawText(text, rect, *attrs);
         }
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
 
     JSValueRef Port_DrawSphere(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -885,7 +993,7 @@ namespace pdg
             return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         };
         self->drawSphere(center, radius, *attrs);
-        return JSValueMakeUndefined(ctx);
+        return thisObject;
     }
 
     void CleanupPortScriptObject(JSObjectRef obj) { }

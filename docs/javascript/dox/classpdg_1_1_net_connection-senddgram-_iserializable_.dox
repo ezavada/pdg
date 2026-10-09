@@ -2,7 +2,7 @@ namespace pdg { /**
 
 \fn pdg::NetConnection::sendDgram(ISerializable message)
 
-\brief send a serializable object to the remote endpoint via UDP
+\brief send a serializable object to the remote endpoint via an available unreliable transport
 
 The object will be sent using UDP if it is available. Delivery is not guaranteed and neither is in-order deliver of messages. This is ideal for small bits of information that are frequently resent, such as position or status updates. 
 
@@ -16,9 +16,11 @@ NetConnection handles packet framing for you, so if the packet arrives, the NetC
 
 \sa ISerializable
 \sa send(ISerializable)
-\sa sendDgram(object)
+\sa sendDgram(NetworkData)
 
 \warning Any object with a serialized size greater than MTU (generally 1500 bytes, but can be smaller) will always fail to send
 
+
+WebTransport uses session datagrams after handshake completion. Payloads larger than its confirmed datagram limit, disabled/unavailable datagrams, or rejected datagram writes use the reliable stream. Native UDP falls back to TCP above 1492 serialized bytes. WebSocket always uses reliable delivery. A successful datagram write still has no delivery guarantee.
 
 **/ }

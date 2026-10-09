@@ -1,7 +1,18 @@
 namespace pdg { /**
 
-\fn pdg::Polygon::moveTo(x, y)
+\fn Polygon pdg::Polygon::moveTo(number x, number y)
 
 \brief moves the polygon to the specified coordinates
+
+\param x The new left edge of the polygon's bounds.
+\param y The new top edge of the polygon's bounds.
+\return This Polygon, for chaining.
+
+**/ /**
+
+\fn Polygon pdg::Polygon::moveTo(Point point)
+\brief Moves the polygon so the top-left corner of its bounds is at point.
+\param point The new top-left corner of the polygon's bounds.
+\return This Polygon, for chaining.
 
 **/ }

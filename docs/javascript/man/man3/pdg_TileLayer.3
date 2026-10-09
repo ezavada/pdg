@@ -1,4 +1,4 @@
-.TH "TileLayer" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "TileLayer" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -23,7 +23,7 @@ Inherits \fBSpriteLayer\fP\&.
 .br
 .RI "define image and dimensions for the tiles used by this layer "
 .ti -1c
-.RI "\fBMemBlock\fP \fBgetMapData\fP (int mapWidth=0, int mapHeight=0, int srcX, int srcY)"
+.RI "\fBMemBlock\fP \fBgetMapData\fP (int mapWidth=worldWidth, int mapHeight=worldHeight, int srcX=0, int srcY=0)"
 .br
 .RI "Extract a rectangular region of tile data from the layer\&. "
 .ti -1c
@@ -35,7 +35,7 @@ Inherits \fBSpriteLayer\fP\&.
 .br
 .RI "get size of a tile in the image "
 .ti -1c
-.RI "object \fBgetTileTypeAndFacingAt\fP (int x, int y)"
+.RI "\fBTileInfo\fP \fBgetTileTypeAndFacingAt\fP (int x, int y)"
 .br
 .RI "get the tile type and the facing/flipped state of the tile "
 .ti -1c
@@ -43,21 +43,17 @@ Inherits \fBSpriteLayer\fP\&.
 .br
 .RI "get the tile type at a particular spot on the map "
 .ti -1c
-.RI "\fBRect\fP \fBgetWorldBounds\fP ()"
-.br
-.RI "get the size in layer coordinates of the world map "
-.ti -1c
 .RI "\fBRect\fP \fBgetWorldSize\fP ()"
 .br
 .RI "get the number of tiles in the map "
 .ti -1c
-.RI "\fBloadMapData\fP (BinaryString data, int mapWidth=0, int mapHeight=0, int dstX, int dstY)"
-.br
-.RI "Load tile data from a binary string into the specified region of the layer\&. "
-.ti -1c
-.RI "\fBloadMapData\fP (\fBMemBlock\fP data, int mapWidth=0, int mapHeight=0, int dstX, int dstY)"
+.RI "\fBloadMapData\fP (\fBMemBlock\fP data, int mapWidth=0, int mapHeight=0, int dstX=0, int dstY=0)"
 .br
 .RI "Load tile data from a \fBMemBlock\fP into the specified region of the layer\&. "
+.ti -1c
+.RI "\fBloadMapData\fP (Uint8Array data, int mapWidth=0, int mapHeight=0, int dstX=0, int dstY=0)"
+.br
+.RI "Load tile data from a Uint8Array into the specified region of the layer\&. "
 .ti -1c
 .RI "\fBsetTileTypeAt\fP (int x, int y, uint t, uint facing=\fBfacing_Ignore\fP)"
 .br
@@ -127,17 +123,23 @@ Public Member Functions inherited from \fBSpriteLayer\fP
 .br
 .RI "Enables or disables Spriter animation events for this layer\&. "
 .ti -1c
-.RI "\fBfadeIn\fP (number durationSeconds, int easing=\fBlinearTween\fP)"
+.RI "\fBSpriteLayer\fP \fBfadeIn\fP (number durationSeconds, int easing=\fBlinearTween\fP)"
 .br
 .RI "fade entire layer to full opacity over time "
 .ti -1c
-.RI "\fBfadeOut\fP (number durationSeconds, int easing=\fBlinearTween\fP)"
+.RI "\fBSpriteLayer\fP \fBfadeOut\fP (number durationSeconds, int easing=\fBlinearTween\fP)"
 .br
 .RI "fade out the entire layer to full transparency over time "
 .ti -1c
 .RI "\fBSprite\fP \fBfindSprite\fP (int id)"
 .br
 .RI "find a sprite in this layer by user assigned id "
+.ti -1c
+.RI "\fBCamera\fP \fBgetCamera\fP ()"
+.br
+.ti -1c
+.RI "\fBCamera\fP \fBgetEffectiveCamera\fP ()"
+.br
 .ti -1c
 .RI "uint \fBgetMaxParticles\fP ()"
 .br
@@ -155,13 +157,16 @@ Public Member Functions inherited from \fBSpriteLayer\fP
 .br
 .RI "get a sprite by z-order "
 .ti -1c
-.RI "\fBPoint\fP \fBgetOrigin\fP ()"
-.br
-.RI "get the point in the layer that is drawn at 0,0 in the port "
-.ti -1c
 .RI "uint \fBgetParticleCount\fP ()"
 .br
 .RI "Count live layer particles\&. "
+.ti -1c
+.RI "number \fBgetParticleTrailCount\fP ()"
+.br
+.RI "Count live unexpired histories and retained fading tails\&. "
+.ti -1c
+.RI "uint \fBgetQueryBits\fP ()"
+.br
 .ti -1c
 .RI "uint \fBgetSerializedSize\fP (\fBSerializer\fP serializer)"
 .br
@@ -179,9 +184,8 @@ Public Member Functions inherited from \fBSpriteLayer\fP
 .br
 .RI "get the z-order of a sprite in this layer "
 .ti -1c
-.RI "number \fBgetZoom\fP ()"
+.RI "\fBRect\fP \fBgetWorldBounds\fP ()"
 .br
-.RI "get the current zoom factor "
 .ti -1c
 .RI "int \fBgetZOrder\fP ()"
 .br
@@ -205,23 +209,23 @@ Public Member Functions inherited from \fBSpriteLayer\fP
 .ti -1c
 .RI "\fBOffset\fP \fBlayerToPortOffset\fP (\fBOffset\fP o)"
 .br
-.RI "adjust the offset to account for layer transformations "
+.RI "adjust the offset to account for the effective camera "
 .ti -1c
 .RI "\fBPoint\fP \fBlayerToPortPoint\fP (\fBPoint\fP p)"
 .br
-.RI "translate the point to account for layer transformations "
+.RI "translate the point to account for the effective camera "
 .ti -1c
 .RI "\fBQuad\fP \fBlayerToPortQuad\fP (\fBQuad\fP q)"
 .br
-.RI "translate the \fBQuad\fP to account for layer transformations "
+.RI "translate the \fBQuad\fP to account for the effective camera "
 .ti -1c
 .RI "\fBRotatedRect\fP \fBlayerToPortRect\fP (\fBRect\fP r)"
 .br
-.RI "translate the rectangle (or \fBRotatedRect\fP) to account for layer transformations "
+.RI "translate the rectangle (or \fBRotatedRect\fP) to account for the effective camera "
 .ti -1c
 .RI "\fBVector\fP \fBlayerToPortVector\fP (\fBVector\fP v)"
 .br
-.RI "translate the point to account for layer transformations "
+.RI "translate the point to account for the effective camera "
 .ti -1c
 .RI "\fBmoveBehind\fP (\fBSpriteLayer\fP layer)"
 .br
@@ -238,10 +242,6 @@ Public Member Functions inherited from \fBSpriteLayer\fP
 .RI "\fBmoveToFront\fP ()"
 .br
 .RI "move this layer in front of all other layers "
-.ti -1c
-.RI "\fBmoveWith\fP (\fBSpriteLayer\fP layer, number moveRatio=1\&.0, number zoomRatio=1\&.0)"
-.br
-.RI "link this layer to follow another layer's movements "
 .ti -1c
 .RI "\fBIEventHandler\fP \fBon\fP (int eventCode, function func)"
 .br
@@ -347,29 +347,25 @@ Public Member Functions inherited from \fBSpriteLayer\fP
 .br
 .RI "set event handler for layer rendering start events "
 .ti -1c
-.RI "\fBIEventHandler\fP \fBonZoomComplete\fP (function func)"
-.br
-.RI "set event handler for this layer finishing zoom animation "
-.ti -1c
 .RI "\fBOffset\fP \fBportToLayerOffset\fP (\fBOffset\fP o)"
 .br
-.RI "adjust the offset to account for layer transformations "
+.RI "adjust the offset to account for the effective camera "
 .ti -1c
 .RI "\fBPoint\fP \fBportToLayerPoint\fP (\fBPoint\fP p)"
 .br
-.RI "adjust the point to account for layer transformations "
+.RI "adjust the point to account for the effective camera "
 .ti -1c
 .RI "\fBQuad\fP \fBportToLayerQuad\fP (\fBQuad\fP q)"
 .br
-.RI "adjust the quad to account for layer transformations "
+.RI "adjust the quad to account for the effective camera "
 .ti -1c
 .RI "\fBRotatedRect\fP \fBportToLayerRect\fP (\fBRect\fP r)"
 .br
-.RI "adjust the rectangle to account for layer transformations "
+.RI "adjust the rectangle to account for the effective camera "
 .ti -1c
 .RI "\fBVector\fP \fBportToLayerVector\fP (\fBVector\fP v)"
 .br
-.RI "adjust the vector to account for layer transformations "
+.RI "adjust the vector to account for the effective camera "
 .ti -1c
 .RI "\fBremoveAllParticleEmitters\fP ()"
 .br
@@ -403,33 +399,27 @@ Public Member Functions inherited from \fBSpriteLayer\fP
 .br
 .RI "Save selected Layer state and its ordered sprites\&. "
 .ti -1c
-.RI "\fBsetAutoCenter\fP (boolean autoCenter=true)"
+.RI "\fBsetCamera\fP (\fBCamera\fP camera=null)"
 .br
-.RI "keep the center of the layer at the center of the port "
+.ti -1c
+.RI "\fBsetCameraParallax\fP (number movementRatio=1, number zoomRatio=1)"
+.br
+.RI "Adjust camera scrolling and zoom for this layer\&. "
 .ti -1c
 .RI "\fBsetDamping\fP (number damping)"
 .br
 .RI "set the overall resistance to motion over time (\fIChipmunk Physics Only\fP) "
 .ti -1c
-.RI "\fBsetFixedMoveAxis\fP (boolean fixedAxis=true)"
-.br
-.RI "make movement of the layer relative to the port axis "
-.ti -1c
-.RI "\fBsetGravity\fP (number gravity, boolean keepItDownward=true)"
+.RI "\fBsetGravity\fP (number gravity)"
 .br
 .RI "set the force of gravity pulling everything downward (\fIChipmunk Physics Only\fP) "
-.ti -1c
-.RI "\fBsetKeepGravityDownward\fP (boolean keepItDownward=true)"
-.br
-.RI "keep gravity relative to the port when the layer is rotated (\fIChipmunk Physics Only\fP) "
 .ti -1c
 .RI "\fBSpriteLayer\fP \fBsetMaxParticles\fP (uint value)"
 .br
 .RI "Set the shared particle budget\&. "
 .ti -1c
-.RI "\fBsetOrigin\fP (\fBPoint\fP origin)"
+.RI "\fBsetQueryBits\fP (uint bits)"
 .br
-.RI "set the point in the layer that is drawn at 0,0 in the port "
 .ti -1c
 .RI "\fBSpriteLayer\fP \fBsetSerializationFlags\fP (uint flags)"
 .br
@@ -447,9 +437,9 @@ Public Member Functions inherited from \fBSpriteLayer\fP
 .br
 .RI "enable or disable use of Chipmunk Physics for a particular layer "
 .ti -1c
-.RI "\fBsetZoom\fP (number zoomLevel)"
+.RI "\fBsetWorldBounds\fP (\fBRect\fP bounds)"
 .br
-.RI "immediately set the zoom level for this layer "
+.RI "Set world bounds for sprite boundary checks\&. "
 .ti -1c
 .RI "\fBshow\fP ()"
 .br
@@ -462,314 +452,13 @@ Public Member Functions inherited from \fBSpriteLayer\fP
 .RI "\fBstopAnimations\fP ()"
 .br
 .RI "stop doing animation calculations for this layer "
-.ti -1c
-.RI "\fBzoom\fP (number deltaZoomLevel, number durationSeconds, int easing=\fBeaseInOutQuad\fP, \fBRect\fP keepInRect=\fBRect\fP(0, 0), \fBPoint\fP centerOn=\fBPoint\fP(0, 0))"
-.br
-.RI "animated zoom by a particular factor over time "
-.ti -1c
-.RI "\fBzoomTo\fP (number zoomLevel, number durationSeconds, int easing=\fBeaseInOutQuad\fP, \fBRect\fP keepInRect=\fBRect\fP(0, 0), \fBPoint\fP centerOn=\fBPoint\fP(0, 0))"
-.br
-.RI "animated zoom to a particular zoom level over time "
-.in -1c
-
-Public Member Functions inherited from \fBAnimated\fP
-.in +1c
-.ti -1c
-.RI "\fBAnimated\fP \fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
-.br
-.RI "Register a callback after the object's normal animation step\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBandThen\fP ()"
-.br
-.RI "Start the next timed operation after the most recently scheduled operation finishes\&. "
-.ti -1c
-.RI "boolean \fBanimate\fP (number deltaSeconds)"
-.br
-.RI "Advance programmed animation by elapsed seconds\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBcancelSchedule\fP ()"
-.br
-.RI "Discard scheduled animations and pending sequencing\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
-.br
-.RI "Animate the rotation-center offset by a delta\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
-.br
-.RI "Animate the rotation-center offset by a delta\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
-.br
-.RI "Animate the rotation-center offset to a target\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
-.br
-.RI "Animate the rotation-center offset to a target\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeGrowingBy\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.RI "Animate the growing rate by an additive delta\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeGrowingTo\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.RI "Animate the growing rate to a target\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeMovementBy\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.RI "Animate the movement rate by an additive delta\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeMovementBy\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.RI "Animate the movement rate by an additive delta\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeMovementTo\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.RI "Animate the movement rate to a target\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeMovementTo\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.RI "Animate the movement rate to a target\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeScaleBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
-.br
-.RI "Animate independent scale by additive deltas\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeScaleTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
-.br
-.RI "Animate independent scale to a target\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeSpinBy\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.RI "Animate the spin rate by an additive delta\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeSpinTo\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.RI "Animate the spin rate to a target\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeStretchingBy\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.RI "Animate the stretching rate by an additive delta\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeStretchingTo\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.RI "Animate the stretching rate to a target\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBclearAnimationHelpers\fP ()"
-.br
-.RI "Retire all helpers on this object\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBflipX\fP ()"
-.br
-.RI "Toggle the x reflection flag immediately\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBflipY\fP ()"
-.br
-.RI "Toggle the y reflection flag immediately\&. "
-.ti -1c
-.RI "\fBRect\fP \fBgetBoundingBox\fP ()"
-.br
-.RI "Read axis-aligned logical bounds\&. "
-.ti -1c
-.RI "\fBOffset\fP \fBgetCenterOffset\fP ()"
-.br
-.RI "Read the rotation-center offset\&. "
-.ti -1c
-.RI "number \fBgetHeight\fP ()"
-.br
-.RI "Read logical height\&. "
-.ti -1c
-.RI "\fBPoint\fP \fBgetLocation\fP ()"
-.br
-.RI "Read the location in the container coordinate system\&. "
-.ti -1c
-.RI "\fBOffset\fP \fBgetMovement\fP ()"
-.br
-.RI "Read the programmed movement rate\&. "
-.ti -1c
-.RI "\fBRotatedRect\fP \fBgetRotatedBounds\fP ()"
-.br
-.RI "Read rotated logical bounds\&. "
-.ti -1c
-.RI "number \fBgetRotation\fP ()"
-.br
-.RI "Read the current rotation in radians\&. "
-.ti -1c
-.RI "\fBOffset\fP \fBgetScale\fP ()"
-.br
-.RI "Read independent transform scale\&. "
-.ti -1c
-.RI "\fBOffset\fP \fBgetSize\fP ()"
-.br
-.RI "Read logical width and height\&. "
-.ti -1c
-.RI "number \fBgetSpin\fP ()"
-.br
-.RI "Read the programmed angular rate\&. "
-.ti -1c
-.RI "\fBOffset\fP \fBgetStretching\fP ()"
-.br
-.RI "Read logical width and height change rates\&. "
-.ti -1c
-.RI "number \fBgetWidth\fP ()"
-.br
-.RI "Read logical width\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBgrow\fP (number factor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
-.br
-.RI "Multiply logical width and height by one factor\&. "
-.ti -1c
-.RI "boolean \fBhasScheduledAnimations\fP ()"
-.br
-.RI "Test whether animations are running or queued\&. "
-.ti -1c
-.RI "boolean \fBisFlippedX\fP ()"
-.br
-.RI "Read the x reflection flag\&. "
-.ti -1c
-.RI "boolean \fBisFlippedY\fP ()"
-.br
-.RI "Read the y reflection flag\&. "
-.ti -1c
-.RI "boolean \fBisSchedulePaused\fP ()"
-.br
-.RI "Test whether scheduled animation advancement is paused\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBmoveBy\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
-.br
-.RI "Move by an offset\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBmoveBy\fP (\fBOffset\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
-.br
-.RI "Move by an offset\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBmoveTo\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
-.br
-.RI "Move to a location\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBmoveTo\fP (\fBPoint\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
-.br
-.RI "Move to a location\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBpauseSchedule\fP ()"
-.br
-.RI "Pause scheduled animations and their delays\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
-.br
-.RI "Retire a specific animation helper\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBresizeBy\fP (number deltaWidth, number deltaHeight, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
-.br
-.RI "Change logical size by additive deltas\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBresizeTo\fP (number width, number height, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
-.br
-.RI "Animate logical size to a target\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBresumeSchedule\fP ()"
-.br
-.RI "Resume scheduled animations and their delays\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBrotateBy\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
-.br
-.RI "Rotate through a relative angle\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBrotateTo\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
-.br
-.RI "Rotate to an absolute angle\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP offset)"
-.br
-.RI "Set the rotation-center offset immediately\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBsetFlipX\fP (boolean flip)"
-.br
-.RI "Set the x reflection flag immediately\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBsetFlipY\fP (boolean flip)"
-.br
-.RI "Set the y reflection flag immediately\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBsetGrowing\fP (number value)"
-.br
-.RI "Set equal constant growth rates immediately\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBsetHeight\fP (number value)"
-.br
-.RI "Set logical height immediately\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBsetLocation\fP (number x, number y)"
-.br
-.RI "Set the location immediately\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBsetLocation\fP (\fBPoint\fP value)"
-.br
-.RI "Set the location immediately\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBsetMovement\fP (number xPerSecond, number yPerSecond)"
-.br
-.RI "Set a constant programmed movement rate immediately\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBsetMovement\fP (\fBVector\fP value)"
-.br
-.RI "Set a constant programmed movement rate immediately\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBsetRotation\fP (number value)"
-.br
-.RI "Set rotation immediately\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBsetScale\fP (number x, number y=x)"
-.br
-.RI "Set independent transform scale immediately\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBsetSize\fP (number width, number height)"
-.br
-.RI "Set logical width and height immediately\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBsetSize\fP (\fBOffset\fP value)"
-.br
-.RI "Set logical width and height immediately\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBsetSpin\fP (number value)"
-.br
-.RI "Set a constant programmed angular rate immediately\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBsetStretching\fP (number widthPerSecond, number heightPerSecond)"
-.br
-.RI "Set independent constant growth rates immediately\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBsetWidth\fP (number value)"
-.br
-.RI "Set logical width immediately\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBstopGrowing\fP ()"
-.br
-.RI "Stop all programmed changes to logical size\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBstopMovement\fP ()"
-.br
-.RI "Stop all programmed changes to position\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBstopSpinning\fP ()"
-.br
-.RI "Stop all programmed changes to rotation\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBstopStretching\fP ()"
-.br
-.RI "Stop all programmed changes to logical size\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBstretch\fP (number widthFactor, number heightFactor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
-.br
-.RI "Multiply logical width and height by independent factors\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBwait\fP (number durationSeconds)"
-.br
-.RI "Delay the next timed animation request\&. "
 .in -1c
 
 Public Member Functions inherited from \fBEventEmitter\fP
 .in +1c
+.ti -1c
+.RI "\fBEventEmitter\fP ()"
+.br
 .ti -1c
 .RI "\fBaddHandler\fP (\fBIEventHandler\fP inHandler, int inEventType=\fBall_events\fP)"
 .br
@@ -790,6 +479,13 @@ Public Member Functions inherited from \fBEventEmitter\fP
 .RI "\fBunblockEvent\fP (int inEventType)"
 .br
 .RI "stop ignoring events of a particular type "
+.in -1c
+
+Public Member Functions inherited from \fBISerializable\fP
+.in +1c
+.ti -1c
+.RI "\fBISerializable\fP (function getSerializedSize, function serialize, function deserialize, function getMyClassTag)"
+.br
 .in -1c
 .SS "Related Symbols"
 (Note that these are not member symbols\&.) 
@@ -844,11 +540,7 @@ Tile sets can contain transparency, either through a transparent color or via an
 Tile sets can support tile rotation (facing) or tile flipping (vertical, horizontal, or both)\&. You cannot use both rotation and flipping in the same layer\&.
 
 .PP
-\fBWarning\fP
-.RS 4
-While individual tiles can be rotated, the \fBTileLayer\fP itself cannot\&. This is a departure from the expected capabilities of SpriteLayers in general, and will be addressed in a future release\&.
-.RE
-.PP
+Tile rendering uses the effective \fBCamera\fP, including rotation, zoom, nonuniform scale and reflection\&.
 .SS "Getting the Results you Want"
 For truly impressive maps, you will rarely use just a single \fBTileLayer\fP\&. Because TileLayers are highly optimized for large areas of transparent/empty tiles, you can use a number of linked TileLayers that each focus on different details: water, terrain, ground cover, flowers and shrubs, trees, etc\&.\&.\&.
 
@@ -856,7 +548,7 @@ For truly impressive maps, you will rarely use just a single \fBTileLayer\fP\&. 
 You can intersperse regular SpriteLayers in between TileLayers to provided animated effects to make your characters move at the right layer (underneath the tree-tops, for example)\&.
 
 .PP
-Be sure to link together all your layers using \fBSpriteLayer\&.moveWith()\fP\&.
+Attach a shared \fBCamera\fP to the destination \fBPort\fP or individual layers\&. Layers inherit their port camera unless explicitly overridden; \fBSpriteLayer\&.setCameraParallax()\fP can give backgrounds different motion\&.
 
 .PP
 \fBSee also\fP
@@ -867,7 +559,10 @@ Be sure to link together all your layers using \fBSpriteLayer\&.moveWith()\fP\&.
 \fBImage\&.setTransparentColor\fP 
 
 .PP
-\fBSpriteLayer\&.moveWith\fP 
+\fBSpriteLayer\&.setCamera\fP 
+
+.PP
+\fBSpriteLayer\&.setCameraParallax\fP 
 .RE
 .PP
 
@@ -893,24 +588,24 @@ To support rotation, you must have a maximum of 64 tiles in your tile set\&. Typ
 
 .PP
 To support flipping in both directions, your tile set should be laid out just like for rotation, 64 tiles in an 8x8 grid\&. For horizontal flipping only, you should have 128 tiles in an 8x16 grid, and for vertical flipping only you should have 128 tile in a 16x8 grid\&. For all kinds of flipping you must pass true for the flipTiles parameter when you call \fBdefineTileSet()\fP\&. 
-.SS "\fBMemBlock\fP getMapData (int mapWidth = \fR0\fP, int mapHeight = \fR0\fP, int srcX, int srcY)"
+.SS "\fBMemBlock\fP getMapData (int mapWidth = \fRworldWidth\fP, int mapHeight = \fRworldHeight\fP, int srcX = \fR0\fP, int srcY = \fR0\fP)"
 
 .PP
-Extract a rectangular region of tile data from the layer\&. This function extracts a rectangular region of tile data from the \fBTileLayer\fP and returns it as a BinaryString containing the tile indices\&.
+Extract a rectangular region of tile data from the layer\&. This function extracts a rectangular region of tile data from the \fBTileLayer\fP and returns it as a \fBMemBlock\fP containing the tile indices\&.
 
 .PP
 \fBParameters\fP
 .RS 4
-\fImapWidth\fP The width of the region to extract (number of tiles horizontally) 
+\fImapWidth\fP The width of the region to extract in tiles\&. Defaults to the layer's current world width\&. 
 .br
-\fImapHeight\fP The height of the region to extract (number of tiles vertically) 
+\fImapHeight\fP The height of the region to extract in tiles\&. Defaults to the layer's current world height\&. 
 .br
-\fIsrcX\fP The X coordinate of the top-left corner of the region to extract 
+\fIsrcX\fP The X coordinate of the top-left corner of the region to extract\&. Defaults to zero\&. 
 .br
-\fIsrcY\fP The Y coordinate of the top-left corner of the region to extract
+\fIsrcY\fP The Y coordinate of the top-left corner of the region to extract\&. Defaults to zero\&.
 .RE
 .PP
-The function returns a BinaryString containing tile indices arranged in row-major order (left to right, top to bottom)\&. Each byte in the returned data represents a tile index from the specified region\&.
+The function returns a \fBMemBlock\fP containing tile indices arranged in row-major order (left to right, top to bottom)\&. Each byte in the returned data represents a tile index from the specified region\&.
 
 .PP
 The extracted data can be used with \fBTileLayer::loadMapData()\fP to copy tile data between layers or save it for later use\&.
@@ -918,28 +613,28 @@ The extracted data can be used with \fBTileLayer::loadMapData()\fP to copy tile 
 .PP
 \fBReturns\fP
 .RS 4
-A BinaryString containing the tile indices from the specified region
+A \fBMemBlock\fP containing the tile indices from the specified region
 .RE
 .PP
-\fBWarning\fP
+\fBExceptions\fP
 .RS 4
-If the requested region extends beyond the layer boundaries, the behavior is undefined 
+\fIRangeError\fP If the requested width or height, including the source offset, exceeds the layer's world dimensions\&. 
 .RE
 .PP
 \fBNote\fP
 .RS 4
-The returned data format is compatible with \fBTileLayer::loadMapData(BinaryString, int, int, int, int)\fP
+The returned data format is compatible with \fBTileLayer::loadMapData(Uint8Array, int, int, int, int)\fP
 .RE
 .PP
 \fBSee also\fP
 .RS 4
-\fBTileLayer::loadMapData(BinaryString, int, int, int, int)\fP 
+\fBTileLayer::loadMapData(Uint8Array, int, int, int, int)\fP 
 
 .PP
 \fBTileLayer::loadMapData(MemBlock, int, int, int, int)\fP 
 
 .PP
-BinaryString 
+\fBMemBlock\fP 
 .RE
 .PP
 
@@ -958,7 +653,7 @@ get size of a tile in the image
 .RE
 .PP
 
-.SS "object getTileTypeAndFacingAt (int x, int y)"
+.SS "\fBTileInfo\fP getTileTypeAndFacingAt (int x, int y)"
 
 .PP
 get the tile type and the facing/flipped state of the tile 
@@ -1016,22 +711,6 @@ the tile type\&. This is the raw data as stored in the \fBTileLayer\fP, so it in
 .RE
 .PP
 
-.SS "\fBRect\fP getWorldBounds ()"
-
-.PP
-get the size in layer coordinates of the world map 
-.PP
-\fBReturns\fP
-.RS 4
-the layer coordinates of the boundaries of the world map
-.RE
-.PP
-\fBWarning\fP
-.RS 4
-this is not necessarily the pixel location for drawing, since it doesn't account for layer movement, rotation or zoom\&. You need to call \fBlayerToPortRect()\fP on this to get pixel drawing coordinates\&. 
-.RE
-.PP
-
 .SS "\fBRect\fP getWorldSize ()"
 
 .PP
@@ -1051,57 +730,7 @@ a rectangle with the dimensions of the world map in number of tiles\&. If you wa
 .RE
 .PP
 
-.SS "loadMapData (BinaryString data, int mapWidth = \fR0\fP, int mapHeight = \fR0\fP, int dstX, int dstY)"
-
-.PP
-Load tile data from a binary string into the specified region of the layer\&. This function loads tile data from a BinaryString into a specific rectangular region of the \fBTileLayer\fP\&. The data is interpreted as a 2D array of tile indices\&.
-
-.PP
-\fBParameters\fP
-.RS 4
-\fIdata\fP The BinaryString containing the tile data to load 
-.br
-\fImapWidth\fP The width of the tile map in the data (number of tiles horizontally) 
-.br
-\fImapHeight\fP The height of the tile map in the data (number of tiles vertically) 
-.br
-\fIdstX\fP The X coordinate where to place the top-left corner of the loaded data in the layer 
-.br
-\fIdstY\fP The Y coordinate where to place the top-left corner of the loaded data in the layer
-.RE
-.PP
-The BinaryString data should contain tile indices arranged in row-major order (left to right, top to bottom)\&. Each tile index corresponds to a tile in the \fBTileLayer\fP's tile set\&.
-
-.PP
-The function will load the specified rectangular region from the data into the layer starting at the destination coordinates (dstX, dstY)\&.
-
-.PP
-\fBWarning\fP
-.RS 4
-The function will overwrite existing tile data in the destination region 
-
-.PP
-If the data size doesn't match mapWidth * mapHeight, the behavior is undefined 
-.RE
-.PP
-\fBNote\fP
-.RS 4
-Tile indices in the data should be valid for the layer's tile set
-.RE
-.PP
-\fBSee also\fP
-.RS 4
-\fBTileLayer::loadMapData(MemBlock, int, int, int, int)\fP 
-
-.PP
-\fBTileLayer::getMapData()\fP 
-
-.PP
-BinaryString 
-.RE
-.PP
-
-.SS "loadMapData (\fBMemBlock\fP data, int mapWidth = \fR0\fP, int mapHeight = \fR0\fP, int dstX, int dstY)"
+.SS "loadMapData (\fBMemBlock\fP data, int mapWidth = \fR0\fP, int mapHeight = \fR0\fP, int dstX = \fR0\fP, int dstY = \fR0\fP)"
 
 .PP
 Load tile data from a \fBMemBlock\fP into the specified region of the layer\&. This function loads tile data from a \fBMemBlock\fP into a specific rectangular region of the \fBTileLayer\fP\&. The data is interpreted as a 2D array of tile indices\&.
@@ -1141,7 +770,61 @@ Tile indices in the data should be valid for the layer's tile set
 .PP
 \fBSee also\fP
 .RS 4
-\fBTileLayer::loadMapData(BinaryString, int, int, int, int)\fP 
+\fBTileLayer::loadMapData(Uint8Array, int, int, int, int)\fP 
+
+.PP
+\fBTileLayer::getMapData()\fP 
+
+.PP
+\fBMemBlock\fP 
+.RE
+.PP
+
+.SS "loadMapData (Uint8Array data, int mapWidth = \fR0\fP, int mapHeight = \fR0\fP, int dstX = \fR0\fP, int dstY = \fR0\fP)"
+
+.PP
+Load tile data from a Uint8Array into the specified region of the layer\&. This function loads tile data from a Uint8Array into a specific rectangular region of the \fBTileLayer\fP\&. The data is interpreted as a 2D array of tile indices\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIdata\fP The Uint8Array containing the tile data to load 
+.br
+\fImapWidth\fP The width of the tile map in the data (number of tiles horizontally) 
+.br
+\fImapHeight\fP The height of the tile map in the data (number of tiles vertically) 
+.br
+\fIdstX\fP The X coordinate where to place the top-left corner of the loaded data in the layer 
+.br
+\fIdstY\fP The Y coordinate where to place the top-left corner of the loaded data in the layer
+.RE
+.PP
+The Uint8Array data should contain tile indices arranged in row-major order (left to right, top to bottom)\&. Each tile index corresponds to a tile in the \fBTileLayer\fP's tile set\&.
+
+.PP
+The function will load the specified rectangular region from the data into the layer starting at the destination coordinates (dstX, dstY)\&.
+
+.PP
+\fBWarning\fP
+.RS 4
+The function will overwrite existing tile data in the destination region 
+.RE
+.PP
+\fBExceptions\fP
+.RS 4
+\fIRangeError\fP If the array contains fewer than mapWidth * mapHeight bytes\&. 
+.br
+\fITypeError\fP If data is not an attached, non-shared Uint8Array or \fBMemBlock\fP\&. 
+.RE
+.PP
+\fBNote\fP
+.RS 4
+Tile indices in the data should be valid for the layer's tile set
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBTileLayer::loadMapData(MemBlock, int, int, int, int)\fP 
 
 .PP
 \fBTileLayer::getMapData()\fP 

@@ -1,4 +1,4 @@
-.TH "Events" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Events" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -15,7 +15,7 @@ Events \- Events
 .ti -1c
 .RI "struct \fBColliderContact\fP"
 .br
-.RI "One shape contact delivered as eventType_ColliderContact\&. "
+.RI "\fBColliderContact\fP\&. "
 .ti -1c
 .RI "class \fBEventEmitter\fP"
 .br
@@ -31,23 +31,23 @@ Events \- Events
 .ti -1c
 .RI "struct \fBKeyEvent\fP"
 .br
-.RI "a key down or up event "
+.RI "\fBKeyEvent\fP\&. "
 .ti -1c
 .RI "struct \fBKeyPressEvent\fP"
 .br
-.RI "the user pressed and released a key "
+.RI "\fBKeyPressEvent\fP\&. "
 .ti -1c
 .RI "struct \fBMouseEvent\fP"
 .br
-.RI "the user did something with the mouse "
+.RI "\fBMouseEvent\fP\&. "
 .ti -1c
 .RI "struct \fBMouseTrackingEvent\fP"
 .br
-.RI "the mouse entered or left a tracking region (\fINOT IMPLEMENTED\fP) "
+.RI "Browser mouse tracking payload; the native V8 converter does not deliver these events\&. "
 .ti -1c
 .RI "struct \fBPortDrawEvent\fP"
 .br
-.RI "a port needs to be redrawn (\fIGUI Only\fP) "
+.RI "\fBPortDrawEvent\fP\&. "
 .ti -1c
 .RI "struct \fBPortResizedEvent\fP"
 .br
@@ -55,15 +55,15 @@ Events \- Events
 .ti -1c
 .RI "struct \fBScrollWheelEvent\fP"
 .br
-.RI "the user repositioned the scroll wheel "
+.RI "\fBScrollWheelEvent\fP\&. "
 .ti -1c
 .RI "struct \fBShutdownEvent\fP"
 .br
-.RI "a timer fire event "
+.RI "\fBShutdownEvent\fP\&. "
 .ti -1c
 .RI "struct \fBSoundEvent\fP"
 .br
-.RI "a sound completed or is looping (\fIGUI Only\fP) "
+.RI "\fBSoundEvent\fP\&. "
 .ti -1c
 .RI "struct \fBSpriteAnimateEvent\fP"
 .br
@@ -71,7 +71,7 @@ Events \- Events
 .ti -1c
 .RI "struct \fBSpriteBreakEvent\fP"
 .br
-.RI "A body exceeded its angular-speed threshold or a legacy joint exceeded its break force\&. "
+.RI "\fBSpriteBreakEvent\fP\&. "
 .ti -1c
 .RI "struct \fBSpriteCollideEvent\fP"
 .br
@@ -79,19 +79,19 @@ Events \- Events
 .ti -1c
 .RI "struct \fBSpriteLayerEvent\fP"
 .br
-.RI "something happened to this layer "
+.RI "\fBSpriteLayerEvent\fP\&. "
 .ti -1c
 .RI "struct \fBSpriteTouchEvent\fP"
 .br
-.RI "the user clicked on (or touched) a Sprite "
+.RI "\fBSpriteTouchEvent\fP\&. "
 .ti -1c
 .RI "struct \fBSpriteTriggerEvent\fP"
 .br
-.RI "Payload for an authored Spriter trigger delivered as eventType_SpriteTriggerEvent\&. "
+.RI "\fBSpriteTriggerEvent\fP\&. "
 .ti -1c
 .RI "struct \fBTimerEvent\fP"
 .br
-.RI "a timer fire event "
+.RI "\fBTimerEvent\fP\&. "
 .ti -1c
 .RI "class \fBTimerManager\fP"
 .br
@@ -212,11 +212,26 @@ The payload contains triggerName, clipName, entityName, timeSeconds (relative to
 The queue retains the acting Sprite until delivery or cancellation\&. Layer teardown purges matching events and releases owned strings and Sprite references\&. A clip change does not erase events for crossings already completed in a previous update\&. Sound events and general nested-entity trigger forwarding are separate capabilities\&. 
 .SH "Class Documentation"
 .PP 
-.SH "struct ColliderContact"
+.SH "struct pdg::ColliderContact"
 .PP 
-One shape contact delivered as eventType_ColliderContact\&. 
+\fBColliderContact\fP\&. 
 
-Enable Collider::setWantsContactEvents() on each collider whose owner should receive notifications\&. Both Sprite and Part colliders deliver through the owning Sprite\&. Each receiving collider sees itself as \fRcollider\fP; vectors reverse for the other endpoint\&. Delivery occurs synchronously after the solve\&.
+One shape contact delivered as eventType_ColliderContact\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  collider  \fR\fBCollider\fP\fP  Required  impulse  \fR\fBVector\fP\fP  Required  normal  \fR\fBVector\fP\fP  Required  other  \fR\fBCollider\fP\fP  Required  otherShape  \fRnumber\fP  Required  penetration  \fRnumber\fP  Required  phase  \fRnumber\fP  Required  point  \fR\fBPoint\fP\fP  Required  sensor  \fRboolean\fP  Required  shape  \fRnumber\fP  Required  
+.RE
+.PP
+Enable \fBCollider::setWantsContactEvents()\fP on each collider whose owner should receive notifications\&. Both \fBSprite\fP and \fBPart\fP colliders deliver through the owning \fBSprite\fP\&. Each receiving collider sees itself as \fR\fBcollider\fP\fP; vectors reverse for the other endpoint\&. Delivery occurs synchronously after the solve\&.
 
 .PP
 
@@ -226,7 +241,7 @@ Enable Collider::setWantsContactEvents() on each collider whose owner should rec
 
 .RE
 .PP
-Field  Meaning  emitter  Owning Sprite receiving this event  eventType  \fBpdg::eventType_ColliderContact\fP  collider, other  Shared Collider handles identifying both endpoints  shape, otherShape  Stable shape IDs within the corresponding colliders  phase  collision_Begin, collision_Stay or collision_End  point  Approximate contact Point in owning-layer/world coordinates  normal  Unit Vector directed from collider toward other  impulse  Actual impulse applied to other; zero for sensors, sleeping contacts and end contacts  penetration  Nonnegative overlap depth; zero for an end contact  sensor  Whether either collider is a sensor  
+Field  Meaning  emitter  Owning \fBSprite\fP receiving this event  eventType  \fBpdg::eventType_ColliderContact\fP  collider, other  Shared \fBCollider\fP handles identifying both endpoints  shape, otherShape  Stable shape IDs within the corresponding colliders  phase  collision_Begin, collision_Stay or collision_End  point  Approximate contact \fBPoint\fP in owning-layer/world coordinates  normal  Unit \fBVector\fP directed from collider toward other  impulse  Actual impulse applied to other; zero for sensors, sleeping contacts and end contacts  penetration  Nonnegative overlap depth; zero for an end contact  sensor  Whether either collider is a sensor  
 
 .PP
 
@@ -234,108 +249,62 @@ Field  Meaning  emitter  Owning Sprite receiving this event  eventType  \fBpdg::
 Chipmunk contacts reuse its solved manifold: point is the mean of the contact midpoints and penetration is the greatest overlap depth\&. Sleeping pairs continue to report collision_Stay without a new impulse\&.
 
 .PP
-Geometry, filters and physical associations are evaluated for the solved frame\&. A callback can remove an endpoint before another notification is delivered; retained handles remain safe and isAttached() reports their current state\&. Contact identity is per shape pair, so compound geometry can generate several notifications for the same two owners\&. Native \fBColliderContact\fP pointers are borrowed only for the callback; JavaScript retains its Collider handles\&. 
-.SH "class pdg::IEventHandler"
+Geometry, filters and physical associations are evaluated for the solved frame\&. A callback can remove an endpoint before another notification is delivered; retained handles remain safe and isAttached() reports their current state\&. Contact identity is per shape pair, so compound geometry can generate several notifications for the same two owners\&. Native \fBColliderContact\fP pointers are borrowed only for the callback; JavaScript retains its \fBCollider\fP handles\&. 
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBCollider\fP \fIcollider\fP collider Type: \fR\fBCollider\fP\fP\&. Required\&. 
+.br
+.PP
+\fBVector\fP \fIimpulse\fP impulse Type: \fR\fBVector\fP\fP\&. Required\&. 
+.br
+.PP
+\fBVector\fP \fInormal\fP normal Type: \fR\fBVector\fP\fP\&. Required\&. 
+.br
+.PP
+\fBCollider\fP \fIother\fP other Type: \fR\fBCollider\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIotherShape\fP otherShape Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIpenetration\fP penetration Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIphase\fP phase Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPoint\fP \fIpoint\fP point Type: \fR\fBPoint\fP\fP\&. Required\&. 
+.br
+.PP
+boolean \fIsensor\fP sensor Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIshape\fP shape Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
+.SH "struct pdg::KeyEvent"
 .PP 
-Interface for any class which handles events\&. 
+\fBKeyEvent\fP\&. 
 
+a key down or up event
 
 .PP
 \fBNote\fP
 .RS 4
-\fBAPI Stability: 3 — Stable\fP\&. This public contract is established\&. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance\&. See \fBAPI stability\fP\&.
+Documentation-only JavaScript shape, not a runtime constructor\&.
 .RE
 .PP
-Specific Subclasses should be written to implement particular handlers\&. Typically you would call an onXXX() method of the \fBEventEmitter\fP object that is generating the event you want, and it will take care of creating the event handler for you, and adding a convenient cancel() method to the handler\&. For example:
-
+ 
 .PP
-.PP
-.nf
-var mySpriteCollisionHandler = mySprite\&.onCollideSprite(function(event) {
-   // do something about the collision
-});
-\&.\&.\&.
-mySpriteCollisionHandler\&.cancel();   // stop handling collision events with this handler
-.fi
-.PP
-
-.PP
-This cancel() method will only work for a single emitter\&. So if you may want to create a handler that is used with multiple emitters, you should create it once and then explicitly add it to and remove it from each emitter\&. Here's how:
-
-.PP
-.PP
-.nf
-var mySpriteHandler = new pdg\&.IEventHandler(function(event) {
-                console\&.log("in my event handler with "+event);
-});
-mySprite\&.addHandler(mySpriteHandler, pdg\&.eventType_SpriteCollide);
-\&.\&.\&.
-mySprite\&.removeHandler(mySpriteHandler, pdg\&.eventType_SpriteCollide);
-.fi
-.PP
-.SS "Your Custom Function:"
-As you can see from the examples above, your Event Handler function will be called with a single parameter, and return a boolean: 
-.PP
-\fBParameters\fP
+\fBFields\fP
 .RS 4
-\fIevent\fP the event that occurred (from the See Also list below) 
+Field  Type  Required/default  Meaning  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  keyCode  \fRnumber\fP  Required  
 .RE
 .PP
-\fBReturns\fP
-.RS 4
-\fBtrue\fP if the event has been completely handled and should not propagate any further; or \fBfalse\fP it should be allowed to continue to propagate through the handler chain\&.
-.RE
-.PP
-\fBSee also\fP
-.RS 4
-\fBKeyEvent\fP 
-
-.PP
-\fBKeyPressEvent\fP 
-
-.PP
-\fBMouseEvent\fP 
-
-.PP
-\fBMouseTrackingEvent\fP 
-
-.PP
-\fBPortDrawEvent\fP 
-
-.PP
-\fBPortResizedEvent\fP 
-
-.PP
-\fBScrollWheelEvent\fP 
-
-.PP
-\fBShutdownEvent\fP 
-
-.PP
-\fBSoundEvent\fP 
-
-.PP
-\fBSpriteAnimateEvent\fP 
-
-.PP
-\fBSpriteBreakEvent\fP 
-
-.PP
-\fBSpriteCollideEvent\fP 
-
-.PP
-\fBSpriteLayerEvent\fP 
-
-.PP
-\fBSpriteTouchEvent\fP 
-.RE
-.PP
-
-.SH "struct pdg::KeyEvent"
-.PP 
-a key down or up event 
-
-Generated by the EventManager when the user pushes down on a key (\fBpdg\&.eventType_KeyDown\fP) or releases a key (\fBpdg\&.eventType_KeyUp\fP)\&. Use this for arcade style key handling\&.
+Generated by the \fBEventManager\fP when the user pushes down on a key (\fBpdg\&.eventType_KeyDown\fP) or releases a key (\fBpdg\&.eventType_KeyUp\fP)\&. Use this for arcade style key handling\&.
 
 .PP
 For keyboard data entry, use \fBpdg\&.eventType_KeyPress\fP\&. 
@@ -401,11 +370,40 @@ If you need to check for specific keys in a cross-platform way, use \fBpdg\&.eve
 .RE
 .PP
 
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIkeyCode\fP keyCode Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
 .SH "struct pdg::KeyPressEvent"
 .PP 
-the user pressed and released a key 
+\fBKeyPressEvent\fP\&. 
 
-Generated by the EventManager when the user presses and releases a key (a keystroke)\&. Also generated by repeat key events from the OS when a key is held down\&.
+the user pressed and released a key
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  alt  \fRboolean\fP  Required  ctrl  \fRboolean\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  isRepeating  \fRboolean\fP  Required  meta  \fRboolean\fP  Required  shift  \fRboolean\fP  Required  unicode  \fRnumber\fP  Required  
+.RE
+.PP
+Generated by the \fBEventManager\fP when the user presses and releases a key (a keystroke)\&. Also generated by repeat key events from the OS when a key is held down\&.
 
 .PP
 For arcade style multi-key handling see \fBpdg\&.eventType_KeyDown\fP and \fBpdg\&.eventType_KeyUp\fP\&. 
@@ -438,14 +436,58 @@ For arcade style multi-key handling see \fBpdg\&.eventType_KeyDown\fP and \fBpdg
 .RE
 .PP
 
+.PP
+\fBClass Members:\fP
+.RS 4
+boolean \fIalt\fP alt Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fIctrl\fP ctrl Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fIisRepeating\fP isRepeating Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fImeta\fP meta Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fIshift\fP shift Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIunicode\fP unicode Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
 .SH "struct pdg::MouseEvent"
 .PP 
-the user did something with the mouse 
+\fBMouseEvent\fP\&. 
 
-Generated by the EventManager whenever the user moves the mouse (\fBpdg\&.eventType_MouseMove\fP) or clicks a mouse button (\fBpdg\&.eventType_MouseDown\fP and \fBpdg\&.eventType_MouseUp\fP)\&.
+the user did something with the mouse
 
 .PP
-The EventManager also tracks the state of the mouse buttons, so you can retrieve that at any time with \fBpdg\&.EventManager\&.isButtonDown()\fP\&. The GraphicsManager tracks the position of the mouse, and that can be retrieved at any time with \fBpdg\&.GraphicsManager\&.getMouse()\fP\&. 
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  alt  \fRboolean\fP  Required  buttonNumber  \fRnumber\fP  Required  ctrl  \fRboolean\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  lastClickElapsed  \fRnumber\fP  Required  lastClickPos  \fR\fBPoint\fP\fP  Required  leftButton  \fRboolean\fP  Required  meta  \fRboolean\fP  Required  mousePos  \fR\fBPoint\fP\fP  Required  rightButton  \fRboolean\fP  Required  shift  \fRboolean\fP  Required  
+.RE
+.PP
+Generated by the \fBEventManager\fP whenever the user moves the mouse (\fBpdg\&.eventType_MouseMove\fP) or clicks a mouse button (\fBpdg\&.eventType_MouseDown\fP and \fBpdg\&.eventType_MouseUp\fP)\&.
+
+.PP
+The \fBEventManager\fP also tracks the state of the mouse buttons, so you can retrieve that at any time with \fBpdg\&.EventManager\&.isButtonDown()\fP\&. The \fBGraphicsManager\fP tracks the position of the mouse, and that can be retrieved at any time with \fBpdg\&.GraphicsManager\&.getMouse()\fP\&. 
 .PP
 .nf
 { 
@@ -481,7 +523,7 @@ Location and time since the last mouseDown event are provided to make it easier 
 on a touch device mouse moved events are only generated when the user is touching the device, and each finger touching is treated like a separate mouse button, with the button number based on the order the fingers touched the device\&.
 
 .PP
-A SpriteLayer has the ability to automatically handle these mouse events and generate \fBpdg\&.eventType_SpriteTouch\fP for any Sprite that was clicked on, or pass these on as mouse events if no Sprite was hit\&.
+A \fBSpriteLayer\fP has the ability to automatically handle these mouse events and generate \fBpdg\&.eventType_SpriteTouch\fP for any \fBSprite\fP that was clicked on, or pass these on as mouse events if no \fBSprite\fP was hit\&.
 .RE
 .PP
 \fBSee also\fP
@@ -514,16 +556,131 @@ A SpriteLayer has the ability to automatically handle these mouse events and gen
 .RE
 .PP
 
+.PP
+\fBClass Members:\fP
+.RS 4
+boolean \fIalt\fP alt Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIbuttonNumber\fP buttonNumber Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fIctrl\fP ctrl Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIlastClickElapsed\fP lastClickElapsed Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPoint\fP \fIlastClickPos\fP lastClickPos Type: \fR\fBPoint\fP\fP\&. Required\&. 
+.br
+.PP
+boolean \fIleftButton\fP leftButton Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fImeta\fP meta Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBPoint\fP \fImousePos\fP mousePos Type: \fR\fBPoint\fP\fP\&. Required\&. 
+.br
+.PP
+boolean \fIrightButton\fP rightButton Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fIshift\fP shift Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
 .SH "struct pdg::MouseTrackingEvent"
 .PP 
-the mouse entered or left a tracking region (\fINOT IMPLEMENTED\fP) 
+Browser mouse tracking payload; the native V8 converter does not deliver these events\&. 
 
+the mouse entered or left a tracking region (\fINOT IMPLEMENTED\fP)
 
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  alt  \fRboolean\fP  Required  buttonNumber  \fRnumber\fP  Required  ctrl  \fRboolean\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  lastClickElapsed  \fRnumber\fP  Required  lastClickPos  \fR\fBPoint\fP\fP  Required  leftButton  \fRboolean\fP  Required  meta  \fRboolean\fP  Required  mousePos  \fR\fBPoint\fP\fP  Required  rightButton  \fRboolean\fP  Required  shift  \fRboolean\fP  Required  trackingRef  \fRnumber\fP  Required  
+.RE
+.PP
+
+.PP
+\fBClass Members:\fP
+.RS 4
+boolean \fIalt\fP alt Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIbuttonNumber\fP buttonNumber Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fIctrl\fP ctrl Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIlastClickElapsed\fP lastClickElapsed Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPoint\fP \fIlastClickPos\fP lastClickPos Type: \fR\fBPoint\fP\fP\&. Required\&. 
+.br
+.PP
+boolean \fIleftButton\fP leftButton Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fImeta\fP meta Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBPoint\fP \fImousePos\fP mousePos Type: \fR\fBPoint\fP\fP\&. Required\&. 
+.br
+.PP
+boolean \fIrightButton\fP rightButton Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fIshift\fP shift Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fItrackingRef\fP trackingRef Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
 .SH "struct pdg::PortDrawEvent"
 .PP 
-a port needs to be redrawn (\fIGUI Only\fP) 
+\fBPortDrawEvent\fP\&. 
 
-Generated by the GraphicsManager whenever it is time to redraw a Port\&. All drawing calls should be done during the handling of a \fBpdg\&.eventType_PortDraw\fP\&. 
+a port needs to be redrawn (\fIGUI Only\fP)
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  frameNum  \fRnumber\fP  Required  port  \fR\fBPort\fP\fP  Required  
+.RE
+.PP
+Generated by the \fBGraphicsManager\fP whenever it is time to redraw a \fBPort\fP\&. All drawing calls should be done during the handling of a \fBpdg\&.eventType_PortDraw\fP\&. 
 .PP
 .nf
 { 
@@ -554,6 +711,23 @@ these events are never generated in a non-GUI build, such as the PDG Node\&.js p
 .RE
 .PP
 
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIframeNum\fP frameNum Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPort\fP \fIport\fP port Type: \fR\fBPort\fP\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
 .SH "struct pdg::PortResizedEvent"
 .PP 
 a port has been resized (\fIGUI Only\fP) 
@@ -591,9 +765,24 @@ these events are never generated in a non-GUI build, such as the PDG Node\&.js p
 
 .SH "struct pdg::ScrollWheelEvent"
 .PP 
-the user repositioned the scroll wheel 
+\fBScrollWheelEvent\fP\&. 
 
-Generated by the EventManager when the user moves the scroll wheel\&. 
+the user repositioned the scroll wheel
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  alt  \fRboolean\fP  Required  ctrl  \fRboolean\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  horizDelta  \fRnumber\fP  Required  meta  \fRboolean\fP  Required  shift  \fRboolean\fP  Required  vertDelta  \fRnumber\fP  Required  
+.RE
+.PP
+Generated by the \fBEventManager\fP when the user moves the scroll wheel\&. 
 .PP
 .nf
 { 
@@ -617,10 +806,54 @@ Generated by the EventManager when the user moves the scroll wheel\&.
 .RE
 .PP
 
+.PP
+\fBClass Members:\fP
+.RS 4
+boolean \fIalt\fP alt Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fIctrl\fP ctrl Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIhorizDelta\fP horizDelta Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fImeta\fP meta Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fIshift\fP shift Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIvertDelta\fP vertDelta Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
 .SH "struct pdg::ShutdownEvent"
 .PP 
-a timer fire event 
+\fBShutdownEvent\fP\&. 
 
+a timer fire event
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  exitCode  \fRnumber\fP  Required  exitReason  \fRnumber\fP  Required  
+.RE
+.PP
 Generated by the Pixel Dust Game Engine when the application exits normally\&. This is usually when \fBpdg\&.quit()\fP is called\&. 
 .PP
 .nf
@@ -644,11 +877,43 @@ Generated by the Pixel Dust Game Engine when the application exits normally\&. T
 .RE
 .PP
 
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIexitCode\fP exitCode Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIexitReason\fP exitReason Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
 .SH "struct pdg::SoundEvent"
 .PP 
-a sound completed or is looping (\fIGUI Only\fP) 
+\fBSoundEvent\fP\&. 
 
-Generated by the SoundManager whenever a sound finishes playing (\fBpdg\&.soundEvent_DonePlaying\fP), or reaches the end and loops (\fBpdg\&.soundEvent_Looping\fP)\&. If there is an error, you will get eventCode \fBpdg\&.soundEvent_FailedToPlay\fP
+a sound completed or is looping (\fIGUI Only\fP)
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  emitter  \fR\fBEventEmitter\fP\fP  Required  eventCode  \fRnumber\fP  Required  eventType  \fRnumber\fP  Required  sound  \fR\fBSound\fP\fP  Required  
+.RE
+.PP
+Generated by the \fBSoundManager\fP whenever a sound finishes playing (\fBpdg\&.soundEvent_DonePlaying\fP), or reaches the end and loops (\fBpdg\&.soundEvent_Looping\fP)\&. If there is an error, you will get eventCode \fBpdg\&.soundEvent_FailedToPlay\fP
 
 .PP
 For keyboard data entry, use \fBpdg\&.eventType_KeyPress\fP\&. 
@@ -661,7 +926,7 @@ For keyboard data entry, use \fBpdg\&.eventType_KeyPress\fP\&.
 
 .fi
 .PP
- soundEvent_Looping(1), or soundEvent_FailedToPlay(2)) sound: {} // the Sound object that caused the event }
+ \fBsoundEvent_Looping(1)\fP, or \fBsoundEvent_FailedToPlay(2)\fP) sound: {} // the \fBSound\fP object that caused the event }
 
 .PP
 \fBSee also\fP
@@ -682,6 +947,23 @@ For keyboard data entry, use \fBpdg\&.eventType_KeyPress\fP\&.
 .RE
 .PP
 
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventCode\fP eventCode Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBSound\fP \fIsound\fP sound Type: \fR\fBSound\fP\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
 .SH "struct pdg::SpriteAnimateEvent"
 .PP 
 a Sprite did some animation (\fIOptional\fP) 
@@ -756,9 +1038,24 @@ Spriter eventline notifications require pdg::Sprite::enableSpriterEvents(true)\&
 
 .SH "struct pdg::SpriteBreakEvent"
 .PP 
-A body exceeded its angular-speed threshold or a legacy joint exceeded its break force\&. 
+\fBSpriteBreakEvent\fP\&. 
 
-Register an IEventHandler for eventType_SpriteBreak on the owning Sprite\&. Part body notifications use their owning Sprite's route\&. Inspect reason to distinguish the two event forms\&. Body notifications work with both basic and Chipmunk solvers\&.
+A body exceeded its angular-speed threshold or a legacy joint exceeded its break force\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  actingSprite  \fR\fBSprite\fP\fP or \fRnull\fP  Required  action  \fRnumber\fP  Required  angularSpeed  \fRnumber\fP  Required  body  \fR\fBPhysicsBody\fP\fP or \fRnull\fP  Required  breakAngularSpeed  \fRnumber\fP  Required  breakForce  \fRnumber\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  force  \fRnumber\fP  Required  impulse  \fRnumber\fP  Required  inLayer  \fR\fBSpriteLayer\fP\fP or \fRnull\fP  Required  joint  \fR\fBCpConstraint\fP\fP or \fRnull\fP  Required  part  \fR\fBPart\fP\fP or \fRnull\fP  Required  reason  \fRnumber\fP  Required  referenceBody  \fR\fBPhysicsBody\fP\fP or \fRnull\fP  Required  targetSprite  \fR\fBSprite\fP\fP or \fRnull\fP  Required  
+.RE
+.PP
+Register an \fBIEventHandler\fP for eventType_SpriteBreak on the owning \fBSprite\fP\&. \fBPart\fP body notifications use their owning \fBSprite\fP's route\&. Inspect reason to distinguish the two event forms\&. Body notifications work with both basic and Chipmunk solvers\&.
 
 .PP
  
@@ -768,23 +1065,76 @@ Register an IEventHandler for eventType_SpriteBreak on the owning Sprite\&. Part
 
 .RE
 .PP
-Field  Meaning  emitter, eventType  Standard event emitter and eventType_SpriteBreak\&.  actingSprite, inLayer  Owning Sprite and its layer (null outside a layer)\&.  reason  physicsBreak_AngularSpeed or physicsBreak_Force\&.  action  action_BodyBreak for speed; action_JointBreak for legacy force breaks\&.  body, part  Source PhysicsBody and optional Part for speed; null for legacy force breaks\&.  referenceBody  Optional angular-speed reference PhysicsBody, otherwise null\&.  angularSpeed  Measured speed magnitude in radians/second; zero for force breaks\&.  breakAngularSpeed  Configured speed threshold in radians/second; zero for force breaks\&.  targetSprite, joint  Legacy joint endpoint and CpConstraint; null for speed events\&.  impulse, force, breakForce  Legacy joint impulse, solved force and break threshold; zero for speed events\&.  
+Field  Meaning  emitter, eventType  Standard event emitter and eventType_SpriteBreak\&.  actingSprite, inLayer  Owning \fBSprite\fP and its layer (null outside a layer)\&.  reason  physicsBreak_AngularSpeed or physicsBreak_Force\&.  action  action_BodyBreak for speed; action_JointBreak for legacy force breaks\&.  body, part  Source \fBPhysicsBody\fP and optional \fBPart\fP for speed; null for legacy force breaks\&.  referenceBody  Optional angular-speed reference \fBPhysicsBody\fP, otherwise null\&.  angularSpeed  Measured speed magnitude in radians/second; zero for force breaks\&.  breakAngularSpeed  Configured speed threshold in radians/second; zero for force breaks\&.  targetSprite, joint  Legacy joint endpoint and \fBCpConstraint\fP; null for speed events\&.  impulse, force, breakForce  Legacy joint impulse, solved force and break threshold; zero for speed events\&.  
 
 .PP
 
 .PP
-Angular-speed notifications do not clamp speed, apply braking, disconnect joints or split artwork, regardless of the handler's return value\&. They fire once per sampled excursion above the limit; returning to or below the limit rearms them\&. See PhysicsBody\&.setBreakAngularSpeed() for sampling and reference lifetime rules\&.
+Angular-speed notifications do not clamp speed, apply braking, disconnect joints or split artwork, regardless of the handler's return value\&. They fire once per sampled excursion above the limit; returning to or below the limit rearms them\&. See \fBPhysicsBody\&.setBreakAngularSpeed()\fP for sampling and reference lifetime rules\&.
 
 .PP
-Legacy Chipmunk joint-force events retain their existing behavior: returning true handles the notification; an unhandled event invokes the existing disconnect path\&. Shared PhysicsConstraint force breaking retains its existing behavior too; this body feature does not add force events to that separate constraint path\&.
+Legacy Chipmunk joint-force events retain their existing behavior: returning true handles the notification; an unhandled event invokes the existing disconnect path\&. Shared \fBPhysicsConstraint\fP force breaking retains its existing behavior too; this body feature does not add force events to that separate constraint path\&.
 
 .PP
 \fBSee also\fP
 .RS 4
-PhysicsBody\&.setBreakAngularSpeed(), \fBpdg\&.eventType_SpriteBreak\fP 
+\fBPhysicsBody\&.setBreakAngularSpeed()\fP, \fBpdg\&.eventType_SpriteBreak\fP 
 .RE
 .PP
 
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBSprite\fP \fIactingSprite\fP actingSprite Type: \fR\fBSprite\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIaction\fP action Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIangularSpeed\fP angularSpeed Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPhysicsBody\fP \fIbody\fP body Type: \fR\fBPhysicsBody\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIbreakAngularSpeed\fP breakAngularSpeed Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIbreakForce\fP breakForce Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIforce\fP force Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIimpulse\fP impulse Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBSpriteLayer\fP \fIinLayer\fP inLayer Type: \fR\fBSpriteLayer\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+\fBCpConstraint\fP \fIjoint\fP joint Type: \fR\fBCpConstraint\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+\fBPart\fP \fIpart\fP part Type: \fR\fBPart\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIreason\fP reason Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPhysicsBody\fP \fIreferenceBody\fP referenceBody Type: \fR\fBPhysicsBody\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+\fBSprite\fP \fItargetSprite\fP targetSprite Type: \fR\fBSprite\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
 .SH "struct pdg::SpriteCollideEvent"
 .PP 
 a Sprite collided with something (\fIOptional\fP) 
@@ -846,15 +1196,27 @@ Enable layer collisions with SpriteLayer\&.enableCollisions()\&. Use Collider\&.
 
 .SH "struct pdg::SpriteLayerEvent"
 .PP 
-something happened to this layer 
+\fBSpriteLayerEvent\fP\&. 
 
+something happened to this layer
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  actingLayer  \fR\fBSpriteLayer\fP\fP or \fRnull\fP  Required  action  \fRnumber\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  millisec  \fRnumber\fP  Required  
+.RE
+.PP
 This event can be generated with \fBpdg\&.action_LayerFadeInComplete\fP or \fBpdg\&.action_LayerFadeOutComplete\fP when the layer finishes a fade\&.
 
 .PP
-This event can be generated with \fBpdg\&.action_ZoomComplete\fP with the layer finishes a zoom animation\&.
-
-.PP
-These events are also generated regularly by a SpriteLayer to give the application a chance to take action at various stages of sprite animation and rendering\&. 
+These events are also generated regularly by a \fBSpriteLayer\fP to give the application a chance to take action at various stages of sprite animation and rendering\&. 
 .PP
 .nf
 { 
@@ -911,11 +1273,46 @@ for each layer, with actingLayer set to that layer, in Z-order (0\&.\&.\&.n):
 .RE
 .PP
 
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBSpriteLayer\fP \fIactingLayer\fP actingLayer Type: \fR\fBSpriteLayer\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIaction\fP action Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fImillisec\fP millisec Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
 .SH "struct pdg::SpriteTouchEvent"
 .PP 
-the user clicked on (or touched) a Sprite 
+\fBSpriteTouchEvent\fP\&. 
 
-This event is generated by a Sprite whenever a user clicks on it (or touches it in on a touch device)\&.
+the user clicked on (or touched) a \fBSprite\fP
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  alt  \fRboolean\fP  Required  buttonNumber  \fRnumber\fP  Required  ctrl  \fRboolean\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  inLayer  \fR\fBSpriteLayer\fP\fP  Required  lastClickElapsed  \fRnumber\fP  Required  lastClickPos  \fR\fBPoint\fP\fP  Required  leftButton  \fRboolean\fP  Required  meta  \fRboolean\fP  Required  mousePos  \fR\fBPoint\fP\fP  Required  rightButton  \fRboolean\fP  Required  shift  \fRboolean\fP  Required  touchedSprite  \fR\fBSprite\fP\fP  Required  touchType  \fRnumber\fP  Required  
+.RE
+.PP
+This event is generated by a \fBSprite\fP whenever a user clicks on it (or touches it in on a touch device)\&.
 
 .PP
 .PP
@@ -951,20 +1348,20 @@ A single click may generate up to three separate events, each with a different t
 
 .PP
 .IP "\(bu" 2
-\fBpdg\&.touch_MouseDown\fP when a mouse button goes down inside a Sprite
+\fBpdg\&.touch_MouseDown\fP when a mouse button goes down inside a \fBSprite\fP
 .IP "\(bu" 2
-\fBpdg\&.touch_MouseUp\fP when a mouse button is released inside a Sprite
+\fBpdg\&.touch_MouseUp\fP when a mouse button is released inside a \fBSprite\fP
 .IP "\(bu" 2
-\fBpdg\&.touch_MouseClick\fP when the mouse button was clicked and released inside the same Sprite
+\fBpdg\&.touch_MouseClick\fP when the mouse button was clicked and released inside the same \fBSprite\fP
 .PP
 
 .PP
 \fBNote\fP
 .RS 4
-Click events must be turned on for each Sprite using Sprite\&.setWantsClickEvents()
+Click events must be turned on for each \fBSprite\fP using \fBSprite\&.setWantsClickEvents()\fP
 
 .PP
-If no Sprite was hit by a mouse event, the original \fBpdg\&.eventType_MouseDown\fP or \fBpdg\&.eventType_MouseUp\fP is passed on through the EventManager
+If no \fBSprite\fP was hit by a mouse event, the original \fBpdg\&.eventType_MouseDown\fP or \fBpdg\&.eventType_MouseUp\fP is passed on through the \fBEventManager\fP
 .RE
 .PP
 
@@ -987,17 +1384,82 @@ If no Sprite was hit by a mouse event, the original \fBpdg\&.eventType_MouseDown
 .RE
 .PP
 
+.PP
+\fBClass Members:\fP
+.RS 4
+boolean \fIalt\fP alt Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIbuttonNumber\fP buttonNumber Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+boolean \fIctrl\fP ctrl Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBSpriteLayer\fP \fIinLayer\fP inLayer Type: \fR\fBSpriteLayer\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIlastClickElapsed\fP lastClickElapsed Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPoint\fP \fIlastClickPos\fP lastClickPos Type: \fR\fBPoint\fP\fP\&. Required\&. 
+.br
+.PP
+boolean \fIleftButton\fP leftButton Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fImeta\fP meta Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBPoint\fP \fImousePos\fP mousePos Type: \fR\fBPoint\fP\fP\&. Required\&. 
+.br
+.PP
+boolean \fIrightButton\fP rightButton Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+boolean \fIshift\fP shift Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+\fBSprite\fP \fItouchedSprite\fP touchedSprite Type: \fR\fBSprite\fP\fP\&. Required\&. 
+.br
+.PP
+number \fItouchType\fP touchType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
 .SH "struct pdg::SpriteTriggerEvent"
 .PP 
-Payload for an authored Spriter trigger delivered as eventType_SpriteTriggerEvent\&. 
+\fBSpriteTriggerEvent\fP\&. 
 
+Payload for an authored Spriter trigger delivered as eventType_SpriteTriggerEvent\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  actingSprite  \fR\fBSprite\fP\fP or \fRnull\fP  Required  action  \fRnumber\fP  Required  clipName  \fRstring\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  entityName  \fRstring\fP  Required  eventType  \fRnumber\fP  Required  inLayer  \fR\fBSpriteLayer\fP\fP or \fRnull\fP  Required  offsetSeconds  \fRnumber\fP  Required  timeSeconds  \fRnumber\fP  Required  triggerName  \fRstring\fP  Required  
+.RE
+.PP
 The common JavaScript payload contains:
 
 .PP
-Field  Meaning  \fRemitter\fP  Event emitter delivering the notification  \fReventType\fP  \fBpdg::eventType_SpriteTriggerEvent\fP  \fRactingSprite\fP  Sprite whose animation crossed the trigger  \fRinLayer\fP  SpriteLayer containing that Sprite  \fRtriggerName\fP  Authored eventline name  \fRclipName\fP  Clip containing the eventline key  \fRentityName\fP  Spriter entity containing the clip  \fRtimeSeconds\fP  Authored key position from clip start, in floating-point seconds  \fRoffsetSeconds\fP  Occurrence offset from the start of the update, in floating-point seconds  
+Field  Meaning  \fR\fBemitter\fP\fP  \fBEvent\fP emitter delivering the notification  \fR\fBeventType\fP\fP  \fBpdg::eventType_SpriteTriggerEvent\fP  \fR\fBactingSprite\fP\fP  \fBSprite\fP whose animation crossed the trigger  \fR\fBinLayer\fP\fP  \fBSpriteLayer\fP containing that \fBSprite\fP  \fR\fBtriggerName\fP\fP  Authored eventline name  \fR\fBclipName\fP\fP  Clip containing the eventline key  \fR\fBentityName\fP\fP  Spriter entity containing the clip  \fR\fBtimeSeconds\fP\fP  Authored key position from clip start, in floating-point seconds  \fR\fBoffsetSeconds\fP\fP  Occurrence offset from the start of the update, in floating-point seconds  
 
 .PP
-Subscribe by event type and inspect \fRtriggerName\fP to distinguish authored triggers\&. An \fRaction\fP field is not a portable trigger discriminator\&. The native compatibility field \fRframeTime\fP uses integer milliseconds and is omitted from JavaScript\&. The native event ID is currently exposed by the browser bridge but not the V8/JavaScriptCore bridges\&.
+Subscribe by event type and inspect \fR\fBtriggerName\fP\fP to distinguish authored triggers\&. An \fR\fBaction\fP\fP field is not a portable trigger discriminator\&. The native compatibility field \fRframeTime\fP uses integer milliseconds and is omitted from JavaScript\&. The native event ID is currently exposed by the browser bridge but not the V8/JavaScriptCore bridges\&.
 
 .PP
 \fBSee also\fP
@@ -1012,10 +1474,60 @@ Subscribe by event type and inspect \fRtriggerName\fP to distinguish authored tr
 .RE
 .PP
 
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBSprite\fP \fIactingSprite\fP actingSprite Type: \fR\fBSprite\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIaction\fP action Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+string \fIclipName\fP clipName Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+string \fIentityName\fP entityName Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBSpriteLayer\fP \fIinLayer\fP inLayer Type: \fR\fBSpriteLayer\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIoffsetSeconds\fP offsetSeconds Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fItimeSeconds\fP timeSeconds Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+string \fItriggerName\fP triggerName Type: \fRstring\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
 .SH "struct pdg::TimerEvent"
 .PP 
-a timer fire event 
+\fBTimerEvent\fP\&. 
 
+a timer fire event
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  id  \fRnumber\fP  Required  millisec  \fRnumber\fP  Required  msElapsed  \fRnumber\fP  Required  
+.RE
+.PP
 Generated by the \fBpdg\&.TimerManager\fP when a timer fires
 
 .PP
@@ -1038,6 +1550,26 @@ Generated by the \fBpdg\&.TimerManager\fP when a timer fires
 .RE
 .PP
 
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIid\fP id Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fImillisec\fP millisec Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fImsElapsed\fP msElapsed Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
 .SH "Variable Documentation"
 .PP 
 .SS "const action_BodyBreak = 16"
@@ -1085,7 +1617,7 @@ To detect the key being released, use \fBeventType_KeyUp\fP\&. For keyboard data
 
 .RE
 .PP
-The #KeyEvent\&.keyCode field contains \fBplatform-specific raw hardware keycodes\fP that vary by operating system (Mac uses NSEvent scan codes, Windows uses VK_* virtual key codes, Linux uses GLFW scan codes)\&.
+The \fBkeyCode\fP field contains \fBplatform-specific raw hardware keycodes\fP that vary by operating system (Mac uses NSEvent scan codes, Windows uses VK_* virtual key codes, Linux uses GLFW scan codes)\&.
 
 .PP
 \fBWarning\fP
@@ -1148,7 +1680,7 @@ For keyboard data entry, use \fBeventType_KeyPress\fP\&.
 
 .RE
 .PP
-The #KeyEvent\&.keyCode field contains \fBplatform-specific raw hardware keycodes\fP that vary by operating system (Mac uses NSEvent scan codes, Windows uses VK_* virtual key codes, Linux uses GLFW scan codes)\&.
+The \fBkeyCode\fP field contains \fBplatform-specific raw hardware keycodes\fP that vary by operating system (Mac uses NSEvent scan codes, Windows uses VK_* virtual key codes, Linux uses GLFW scan codes)\&.
 
 .PP
 \fBWarning\fP

@@ -26,7 +26,7 @@
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="titlearea">
    <div id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></div>
-   <div id="projectname">PDG <span id="projectnumber">engine v1.1.1</span>
+   <div id="projectname">PDG <span id="projectnumber">engine v1.2.0</span>
    </div>
 </div>
 <!-- end header part -->
@@ -122,8 +122,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a32721ab0236b18e10a08783fdbcde823"><td class="mdescLeft">&#160;</td><td class="mdescRight">load an image strip by name from the resources  <br /></td></tr>
 <tr class="memitem:a6dddaa6203a8b01c84b3b6ae13f19d2e" id="r_a6dddaa6203a8b01c84b3b6ae13f19d2e"><td class="memItemLeft">string&#160;</td><td class="memItemRight"><a class="el" href="#a6dddaa6203a8b01c84b3b6ae13f19d2e">getLanguage</a> ()</td></tr>
 <tr class="memdesc:a6dddaa6203a8b01c84b3b6ae13f19d2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">return the current active language  <br /></td></tr>
-<tr class="memitem:a1cbae8b08a327166e20819a4a4e2b921" id="r_a1cbae8b08a327166e20819a4a4e2b921"><td class="memItemLeft">BinaryString&#160;</td><td class="memItemRight"><a class="el" href="#a1cbae8b08a327166e20819a4a4e2b921">getResource</a> (string resourceName)</td></tr>
-<tr class="memdesc:a1cbae8b08a327166e20819a4a4e2b921"><td class="mdescLeft">&#160;</td><td class="mdescRight">get an untyped resource by name  <br /></td></tr>
+<tr class="memitem:a9b7904e711d058b071c2efd634f66715" id="r_a9b7904e711d058b071c2efd634f66715"><td class="memItemLeft">Uint8Array&#160;</td><td class="memItemRight"><a class="el" href="#a9b7904e711d058b071c2efd634f66715">getResource</a> (string resourceName, int maxSize=-1)</td></tr>
+<tr class="memdesc:a9b7904e711d058b071c2efd634f66715"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load a resource as a Uint8Array, or return false if loading fails.  <br /></td></tr>
 <tr class="memitem:a21dc24296437b4a603a2428bd6d37709" id="r_a21dc24296437b4a603a2428bd6d37709"><td class="memItemLeft">string&#160;</td><td class="memItemRight"><a class="el" href="#a21dc24296437b4a603a2428bd6d37709">getResourcePaths</a> ()</td></tr>
 <tr class="memdesc:a21dc24296437b4a603a2428bd6d37709"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the paths that will be searched for resources  <br /></td></tr>
 <tr class="memitem:aad19a39574c99862b33edbf7f001e37b" id="r_aad19a39574c99862b33edbf7f001e37b"><td class="memItemLeft">number&#160;</td><td class="memItemRight"><a class="el" href="#aad19a39574c99862b33edbf7f001e37b">getResourceSize</a> (string resourceName)</td></tr>
@@ -270,37 +270,42 @@ Strings Resource File Format</h2>
 
 </div>
 </div>
-<a id="a1cbae8b08a327166e20819a4a4e2b921" name="a1cbae8b08a327166e20819a4a4e2b921"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1cbae8b08a327166e20819a4a4e2b921">&#9670;&#160;</a></span>getResource()</h2>
+<a id="a9b7904e711d058b071c2efd634f66715" name="a9b7904e711d058b071c2efd634f66715"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b7904e711d058b071c2efd634f66715">&#9670;&#160;</a></span>getResource()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">BinaryString getResource </td>
+          <td class="memname">Uint8Array getResource </td>
           <td>(</td>
-          <td class="paramtype">string</td>          <td class="paramname"><span class="paramname"><em>resourceName</em></span></td><td>)</td>
+          <td class="paramtype">string</td>          <td class="paramname"><span class="paramname"><em>resourceName</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>maxSize</em></span><span class="paramdefsep"> = </span><span class="paramdefval">-1</span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>get an untyped resource by name </p>
-<p>Get a resource by name. The resource is returned as a block of data in a <a class="el" href="classpdg_1_1_mem_block.html" title="holds arbitrary blocks of memory">MemBlock</a> object. If the resource doesn't exits, false is returned, so you can check for the resource loading with:</p>
+<p>Load a resource as a Uint8Array, or return false if loading fails. </p>
+<p>Get a resource by name. The resource is returned as a Uint8Array. If loading fails, false is returned, so you can check for the resource loading with:</p>
 <div class="fragment"><div class="line">var <a class="code hl_function" href="group___managers.html#gab0bd7560790c13b656fd58e17e35143e">res</a> = <a class="code hl_namespace" href="namespacepdg.html">pdg</a>.res.getResource(<span class="stringliteral">&#39;myRes&#39;</span>);</div>
 <div class="line"><span class="keywordflow">if</span> (<a class="code hl_function" href="group___managers.html#gab0bd7560790c13b656fd58e17e35143e">res</a> === <span class="keyword">false</span>) {</div>
 <div class="line">    console.log(<span class="stringliteral">&#39;resource not found!&#39;</span>);</div>
 <div class="line">} <span class="keywordflow">else</span> {</div>
 <div class="line">    <span class="comment">// do something with the resource</span></div>
 <div class="line">}</div>
-<div class="ttc" id="agroup___managers_html_gab0bd7560790c13b656fd58e17e35143e"><div class="ttname"><a href="group___managers.html#gab0bd7560790c13b656fd58e17e35143e">pdg::ResourceManager::res</a></div><div class="ttdeci">res</div><div class="ttdoc">the singleton instance of the ResourceManager</div><div class="ttdef"><b>Definition</b> pdg-js.h:337</div></div>
+<div class="ttc" id="agroup___managers_html_gab0bd7560790c13b656fd58e17e35143e"><div class="ttname"><a href="group___managers.html#gab0bd7560790c13b656fd58e17e35143e">pdg::ResourceManager::res</a></div><div class="ttdeci">res</div><div class="ttdoc">the singleton instance of the ResourceManager</div><div class="ttdef"><b>Definition</b> pdg-js.h:362</div></div>
 </div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">resourceName</td><td>the name of the resource</td></tr>
+    <tr><td class="paramname">resourceName</td><td>the name of the resource </td></tr>
+    <tr><td class="paramname">maxSize</td><td>The requested buffer size in bytes. Omit it or pass a negative value to use the resource's full size.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>a <a class="el" href="classpdg_1_1_mem_block.html" title="holds arbitrary blocks of memory">MemBlock</a> with the resource data, or <b>false</b> if not found</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>a Uint8Array with the resource data, or <b>false</b> if loading fails</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>the entire resource is loaded into memory, so you might want to check the size before loading it using <a class="el" href="#aad19a39574c99862b33edbf7f001e37b" title="get the size of a resource by name">getResourceSize()</a> if you are concerned about how large it could be.</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#aad19a39574c99862b33edbf7f001e37b" title="get the size of a resource by name">getResourceSize()</a> </dd></dl>
 

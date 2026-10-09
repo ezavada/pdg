@@ -76,6 +76,7 @@ enum FitType {
 //! \ingroup Graphics
 // -----------------------------------------------------------------------------------
 
+/// Appearance setters return this image by reference for chaining.
 class Image : public ISerializable {
 // classes that can call protected members
 #ifndef PDG_NO_GUI
@@ -92,13 +93,13 @@ public:
 	virtual long 	getHeight();
 	virtual long	getWidth();
 
-    virtual void    setTransparentColor(Color rgb) = 0;
+    virtual Image& setTransparentColor(Color rgb) = 0;
     virtual Color   getTransparentColor() = 0;
 
-    virtual void    setOpacity(uint8 opacity) = 0;  // 0xff means solid bit blit
+    virtual Image& setOpacity(uint8 opacity) = 0;  // 0xff means solid bit blit
 	virtual uint8	getOpacity() const = 0;
 
-	virtual void	setEdgeClamping(bool inUseEdgeClamp) = 0;  // hack to approximate OpenGL edge clamping when needed
+	virtual Image& setEdgeClamping(bool inUseEdgeClamp) = 0;  // hack to approximate OpenGL edge clamping when needed
 
 	//! Named, unmodified images may release pixels after rasterization; runtime-created or modified images retain them.
 	//! Calling retainData() will retain the data for use even after that has happened

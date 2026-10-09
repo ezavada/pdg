@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Pixel Dust Game Engine
-   &#160;<span id="projectnumber">v1.1.1</span>
+   &#160;<span id="projectnumber">v1.2.0</span>
    </div>
   </td>
  </tr>
@@ -133,6 +133,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0392953460e6359c2ee2801116f9faff" id="r_a0392953460e6359c2ee2801116f9faff"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_element_ref.html">ElementRef</a> *&#160;</td><td class="memItemRight"><a class="el" href="#a0392953460e6359c2ee2801116f9faff">addEllipse</a> (const <a class="el" href="group___graphics.html#ga3ad09d2eca9e6b332034b77b71251024">Point</a> &amp;center, float xRadius, float yRadius, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
 <tr class="memitem:a79b92ef7cbd65586944237ab0899c51b" id="r_a79b92ef7cbd65586944237ab0899c51b"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_element_ref.html">ElementRef</a> *&#160;</td><td class="memItemRight"><a class="el" href="#a79b92ef7cbd65586944237ab0899c51b">addImage</a> (const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="classpdg_1_1_image.html">Image</a> &amp;image, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
 <tr class="memitem:ae42a4bf225c327d7fa3053716556bd4a" id="r_ae42a4bf225c327d7fa3053716556bd4a"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_element_ref.html">ElementRef</a> *&#160;</td><td class="memItemRight"><a class="el" href="#ae42a4bf225c327d7fa3053716556bd4a">addImageStrip</a> (const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="classpdg_1_1_image_strip.html">ImageStrip</a> &amp;imageStrip, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
+<tr class="memitem:ab583299763d5c82c56da89f5b903fe7e" id="r_ab583299763d5c82c56da89f5b903fe7e"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_element_ref.html">ElementRef</a> *&#160;</td><td class="memItemRight"><a class="el" href="#ab583299763d5c82c56da89f5b903fe7e">addText</a> (const char *text, const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
+<tr class="memdesc:ab583299763d5c82c56da89f5b903fe7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add owned UTF-8 text laid out in a local rectangle using text attributes.  <br /></td></tr>
 <tr class="memitem:a7e4f78e4df36940e527090262f70c48a" id="r_a7e4f78e4df36940e527090262f70c48a"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_element_ref.html">ElementRef</a> *&#160;</td><td class="memItemRight"><a class="el" href="#a7e4f78e4df36940e527090262f70c48a">addDrawing</a> (const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect, const <a class="el" href="#aaa09dac27a5fbfff245b47b18131bb5a">Drawing</a> &amp;drawing, const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;attrs)=0</td></tr>
 <tr class="memitem:a1ffd306be0083f2cd39f249aad261c4e" id="r_a1ffd306be0083f2cd39f249aad261c4e"><td class="memItemLeft">virtual size_t&#160;</td><td class="memItemRight"><a class="el" href="#a1ffd306be0083f2cd39f249aad261c4e">getElementCount</a> () const =0</td></tr>
 <tr class="memitem:a3ada67fa7e4684e644d1d9b83bc09dc0" id="r_a3ada67fa7e4684e644d1d9b83bc09dc0"><td class="memItemLeft">virtual <a class="el" href="classpdg_1_1_element_ref.html">ElementRef</a> *&#160;</td><td class="memItemRight"><a class="el" href="#a3ada67fa7e4684e644d1d9b83bc09dc0">getElement</a> (size_t index) const =0</td></tr>
@@ -144,10 +146,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a03d9a81ef7d6e973cffccc1c94bea31a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replay drawing contents with parent attributes.  <br /></td></tr>
 <tr class="memitem:a686a69b2a3739ddce433ec8a8e4f2dde" id="r_a686a69b2a3739ddce433ec8a8e4f2dde"><td class="memItemLeft">glm::mat3&#160;</td><td class="memItemRight"><a class="el" href="#a686a69b2a3739ddce433ec8a8e4f2dde">destinationTransform</a> (const <a class="el" href="group___graphics.html#gad144e096b54d6bd74ec90603775913e1">Quad</a> &amp;destination) const</td></tr>
 <tr class="memdesc:a686a69b2a3739ddce433ec8a8e4f2dde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map drawing bounds into an affine destination.  <br /></td></tr>
-<tr class="memitem:a0985373f563be1b71c691c15ebe70ee3" id="r_a0985373f563be1b71c691c15ebe70ee3"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a0985373f563be1b71c691c15ebe70ee3">draw</a> (<a class="el" href="classpdg_1_1_port.html">Port</a> *port)=0</td></tr>
-<tr class="memitem:a433a1ef0e94194f67e72a31a1a1e14d3" id="r_a433a1ef0e94194f67e72a31a1a1e14d3"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a433a1ef0e94194f67e72a31a1a1e14d3">draw</a> (<a class="el" href="classpdg_1_1_port.html">Port</a> *port, const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;rect)=0</td></tr>
-<tr class="memitem:af8e80dd225971c22c0aa9a82733bee2a" id="r_af8e80dd225971c22c0aa9a82733bee2a"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#af8e80dd225971c22c0aa9a82733bee2a">draw</a> (<a class="el" href="classpdg_1_1_port.html">Port</a> *port, const <a class="el" href="group___graphics.html#gad144e096b54d6bd74ec90603775913e1">Quad</a> &amp;quad)=0</td></tr>
-<tr class="memitem:a95999d2e65bb71325a99072e7514e592" id="r_a95999d2e65bb71325a99072e7514e592"><td class="memItemLeft">virtual void&#160;</td><td class="memItemRight"><a class="el" href="#a95999d2e65bb71325a99072e7514e592">draw</a> (<a class="el" href="classpdg_1_1_port.html">Port</a> *port, const <a class="el" href="group___graphics.html#ga67e6dda5714d6d005160629995986da6">RotatedRect</a> &amp;rr)=0</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-static-methods" class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -556,6 +554,70 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="ab583299763d5c82c56da89f5b903fe7e" name="ab583299763d5c82c56da89f5b903fe7e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab583299763d5c82c56da89f5b903fe7e">&#9670;&#160;</a></span>addText()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="classpdg_1_1_element_ref.html">ElementRef</a> * addText </td>
+          <td>(</td>
+          <td class="paramtype">const char *</td>          <td class="paramname"><span class="paramname"><em>text</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rect</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>attrs</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Add owned UTF-8 text laid out in a local rectangle using text attributes. </p>
+<p>Add owned, editable UTF-8 text to drawing artwork.</p>
+<p>Copies the text and attributes. <a class="el" href="classpdg_1_1_font.html">Font</a>, text size/style, fill color and fill opacity follow <a class="el" href="classpdg_1_1_port.html#a5dbdbf514ef1ecf5594ee9e32581f3e5">Port::drawText()</a>. Newlines are supported. The rectangle supplies the local layout bounds and four corner control points; hit tests use its box. Element and parent transforms and opacities apply normally, including live attributes.</p>
+<p>Part/Sprite artwork snapshots preserve text and styling. Fonts are saved by name and scaling factor, without embedding font files; the receiving system must supply the font for the same appearance. Older drawing snapshots remain readable.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">text</td><td>Non-null, null-terminated UTF-8 text of at most 1 MiB; may be empty. </td></tr>
+    <tr><td class="paramname">rect</td><td>Finite local rectangle with right &gt;= left and bottom &gt;= top. </td></tr>
+    <tr><td class="paramname">attrs</td><td>Text appearance and transform to copy. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>An owned <a class="el" href="classpdg_1_1_element_ref.html" title="Handle for editing an element in shared Drawing artwork.">ElementRef</a> of type type_Text; the caller deletes this handle.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Rendering requires a graphics build. Attach the drawing with <a class="el" href="classpdg_1_1_part.html#a095227ee2d914211388d9f2ed43d3ec0" title="Assign editable Drawing artwork.">Part::setDrawing()</a> to include it in that owner's saved artwork. </dd></dl>
+<dl class="section user"><dt>Example</dt><dd><div class="fragment"><div class="line">std::unique_ptr&lt;pdg::Drawing&gt; drawing(<a class="code hl_function" href="#abf52e9a12438af1bdeeed26816f859ed">pdg::Drawing::create</a>());</div>
+<div class="line"><a class="code hl_class" href="classpdg_1_1_attributes.html">pdg::Attributes</a> attrs;</div>
+<div class="line">attrs.<a class="code hl_function" href="classpdg_1_1_attributes.html#a7234b4d318332988648688e697f8bbd5">textSize</a>(24).<a class="code hl_function" href="classpdg_1_1_attributes.html#a275750a22af4bd03f46eb1147a6e91e0">textStyle</a>(<a class="code hl_enumvalue" href="group___graphics.html#ggaddb2fa415e015ee482fa2cd9eba96af7a8f5e870f9c02c07b7f9b0d2b63b12636">pdg::textStyle_Bold</a>).<a class="code hl_function" href="classpdg_1_1_attributes.html#a79d3c43a1c3b68b25ea7203c39954d44">fillColor</a>(<a class="code hl_struct" href="structpdg_1_1_color.html">pdg::Color</a>(1.f, 1.f, 1.f));</div>
+<div class="line">std::unique_ptr&lt;pdg::ElementRef&gt; label(drawing-&gt;addText(<span class="stringliteral">&quot;Player 1&quot;</span>, <a class="code hl_typedef" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">pdg::Rect</a>(0, 0, 180, 40), attrs));</div>
+<div class="line">label-&gt;setText(<span class="stringliteral">&quot;Player 2&quot;</span>);</div>
+<div class="ttc" id="aclasspdg_1_1_attributes_html"><div class="ttname"><a href="classpdg_1_1_attributes.html">pdg::Attributes</a></div><div class="ttdef"><b>Definition</b> attributes.h:92</div></div>
+<div class="ttc" id="aclasspdg_1_1_attributes_html_a275750a22af4bd03f46eb1147a6e91e0"><div class="ttname"><a href="classpdg_1_1_attributes.html#a275750a22af4bd03f46eb1147a6e91e0">pdg::Attributes::textStyle</a></div><div class="ttdeci">Attributes &amp; textStyle(uint32 style)</div></div>
+<div class="ttc" id="aclasspdg_1_1_attributes_html_a7234b4d318332988648688e697f8bbd5"><div class="ttname"><a href="classpdg_1_1_attributes.html#a7234b4d318332988648688e697f8bbd5">pdg::Attributes::textSize</a></div><div class="ttdeci">Attributes &amp; textSize(float size)</div></div>
+<div class="ttc" id="aclasspdg_1_1_attributes_html_a79d3c43a1c3b68b25ea7203c39954d44"><div class="ttname"><a href="classpdg_1_1_attributes.html#a79d3c43a1c3b68b25ea7203c39954d44">pdg::Attributes::fillColor</a></div><div class="ttdeci">Attributes &amp; fillColor(const Color &amp;color)</div></div>
+<div class="ttc" id="aclasspdg_1_1_drawing_html_abf52e9a12438af1bdeeed26816f859ed"><div class="ttname"><a href="#abf52e9a12438af1bdeeed26816f859ed">pdg::Drawing::create</a></div><div class="ttdeci">static Drawing * create()</div></div>
+<div class="ttc" id="agroup___graphics_html_ga7ee736664a9e39162d1b60170692b7b7"><div class="ttname"><a href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">pdg::Rect</a></div><div class="ttdeci">RectT&lt; float &gt; Rect</div><div class="ttdef"><b>Definition</b> coordinates.h:587</div></div>
+<div class="ttc" id="agroup___graphics_html_ggaddb2fa415e015ee482fa2cd9eba96af7a8f5e870f9c02c07b7f9b0d2b63b12636"><div class="ttname"><a href="group___graphics.html#ggaddb2fa415e015ee482fa2cd9eba96af7a8f5e870f9c02c07b7f9b0d2b63b12636">pdg::textStyle_Bold</a></div><div class="ttdeci">@ textStyle_Bold</div><div class="ttdef"><b>Definition</b> font.h:51</div></div>
+<div class="ttc" id="astructpdg_1_1_color_html"><div class="ttname"><a href="structpdg_1_1_color.html">pdg::Color</a></div><div class="ttdef"><b>Definition</b> color.h:103</div></div>
+</div><!-- fragment --> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classpdg_1_1_element_ref.html#a16ad987dcc45c4298799f4337b9a3c96" title="Borrow the owned UTF-8 text; throws for non-text or removed elements.">ElementRef::getText()</a>, <a class="el" href="classpdg_1_1_element_ref.html#a87ce9816b80abba22c4109bec3aabefb" title="Copy replacement UTF-8 text without changing layout or styling.">ElementRef::setText()</a>, <a class="el" href="classpdg_1_1_part.html#a095227ee2d914211388d9f2ed43d3ec0" title="Assign editable Drawing artwork.">Part::setDrawing()</a> </dd></dl>
+
+</div>
+</div>
 <a id="ae32b30f33fa7097e5df689fbdf38db15" name="ae32b30f33fa7097e5df689fbdf38db15"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae32b30f33fa7097e5df689fbdf38db15">&#9670;&#160;</a></span>centerPoint()</h2>
 
@@ -636,118 +698,6 @@ Protected Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a0985373f563be1b71c691c15ebe70ee3" name="a0985373f563be1b71c691c15ebe70ee3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0985373f563be1b71c691c15ebe70ee3">&#9670;&#160;</a></span>draw() <span class="overload">[1/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void draw </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classpdg_1_1_port.html">Port</a> *</td>          <td class="paramname"><span class="paramname"><em>port</em></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="af8e80dd225971c22c0aa9a82733bee2a" name="af8e80dd225971c22c0aa9a82733bee2a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af8e80dd225971c22c0aa9a82733bee2a">&#9670;&#160;</a></span>draw() <span class="overload">[2/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void draw </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classpdg_1_1_port.html">Port</a> *</td>          <td class="paramname"><span class="paramname"><em>port</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="group___graphics.html#gad144e096b54d6bd74ec90603775913e1">Quad</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>quad</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a433a1ef0e94194f67e72a31a1a1e14d3" name="a433a1ef0e94194f67e72a31a1a1e14d3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a433a1ef0e94194f67e72a31a1a1e14d3">&#9670;&#160;</a></span>draw() <span class="overload">[3/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void draw </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classpdg_1_1_port.html">Port</a> *</td>          <td class="paramname"><span class="paramname"><em>port</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="group___graphics.html#ga7ee736664a9e39162d1b60170692b7b7">Rect</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rect</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a95999d2e65bb71325a99072e7514e592" name="a95999d2e65bb71325a99072e7514e592"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a95999d2e65bb71325a99072e7514e592">&#9670;&#160;</a></span>draw() <span class="overload">[4/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void draw </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="classpdg_1_1_port.html">Port</a> *</td>          <td class="paramname"><span class="paramname"><em>port</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const <a class="el" href="group___graphics.html#ga67e6dda5714d6d005160629995986da6">RotatedRect</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>rr</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel pure-virtual">pure virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a03d9a81ef7d6e973cffccc1c94bea31a" name="a03d9a81ef7d6e973cffccc1c94bea31a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a03d9a81ef7d6e973cffccc1c94bea31a">&#9670;&#160;</a></span>drawTransformed()</h2>
 
@@ -784,9 +734,9 @@ Protected Member Functions</h2></td></tr>
 <p>Composes parent and element transforms/opacity without changing stored element attributes. Requires a GUI-capable build.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">port</td><td>Destination <a class="el" href="classpdg_1_1_port.html">Port</a>. </td></tr>
+    <tr><td class="paramname">port</td><td>Destination <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a>. </td></tr>
     <tr><td class="paramname">parent</td><td>Parent transform and appearance applied to every element. </td></tr>
-    <tr><td class="paramname">localStrokes</td><td>False keeps stroke thickness in <a class="el" href="classpdg_1_1_port.html">Port</a> pixels. True scales thickness by sqrt(abs(det(composed transform))).</td></tr>
+    <tr><td class="paramname">localStrokes</td><td>False keeps stroke thickness in <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> pixels. True scales thickness by sqrt(abs(det(composed transform))).</td></tr>
   </table>
   </dd>
 </dl>

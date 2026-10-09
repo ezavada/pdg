@@ -37,6 +37,7 @@
 
 #include <map>
 #include <list>
+#include <memory>
 
 #ifdef PDG_COMPILING_FOR_SCRIPT_BINDINGS
 #include "pdg_script_bindings.h"
@@ -109,7 +110,12 @@ public:
 	SCRIPT_OBJECT_REF mEventEmitterScriptObj;
 #endif
 
+    /// @cond INTERNAL
+    std::weak_ptr<EventEmitter*> eventLifetime() const { if(!mLifetime)mLifetime=std::make_shared<EventEmitter*>(const_cast<EventEmitter*>(this));return mLifetime; }
+    /// @endcond
 protected:
+    mutable std::shared_ptr<EventEmitter*> mLifetime;
+    virtual bool acceptsEvents() const { return true; }
 
 /// @cond INTERNAL   
 	virtual bool emitEvent(EventEmitter* emitter, long inEventType, void* inEventData); // returns true if event handled

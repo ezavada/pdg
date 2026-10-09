@@ -7,3 +7,5 @@ deps/scml-pp/reference/*
 deps/scml-pp/samples/*
 deps/zlib/Release/*
 
+
+webtransport-build/

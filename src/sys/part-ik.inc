@@ -10,6 +10,7 @@ double ikBoundAngle(double angle, double current, const Part& joint) {
 }
 }
 Part& Part::setIKLimits(double minAngle, double maxAngle) {
+    if(recordOperation("setIKLimits", captureAnimationArguments(minAngle, maxAngle))) return *this;
     if (!std::isfinite(minAngle) || !std::isfinite(maxAngle) ||
         std::abs(minAngle)>std::numeric_limits<float>::max() || std::abs(maxAngle)>std::numeric_limits<float>::max() ||
         minAngle>maxAngle || maxAngle-minAngle>ikTurn)
@@ -40,12 +41,16 @@ bool Part::validateIKLimitConstraint(const PhysicsConstraint& constraint) const 
     return forward;
 }
 Part& Part::setIKLimits(PhysicsConstraint& constraint) {
+    if(recordOperation("setIKLimits", captureAnimationArguments(constraint))) return *this;
     validateIKLimitConstraint(constraint);
     constraint.addRef(); clearIKLimits(); mIKConstraint=&constraint; mHasIKLimits=true;
     return *this;
 }
 Part& Part::clearIKLimits() {
-    if (mIKConstraint) { mIKConstraint->release(); mIKConstraint=nullptr; }
+    if(recordOperation("clearIKLimits", captureAnimationArguments())) return *this;
+    if (mIKConstraint) { mIKConstraint->release();
+    mIKConstraint=nullptr;
+}
     mHasIKLimits=false; mIKMinAngle=mIKMaxAngle=0; return *this;
 }
 double Part::getIKMinAngle() const {
@@ -95,6 +100,7 @@ Part::IKSolution Part::calculateIK(Part* middle, Part* tip, const Point& target,
     if (space<partSpace_Local || space>partSpace_World || (bend!=1 && bend!=-1) ||
         !std::isfinite(target.x) || !std::isfinite(target.y) || !std::isfinite(influence) || influence<0 || influence>1)
         throw std::invalid_argument("Invalid Part IK target, coordinate space, bend direction or influence");
+    if(mProceduralOwner||middle->mProceduralOwner)throw std::logic_error("IK rotations belong to a procedural chain");
     if (!drive) { validateProgrammedTransform();middle->validateProgrammedTransform();tip->validateProgrammedTransform(); }
     else {
         const Part* joints[3]={this,middle,tip};
@@ -196,15 +202,18 @@ bool Part::solveIK(Part* middle, Part* tip, const Point& target, int space, int 
     return std::hypot(actual.tx-solution.worldTarget.x,actual.ty-solution.worldTarget.y)<=solution.tolerance;
 }
 Part& Part::setIKTarget(Part* middle, Part* tip, const Point& target, int space, int bend, double influence) {
+    if(recordOperation("setIKTarget", captureAnimationArguments(middle, tip, target, space, bend, influence))) return *this;
     calculateIK(middle,tip,target,space,bend,influence);
     validateIKOverlap(middle,tip,false);
     auto config=std::make_unique<IKTarget>();
     config->middle=middle->mId;config->tip=tip->mId;
     config->target=target;config->space=space;config->bend=bend;config->influence=influence;config->reached=false;
+    if(mIKTarget&&(mIKTarget->middle!=middle->mId||mIKTarget->tip!=tip->mId)&&mJiggle&&mJiggle->config.mode==jiggleMode_IKTarget)clearJiggle();
     mIKTarget=std::move(config);mIKError.clear();return *this;
 }
 Part& Part::setIKDriveTarget(Part* middle, Part* tip, const Point& target, double maxForce, double maxTorque,
                             int space, int bend, double influence, double frequency, double dampingRatio) {
+    if(recordOperation("setIKDriveTarget", captureAnimationArguments(middle, tip, target, maxForce, maxTorque, space, bend, influence, frequency, dampingRatio))) return *this;
     if(!middle || !tip || !mSprite) throw std::invalid_argument("Physical IK requires an owned Part chain");
     for(double value:{maxForce,maxTorque,frequency,dampingRatio})
         if(!std::isfinite(value) || value<0) throw std::invalid_argument("IK drive limits and damping must be finite and nonnegative");
@@ -231,8 +240,17 @@ Part& Part::setIKDriveTarget(Part* middle, Part* tip, const Point& target, doubl
     for(auto* body:mIKTarget->bodies) if(body) body->mDriveController=this;
     mIKError.clear();return *this;
 }
-Part& Part::clearIKTarget() {mIKTarget.reset();mIKError.clear();return *this;}
+Part& Part::clearIKTarget() {
+    if(recordOperation("clearIKTarget", captureAnimationArguments())) return *this;
+    if(mJiggle&&mJiggle->config.mode==jiggleMode_IKTarget)clearJiggle();
+    if(mFABRIK)releaseProcedural();
+    mFABRIK.reset();
+    mIKTarget.reset();
+    mIKError.clear();
+    return *this;
+}
 bool Part::isIKTargetReached() const {
+    if(mFABRIK)return mFABRIK->result.reached;
     if(!mIKTarget) return false;
     if(!mIKTarget->physical) return mIKTarget->reached;
     if(!mIKError.empty()) return false;
@@ -245,15 +263,27 @@ bool Part::isIKTargetReached() const {
         return std::hypot(actual.tx-solution.worldTarget.x,actual.ty-solution.worldTarget.y)<=solution.tolerance;
     } catch(const std::exception&) {return false;}
 }
-bool Part::applyIKTarget() {
+bool Part::applyIKTarget(double seconds) {
     if(!mIKTarget) return false;
     auto& ik=*mIKTarget;
+    const Point originalTarget=ik.target;const int originalSpace=ik.space;
+    struct RestoreTarget { IKTarget& ik;Point target;int space;~RestoreTarget(){ik.target=target;ik.space=space;} } restore{ik,originalTarget,originalSpace};
+    std::optional<SpriteJiggleState> jiggleNext;
+    try {
+    if(mJiggle&&mJiggle->config.mode==jiggleMode_IKTarget) {
+        Point world=ik.target;
+        if(ik.space==partSpace_Local)world=physicsFrame().transformPoint(world);
+        else if(ik.space==partSpace_Sprite)world=mSprite->partRootTransform().transformPoint(world);
+        jiggleNext=*mJiggle;stepPartJiggleFade(*jiggleNext,seconds);
+        jiggleNext->result=stepJiggleTarget(jiggleNext->config,jiggleNext->state,world.x,world.y,seconds);
+        ik.target=Point(jiggleNext->result.effectiveX,jiggleNext->result.effectiveY);ik.space=partSpace_World;
+    }
     auto* middle=mSprite?mSprite->getPart(ik.middle):nullptr;
     auto* tip=mSprite?mSprite->getPart(ik.tip):nullptr;
-    try {
         if(!ik.physical) {
             const float before=mFacing,middleBefore=middle?middle->mFacing:0;
             ik.reached=solveIK(middle,tip,ik.target,ik.space,ik.bend,ik.influence);mIKError.clear();
+            if(jiggleNext)*mJiggle=std::move(*jiggleNext);
             return mFacing!=before || (middle && middle->mFacing!=middleBefore);
         }
         const auto solution=calculateIK(middle,tip,ik.target,ik.space,ik.bend,ik.influence,&ik);
@@ -277,7 +307,7 @@ bool Part::applyIKTarget() {
                 ik.maxForce,ik.maxTorque,ik.frequency,ik.dampingRatio,
                 ((i==0 && mIKConstraint) || (i==1 && middle->mIKConstraint))?rotationDirection_AsSpecified:rotationDirection_Shortest);
         }
-        mIKError.clear();return true;
+        mIKError.clear();if(jiggleNext)*mJiggle=std::move(*jiggleNext);return true;
     } catch(const std::exception& error) {
         ik.stopDrives();ik.reached=false;mIKError=error.what();return false;
     }

@@ -1,7 +1,9 @@
 namespace pdg { /**
 
-\fn pdg::Attributes::fillRadialGradient(Point center, Color centerColor, float radius, Color endColor)
+\fn pdg::Attributes::fillRadialGradient(Point center, Color centerColor, number float radius, Color endColor)
 
 \brief Create a radial gradient fill from center point to outer radius
+
+Each color argument independently accepts a Color object, a CSS color string, or a packed RGBA number.
 
 **/ }

@@ -30,6 +30,7 @@ void PDGImageFile::renderSprite(SpriterEngine::UniversalObjectInterface* object)
     if (!mPDGImage || !object || !layer) return;
     Port* port = layer->getSpritePort();
     if (!port) return;
+    Port::ScreenDrawingScope screenSpace(*port);
 
     const auto position = object->getPosition();
     const auto scale = object->getScale();

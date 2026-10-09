@@ -94,6 +94,39 @@ namespace pdg
             static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, AnimatedBase* cppObj);
             AnimatedBaseWrap(AnimatedBase* obj) : cppPtr_(obj) {}
 
+            static void PlayScript (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Batch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndBatch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Series (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndSeries (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AndAlso (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Stagger (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Mark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void JumpToMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ScriptOn (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void TriggerEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnStarted (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnScriptFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnYoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnRepeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnUntilFired (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void When (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Otherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndWhen (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndOtherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Until (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Yoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Repeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Diminish (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Increase (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SlowDown (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SpeedUp (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RestartIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PauseIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResumeIt (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetBoundingBox (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetRotatedBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -161,6 +194,676 @@ namespace pdg
 
     };
 
+    Troupe* New_Troupe(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+    class TroupeWrap : public jswrap::ObjectWrap
+    {
+        public:
+            static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
+            static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
+        protected:
+            static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
+        public:
+            Troupe* getCppObject() { return cppPtr_; }
+        protected:
+            Troupe* cppPtr_;
+
+            TroupeWrap(const v8::FunctionCallbackInfo<v8::Value>& args);
+            ~TroupeWrap();
+
+        public:
+            static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, Troupe* cppObj);
+            TroupeWrap(Troupe* obj) : cppPtr_(obj) {}
+
+            static void RecordCommand (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PlayScript (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Batch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndBatch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Series (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndSeries (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AndAlso (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Stagger (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Mark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void JumpToMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ScriptOn (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void TriggerEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnStarted (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnScriptFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnYoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnRepeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnUntilFired (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void When (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Otherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndWhen (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndOtherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Until (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Yoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Repeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Diminish (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Increase (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SlowDown (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SpeedUp (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RestartIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PauseIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResumeIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetBoundingBox (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetRotatedBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetSize (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetWidth (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetHeight (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetScale (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetRotation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetCenterOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetSpin (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void MoveTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void MoveBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeMovementTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeMovementBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetSize (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeCenterOffsetTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeCenterOffsetBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetWidth (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetHeight (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetRotation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetSpin (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetGrowing (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetScale (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeSpinTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeSpinBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeGrowingTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeGrowingBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeStretchingTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeStretchingBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeScaleTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeScaleBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Grow (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Stretch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResizeBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResizeTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RotateBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RotateTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetCenterOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetFlipX (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetFlipY (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopSpinning (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopGrowing (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PauseSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResumeSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void CancelSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void FlipX (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void FlipY (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AndThen (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsFlippedX (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsFlippedY (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsSchedulePaused (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void HasScheduledAnimations (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Wait (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AddAnimationHelper (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RemoveAnimationHelper (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ClearAnimationHelpers (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Animate (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Add (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Remove (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Clear (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Contains (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetMemberCount (const v8::FunctionCallbackInfo<v8::Value>& args);
+    };
+
+    AnimationScript* New_AnimationScript(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+    class AnimationScriptWrap : public jswrap::ObjectWrap
+    {
+        public:
+            static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
+            static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
+        protected:
+            static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
+        public:
+            AnimationScript* getCppObject() { return cppPtr_; }
+        protected:
+            AnimationScript* cppPtr_;
+
+            AnimationScriptWrap(const v8::FunctionCallbackInfo<v8::Value>& args);
+            ~AnimationScriptWrap();
+
+        public:
+            static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, AnimationScript* cppObj);
+            AnimationScriptWrap(AnimationScript* obj) : cppPtr_(obj) {}
+
+            static void RecordCommand (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PlayScript (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Batch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndBatch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Series (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndSeries (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AndAlso (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Stagger (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Mark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void JumpToMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ScriptOn (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void TriggerEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnStarted (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnScriptFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnYoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnRepeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnUntilFired (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void When (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Otherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndWhen (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndOtherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Until (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Yoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Repeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Diminish (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Increase (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SlowDown (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SpeedUp (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RestartIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PauseIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResumeIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetBoundingBox (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetRotatedBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetSize (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetWidth (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetHeight (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetScale (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetRotation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetCenterOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetSpin (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void MoveTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void MoveBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeMovementTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeMovementBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetSize (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeCenterOffsetTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeCenterOffsetBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetWidth (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetHeight (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetRotation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetSpin (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetGrowing (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetScale (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeSpinTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeSpinBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeGrowingTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeGrowingBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeStretchingTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeStretchingBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeScaleTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeScaleBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Grow (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Stretch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResizeBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResizeTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RotateBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RotateTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetCenterOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetFlipX (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetFlipY (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopSpinning (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopGrowing (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PauseSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResumeSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void CancelSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void FlipX (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void FlipY (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AndThen (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsFlippedX (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsFlippedY (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsSchedulePaused (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void HasScheduledAnimations (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Wait (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AddAnimationHelper (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RemoveAnimationHelper (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ClearAnimationHelpers (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndScript (const v8::FunctionCallbackInfo<v8::Value>& args);
+    };
+
+#ifdef PDG_SPRITER_SUPPORT
+    Bone* New_Bone(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+    class BoneWrap : public jswrap::ObjectWrap
+    {
+        public:
+            static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
+            static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
+        protected:
+            static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
+        public:
+            Bone* getCppObject() { return cppPtr_; }
+        protected:
+            Bone* cppPtr_;
+
+            BoneWrap(const v8::FunctionCallbackInfo<v8::Value>& args);
+            ~BoneWrap();
+
+        public:
+            static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, Bone* cppObj);
+            BoneWrap(Bone* obj) : cppPtr_(obj) {}
+
+            static void DiminishInfluence (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Animate (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PlayScript (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Batch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndBatch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Series (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndSeries (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AndAlso (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Stagger (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Mark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void JumpToMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ScriptOn (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void TriggerEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnStarted (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnScriptFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnYoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnRepeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnUntilFired (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void When (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Otherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndWhen (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndOtherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Until (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Yoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Repeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Diminish (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Increase (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SlowDown (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SpeedUp (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RestartIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PauseIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResumeIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetBoundingBox (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetRotatedBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetSize (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetWidth (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetHeight (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetScale (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetRotation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetCenterOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetSpin (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void MoveTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void MoveBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeMovementTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeMovementBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetSize (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeCenterOffsetTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeCenterOffsetBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetWidth (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetHeight (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetRotation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetSpin (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetGrowing (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetScale (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeSpinTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeSpinBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeGrowingTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeGrowingBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeStretchingTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeStretchingBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeScaleTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeScaleBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Grow (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Stretch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResizeBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResizeTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RotateBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RotateTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetCenterOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetFlipX (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetFlipY (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopSpinning (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopGrowing (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PauseSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResumeSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void CancelSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void FlipX (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void FlipY (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AndThen (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsFlippedX (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsFlippedY (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsSchedulePaused (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void HasScheduledAnimations (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Wait (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AddAnimationHelper (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RemoveAnimationHelper (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ClearAnimationHelpers (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetId (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetName (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetSprite (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsAttached (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetInfluence (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetIKLimits (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ClearIKLimits (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void HasIKLimits (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetIKMinAngle (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetIKMaxAngle (const v8::FunctionCallbackInfo<v8::Value>& args);
+    };
+#endif
+
+    CollisionQueryBuffer* New_CollisionQueryBuffer(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+    class CollisionQueryBufferWrap : public jswrap::ObjectWrap
+    {
+        public:
+            static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
+            static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
+        protected:
+            static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
+        public:
+            CollisionQueryBuffer* getCppObject() { return cppPtr_; }
+        protected:
+            CollisionQueryBuffer* cppPtr_;
+
+            CollisionQueryBufferWrap(const v8::FunctionCallbackInfo<v8::Value>& args);
+            ~CollisionQueryBufferWrap();
+
+        public:
+            static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, CollisionQueryBuffer* cppObj);
+            CollisionQueryBufferWrap(CollisionQueryBuffer* obj) : cppPtr_(obj) {}
+
+            static void GetPointX (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetPointY (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetNormalX (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetNormalY (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetCapacity (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetCount (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsOverflowed (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Clear (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetCollider (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetShapeId (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetPoint (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetNormal (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetFraction (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetDistance (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetInitialOverlap (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Configure (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SelectLayers (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AddLayer (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ExcludeCollider (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ExcludeBody (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetPredicate (const v8::FunctionCallbackInfo<v8::Value>& args);
+    };
+
+    Scene* New_Scene(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+    class SceneWrap : public jswrap::ObjectWrap
+    {
+        public:
+            static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
+            static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
+        protected:
+            static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
+        public:
+            Scene* getCppObject() { return cppPtr_; }
+        protected:
+            Scene* cppPtr_;
+
+            SceneWrap(const v8::FunctionCallbackInfo<v8::Value>& args);
+            ~SceneWrap();
+
+        public:
+            static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, Scene* cppObj);
+            SceneWrap(Scene* obj) : cppPtr_(obj) {}
+
+            static void AddHandler (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RemoveHandler (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Clear (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void BlockEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void UnblockEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Raycast (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SweepCircle (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OverlapPoint (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OverlapCircle (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OverlapBox (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OverlapCapsule (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void NearestPoint (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AddLayer (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RemoveLayer (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void DisposeLayer (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void CreateSpriteLayer (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetLayer (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Pause (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Resume (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Dispose (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void CancelAllTimers (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsPaused (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsDisposed (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetLayerCount (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetTimeScale (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetFixedStep (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetSimulationTime (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetDroppedTime (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetInterpolationAlpha (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetTick (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsInputEnabled (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsManual (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsInterpolationEnabled (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetTimeScale (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetFixedStep (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Advance (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetManual (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetInputEnabled (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetInterpolation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetCamera (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetCamera (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StartTimer (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void CancelTimer (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PauseTimer (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void UnpauseTimer (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void DelayTimer (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsTimerPaused (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetWhenTimerFiresNext (const v8::FunctionCallbackInfo<v8::Value>& args);
+    };
+
+    Camera* New_Camera(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+    class CameraWrap : public jswrap::ObjectWrap
+    {
+        public:
+            static void Init(v8::Isolate* isolate, v8::Local<v8::Object> target);
+            static void New(const v8::FunctionCallbackInfo<v8::Value>& args);
+            static v8::Local<v8::FunctionTemplate> GetTemplate(v8::Isolate* isolate) { return v8::Local<v8::FunctionTemplate>::New(isolate, constructorTpl_); }
+        protected:
+            static v8::Persistent<v8::FunctionTemplate> constructorTpl_;
+        public:
+            Camera* getCppObject() { return cppPtr_; }
+        protected:
+            Camera* cppPtr_;
+
+            CameraWrap(const v8::FunctionCallbackInfo<v8::Value>& args);
+            ~CameraWrap();
+
+        public:
+            static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, Camera* cppObj);
+            CameraWrap(Camera* obj) : cppPtr_(obj) {}
+
+            static void PlayScript (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Batch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndBatch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Series (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndSeries (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AndAlso (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Stagger (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Mark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void JumpToMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ScriptOn (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void TriggerEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnStarted (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnScriptFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnYoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnRepeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnUntilFired (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void When (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Otherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndWhen (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndOtherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Until (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Yoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Repeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Diminish (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Increase (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SlowDown (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SpeedUp (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RestartIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PauseIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResumeIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetBoundingBox (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetRotatedBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetSize (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetWidth (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetHeight (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetScale (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetRotation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetCenterOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetSpin (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void MoveTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void MoveBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeMovementTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeMovementBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetSize (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeCenterOffsetTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeCenterOffsetBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetWidth (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetHeight (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetRotation (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetSpin (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetGrowing (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetScale (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeSpinTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeSpinBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeGrowingTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeGrowingBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeStretchingTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeStretchingBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeScaleTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ChangeScaleBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Grow (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Stretch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResizeBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResizeTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RotateBy (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RotateTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetCenterOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetFlipX (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetFlipY (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopSpinning (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopGrowing (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PauseSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResumeSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void CancelSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void FlipX (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void FlipY (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AndThen (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsFlippedX (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsFlippedY (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsSchedulePaused (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void HasScheduledAnimations (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Wait (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AddAnimationHelper (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RemoveAnimationHelper (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ClearAnimationHelpers (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AddHandler (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RemoveHandler (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Clear (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void BlockEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void UnblockEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetZoom (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetZoom (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetPixelSnapping (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetPixelSnapping (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Zoom (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ZoomTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Animate (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Follow (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopFollowing (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsFollowing (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetSmoothing (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetSmoothing (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetLookAhead (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetLookAhead (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetDeadzone (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetDeadzone (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetFollowOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetFollowOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetViewBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ClearViewBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void HasViewBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetViewBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetViewport (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetViewport (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void WorldToView (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ViewToWorld (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetEffects (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Flash (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetFlashOpacity (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Show (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Hide (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void IsHidden (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetOpacity (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetOpacity (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void FadeTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void FadeIn (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void FadeOut (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void CutTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void MatchCutTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void MatchFadeTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void TransitionTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void LumaFadeTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void WhipPanTo (const v8::FunctionCallbackInfo<v8::Value>& args);
+#ifndef PDG_NO_GUI
+#endif
+    };
+
     Particle* New_Particle(const v8::FunctionCallbackInfo<v8::Value>& args);
 
     class ParticleWrap : public jswrap::ObjectWrap
@@ -183,6 +886,39 @@ namespace pdg
             static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, Particle* cppObj);
             ParticleWrap(Particle* obj) : cppPtr_(obj) {}
 
+            static void PlayScript (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Batch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndBatch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Series (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndSeries (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AndAlso (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Stagger (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Mark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void JumpToMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ScriptOn (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void TriggerEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnStarted (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnScriptFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnYoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnRepeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnUntilFired (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void When (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Otherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndWhen (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndOtherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Until (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Yoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Repeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Diminish (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Increase (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SlowDown (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SpeedUp (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RestartIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PauseIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResumeIt (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetBoundingBox (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetRotatedBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -260,6 +996,11 @@ namespace pdg
             static void SetupParticleEmitter (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetParticleEmitter (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void RemoveParticleEmitter (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetTrail (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ClearTrail (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void BreakTrail (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void HasTrail (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetTrailPointCount (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void ClearContent (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void HasContent (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetOpacity (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -300,6 +1041,39 @@ namespace pdg
             static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, ParticleEmitter* cppObj);
             ParticleEmitterWrap(ParticleEmitter* obj) : cppPtr_(obj) {}
 
+            static void PlayScript (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Batch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndBatch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Series (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndSeries (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AndAlso (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Stagger (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Mark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void JumpToMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ScriptOn (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void TriggerEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnStarted (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnScriptFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnYoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnRepeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnUntilFired (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void When (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Otherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndWhen (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndOtherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Until (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Yoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Repeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Diminish (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Increase (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SlowDown (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SpeedUp (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RestartIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PauseIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResumeIt (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetBoundingBox (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetRotatedBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -625,6 +1399,39 @@ namespace pdg
             static void SetupPhysicsBody (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void RemovePhysicsBody (const v8::FunctionCallbackInfo<v8::Value>& args);
 
+            static void PlayScript (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Batch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndBatch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Series (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndSeries (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AndAlso (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Stagger (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Mark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void JumpToMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ScriptOn (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void TriggerEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnStarted (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnScriptFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnYoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnRepeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnUntilFired (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void When (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Otherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndWhen (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndOtherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Until (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Yoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Repeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Diminish (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Increase (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SlowDown (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SpeedUp (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RestartIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PauseIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResumeIt (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetBoundingBox (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetRotatedBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -700,12 +1507,14 @@ namespace pdg
             static void GetParentPart (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetParentPart (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetTransform (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ProceduralControl (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SolveIK (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetIKTarget (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void ClearIKTarget (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void HasIKTarget (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void IsIKTargetReached (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetIKError (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetJiggleError (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetIKLimits (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void ClearIKLimits (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void HasIKLimits (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -802,6 +1611,39 @@ namespace pdg
             static void Clear (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void BlockEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void UnblockEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PlayScript (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Batch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndBatch (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Series (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndSeries (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void AndAlso (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Stagger (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Mark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void JumpToMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ScriptOn (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void TriggerEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnStarted (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnScriptFinished (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnMark (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnYoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnRepeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void OnUntilFired (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void When (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Otherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndWhen (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void EndOtherwise (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Until (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Yoyo (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Repeat (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Diminish (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void Increase (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SlowDown (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SpeedUp (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void StopIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void RestartIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void PauseIt (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ResumeIt (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetBoundingBox (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetRotatedBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -889,6 +1731,7 @@ namespace pdg
             static void TransitionToAnimation (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void IsAnimationTransitioning (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetAnimationTransitionProgress (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void ProceduralControl (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void AddAnimationIK (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetAnimationIKTarget (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetAnimationIKResult (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -927,6 +1770,7 @@ namespace pdg
             static void DisableAnimationPose (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void IsAnimationPoseEnabled (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetAnimationRigError (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetBone (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetAnimationBoneNames (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetAnimationBindingNames (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetAnimationBoneTransform (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -1034,82 +1878,32 @@ namespace pdg
             static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, SpriteLayer* cppObj);
             SpriteLayerWrap(SpriteLayer* obj) : cppPtr_(obj) {}
 
+#ifndef PDG_USING_JAVASCRIPT_CORE
+        public:
+            void forgetCppObject() { cppPtr_=nullptr; }
+#endif
             static void AddHandler (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void RemoveHandler (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void Clear (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void BlockEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void UnblockEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetBoundingBox (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetRotatedBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetSize (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetWidth (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetHeight (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetScale (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetRotation (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetCenterOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetSpin (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void MoveTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void MoveBy (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeMovementTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeMovementBy (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetSize (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeCenterOffsetTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeCenterOffsetBy (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetWidth (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetHeight (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetRotation (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetSpin (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetGrowing (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetScale (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeSpinTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeSpinBy (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeGrowingTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeGrowingBy (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeStretchingTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeStretchingBy (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeScaleTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeScaleBy (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void Grow (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void Stretch (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ResizeBy (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ResizeTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void RotateBy (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void RotateTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetCenterOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetFlipX (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetFlipY (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void StopMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void StopSpinning (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void StopGrowing (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void StopStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void PauseSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ResumeSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void CancelSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void FlipX (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void FlipY (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void AndThen (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void IsFlippedX (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void IsFlippedY (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void IsSchedulePaused (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void HasScheduledAnimations (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void Wait (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void AddAnimationHelper (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void RemoveAnimationHelper (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ClearAnimationHelpers (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetSerializedSize (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void Serialize (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void Deserialize (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetMyClassTag (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetQueryBits (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetQueryBits (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetCamera (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetCamera (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetEffectiveCamera (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetCameraParallax (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetWorldBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetWorldBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void CreateParticle (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void AddParticle (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void RemoveParticle (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void RemoveAllParticles (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetParticleTrailCount (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetParticleCount (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetNthParticle (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetMaxParticles (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -1130,7 +1924,6 @@ namespace pdg
             static void MoveToFront (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void MoveToBack (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetZOrder (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void MoveWith (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void FindSprite (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetNthSprite (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetSpriteZOrder (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -1147,14 +1940,6 @@ namespace pdg
 #ifndef PDG_NO_GUI
             static void GetSpritePort (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetSpritePort (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetOrigin (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetOrigin (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetZoom (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetZoom (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void Zoom (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ZoomTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetAutoCenter (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetFixedMoveAxis (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void LayerToPortPoint (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void LayerToPortOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void LayerToPortVector (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -1170,7 +1955,6 @@ namespace pdg
             static void SetUseChipmunkPhysics (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetStaticLayer (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetGravity (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetKeepGravityDownward (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetDamping (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetSpace (const v8::FunctionCallbackInfo<v8::Value>& args);
 #endif
@@ -1206,9 +1990,9 @@ namespace pdg
             static void OnPreAnimateLayer (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void OnPostAnimateLayer (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void OnAnimationComplete (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void OnZoomComplete (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void OnLayerFadeInComplete (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void OnLayerFadeOutComplete (const v8::FunctionCallbackInfo<v8::Value>& args);
+
     };
 
     TileLayer* New_TileLayer(const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -1233,82 +2017,32 @@ namespace pdg
             static v8::Local<v8::Object> NewFromCpp(v8::Isolate* isolate, TileLayer* cppObj);
             TileLayerWrap(TileLayer* obj) : cppPtr_(obj) {}
 
+#ifndef PDG_USING_JAVASCRIPT_CORE
+        public:
+            void forgetCppObject() { cppPtr_=nullptr; }
+#endif
             static void AddHandler (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void RemoveHandler (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void Clear (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void BlockEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void UnblockEvent (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetBoundingBox (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetRotatedBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetSize (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetWidth (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetHeight (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetScale (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetRotation (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetCenterOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetSpin (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetLocation (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void MoveTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void MoveBy (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeMovementTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeMovementBy (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetSize (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeCenterOffsetTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeCenterOffsetBy (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetWidth (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetHeight (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetRotation (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetSpin (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetGrowing (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetScale (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeSpinTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeSpinBy (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeGrowingTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeGrowingBy (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeStretchingTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeStretchingBy (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeScaleTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ChangeScaleBy (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void Grow (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void Stretch (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ResizeBy (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ResizeTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void RotateBy (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void RotateTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetCenterOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetFlipX (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetFlipY (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void StopMovement (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void StopSpinning (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void StopGrowing (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void StopStretching (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void PauseSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ResumeSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void CancelSchedule (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void FlipX (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void FlipY (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void AndThen (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void IsFlippedX (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void IsFlippedY (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void IsSchedulePaused (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void HasScheduledAnimations (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void Wait (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void AddAnimationHelper (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void RemoveAnimationHelper (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ClearAnimationHelpers (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetSerializedSize (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void Serialize (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void Deserialize (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetMyClassTag (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetQueryBits (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetQueryBits (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetCamera (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetCamera (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetEffectiveCamera (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetCameraParallax (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetWorldBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void SetWorldBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void CreateParticle (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void AddParticle (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void RemoveParticle (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void RemoveAllParticles (const v8::FunctionCallbackInfo<v8::Value>& args);
+            static void GetParticleTrailCount (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetParticleCount (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetNthParticle (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetMaxParticles (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -1329,7 +2063,6 @@ namespace pdg
             static void MoveToFront (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void MoveToBack (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetZOrder (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void MoveWith (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void FindSprite (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetNthSprite (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetSpriteZOrder (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -1346,14 +2079,6 @@ namespace pdg
 #ifndef PDG_NO_GUI
             static void GetSpritePort (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetSpritePort (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetOrigin (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetOrigin (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetZoom (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetZoom (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void Zoom (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void ZoomTo (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetAutoCenter (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetFixedMoveAxis (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void LayerToPortPoint (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void LayerToPortOffset (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void LayerToPortVector (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -1369,13 +2094,11 @@ namespace pdg
             static void SetUseChipmunkPhysics (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetStaticLayer (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetGravity (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void SetKeepGravityDownward (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetDamping (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetSpace (const v8::FunctionCallbackInfo<v8::Value>& args);
 #endif
             static void GetWorldSize (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void SetWorldSize (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void GetWorldBounds (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void DefineTileSet (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void LoadMapData (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void GetMapData (const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -1409,9 +2132,9 @@ namespace pdg
             static void OnPreAnimateLayer (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void OnPostAnimateLayer (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void OnAnimationComplete (const v8::FunctionCallbackInfo<v8::Value>& args);
-            static void OnZoomComplete (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void OnLayerFadeInComplete (const v8::FunctionCallbackInfo<v8::Value>& args);
             static void OnLayerFadeOutComplete (const v8::FunctionCallbackInfo<v8::Value>& args);
+
     };
 #endif
 

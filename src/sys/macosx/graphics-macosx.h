@@ -56,6 +56,7 @@ namespace pdg {
 
 struct MacFontMetricsInfo : public FontMetricsInfo {
 	MacAPI::PrivateOSFontRef mMacFont;
+    void* mCoreTextFont;
 };
 
 // mostly what this class does is make the constructors and destructors public
@@ -73,7 +74,9 @@ class FontImplMac : public FontImpl {
 public:
 	FontImplMac(Port* port, const char* fontName, float scalingFactor);
 	virtual ~FontImplMac();
-	virtual FontMetricsInfo* getFontMetrics(int size, uint32 style);
+	FontMetricsInfo* getFontMetrics(int size, uint32 style) override;
+    void releaseFontMetrics(FontMetricsInfo* metrics) override;
+    void* getCoreTextFont(int size, uint32 style);
 	MacAPI::PrivateOSFontRef getMacFont(int size, uint32 style);
 };
 

@@ -5,6 +5,8 @@ namespace pdg { /**
 
 \brief creates and tracks collections of sprites
 
+Layers own contents, visibility, world bounds and simulation controls. They do not inherit Animated. Attach an Animated Camera with setCamera(), or inherit the current sprite Port camera by leaving the explicit attachment null. Multiple layers can share a camera; see Camera for coordinate and animation semantics.
+
 
 Events
 ------

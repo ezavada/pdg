@@ -139,7 +139,6 @@ describe("TileLayer", function() {
       expect(typeof tileLayer.onPreAnimateLayer).toBe('function');
       expect(typeof tileLayer.onPostAnimateLayer).toBe('function');
       expect(typeof tileLayer.onAnimationComplete).toBe('function');
-      expect(typeof tileLayer.onZoomComplete).toBe('function');
       expect(typeof tileLayer.onLayerFadeInComplete).toBe('function');
       expect(typeof tileLayer.onLayerFadeOutComplete).toBe('function');
     });
@@ -158,11 +157,6 @@ describe("TileLayer", function() {
       expect(drawHandler).toBeDefined();
       expect(typeof drawHandler).toBe('object');
       
-      var zoomHandler = tileLayer.onZoomComplete(function(event) {
-        return true;
-      });
-      expect(zoomHandler).toBeDefined();
-      expect(typeof zoomHandler).toBe('object');
     });
 
   });

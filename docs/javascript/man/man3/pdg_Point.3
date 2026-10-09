@@ -1,4 +1,4 @@
-.TH "Point" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Point" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -27,7 +27,7 @@ Inherits \fBOffset\fP\&.
 .br
 .RI "create and set x & y values "
 .ti -1c
-.RI "\fBPoint\fP (object xy)"
+.RI "\fBPoint\fP (\fBXY\fP xy)"
 .br
 .RI "create and set x & y values "
 .ti -1c
@@ -52,7 +52,7 @@ Public Member Functions inherited from \fBOffset\fP
 .RI "\fBOffset\fP (number[] xy)"
 .br
 .ti -1c
-.RI "\fBOffset\fP (object xy)"
+.RI "\fBOffset\fP (\fBXY\fP xy)"
 .br
 .ti -1c
 .RI "\fBOffset\fP \fBadd\fP (\fBOffset\fP offset)"
@@ -166,13 +166,18 @@ References \fBx\fP, and \fBy\fP\&.
 .PP
 create and set x & y values 
 .PP
+\fBNote\fP
+.RS 4
+Parameter \fRxy:\fP \fBXY\fP\&.
+.RE
+.PP
 \fBParameters\fP
 .RS 4
 \fIxy\fP an array of numbers with x as element 0 and y as element 1 
 .RE
 .PP
 
-.SS "Point (object xy)"
+.SS "Point (\fBXY\fP xy)"
 
 .PP
 create and set x & y values 

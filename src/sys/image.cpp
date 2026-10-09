@@ -289,10 +289,10 @@ void
 ImageImpl::prepareToRasterize() {
 }
 
-void    
+ImageImpl&
 ImageImpl::setTransparentColor(Color rgb) {
-	if (mSuperImage) return;  // don't do for subimage
-	if (!data) return;  // no data assigned, can't do this yet
+	if (mSuperImage) return *this;  // don't do for subimage
+	if (!data) return *this;  // no data assigned, can't do this yet
 	mSnapshotPixelsChanged = true;
     mRetainData = true;
 	transparentColor = rgb;
@@ -302,7 +302,7 @@ ImageImpl::setTransparentColor(Color rgb) {
 		// convert RGB --> RGBA so we have an alpha channel
 		long tempPitch = ((mBufferWidth*16) + 3) / 4; // closest 4 byte modulus width that has 4 bytes per pixel
 		uint8* tempData = (uint8*) std::malloc( mBufferHeight * tempPitch );
-		if (!tempData) return;
+		if (!tempData) return *this;
 		std::memset(tempData, 0, mBufferHeight * tempPitch);
 		uint8* dst = tempData;
 		uint8* src = (uint8*) data;
@@ -342,11 +342,13 @@ ImageImpl::setTransparentColor(Color rgb) {
 		}
 		src += pitch;
 	}
+    return *this;
 }
 
-void
+ImageImpl&
 ImageImpl::setOpacity(uint8 inOpacity) {
     opacity = inOpacity;
+    return *this;
 }
 
 uint8

@@ -145,6 +145,7 @@ async function main(args) {
                 if (server) {
                     const query = new URLSearchParams({test:entry.id, quick:'1', 'sample-seconds':options.seconds,
                         'warmup-seconds':options.warmup, 'load-factor':options.factor});
+                    if (process.env.PDG_TEXT_WORKLOAD === 'changing') query.set('text-workload', 'changing');
                     command = process.execPath;
                     argv = [path.join(root, 'test/emscripten/run_ui_browser.js'), runner.browserPath(),
                         'http://127.0.0.1:' + server.address().port + '/test/perf.html?' + query,

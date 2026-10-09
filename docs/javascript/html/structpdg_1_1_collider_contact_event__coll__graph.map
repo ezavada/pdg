@@ -1,0 +1,15 @@
+<map id="ColliderContactEvent" name="ColliderContactEvent">
+<area shape="rect" id="Node000001" title="ColliderContactEvent." alt="" coords="208,197,353,223"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_collider.html" title="Optional shapes, filtering, sensors and contacts for a Sprite, Part or Particle." alt="" coords="5,80,71,106"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="71,111,124,141,183,171,245,196,240,197,181,176,121,146,70,117"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="86,85,97,93,89,101,72,103,70,98,87,96,92,93,86,90"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="188,80,285,106"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="238,119,242,147,250,172,268,198,263,196,245,175,237,148,235,124"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_vector.html" title="vector (magnitude and direction) within a 2D coordinate system." alt="" coords="310,80,369,106"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="329,119,289,199,285,195,324,121"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_offset.html" title="offset within a 2D coordinate system" alt="" coords="349,5,407,31"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="367,43,348,82,344,78,362,47"/>
+<area shape="rect" id="Node000006" href="$classpdg_1_1_point.html" title="point for 2D coordinate system" alt="" coords="394,80,445,106"/>
+<area shape="poly" id="edge7_Node000006_Node000005" title=" " alt="" coords="393,42,415,81,410,79,391,47"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="414,119,401,150,381,175,361,189,338,199,336,194,358,185,378,171,397,147,409,123"/>
+</map>

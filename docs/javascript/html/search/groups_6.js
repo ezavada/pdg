@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['managers_0',['Managers',['../group___managers.html',1,'']]]
+  ['layers_0',['Sprites and layers',['../group___sprites.html',1,'']]]
 ];

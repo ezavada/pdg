@@ -28,6 +28,54 @@
 // -----------------------------------------------
 
 describe("Drawing", function() {
+  describe("text elements",function(){
+    it("owns editable Unicode text, rectangular control points and styling",function(){
+      var d=pdg.createDrawing(),attrs=new pdg.Attributes().textSize(24).textStyle(pdg.textStyle_Bold).fillColor('red');
+      var e=d.addText('Hello, 世界\nCafé',new pdg.Rect(10,20,110,60),attrs);
+      expect(e.type()).toBe(pdg.type_Text);expect(e.getText()).toBe('Hello, 世界\nCafé');
+      attrs.textSize(9);expect(e.getAttributes().getTextSize()).toBe(24);
+      e.setText('Updated ✨');expect(d.getElement(0).getText()).toBe('Updated ✨');
+      expect(e.getControlPoints().length).toBe(4);expect(d.getBounds().right).toBe(110);
+      e.changeControlPoint(2,new pdg.Point(140,80));expect(d.getBounds().right).toBe(140);
+      expect(d.getElementHitBy(new pdg.Point(50,40)).getText()).toBe('Updated ✨');
+      e.setAttributes(new pdg.Attributes().translation(new pdg.Offset(30,0)));
+      expect(d.getBounds().left).toBe(40);expect(d.getElementHitBy(new pdg.Point(15,40))).toBeNull();
+      e.remove();expect(function(){e.getText();}).toThrow();
+    });
+    it("validates text and rectangles without appending invalid elements",function(){
+      var d=pdg.createDrawing(),a=new pdg.Attributes(),r=new pdg.Rect(10,20);
+      [null,undefined,1,{}].forEach(function(t){expect(function(){d.addText(t,r,a);}).toThrow();});
+      expect(function(){d.addText('x',new pdg.Rect(0,0,Infinity,10),a);}).toThrow();
+      expect(function(){d.addText('x',new pdg.Rect(10,0,0,10),a);}).toThrow();
+      expect(d.getElementCount()).toBe(0);
+      var shape=d.addRect(r,a);expect(function(){shape.getText();}).toThrow();expect(function(){shape.setText('x');}).toThrow();
+      var e=d.addText('',r,a);expect(e.getText()).toBe('');
+      expect(function(){e.setText(null);}).toThrow();
+      var tooLong=new Array(1048578).join('x');
+      expect(function(){e.setText(tooLong);}).toThrow();expect(e.getText()).toBe('');
+      expect(function(){d.addText(tooLong,r,a);}).toThrow();expect(d.getElementCount()).toBe(2);
+    });
+    if(pdg.hasGraphics) it("renders saved text and named font settings identically",function(){
+      var port,layer,source,restored,before;
+      runs(function(){
+        port=pdg.gfx.createOffscreenPort(new pdg.Rect(96,64));layer=pdg.createSpriteLayer(port);
+        source=layer.createSprite();var d=pdg.createDrawing();
+        d.addText('Save\nText',new pdg.Rect(4,4,92,60),new pdg.Attributes().font(pdg.gfx.createFont('Arial',1.25)).textSize(18).textStyle(pdg.textStyle_Bold).fillColor('red').fillOpacity(.7));
+        source.createPart('label').setDrawing(d);
+        var writer=new pdg.Serializer();writer.serialize_obj(source);var reader=new pdg.Deserializer();reader.setDataPtr(writer.getDataPtr());restored=reader.deserialize_obj();
+        expect(restored.findPart('label').getContentBounds().right).toBe(92);
+      });
+      waits(80);
+      runs(function(){before=new pdg.Image(port);layer.removeSprite(source);layer.addSprite(restored);});
+      waits(80);
+      runs(function(){
+        var after=new pdg.Image(port),ink=0,mismatch=0;
+        for(var y=0;y<64;++y)for(var x=0;x<96;++x){var a=before.getPixel(x,y),b=after.getPixel(x,y);if(a.alpha>.1)++ink;if(Math.abs(a.alpha-b.alpha)>.01 || Math.abs(a.red-b.red)>.01)++mismatch;}
+        expect(ink).toBeGreaterThan(30);expect(mismatch).toBe(0);
+        pdg.cleanupLayer(layer);source.clearParts();restored.clearParts();pdg.gfx.closeGraphicsPort(port);
+      });
+    });
+  });
 
   describe("live attributes", function() {
     it("updates shared elements and hit tests while preserving snapshots", function() {
@@ -298,6 +346,11 @@ describe("Drawing", function() {
       expect(elementRef.constructor.name).toBe('ElementRef');
       expect(drawing.getElementCount()).toBe(1);
       expect(elementRef.type()).toBe(pdg.type_Polygon);
+      // Moving the geometry must not leave the Drawing dependent on the input handle.
+      polygon.addPoint(new pdg.Point(100, 100));
+      if (typeof polygon.delete === 'function') polygon.delete();
+      expect(drawing.getBounds().right).toBe(10);
+      expect(drawing.getBounds().bottom).toBe(10);
     });
 
   });
@@ -625,14 +678,8 @@ describe("Drawing", function() {
       expect(drawing.empty()).toBe(false);
     });
 
-    it("has draw method (GUI only)", function() {
-      // Note: We can't actually test drawing without a Port object
-      // Just verify the method exists
-      if (pdg.hasGraphics) {
-        expect(typeof drawing.draw).toBe('function');
-      } else {
-        expect(typeof drawing.draw).toBe('undefined');
-      }
+    it("keeps Drawing replay internal", function() {
+      expect(typeof drawing.draw).toBe('undefined');
     });
 
   });

@@ -1,13 +1,21 @@
 var searchData=
 [
-  ['elasticity_0',['elasticity',['../structpdg_1_1_animation_physics_body.html#a5bf380c82b8fb29df2cdf1e9ff070b3d',1,'pdg::AnimationPhysicsBody']]],
-  ['emitter_1',['emitter',['../structpdg_1_1_event_manager_1_1_event_queue_entry.html#a0c465144eed306415bf23823ef92587c',1,'pdg::EventManager::EventQueueEntry::emitter'],['../classpdg_1_1_particle.html#a9079a743e6759c50192d638b5fbf6c1e',1,'pdg::Particle::emitter']]],
-  ['enabled_2',['enabled',['../structpdg_1_1_physics_drive_state.html#a8740ba80e30dd75e71d09fa1dcf04f3d',1,'pdg::PhysicsDriveState']]],
-  ['entering_3',['entering',['../structpdg_1_1_mouse_tracking_info.html#a083db6a4c3f511d85c7b80447a72a959',1,'pdg::MouseTrackingInfo']]],
-  ['entityname_4',['entityName',['../structpdg_1_1_sprite_trigger_event_info.html#ac1d4f7de93252f0cd336025c141e49e7',1,'pdg::SpriteTriggerEventInfo']]],
-  ['error_5',['error',['../structpdg_1_1_net_error.html#a0034dae14c0236405964d5d0ca247c6b',1,'pdg::NetError']]],
-  ['eventcode_6',['eventCode',['../structpdg_1_1_sound_event_info.html#a9157a6c3a8520d74bad887ba041ed28f',1,'pdg::SoundEventInfo']]],
-  ['eventtype_7',['eventType',['../structpdg_1_1_event_manager_1_1_event_queue_entry.html#a493153a8b95f83287c0c0e629b1aa045',1,'pdg::EventManager::EventQueueEntry']]],
-  ['exitcode_8',['exitCode',['../structpdg_1_1_shutdown_info.html#a83054791bd649b72f7b64368225dc19b',1,'pdg::ShutdownInfo']]],
-  ['exitreason_9',['exitReason',['../structpdg_1_1_shutdown_info.html#a633085c7fad7bfc1801011cbd3855990',1,'pdg::ShutdownInfo']]]
+  ['effectivex_0',['effectiveX',['../structpdg_1_1_jiggle_result.html#a9d507e4deddef1aa5606fadc46512e45',1,'pdg::JiggleResult']]],
+  ['effectivey_1',['effectiveY',['../structpdg_1_1_jiggle_result.html#a69c67e548fdc25dfc3f89f30215657ed',1,'pdg::JiggleResult']]],
+  ['elapsedseconds_2',['elapsedSeconds',['../structpdg_1_1_animation_evaluation_context.html#a84c060ae6b778159adc026f7aa645439',1,'pdg::AnimationEvaluationContext::elapsedSeconds'],['../structpdg_1_1_animation_event.html#a84c060ae6b778159adc026f7aa645439',1,'pdg::AnimationEvent::elapsedSeconds']]],
+  ['elasticity_3',['elasticity',['../structpdg_1_1_animation_physics_body.html#a5bf380c82b8fb29df2cdf1e9ff070b3d',1,'pdg::AnimationPhysicsBody']]],
+  ['emitter_4',['emitter',['../structpdg_1_1_event_manager_1_1_event_queue_entry.html#a0c465144eed306415bf23823ef92587c',1,'pdg::EventManager::EventQueueEntry::emitter'],['../classpdg_1_1_particle.html#a9079a743e6759c50192d638b5fbf6c1e',1,'pdg::Particle::emitter']]],
+  ['enabled_5',['enabled',['../structpdg_1_1_net_listener_options.html#a8740ba80e30dd75e71d09fa1dcf04f3d',1,'pdg::NetListenerOptions::enabled'],['../structpdg_1_1_animation_jiggle.html#a8740ba80e30dd75e71d09fa1dcf04f3d',1,'pdg::AnimationJiggle::enabled'],['../structpdg_1_1_physics_drive_state.html#a8740ba80e30dd75e71d09fa1dcf04f3d',1,'pdg::PhysicsDriveState::enabled']]],
+  ['endopacity_6',['endOpacity',['../structpdg_1_1_particle_trail_options.html#ae84a6b81377856762cce7e567fa4c87e',1,'pdg::ParticleTrailOptions']]],
+  ['endpoint_7',['endpoint',['../structpdg_1_1_net_error.html#adc11427bf84662c18ba6c79cf98ea36f',1,'pdg::NetError::endpoint'],['../structpdg_1_1_net_listener.html#adc11427bf84662c18ba6c79cf98ea36f',1,'pdg::NetListener::endpoint']]],
+  ['endwidth_8',['endWidth',['../structpdg_1_1_particle_trail_options.html#abfdfc9d0c2fa00adc98cbd62c0a2b3c5',1,'pdg::ParticleTrailOptions']]],
+  ['entering_9',['entering',['../structpdg_1_1_mouse_tracking_info.html#a083db6a4c3f511d85c7b80447a72a959',1,'pdg::MouseTrackingInfo']]],
+  ['entityname_10',['entityName',['../structpdg_1_1_sprite_trigger_event_info.html#ac1d4f7de93252f0cd336025c141e49e7',1,'pdg::SpriteTriggerEventInfo']]],
+  ['error_11',['error',['../structpdg_1_1_net_error.html#a0034dae14c0236405964d5d0ca247c6b',1,'pdg::NetError']]],
+  ['eventcode_12',['eventCode',['../structpdg_1_1_sound_event_info.html#a9157a6c3a8520d74bad887ba041ed28f',1,'pdg::SoundEventInfo']]],
+  ['eventtype_13',['eventType',['../structpdg_1_1_event_manager_1_1_event_queue_entry.html#a493153a8b95f83287c0c0e629b1aa045',1,'pdg::EventManager::EventQueueEntry']]],
+  ['excludedbodies_14',['excludedBodies',['../structpdg_1_1_collision_query_options.html#a9fb45996f824babaa28aedfe3f0bc92b',1,'pdg::CollisionQueryOptions']]],
+  ['excludedcolliders_15',['excludedColliders',['../structpdg_1_1_collision_query_options.html#a7ddbd62b5629006ed76838db94fec895',1,'pdg::CollisionQueryOptions']]],
+  ['exitcode_16',['exitCode',['../structpdg_1_1_shutdown_info.html#a83054791bd649b72f7b64368225dc19b',1,'pdg::ShutdownInfo']]],
+  ['exitreason_17',['exitReason',['../structpdg_1_1_shutdown_info.html#a633085c7fad7bfc1801011cbd3855990',1,'pdg::ShutdownInfo']]]
 ];

@@ -128,7 +128,7 @@ SoundWrap::~SoundWrap() {
       RETURN_BOOL(result);
       END
   METHOD_IMPL(Sound, SetLooping)
-      METHOD_SIGNATURE("", Sound, 1, (boolean loopingOn));
+      METHOD_SIGNATURE("set if the sound should loop or not", [this], 1, (boolean loopingOn));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_BOOL_ARG(1, loopingOn);
       self->setLooping(loopingOn);
@@ -141,7 +141,7 @@ SoundWrap::~SoundWrap() {
       RETURN_BOOL(result);
       END
   METHOD_IMPL(Sound, SetPitch)
-      METHOD_SIGNATURE("", Sound, 0, (number pitchOffset));
+      METHOD_SIGNATURE("set the pitch of a sound", [this], 0, (number pitchOffset));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_NUMBER_ARG(1, pitchOffset);
       self->setPitch(pitchOffset);
@@ -161,7 +161,7 @@ SoundWrap::~SoundWrap() {
       NO_RETURN;
       END
   METHOD_IMPL(Sound, SetOffsetX)
-      METHOD_SIGNATURE("", Sound, 0, ([number int] offsetX));
+      METHOD_SIGNATURE("set the left/right positioning of the sound's origin", [this], 0, ([number int] offsetX));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_INT32_ARG(1, offsetX);
       self->setOffsetX(offsetX);
@@ -218,14 +218,14 @@ SoundWrap::~SoundWrap() {
       NO_RETURN;
       END
   METHOD_IMPL(Sound, Skip)
-      METHOD_SIGNATURE("", Sound, 1, ([number int] skipMilliseconds));
+      METHOD_SIGNATURE("skip ahead or back in a sound", [this], 1, ([number int] skipMilliseconds));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_INT32_ARG(1, skipMilliseconds);
       self->skip(skipMilliseconds);
       RETURN_THIS;
       END
   METHOD_IMPL(Sound, SkipTo)
-      METHOD_SIGNATURE("", Sound, 1, ([number uint] timeMs));
+      METHOD_SIGNATURE("skipTo a particular time position in a sound", [this], 1, ([number uint] timeMs));
       REQUIRE_ARG_COUNT(1);
       REQUIRE_UINT32_ARG(1, timeMs);
       self->skipTo(timeMs);
@@ -262,3 +262,34 @@ SoundWrap::~SoundWrap() {
 %#endif //! PDG_NO_SOUND
 
 } // pdg namespace
+
+/* @pdg-member
+{
+  "name": "Sound.Sound",
+  "type": "constructor",
+  "params": [
+    {
+      "name": "filename",
+      "type": "string"
+    }
+  ],
+  "returns": "object Sound",
+  "brief": "Load a sound from a file."
+}
+*/
+
+// @pdg-class {"name":"Sound","native_binding":{"browser":{"base":null,"generate":true,"guard":"!PDG_NO_SOUND","constructors":[{"factory":"pdg::emscriptenCreateSound","allow_raw_pointers":true}]}}}
+
+// @pdg-member {"name":"Sound.play","native_binding":{"binding_name":"_play"}}
+
+
+// @pdg-member {"name":"Sound.changePitch","native_binding":{"adapter":"browser.emscriptenSoundChangePitch"}}
+
+
+// @pdg-member {"name":"Sound.changeOffsetX","native_binding":{"adapter":"browser.emscriptenSoundChangeOffset"}}
+
+// @pdg-member {"name":"Sound.fadeOut","native_binding":{"adapter":"browser.emscriptenSoundFadeOut"}}
+
+// @pdg-member {"name":"Sound.fadeIn","native_binding":{"adapter":"browser.emscriptenSoundFadeIn"}}
+
+// @pdg-member {"name":"Sound.changeVolume","native_binding":{"adapter":"browser.emscriptenSoundChangeVolume"}}

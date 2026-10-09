@@ -1,15 +1,14 @@
 var searchData=
 [
-  ['screen_0',['Full Screen',['../classpdg_1_1_graphics_manager.html#autotoc_md2',1,'']]],
-  ['side_1',['Watch the solvers side by side',['../group___physics.html#physics_solver_viewer',1,'']]],
-  ['side_20by_20side_2',['Watch the solvers side by side',['../group___physics.html#physics_solver_viewer',1,'']]],
-  ['smoothing_20and_20recoil_3',['Smoothing and recoil',['../animation_target_adapters.html#animation_target_spring',1,'']]],
-  ['solver_20comparison_4',['Basic and Chipmunk solver comparison',['../group___physics.html#physics_solver_comparison',1,'']]],
-  ['solvers_20side_20by_20side_5',['Watch the solvers side by side',['../group___physics.html#physics_solver_viewer',1,'']]],
-  ['spline_20parameters_6',['Hermite Spline Parameters',['../classpdg_1_1_spline.html#hermite_params',1,'']]],
-  ['sprite_7',['Attaching an independent Sprite',['../classpdg_1_1_part.html#part_mounting',1,'']]],
-  ['spriter_20triggers_8',['Authored Spriter triggers',['../group___events.html',1,'']]],
-  ['sprites_20and_20events_9',['Drawing, sprites, and events',['../index.html#js_model',1,'']]],
-  ['stability_10',['API stability',['../index.html#api_stability',1,'']]],
-  ['strings_20resource_20file_20format_11',['Strings Resource File Format',['../classpdg_1_1_resource_manager.html#autotoc_md15',1,'']]]
+  ['parameters_0',['Hermite Spline Parameters',['../classpdg_1_1_spline.html#hermite_params',1,'']]],
+  ['part_20bodies_1',['Part bodies',['../classpdg_1_1_part.html#part_physics',1,'']]],
+  ['part_20chain_20ik_2',['Explicit Part-chain IK',['../classpdg_1_1_part.html#part_ik',1,'']]],
+  ['particle_20effects_3',['Particle effects',['../_particle_effects.html',1,'']]],
+  ['pdg_4',['PDG',['../index.html#js_about',1,'About PDG'],['../index.html',1,'Pixel Dust Game Engine (PDG)']]],
+  ['pixel_20dust_20game_20engine_20pdg_5',['Pixel Dust Game Engine (PDG)',['../index.html',1,'']]],
+  ['platform_20requirements_6',['Platform requirements',['../index.html#js_platform_requirements',1,'']]],
+  ['playback_7',['Playback',['../classpdg_1_1_sound.html#autotoc_md18',1,'Dynamic Playback'],['../classpdg_1_1_sound.html#autotoc_md17',1,'Fire and Forget Playback']]],
+  ['popupmenu_8',['PopupMenu.PopupMenu',['../javascript_mvc_inventory.html#mvc_export_PopupMenu_PopupMenu',1,'']]],
+  ['popupmenu_20iteminfo_9',['PopupMenu.ItemInfo',['../javascript_mvc_inventory.html#mvc_export_PopupMenu_ItemInfo',1,'']]],
+  ['popupmenu_20popupmenu_10',['PopupMenu.PopupMenu',['../javascript_mvc_inventory.html#mvc_export_PopupMenu_PopupMenu',1,'']]]
 ];

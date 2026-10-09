@@ -99,7 +99,7 @@ example, pass `0.25` for a quarter-second blend, sample time, transition duratio
 contact-release duration, or physics-recovery duration. Modifier callbacks receive
 elapsed seconds in pdg::AnimationModifierContext::deltaSeconds.
 
-Timed Animated operations, wait(), sprite fades, layer fades/zoom,
+Timed Animated operations, wait(), sprite fades, layer fades and camera zoom,
 IAnimationHelper::animate(), and built-in/custom EasingFunc callbacks now use
 floating-point seconds. Physical forces and velocities belong to PhysicsBody;
 Animated contains only programmed transform changes.

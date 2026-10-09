@@ -59,59 +59,64 @@ namespace pdg {
     // Renderer interface
     // -----------------------------------------------------------------------------------
 
+    /// Drawing operations return the renderer by reference for chaining.
     class Renderer {
     public:
         virtual ~Renderer() = default;
 
         // Various types of lines
-        virtual void drawLine(const Point& from, const Point& to, const Attributes& attrs) = 0;
-        void         drawVector(const Vector& v, const Attributes& attrs);
-        virtual void drawSpline(const Spline& spline, const Attributes& attrs) = 0;
-        virtual void drawArc(const Point& center, float xRadius, float yRadius, float startAngle, float endAngle, const Attributes& attrs) = 0;
-        void         drawBezier(const Point& from, const Point& control1, const Point& control2, const Point& to, const Attributes& attrs);
+        virtual Renderer& drawLine(const Point& from, const Point& to, const Attributes& attrs) = 0;
+        Renderer&    drawVector(const Vector& v, const Attributes& attrs);
+        virtual Renderer& drawSpline(const Spline& spline, const Attributes& attrs) = 0;
+        virtual Renderer& drawArc(const Point& center, float xRadius, float yRadius, float startAngle, float endAngle, const Attributes& attrs) = 0;
+        Renderer&    drawBezier(const Point& from, const Point& control1, const Point& control2, const Point& to, const Attributes& attrs);
 
         // Various types of enclosed shapes
-        virtual void drawRect(const Rect& rect, const Attributes& attrs) = 0;
-        virtual void drawQuad(const Quad& quad, const Attributes& attrs) = 0;
-        void         drawCircle(const Point& center, float radius, const Attributes& attrs);
-        virtual void drawPolygon(const Polygon& polygon, const Attributes& attrs) = 0;
-        virtual void drawEllipse(const Point& center, float xRadius, float yRadius, const Attributes& attrs) = 0;
-        void         drawRoundedRect(const Rect& rect, float radius, const Attributes& attrs);
+        virtual Renderer& drawRect(const Rect& rect, const Attributes& attrs) = 0;
+        virtual Renderer& drawQuad(const Quad& quad, const Attributes& attrs) = 0;
+        Renderer&    drawCircle(const Point& center, float radius, const Attributes& attrs);
+        virtual Renderer& drawPolygon(const Polygon& polygon, const Attributes& attrs) = 0;
+        virtual Renderer& drawEllipse(const Point& center, float xRadius, float yRadius, const Attributes& attrs) = 0;
+        Renderer&    drawRoundedRect(const Rect& rect, float radius, const Attributes& attrs);
 
         // Image drawing
-        virtual void drawImage(Image* img, const Point& loc, const Attributes& attrs) = 0;
-        virtual void drawImage(Image* img, const Rect& rect, const Attributes& attrs) = 0;
-        virtual void drawImage(Image* img, const Quad& quad, const Attributes& attrs) = 0;
+        virtual Renderer& drawImage(Image* img, const Point& loc, const Attributes& attrs) = 0;
+        virtual Renderer& drawImage(Image* img, const Rect& rect, const Attributes& attrs) = 0;
+        virtual Renderer& drawImage(Image* img, const Quad& quad, const Attributes& attrs) = 0;
 
         // Drawing drawing  
-        virtual void drawDrawing(const Drawing& drawing, const Point& loc, const Attributes& attrs) = 0;
-        virtual void drawDrawing(const Drawing& drawing, const Rect& rect, const Attributes& attrs) = 0;
+        virtual Renderer& drawDrawing(const Drawing& drawing, const Point& loc, const Attributes& attrs) = 0;
+        virtual Renderer& drawDrawing(const Drawing& drawing, const Rect& rect, const Attributes& attrs) = 0;
 
         // Text drawing
-        virtual void drawText(const char* text, const Point& loc, const Attributes& attrs) = 0;
-        virtual void drawText(const char* text, const Rect& rect, const Attributes& attrs) = 0;
+        virtual Renderer& drawText(const char* text, const Point& loc, const Attributes& attrs) = 0;
+        virtual Renderer& drawText(const char* text, const Rect& rect, const Attributes& attrs) = 0;
 
         // Sphere drawing
-        virtual void drawSphere(const Point& center, float radius, const Attributes& attrs) = 0;
+        virtual Renderer& drawSphere(const Point& center, float radius, const Attributes& attrs) = 0;
     };
 
-    inline void Renderer::drawVector(const Vector& v, const Attributes& attrs) {
+    inline Renderer& Renderer::drawVector(const Vector& v, const Attributes& attrs) {
         drawLine(Point(0, 0), Point(v.x, v.y), attrs);
+        return *this;
     }
 
-    inline void Renderer::drawCircle(const Point& center, float radius, const Attributes& attrs) {
+    inline Renderer& Renderer::drawCircle(const Point& center, float radius, const Attributes& attrs) {
         drawEllipse(center, radius, radius, attrs);
+        return *this;
     }
-    inline void Renderer::drawRoundedRect(const Rect& rect, float radius, const Attributes& attrs) {
+    inline Renderer& Renderer::drawRoundedRect(const Rect& rect, float radius, const Attributes& attrs) {
         Attributes roundedAttrs = attrs;
         roundedAttrs.roundedCorners(radius);
         drawRect(rect, roundedAttrs);
+        return *this;
     }
 
-    inline void Renderer::drawBezier(const Point& from, const Point& control1, const Point& control2, const Point& to, const Attributes& attrs) {
+    inline Renderer& Renderer::drawBezier(const Point& from, const Point& control1, const Point& control2, const Point& to, const Attributes& attrs) {
         Spline bezierSpline(SPLINE_CUBIC_BEZIER);
         bezierSpline.addSegment(from, control1, control2, to);
         drawSpline(bezierSpline, attrs);
+        return *this;
     }
 
 } // end namespace pdg

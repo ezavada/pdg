@@ -1,5 +1,6 @@
 <map id="Physics" name="Physics">
-<area shape="rect" id="Node000002" href="$group___animation.html" title="Things related to animation." alt="" coords="291,45,370,70"/>
-<area shape="rect" id="Node000003" href="$group___events.html" title="Things used to notify your code of user input or other significant events." alt="" coords="299,121,362,146"/>
-<area shape="rect" id="Node000001" title="Things used for handling physics simulation." alt="" coords="5,83,74,109"/>
+<area shape="rect" id="Node000002" href="$group___animation.html" title="Things related to animation." alt="" coords="327,55,406,81"/>
+<area shape="rect" id="Node000004" href="$group___events.html" title="Things used to notify your code of user input or other significant events." alt="" coords="336,131,398,157"/>
+<area shape="rect" id="Node000001" title="Things used for handling physics simulation." alt="" coords="5,131,74,157"/>
+<area shape="rect" id="Node000003" href="$group___structured_data_types.html" title="Data records, options, event payloads, and value types used by the JavaScript API." alt="" coords="291,192,443,218"/>
 </map>

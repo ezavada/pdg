@@ -1,15 +1,20 @@
 var searchData=
 [
   ['bad_5ftag_0',['bad_tag',['../classpdg_1_1bad__tag.html#add863cca9e17e47b36722d112b8622e5',1,'pdg::bad_tag']]],
-  ['beginframe_1',['beginFrame',['../classpdg_1_1_animation_drawings.html#a41008e7968299cb0a4d55408f92f8209',1,'pdg::AnimationDrawings']]],
-  ['binarydump_2',['binaryDump',['../classpdg_1_1_o_s.html#a5ce59c5525523378d7b3ce9d133b0d38',1,'pdg::OS']]],
-  ['bindtoanimationbinding_3',['bindToAnimationBinding',['../classpdg_1_1_part.html#a5e37fc77b036d7edae4eb5ddd8d6ef0c',1,'pdg::Part']]],
-  ['bindtoanimationsocket_4',['bindToAnimationSocket',['../classpdg_1_1_part.html#af80492e1037a45d805ddcaf90042a0f7',1,'pdg::Part']]],
-  ['bindtobone_5',['bindToBone',['../classpdg_1_1_part.html#a36e3e8d132d08b42df9d70de2bb32c86',1,'pdg::Part']]],
-  ['blend_6',['blend',['../classpdg_1_1_animation_pose.html#ab0549673b898cf59c05f7c6ca5eae387',1,'pdg::AnimationPose']]],
-  ['blendmode_7',['blendMode',['../classpdg_1_1_animated_attributes.html#ac0b704ebe8d4e712702708dbef95ac92',1,'pdg::AnimatedAttributes::blendMode()'],['../classpdg_1_1_attributes.html#a2d58acd933703cc80ed1113592f9af7e',1,'pdg::Attributes::blendMode()']]],
-  ['blendtoanimation_8',['blendToAnimation',['../classpdg_1_1_sprite.html#a20307998ac97511a1f69c8e914ca6124',1,'pdg::Sprite::blendToAnimation(const char *animationName, float blendTime)'],['../classpdg_1_1_sprite.html#ab45dd649d43c78aa7f7a04e6512b6350',1,'pdg::Sprite::blendToAnimation(int animationId, float blendTime)']]],
-  ['blockevent_9',['blockEvent',['../classpdg_1_1_event_emitter.html#a4e6b5f0941affc33a66260eb13f2d8f4',1,'pdg::EventEmitter::blockEvent()'],['../classpdg_1_1_event_manager.html#a4e6b5f0941affc33a66260eb13f2d8f4',1,'pdg::EventManager::blockEvent()']]],
-  ['broadcastdata_10',['broadcastData',['../classpdg_1_1_network_manager.html#a9d719fdd76a85089aeeb04ecd137d0f9',1,'pdg::NetworkManager']]],
-  ['bytesfrommark_11',['bytesFromMark',['../classpdg_1_1_i_serializer.html#ae1af1b3095c9ba1fc1e80c2168bd7c4e',1,'pdg::ISerializer::bytesFromMark()'],['../classpdg_1_1_serializer.html#ad979f2eb0404279cf8900251141c8dc1',1,'pdg::Serializer::bytesFromMark()']]]
+  ['batch_1',['batch',['../classpdg_1_1_animated_base.html#aad6a361cfbace46f9ecd5f022feb6417',1,'pdg::AnimatedBase::batch()'],['../classpdg_1_1_animated.html#a94fe4e8ff90be53ed8c253c240bc1c18',1,'pdg::Animated::batch()']]],
+  ['beginframe_2',['beginFrame',['../classpdg_1_1_animation_drawings.html#a41008e7968299cb0a4d55408f92f8209',1,'pdg::AnimationDrawings']]],
+  ['binarydump_3',['binaryDump',['../classpdg_1_1_o_s.html#a5ce59c5525523378d7b3ce9d133b0d38',1,'pdg::OS']]],
+  ['bindtoanimationbinding_4',['bindToAnimationBinding',['../classpdg_1_1_troupe.html#a6fa5298213dbf32485611169df7c7ade',1,'pdg::Troupe::bindToAnimationBinding()'],['../classpdg_1_1_animation_script.html#a8d7aad8b97db3260585861cf8df6a668',1,'pdg::AnimationScript::bindToAnimationBinding()'],['../classpdg_1_1_part.html#a5e37fc77b036d7edae4eb5ddd8d6ef0c',1,'pdg::Part::bindToAnimationBinding()']]],
+  ['bindtoanimationsocket_5',['bindToAnimationSocket',['../classpdg_1_1_troupe.html#a2ae90e9d1c419b565fa988bf4a1d983e',1,'pdg::Troupe::bindToAnimationSocket()'],['../classpdg_1_1_animation_script.html#ae222047dbce6f6553c63406303400290',1,'pdg::AnimationScript::bindToAnimationSocket()'],['../classpdg_1_1_part.html#af80492e1037a45d805ddcaf90042a0f7',1,'pdg::Part::bindToAnimationSocket()']]],
+  ['bindtobone_6',['bindToBone',['../classpdg_1_1_troupe.html#abfa5d1f77c9f7875df96a97024749c6d',1,'pdg::Troupe::bindToBone()'],['../classpdg_1_1_animation_script.html#a0c2d1ed619023f56f4c53cfeaf92e793',1,'pdg::AnimationScript::bindToBone()'],['../classpdg_1_1_part.html#a36e3e8d132d08b42df9d70de2bb32c86',1,'pdg::Part::bindToBone()']]],
+  ['blend_7',['blend',['../classpdg_1_1_animation_pose.html#ab0549673b898cf59c05f7c6ca5eae387',1,'pdg::AnimationPose']]],
+  ['blendmode_8',['blendMode',['../classpdg_1_1_troupe.html#a39dba528cb5780e4e42327edaffd2d32',1,'pdg::Troupe::blendMode()'],['../classpdg_1_1_animation_script.html#a44667b39a208cee3aac8b8631fce30f5',1,'pdg::AnimationScript::blendMode()'],['../classpdg_1_1_animated_attributes.html#ac0b704ebe8d4e712702708dbef95ac92',1,'pdg::AnimatedAttributes::blendMode()'],['../classpdg_1_1_attributes.html#a2d58acd933703cc80ed1113592f9af7e',1,'pdg::Attributes::blendMode()']]],
+  ['blendtoanimation_9',['blendToAnimation',['../classpdg_1_1_sprite.html#a20307998ac97511a1f69c8e914ca6124',1,'pdg::Sprite::blendToAnimation(const char *animationName, float blendTime)'],['../classpdg_1_1_sprite.html#ab45dd649d43c78aa7f7a04e6512b6350',1,'pdg::Sprite::blendToAnimation(int animationId, float blendTime)']]],
+  ['blockevent_10',['blockEvent',['../classpdg_1_1_event_emitter.html#a4e6b5f0941affc33a66260eb13f2d8f4',1,'pdg::EventEmitter::blockEvent()'],['../classpdg_1_1_event_manager.html#a4e6b5f0941affc33a66260eb13f2d8f4',1,'pdg::EventManager::blockEvent()']]],
+  ['bone_11',['Bone',['../classpdg_1_1_bone.html#ad71af72bb26a5aee088cc8f806a089e2',1,'pdg::Bone']]],
+  ['breaktrail_12',['breakTrail',['../classpdg_1_1_troupe.html#accaa6f71d3245bfdc75c0fa2f690c1bb',1,'pdg::Troupe::breakTrail()'],['../classpdg_1_1_animation_script.html#ac817773d36dfaa106b07966df6d76e05',1,'pdg::AnimationScript::breakTrail()'],['../classpdg_1_1_particle.html#a6be809e7f9c0074be02717c5f2e4a373',1,'pdg::Particle::breakTrail()']]],
+  ['broadcast_13',['broadcast',['../classpdg_1_1_net_server.html#a629db201a5e810d8d80290562f8d407a',1,'pdg::NetServer::broadcast(const NetMessage &amp;message, std::function&lt; bool(const NetConnection &amp;)&gt; filter={})'],['../classpdg_1_1_net_server.html#a3ba7edba6219e6dbf246fe941afa651f',1,'pdg::NetServer::broadcast(const ISerializable &amp;message, std::function&lt; bool(const NetConnection &amp;)&gt; filter={})']]],
+  ['broadcastdata_14',['broadcastData',['../classpdg_1_1_network_manager.html#a9d719fdd76a85089aeeb04ecd137d0f9',1,'pdg::NetworkManager']]],
+  ['bytes_15',['bytes',['../classpdg_1_1_net_message.html#ad8a5b11278877a110d581db31dcfdd66',1,'pdg::NetMessage']]],
+  ['bytesfrommark_16',['bytesFromMark',['../classpdg_1_1_i_serializer.html#ae1af1b3095c9ba1fc1e80c2168bd7c4e',1,'pdg::ISerializer::bytesFromMark()'],['../classpdg_1_1_serializer.html#ad979f2eb0404279cf8900251141c8dc1',1,'pdg::Serializer::bytesFromMark()']]]
 ];

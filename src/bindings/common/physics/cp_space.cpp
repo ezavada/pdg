@@ -14,6 +14,7 @@
 // -----------------------------------------------
 
 #include "pdg_script_macros.h"
+#include "physics_impl_macros.h"
 
 %#include "pdg_project.h"
 
@@ -53,20 +54,20 @@ METHOD_IMPL(cpSpace, UseSpatialHash)
     REQUIRE_ARG_COUNT(2);
     REQUIRE_NUMBER_ARG(1, dim);
     REQUIRE_INT32_ARG(2, count);
-	cpSpaceUseSpatialHash(self, dim, count);
+	PDG_NATIVE_C_CALL(cpSpaceUseSpatialHash, self, dim, count);
 	NO_RETURN;
 	END
 METHOD_IMPL(cpSpace, ReindexStatic)
 	METHOD_SIGNATURE("", undefined, 0, ());
     REQUIRE_ARG_COUNT(0);
-	cpSpaceReindexStatic(self);
+	PDG_NATIVE_C_CALL(cpSpaceReindexStatic, self);
 	NO_RETURN;
 	END
 METHOD_IMPL(cpSpace, Step)
 	METHOD_SIGNATURE("", undefined, 1, (number dt));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_NUMBER_ARG(1, dt);
-	cpSpaceStep(self, dt);
+	PDG_NATIVE_C_CALL(cpSpaceStep, self, dt);
 	NO_RETURN;
 	END
 CP_PROPERTY_IMPL(cpSpace, IdleSpeedThreshold, NUMBER)
@@ -80,4 +81,5 @@ CPP_UNMANAGED_CONSTRUCTOR_IMPL(cpSpace, cppPtr_ = nullptr; CR )
  	return 0;
 	END
 
-} // end pdg namespace 
+} // end pdg namespace
+// @pdg-class {"name":"CpSpace","construction":{"kind":"borrowed"},"native_binding":{"browser":{"generate":true,"type":"pdg::CpSpace","base":null,"pointer_policy":"borrowed","defaults":{"arguments":"idl"}}}}

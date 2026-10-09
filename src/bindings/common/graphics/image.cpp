@@ -26,6 +26,7 @@
 
 
 namespace pdg {
+// @pdg-member {"name":"Image.getImageBounds","native_binding":{"adapter":"image.bounds-at","binding_name":"_getImageBoundsAt","browser":{"generate":false}}}
     
 // ========================================================================================
 //MARK: Image
@@ -45,6 +46,35 @@ SERIALIZABLE_BASE_CLASS_IMPL(Image)
 
 CLEANUP_IMPL(Image)
 
+/* @pdg-member
+{
+  "name": "Image.Image",
+  "type": "constructor",
+  "native": true,
+  "brief": "load an image file or create a snapshot or live image of an offscreen port",
+  "returns": "object Image",
+  "params": [
+    [
+      {
+        "name": "filename",
+        "type": "string"
+      }
+    ],
+    [
+      {
+        "name": "port",
+        "type": "object Port"
+      },
+      {
+        "name": "copyPixels",
+        "type": "boolean",
+        "optional": true,
+        "default_value": "CopyPixels"
+      }
+    ]
+  ]
+}
+*/
 CPP_MANAGED_CONSTRUCTOR_IMPL(Image)
 	SETUP_NON_SCRIPT_CALL;
 	if (ARGC < 1) {
@@ -87,7 +117,7 @@ PROPERTY_IMPL(ImageStrip, NumFrames, INT32)
 PROPERTY_IMPL(ImageStrip, FrameWidth, INT32)
 METHOD_IMPL(ImageStrip, GetFrame)
 	METHOD_SIGNATURE("get image that is a single frame of this multi-frame image",
-		[object Image], 1, ([number int] frameNum));
+		[object Image*], 1, ([number int] frameNum));
     REQUIRE_ARG_COUNT(1);
 	REQUIRE_INT32_ARG(1, frameNum);
 	Image* image = self->getFrame(frameNum);
@@ -120,3 +150,27 @@ CPP_MANAGED_CONSTRUCTOR_IMPL(ImageStrip)
 
 
 } // pdg namespace
+
+/* @pdg-member
+{
+  "name": "ImageStrip.ImageStrip",
+  "type": "constructor",
+  "params": [
+    {
+      "name": "filename",
+      "type": "string"
+    }
+  ],
+  "returns": "object ImageStrip",
+  "brief": "Load an image strip from a file."
+}
+*/
+
+// @pdg-member {"name":"Image.getOpacity","native_binding":{"binding_name":"_getOpacity"}}
+
+
+// @pdg-member {"name":"Image.getAlphaValue","native_binding":{"binding_name":"_getAlphaValue"}}
+
+// @pdg-member {"name":"ImageStrip.getFrame","native_binding":{"allow_raw_pointers":true}}
+
+// @pdg-class {"name":"ImageStrip","native_binding":{"browser":{"generate":true,"base":"pdg::Image","constructors":[{"factory":"pdg::emscriptenCreateImageStrip","allow_raw_pointers":true}]}}}

@@ -1,4 +1,4 @@
-.TH "AnimatedAttributes" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "AnimatedAttributes" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -10,53 +10,65 @@ AnimatedAttributes \- \fBDrawing\fP attributes with programmed movement and appe
 .PP
 \fR#include <pdg\-js\&.h>\fP
 .PP
-Inherits \fBAnimated\fP\&.
+Inherits \fBAnimated\fP, and \fBAttributes\fP\&.
 .SS "Public Member Functions"
 
 .in +1c
 .ti -1c
-.RI "\fBAnimated\fP \fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
-.br
-.ti -1c
-.RI "\fBambientLight\fP (\fBColor\fP color)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBandThen\fP ()"
+.RI "\fBAnimatedAttributes\fP (\fBAttributes\fP initial=undefined)"
 .br
 .ti -1c
 .RI "boolean \fBanimate\fP (number deltaSeconds)"
 .br
 .RI "Advance appearance and transform animation\&. "
 .ti -1c
-.RI "\fBblendMode\fP (int blendMode)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBcancelSchedule\fP ()"
-.br
-.ti -1c
 .RI "\fBAnimatedAttributes\fP \fBchangeAmbientLight\fP (\fBColor\fP target, number seconds, int easing=\fBlinearTween\fP)"
 .br
 .RI "Animate ambient light color\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimatedAttributes\fP \fBchangeAmbientLight\fP (number targetRGBA, number seconds, int easing=\fBlinearTween\fP)"
 .br
 .ti -1c
-.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBAnimatedAttributes\fP \fBchangeAmbientLight\fP (string targetColorName, number seconds, int easing=\fBlinearTween\fP)"
 .br
 .ti -1c
 .RI "\fBAnimatedAttributes\fP \fBchangeFillColor\fP (\fBColor\fP target, number seconds, int easing=\fBlinearTween\fP)"
 .br
 .RI "Animate solid fill color\&. "
 .ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillColor\fP (number targetRGBA, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillColor\fP (string targetColorName, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
 .RI "\fBAnimatedAttributes\fP \fBchangeFillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, \fBColor\fP endColor, number seconds, int easing=\fBlinearTween\fP)"
 .br
 .RI "Animate a linear fill gradient\&. "
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, number endRGBA, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, string endColorName, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillGradient\fP (\fBPoint\fP start, number startRGBA, \fBPoint\fP end, \fBColor\fP endColor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillGradient\fP (\fBPoint\fP start, number startRGBA, \fBPoint\fP end, number endRGBA, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillGradient\fP (\fBPoint\fP start, number startRGBA, \fBPoint\fP end, string endColorName, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillGradient\fP (\fBPoint\fP start, string startColorName, \fBPoint\fP end, \fBColor\fP endColor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillGradient\fP (\fBPoint\fP start, string startColorName, \fBPoint\fP end, number endRGBA, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillGradient\fP (\fBPoint\fP start, string startColorName, \fBPoint\fP end, string endColorName, number seconds, int easing=\fBlinearTween\fP)"
+.br
 .ti -1c
 .RI "\fBAnimatedAttributes\fP \fBchangeFillOpacity\fP (number target, number seconds, int easing=\fBlinearTween\fP)"
 .br
@@ -66,15 +78,33 @@ Inherits \fBAnimated\fP\&.
 .br
 .RI "Animate a radial fill gradient\&. "
 .ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillRadialGradient\fP (\fBPoint\fP center, \fBColor\fP centerColor, number radius, number endRGBA, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillRadialGradient\fP (\fBPoint\fP center, \fBColor\fP centerColor, number radius, string endColorName, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillRadialGradient\fP (\fBPoint\fP center, number centerRGBA, number radius, \fBColor\fP endColor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillRadialGradient\fP (\fBPoint\fP center, number centerRGBA, number radius, number endRGBA, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillRadialGradient\fP (\fBPoint\fP center, number centerRGBA, number radius, string endColorName, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillRadialGradient\fP (\fBPoint\fP center, string centerColorName, number radius, \fBColor\fP endColor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillRadialGradient\fP (\fBPoint\fP center, string centerColorName, number radius, number endRGBA, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeFillRadialGradient\fP (\fBPoint\fP center, string centerColorName, number radius, string endColorName, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
 .RI "\fBAnimatedAttributes\fP \fBchangeFrames\fP (int first, int last, number seconds, int easing=\fBlinearTween\fP)"
 .br
 .RI "Animate an inclusive sequence of image frames\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeGrowingBy\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeGrowingTo\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
 .ti -1c
 .RI "\fBAnimatedAttributes\fP \fBchangeLightOffset\fP (\fBOffset\fP target, number seconds, int easing=\fBlinearTween\fP)"
 .br
@@ -84,6 +114,12 @@ Inherits \fBAnimated\fP\&.
 .br
 .RI "Animate stroke color\&. "
 .ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeLineColor\fP (number targetRGBA, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
+.RI "\fBAnimatedAttributes\fP \fBchangeLineColor\fP (string targetColorName, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.ti -1c
 .RI "\fBAnimatedAttributes\fP \fBchangeLineOpacity\fP (number target, number seconds, int easing=\fBlinearTween\fP)"
 .br
 .RI "Animate stroke opacity\&. "
@@ -91,18 +127,6 @@ Inherits \fBAnimated\fP\&.
 .RI "\fBAnimatedAttributes\fP \fBchangeLineThickness\fP (number target, number seconds, int easing=\fBlinearTween\fP)"
 .br
 .RI "Animate stroke thickness\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeMovementBy\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeMovementBy\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeMovementTo\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeMovementTo\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
 .ti -1c
 .RI "\fBAnimatedAttributes\fP \fBchangePolarOffset\fP (\fBOffset\fP target, number seconds, int easing=\fBlinearTween\fP)"
 .br
@@ -112,12 +136,6 @@ Inherits \fBAnimated\fP\&.
 .br
 .RI "Animate corner radius\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBchangeScaleBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeScaleTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
 .RI "\fBAnimatedAttributes\fP \fBchangeSkew\fP (number x, number y, number seconds, int easing=\fBlinearTween\fP)"
 .br
 .RI "Animate a relative shear\&. "
@@ -125,18 +143,6 @@ Inherits \fBAnimated\fP\&.
 .RI "\fBAnimatedAttributes\fP \fBchangeSphereRotation\fP (number radians, number seconds, int easing=\fBlinearTween\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
 .br
 .RI "Animate spherical-image rotation\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeSpinBy\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeSpinTo\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeStretchingBy\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeStretchingTo\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
 .ti -1c
 .RI "\fBAnimatedAttributes\fP \fBchangeSubsection\fP (\fBRect\fP target, number seconds, int easing=\fBlinearTween\fP)"
 .br
@@ -149,345 +155,21 @@ Inherits \fBAnimated\fP\&.
 .RI "\fBAnimatedAttributes\fP \fBchangeTransform\fP (array number matrix, number seconds, int easing=\fBlinearTween\fP)"
 .br
 .RI "Animate a replacement affine matrix\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBclearAnimationHelpers\fP ()"
-.br
-.ti -1c
-.RI "\fBAnimatedAttributes\fP \fBclipOverflow\fP (boolean clip)"
-.br
-.ti -1c
-.RI "\fBfillColor\fP (\fBColor\fP color)"
-.br
-.ti -1c
-.RI "\fBfillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, \fBColor\fP endColor)"
-.br
-.ti -1c
-.RI "\fBfillOpacity\fP (number float opacity)"
-.br
-.ti -1c
-.RI "\fBfillRadialGradient\fP (\fBPoint\fP center, \fBColor\fP centerColor, number float radius, \fBColor\fP endColor)"
-.br
-.ti -1c
-.RI "\fBfitType\fP (int fit)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBflipX\fP ()"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBflipY\fP ()"
-.br
-.ti -1c
-.RI "\fBfont\fP (\fBFont\fP font)"
-.br
-.ti -1c
-.RI "\fBframe\fP (int frame)"
-.br
-.ti -1c
-.RI "\fBColor\fP \fBgetAmbientLight\fP ()"
-.br
-.ti -1c
-.RI "int \fBgetBlendMode\fP ()"
-.br
-.ti -1c
-.RI "\fBRect\fP \fBgetBoundingBox\fP ()"
-.br
-.ti -1c
-.RI "\fBOffset\fP \fBgetCenterOffset\fP ()"
-.br
-.ti -1c
-.RI "boolean \fBgetClipOverflow\fP ()"
-.br
-.ti -1c
-.RI "\fBColor\fP \fBgetFillColor\fP ()"
-.br
-.ti -1c
-.RI "number float \fBgetFillOpacity\fP ()"
-.br
-.ti -1c
-.RI "int \fBgetFitType\fP ()"
-.br
-.ti -1c
-.RI "\fBFont\fP \fBgetFont\fP ()"
-.br
-.ti -1c
-.RI "int \fBgetFrame\fP ()"
-.br
-.ti -1c
-.RI "\fBPoint\fP \fBgetGradientEnd\fP ()"
-.br
-.ti -1c
-.RI "\fBColor\fP \fBgetGradientEndColor\fP ()"
-.br
-.ti -1c
-.RI "\fBPoint\fP \fBgetGradientStart\fP ()"
-.br
-.ti -1c
-.RI "\fBColor\fP \fBgetGradientStartColor\fP ()"
-.br
-.ti -1c
-.RI "int \fBgetGradientType\fP ()"
-.br
-.ti -1c
-.RI "number \fBgetHeight\fP ()"
-.br
-.ti -1c
-.RI "\fBOffset\fP \fBgetLightOffset\fP ()"
-.br
-.ti -1c
-.RI "\fBColor\fP \fBgetLineColor\fP ()"
-.br
-.ti -1c
-.RI "number float \fBgetLineOpacity\fP ()"
-.br
-.ti -1c
-.RI "uint \fBgetLineStyle\fP ()"
-.br
-.ti -1c
-.RI "number float \fBgetLineThickness\fP ()"
-.br
-.ti -1c
-.RI "\fBPoint\fP \fBgetLocation\fP ()"
-.br
-.ti -1c
-.RI "\fBOffset\fP \fBgetMovement\fP ()"
-.br
-.ti -1c
-.RI "\fBOffset\fP \fBgetPolarOffset\fP ()"
-.br
-.ti -1c
-.RI "\fBPoint\fP \fBgetRadialGradientCenter\fP ()"
-.br
-.ti -1c
-.RI "\fBColor\fP \fBgetRadialGradientCenterColor\fP ()"
-.br
-.ti -1c
-.RI "\fBColor\fP \fBgetRadialGradientEndColor\fP ()"
-.br
-.ti -1c
-.RI "number float \fBgetRadialGradientRadius\fP ()"
-.br
-.ti -1c
-.RI "\fBRotatedRect\fP \fBgetRotatedBounds\fP ()"
-.br
-.ti -1c
-.RI "number \fBgetRotation\fP ()"
-.br
-.ti -1c
-.RI "number float \fBgetRoundedCornerRadius\fP ()"
-.br
-.ti -1c
-.RI "\fBOffset\fP \fBgetScale\fP ()"
-.br
-.ti -1c
-.RI "\fBOffset\fP \fBgetSize\fP ()"
-.br
-.ti -1c
-.RI "number float \fBgetSphereRotation\fP ()"
-.br
-.ti -1c
-.RI "number \fBgetSpin\fP ()"
-.br
-.ti -1c
-.RI "\fBOffset\fP \fBgetStretching\fP ()"
-.br
-.ti -1c
-.RI "\fBRect\fP \fBgetSubsection\fP ()"
-.br
-.ti -1c
-.RI "number float \fBgetTextSize\fP ()"
-.br
-.ti -1c
-.RI "int \fBgetTextStyle\fP ()"
-.br
-.ti -1c
-.RI "\fBImage\fP \fBgetTexture\fP ()"
-.br
-.ti -1c
-.RI "array number \fBgetTransform\fP ()"
-.br
-.ti -1c
-.RI "number \fBgetWidth\fP ()"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBgrow\fP (number factor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "boolean \fBhasScheduledAnimations\fP ()"
-.br
-.ti -1c
-.RI "boolean \fBisFlippedX\fP ()"
-.br
-.ti -1c
-.RI "boolean \fBisFlippedY\fP ()"
-.br
-.ti -1c
-.RI "boolean \fBisSchedulePaused\fP ()"
-.br
-.ti -1c
-.RI "\fBlightOffset\fP (\fBOffset\fP offset)"
-.br
-.ti -1c
-.RI "\fBlineColor\fP (\fBColor\fP color)"
-.br
-.ti -1c
-.RI "\fBlineOpacity\fP (number float opacity)"
-.br
-.ti -1c
-.RI "\fBlineStyle\fP (int lineStyle)"
-.br
-.ti -1c
-.RI "\fBlineThickness\fP (number float thickness)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBmoveBy\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBmoveBy\fP (\fBOffset\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBmoveTo\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBmoveTo\fP (\fBPoint\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBpauseSchedule\fP ()"
-.br
-.ti -1c
-.RI "\fBpolarOffset\fP (\fBOffset\fP offset)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBresizeBy\fP (number deltaWidth, number deltaHeight, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBresizeTo\fP (number width, number height, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBresumeSchedule\fP ()"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBrotateBy\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBrotateTo\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
-.br
-.ti -1c
-.RI "\fBrotation\fP (number float radians, \fBPoint\fP center=\fBPoint\fP(0, 0))"
-.br
-.ti -1c
-.RI "\fBroundedCorners\fP (number float radius)"
-.br
-.ti -1c
-.RI "\fBscale\fP (number float xFactor, number float yFactor=xFactor, \fBPoint\fP center=\fBPoint\fP(0, 0))"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP offset)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetFlipX\fP (boolean flip)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetFlipY\fP (boolean flip)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetGrowing\fP (number value)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetHeight\fP (number value)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetLocation\fP (number x, number y)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetLocation\fP (\fBPoint\fP value)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetMovement\fP (number xPerSecond, number yPerSecond)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetMovement\fP (\fBVector\fP value)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetRotation\fP (number value)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetScale\fP (number x, number y=x)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetSize\fP (number width, number height)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetSize\fP (\fBOffset\fP value)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetSpin\fP (number value)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetStretching\fP (number widthPerSecond, number heightPerSecond)"
-.br
-.ti -1c
-.RI "\fBAnimatedAttributes\fP \fBsetTransform\fP (array number matrix)"
-.br
-.RI "Replace the affine transform immediately\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBsetWidth\fP (number value)"
-.br
-.ti -1c
-.RI "\fBskew\fP (number float xSkew, number float ySkew, \fBPoint\fP center=\fBPoint\fP(0, 0))"
-.br
-.ti -1c
-.RI "\fBsphereRotation\fP (number float rotation)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBstopGrowing\fP ()"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBstopMovement\fP ()"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBstopSpinning\fP ()"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBstopStretching\fP ()"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBstretch\fP (number widthFactor, number heightFactor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBsubsection\fP (\fBRect\fP section)"
-.br
-.ti -1c
-.RI "\fBtextSize\fP (number float size)"
-.br
-.ti -1c
-.RI "\fBtextStyle\fP (int style)"
-.br
-.ti -1c
-.RI "\fBtexture\fP (\fBImage\fP texture)"
-.br
-.ti -1c
-.RI "\fBtransform\fP (array number matrix)"
-.br
-.ti -1c
-.RI "\fBtranslation\fP (\fBOffset\fP offset)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBwait\fP (number durationSeconds)"
-.br
-.ti -1c
-.RI "\fBAttributes\fP \fBwithAppearance\fP (\fBAttributes\fP overrides, boolean textOnly=false)"
-.br
 .in -1c
 
 Public Member Functions inherited from \fBAnimated\fP
 .in +1c
 .ti -1c
+.RI "\fBAnimated\fP ()"
+.br
+.ti -1c
 .RI "\fBAnimated\fP \fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
 .br
 .RI "Register a callback after the object's normal animation step\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBandAlso\fP ()"
+.br
+.RI "Join the following operand to the preceding parallel chain\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBandThen\fP ()"
 .br
@@ -496,6 +178,10 @@ Public Member Functions inherited from \fBAnimated\fP
 .RI "boolean \fBanimate\fP (number deltaSeconds)"
 .br
 .RI "Advance programmed animation by elapsed seconds\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBbatch\fP ()"
+.br
+.RI "Open an anonymous animation block\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBcancelSchedule\fP ()"
 .br
@@ -569,6 +255,26 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Retire all helpers on this object\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBdiminish\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Reduce the preceding block amplitude around its baseline\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendBatch\fP ()"
+.br
+.RI "Close and select the innermost anonymous block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendOtherwise\fP ()"
+.br
+.RI "Close a conditional with an alternative\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendSeries\fP ()"
+.br
+.RI "Close and select the innermost series\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendWhen\fP ()"
+.br
+.RI "Close a conditional without an alternative\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBflipX\fP ()"
 .br
 .RI "Toggle the x reflection flag immediately\&. "
@@ -633,6 +339,10 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Test whether animations are running or queued\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBincrease\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Increase the preceding block amplitude around its baseline\&. "
+.ti -1c
 .RI "boolean \fBisFlippedX\fP ()"
 .br
 .RI "Read the x reflection flag\&. "
@@ -644,6 +354,14 @@ Public Member Functions inherited from \fBAnimated\fP
 .RI "boolean \fBisSchedulePaused\fP ()"
 .br
 .RI "Test whether scheduled animation advancement is paused\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBjumpToMark\fP (string name, boolean restoreState=true)"
+.br
+.RI "Continue execution at the operation following a mark\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmark\fP (string name, boolean saveState=true)"
+.br
+.RI "Create a named script location and optionally save state on arrival\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBmoveBy\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
@@ -661,13 +379,64 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Move to a location\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBon\fP (string event, function handler)"
+.br
+.RI "Observe a selected animation block's lifecycle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonFinished\fP (function handler)"
+.br
+.RI "Observe finished events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonMark\fP (function handler)"
+.br
+.RI "Observe mark events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonRepeat\fP (function handler)"
+.br
+.RI "Observe repeat events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonScriptFinished\fP (function handler)"
+.br
+.RI "Observe scriptFinished events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonStarted\fP (function handler)"
+.br
+.RI "Observe started events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonUntilFired\fP (function handler)"
+.br
+.RI "Observe untilFired events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonYoyo\fP (function handler)"
+.br
+.RI "Observe yoyo events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBotherwise\fP ()"
+.br
+.RI "Open the alternative of the innermost conditional\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBpauseIt\fP ()"
+.br
+.RI "Pause the most recently selected animation element\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBpauseSchedule\fP ()"
 .br
 .RI "Pause scheduled animations and their delays\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBplayScript\fP (string name)"
+.br
+.RI "Instantiate a named animation script on this target\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
 .br
 .RI "Retire a specific animation helper\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrepeat\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBrepeat\fP (int additionalExecutions)"
+.br
+.RI "Repeat the preceding block\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBresizeBy\fP (number deltaWidth, number deltaHeight, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
@@ -676,6 +445,14 @@ Public Member Functions inherited from \fBAnimated\fP
 .RI "\fBAnimated\fP \fBresizeTo\fP (number width, number height, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
 .RI "Animate logical size to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrestartIt\fP ()"
+.br
+.RI "Restart the most recently selected animation element from its baseline\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresumeIt\fP ()"
+.br
+.RI "Resume the most recently selected paused animation element\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBresumeSchedule\fP ()"
 .br
@@ -688,6 +465,10 @@ Public Member Functions inherited from \fBAnimated\fP
 .RI "\fBAnimated\fP \fBrotateTo\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
 .br
 .RI "Rotate to an absolute angle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBseries\fP ()"
+.br
+.RI "Open a block whose successive operands wait for completion\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP offset)"
 .br
@@ -753,9 +534,25 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Set logical width immediately\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBslowDown\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Divide the preceding block playback rate\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBspeedUp\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Increase the preceding block playback rate\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstagger\fP (number intervalSeconds)"
+.br
+.RI "\fBOffset\fP the selected block's start across successive \fBTroupe\fP members\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBstopGrowing\fP ()"
 .br
 .RI "Stop all programmed changes to logical size\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopIt\fP ()"
+.br
+.RI "Stop the most recently selected animation element\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBstopMovement\fP ()"
 .br
@@ -773,9 +570,346 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Multiply logical width and height by independent factors\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBtriggerEvent\fP (string name)"
+.br
+.RI "Emit a custom named animation event or record an event step\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBuntil\fP (function evaluator)"
+.br
+.RI "Finish the preceding block when its evaluator returns true\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBwait\fP (number durationSeconds)"
 .br
 .RI "Delay the next timed animation request\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBwhen\fP (function evaluator)"
+.br
+.RI "Open a conditional animation branch\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fByoyo\fP ()"
+.br
+.RI "Play the preceding trajectory forward and back\&. "
+.in -1c
+
+Public Member Functions inherited from \fBAttributes\fP
+.in +1c
+.ti -1c
+.RI "\fBAttributes\fP ()"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBambientLight\fP (\fBColor\fP color)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBambientLight\fP (number rgba)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBambientLight\fP (string colorName)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBblendMode\fP (int blendMode)"
+.br
+.RI "sets the blend mode for rendering operations "
+.ti -1c
+.RI "\fBAttributes\fP \fBclipOverflow\fP (boolean clip)"
+.br
+.RI "Confine drawing overflow to the operation's bounds\&. "
+.ti -1c
+.RI "\fBAttributes\fP \fBfillColor\fP (\fBColor\fP color)"
+.br
+.RI "sets the fill color for shapes and drawings "
+.ti -1c
+.RI "\fBAttributes\fP \fBfillColor\fP (number rgba)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillColor\fP (string colorName)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, \fBColor\fP endColor)"
+.br
+.RI "sets a linear gradient fill from start point to end point "
+.ti -1c
+.RI "\fBAttributes\fP \fBfillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, number endRGBA)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillGradient\fP (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, string endColorName)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillGradient\fP (\fBPoint\fP start, number startRGBA, \fBPoint\fP end, \fBColor\fP endColor)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillGradient\fP (\fBPoint\fP start, number startRGBA, \fBPoint\fP end, number endRGBA)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillGradient\fP (\fBPoint\fP start, number startRGBA, \fBPoint\fP end, string endColorName)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillGradient\fP (\fBPoint\fP start, string startColorName, \fBPoint\fP end, \fBColor\fP endColor)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillGradient\fP (\fBPoint\fP start, string startColorName, \fBPoint\fP end, number endRGBA)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillGradient\fP (\fBPoint\fP start, string startColorName, \fBPoint\fP end, string endColorName)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillOpacity\fP (number float opacity)"
+.br
+.RI "sets the opacity for fill operations (0\&.0 to 1\&.0) "
+.ti -1c
+.RI "\fBAttributes\fP \fBfillRadialGradient\fP (\fBPoint\fP center, \fBColor\fP centerColor, number float radius, \fBColor\fP endColor)"
+.br
+.RI "Create a radial gradient fill from center point to outer radius\&. "
+.ti -1c
+.RI "\fBAttributes\fP \fBfillRadialGradient\fP (\fBPoint\fP center, \fBColor\fP centerColor, number float radius, number endRGBA)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillRadialGradient\fP (\fBPoint\fP center, \fBColor\fP centerColor, number float radius, string endColorName)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillRadialGradient\fP (\fBPoint\fP center, number centerRGBA, number float radius, \fBColor\fP endColor)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillRadialGradient\fP (\fBPoint\fP center, number centerRGBA, number float radius, number endRGBA)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillRadialGradient\fP (\fBPoint\fP center, number centerRGBA, number float radius, string endColorName)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillRadialGradient\fP (\fBPoint\fP center, string centerColorName, number float radius, \fBColor\fP endColor)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillRadialGradient\fP (\fBPoint\fP center, string centerColorName, number float radius, number endRGBA)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfillRadialGradient\fP (\fBPoint\fP center, string centerColorName, number float radius, string endColorName)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBfitType\fP (int fit)"
+.br
+.RI "Sets how an image should be fitted into a target rectangle\&. "
+.ti -1c
+.RI "\fBAttributes\fP \fBfont\fP (\fBFont\fP font=null)"
+.br
+.RI "Sets the font to use for drawing text\&. "
+.ti -1c
+.RI "\fBAttributes\fP \fBframe\fP (int frame)"
+.br
+.RI "Sets which frame of an \fBImageStrip\fP to draw\&. "
+.ti -1c
+.RI "\fBColor\fP \fBgetAmbientLight\fP ()"
+.br
+.ti -1c
+.RI "int \fBgetBlendMode\fP ()"
+.br
+.RI "returns the current blend mode "
+.ti -1c
+.RI "boolean \fBgetClipOverflow\fP ()"
+.br
+.RI "Gets whether image overflow should be clipped when drawn\&. "
+.ti -1c
+.RI "\fBColor\fP \fBgetFillColor\fP ()"
+.br
+.RI "returns the current fill color "
+.ti -1c
+.RI "number float \fBgetFillOpacity\fP ()"
+.br
+.RI "returns the current fill opacity "
+.ti -1c
+.RI "int \fBgetFitType\fP ()"
+.br
+.RI "Gets how an image should be fitted into a target rectangle\&. "
+.ti -1c
+.RI "\fBFont\fP \fBgetFont\fP ()"
+.br
+.RI "Gets the font to use for drawing text\&. "
+.ti -1c
+.RI "int \fBgetFrame\fP ()"
+.br
+.RI "Gets which frame of an \fBImageStrip\fP to draw\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBgetGradientEnd\fP ()"
+.br
+.RI "returns the gradient end point "
+.ti -1c
+.RI "\fBColor\fP \fBgetGradientEndColor\fP ()"
+.br
+.RI "returns the gradient end color "
+.ti -1c
+.RI "\fBPoint\fP \fBgetGradientStart\fP ()"
+.br
+.RI "returns the gradient start point "
+.ti -1c
+.RI "\fBColor\fP \fBgetGradientStartColor\fP ()"
+.br
+.RI "returns the gradient start color "
+.ti -1c
+.RI "int \fBgetGradientType\fP ()"
+.br
+.RI "returns the current gradient type "
+.ti -1c
+.RI "\fBOffset\fP \fBgetLightOffset\fP ()"
+.br
+.RI "Gets the light source offset in spherical coordinates (radians) for sphere lighting\&. "
+.ti -1c
+.RI "\fBColor\fP \fBgetLineColor\fP ()"
+.br
+.RI "returns the current line color "
+.ti -1c
+.RI "number float \fBgetLineOpacity\fP ()"
+.br
+.RI "Get the current line opacity value\&. "
+.ti -1c
+.RI "uint \fBgetLineStyle\fP ()"
+.br
+.RI "returns the current line style "
+.ti -1c
+.RI "number float \fBgetLineThickness\fP ()"
+.br
+.RI "returns the current line thickness "
+.ti -1c
+.RI "\fBOffset\fP \fBgetPolarOffset\fP ()"
+.br
+.RI "Gets the polar offset for rotating a textured sphere\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBgetRadialGradientCenter\fP ()"
+.br
+.RI "returns the radial gradient center point "
+.ti -1c
+.RI "\fBColor\fP \fBgetRadialGradientCenterColor\fP ()"
+.br
+.RI "returns the radial gradient center color "
+.ti -1c
+.RI "\fBColor\fP \fBgetRadialGradientEndColor\fP ()"
+.br
+.RI "returns the radial gradient end color "
+.ti -1c
+.RI "number float \fBgetRadialGradientRadius\fP ()"
+.br
+.RI "returns the radial gradient radius "
+.ti -1c
+.RI "number float \fBgetRoundedCornerRadius\fP ()"
+.br
+.RI "returns the rounded corner radius "
+.ti -1c
+.RI "number float \fBgetSphereRotation\fP ()"
+.br
+.RI "Gets the rotation angle in radians for a textured sphere\&. "
+.ti -1c
+.RI "\fBRect\fP \fBgetSubsection\fP ()"
+.br
+.RI "Gets the subsection of an image to draw\&. "
+.ti -1c
+.RI "number float \fBgetTextSize\fP ()"
+.br
+.RI "Gets the text size in points for drawing text\&. "
+.ti -1c
+.RI "int \fBgetTextStyle\fP ()"
+.br
+.RI "Gets text style flags (bold, italic, underline, alignment)\&. "
+.ti -1c
+.RI "\fBImage\fP \fBgetTexture\fP ()"
+.br
+.RI "Gets the texture image to use for drawing a sphere\&. "
+.ti -1c
+.RI "array number \fBgetTransform\fP ()"
+.br
+.RI "returns the current transformation matrix "
+.ti -1c
+.RI "\fBAttributes\fP \fBlightOffset\fP (\fBOffset\fP offset)"
+.br
+.RI "Sets light source with spherical coordinates in radians\&. "
+.ti -1c
+.RI "\fBAttributes\fP \fBlineColor\fP (\fBColor\fP color)"
+.br
+.RI "sets the line color for strokes and outlines "
+.ti -1c
+.RI "\fBAttributes\fP \fBlineColor\fP (number rgba)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBlineColor\fP (string colorName)"
+.br
+.ti -1c
+.RI "\fBAttributes\fP \fBlineOpacity\fP (number float opacity)"
+.br
+.RI "sets the opacity for line strokes (0\&.0 to 1\&.0) "
+.ti -1c
+.RI "\fBAttributes\fP \fBlineStyle\fP (int lineStyle)"
+.br
+.RI "sets the style of line strokes (solid, dashed, etc\&.) "
+.ti -1c
+.RI "\fBAttributes\fP \fBlineThickness\fP (number float thickness)"
+.br
+.RI "sets the thickness of line strokes in pixels "
+.ti -1c
+.RI "\fBAttributes\fP \fBpolarOffset\fP (\fBOffset\fP offset)"
+.br
+.RI "Sets the polar offset for rotating a textured sphere\&. "
+.ti -1c
+.RI "\fBAttributes\fP \fBrotation\fP (number float radians, \fBPoint\fP center=\fBPoint\fP(0, 0))"
+.br
+.RI "sets the rotation angle and center point for transformations "
+.ti -1c
+.RI "\fBAttributes\fP \fBroundedCorners\fP (number float radius)"
+.br
+.RI "sets the radius for rounded corners "
+.ti -1c
+.RI "\fBAttributes\fP \fBscale\fP (number float xFactor, number float yFactor=xFactor, \fBPoint\fP center=\fBPoint\fP(0, 0))"
+.br
+.RI "sets the scaling factors for x and y axes "
+.ti -1c
+.RI "\fBAttributes\fP \fBsetTransform\fP (array number matrix)"
+.br
+.RI "Replace the affine transform immediately\&. "
+.ti -1c
+.RI "\fBAttributes\fP \fBskew\fP (number float xSkew, number float ySkew, \fBPoint\fP center=\fBPoint\fP(0, 0))"
+.br
+.RI "sets the skew transformation for x and y axes "
+.ti -1c
+.RI "\fBAttributes\fP \fBsphereRotation\fP (number float rotation)"
+.br
+.RI "Sets the rotation angle in radians for a textured sphere\&. "
+.ti -1c
+.RI "\fBAttributes\fP \fBsubsection\fP (\fBRect\fP section)"
+.br
+.RI "Sets a subsection of an image to draw\&. "
+.ti -1c
+.RI "\fBAttributes\fP \fBtextSize\fP (number float size)"
+.br
+.RI "Sets the text size in points for drawing text\&. "
+.ti -1c
+.RI "\fBAttributes\fP \fBtextStyle\fP (int style)"
+.br
+.RI "Sets text style flags (bold, italic, underline, alignment)\&. "
+.ti -1c
+.RI "\fBAttributes\fP \fBtexture\fP (\fBImage\fP texture)"
+.br
+.RI "Sets the texture image to use for drawing a sphere\&. "
+.ti -1c
+.RI "\fBAttributes\fP \fBtransform\fP (array number matrix)"
+.br
+.RI "sets the transformation matrix directly "
+.ti -1c
+.RI "\fBAttributes\fP \fBtranslation\fP (\fBOffset\fP offset)"
+.br
+.RI "sets the translation offset for transformations "
+.ti -1c
+.RI "\fBAttributes\fP \fBwithAppearance\fP (\fBAttributes\fP overrides, boolean textOnly=false)"
+.br
+.RI "Copy this drawing style with explicitly assigned appearance overrides\&. "
+.in -1c
+.SS "Additional Inherited Members"
+
+
+Static Public Member Functions inherited from \fBAnimated\fP
+.in +1c
+.ti -1c
+.RI "static \fBAnimationScript\fP \fBdefineScript\fP (string name)"
+.br
+.RI "Create a library-owned named animation recorder\&. "
+.ti -1c
+.RI "static boolean \fBdeleteScript\fP (string name)"
+.br
+.RI "Remove a definition and release its memory in the shared script library\&. "
 .in -1c
 .SH "Detailed Description"
 .PP 
@@ -837,14 +971,23 @@ element\&.setAttributes(style);
 .fi
 .PP
  
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "AnimatedAttributes (\fBAttributes\fP initial = \fRundefined\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRinitial:\fP \fR\fBAttributes\fP\fP or \fRnull\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAttributes::Attributes()\fP\&.
+.PP
+Referenced by \fBchangeAmbientLight()\fP, \fBchangeAmbientLight()\fP, \fBchangeAmbientLight()\fP, \fBchangeFillColor()\fP, \fBchangeFillColor()\fP, \fBchangeFillColor()\fP, \fBchangeFillGradient()\fP, \fBchangeFillGradient()\fP, \fBchangeFillGradient()\fP, \fBchangeFillGradient()\fP, \fBchangeFillGradient()\fP, \fBchangeFillGradient()\fP, \fBchangeFillGradient()\fP, \fBchangeFillGradient()\fP, \fBchangeFillGradient()\fP, \fBchangeFillOpacity()\fP, \fBchangeFillRadialGradient()\fP, \fBchangeFillRadialGradient()\fP, \fBchangeFillRadialGradient()\fP, \fBchangeFillRadialGradient()\fP, \fBchangeFillRadialGradient()\fP, \fBchangeFillRadialGradient()\fP, \fBchangeFillRadialGradient()\fP, \fBchangeFillRadialGradient()\fP, \fBchangeFillRadialGradient()\fP, \fBchangeFrames()\fP, \fBchangeLightOffset()\fP, \fBchangeLineColor()\fP, \fBchangeLineColor()\fP, \fBchangeLineColor()\fP, \fBchangeLineOpacity()\fP, \fBchangeLineThickness()\fP, \fBchangePolarOffset()\fP, \fBchangeRoundedCorners()\fP, \fBchangeSkew()\fP, \fBchangeSphereRotation()\fP, \fBchangeSubsection()\fP, \fBchangeTextSize()\fP, and \fBchangeTransform()\fP\&.
 .SH "Member Function Documentation"
 .PP 
-.SS "\fBAnimated\fP addAnimationHelper (\fBIAnimationHelper\fP helper)"
-
-.SS "ambientLight (\fBColor\fP color)"
-
-.SS "\fBAnimated\fP andThen ()"
-
 .SS "boolean animate (number deltaSeconds)"
 
 .PP
@@ -872,18 +1015,17 @@ Advance a standalone object with animate(deltaSeconds)\&. \fBDrawing\fP and \fBE
 .RE
 .PP
 
-.SS "blendMode (int blendMode)"
-
-.PP
-References \fBblendMode()\fP\&.
-.PP
-Referenced by \fBblendMode()\fP\&.
-.SS "\fBAnimated\fP cancelSchedule ()"
-
 .SS "\fBAnimatedAttributes\fP changeAmbientLight (\fBColor\fP target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate ambient light color\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBambientLight()\fP setter interrupts this channel; unrelated channels continue\&.
+Animate ambient light color\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBambientLight()\fP setter interrupts this channel; unrelated channels continue\&.
 
 .PP
 \fBParameters\fP
@@ -907,27 +1049,40 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeCenterOffsetBy (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeAmbientLight (number targetRGBA, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP changeCenterOffsetBy (\fBOffset\fP value, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP changeCenterOffsetTo (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeAmbientLight (string targetColorName, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP changeCenterOffsetTo (\fBOffset\fP value, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimatedAttributes\fP changeFillColor (\fBColor\fP target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate solid fill color\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBfillColor()\fP setter interrupts this channel; unrelated channels continue\&. Selects a solid fill and replaces previous solid/gradient fill-color tracks\&. Fill opacity remains independent\&.
+Animate solid fill color\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBfillColor()\fP setter interrupts this channel; unrelated channels continue\&. Selects a solid fill and replaces previous solid/gradient fill-color tracks\&. Fill opacity remains independent\&.
 
 .PP
 \fBParameters\fP
@@ -974,11 +1129,40 @@ element\&.setAttributes(style);
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillColor (number targetRGBA, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillColor (string targetColorName, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimatedAttributes\fP changeFillGradient (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, \fBColor\fP endColor, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate a linear fill gradient\&. Switches the fill mode when the pending delay expires, then interpolates the numeric/color fields\&. Replaces other solid/gradient fill-color tracks while preserving fill opacity\&. Resolves lineStyle_Auto as a fill\&.
+Animate a linear fill gradient\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Switches the fill mode when the pending delay expires, then interpolates the numeric/color fields\&. Replaces other solid/gradient fill-color tracks while preserving fill opacity\&. Resolves lineStyle_Auto as a fill\&.
 
 .PP
 \fBParameters\fP
@@ -1020,11 +1204,106 @@ style\&.changeFillGradient(new pdg\&.Point(0, 0), new pdg\&.Color(1, 0, 0),
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillGradient (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, number endRGBA, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillGradient (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, string endColorName, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillGradient (\fBPoint\fP start, number startRGBA, \fBPoint\fP end, \fBColor\fP endColor, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillGradient (\fBPoint\fP start, number startRGBA, \fBPoint\fP end, number endRGBA, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillGradient (\fBPoint\fP start, number startRGBA, \fBPoint\fP end, string endColorName, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillGradient (\fBPoint\fP start, string startColorName, \fBPoint\fP end, \fBColor\fP endColor, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillGradient (\fBPoint\fP start, string startColorName, \fBPoint\fP end, number endRGBA, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillGradient (\fBPoint\fP start, string startColorName, \fBPoint\fP end, string endColorName, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimatedAttributes\fP changeFillOpacity (number target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate fill opacity\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBfillOpacity()\fP setter interrupts this channel; unrelated channels continue\&.
+Animate fill opacity\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBfillOpacity()\fP setter interrupts this channel; unrelated channels continue\&.
 
 .PP
 \fBParameters\fP
@@ -1048,11 +1327,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimatedAttributes\fP changeFillRadialGradient (\fBPoint\fP center, \fBColor\fP centerColor, number radius, \fBColor\fP endColor, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate a radial fill gradient\&. Switches the fill mode when the pending delay expires, then interpolates the numeric/color fields\&. Replaces other solid/gradient fill-color tracks while preserving fill opacity\&. Resolves lineStyle_Auto as a fill\&.
+Animate a radial fill gradient\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Switches the fill mode when the pending delay expires, then interpolates the numeric/color fields\&. Replaces other solid/gradient fill-color tracks while preserving fill opacity\&. Resolves lineStyle_Auto as a fill\&.
 
 .PP
 \fBParameters\fP
@@ -1082,11 +1368,106 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillRadialGradient (\fBPoint\fP center, \fBColor\fP centerColor, number radius, number endRGBA, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillRadialGradient (\fBPoint\fP center, \fBColor\fP centerColor, number radius, string endColorName, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillRadialGradient (\fBPoint\fP center, number centerRGBA, number radius, \fBColor\fP endColor, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillRadialGradient (\fBPoint\fP center, number centerRGBA, number radius, number endRGBA, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillRadialGradient (\fBPoint\fP center, number centerRGBA, number radius, string endColorName, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillRadialGradient (\fBPoint\fP center, string centerColorName, number radius, \fBColor\fP endColor, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillRadialGradient (\fBPoint\fP center, string centerColorName, number radius, number endRGBA, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeFillRadialGradient (\fBPoint\fP center, string centerColorName, number radius, string endColorName, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimatedAttributes\fP changeFrames (int first, int last, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate an inclusive sequence of image frames\&. Visits first through last in either direction, with equal time per frame before easing\&. Does not loop; holds the last frame at completion\&. A pending wait keeps the old frame until the sequence starts\&. Calling \fBframe()\fP directly cancels the sequence\&.
+Animate an inclusive sequence of image frames\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Visits first through last in either direction, with equal time per frame before easing\&. Does not loop; holds the last frame at completion\&. A pending wait keeps the old frame until the sequence starts\&. Calling \fBframe()\fP directly cancels the sequence\&.
 
 .PP
 \fBParameters\fP
@@ -1124,19 +1505,18 @@ style\&.changeFrames(0, 7, 0\&.8);
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeGrowingBy (number amountPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeGrowingTo (number amountPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimatedAttributes\fP changeLightOffset (\fBOffset\fP target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate sphere light offset\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBlightOffset()\fP setter interrupts this channel; unrelated channels continue\&.
+Animate sphere light offset\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBlightOffset()\fP setter interrupts this channel; unrelated channels continue\&.
 
 .PP
 \fBParameters\fP
@@ -1160,11 +1540,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimatedAttributes\fP changeLineColor (\fBColor\fP target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate stroke color\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBlineColor()\fP setter interrupts this channel; unrelated channels continue\&. Resolves lineStyle_Auto to a solid stroke\&.
+Animate stroke color\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBlineColor()\fP setter interrupts this channel; unrelated channels continue\&. Resolves lineStyle_Auto to a solid stroke\&.
 
 .PP
 \fBParameters\fP
@@ -1193,11 +1580,40 @@ Advance a standalone object with animate(deltaSeconds)\&. \fBDrawing\fP and \fBE
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeLineColor (number targetRGBA, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
+.SS "\fBAnimatedAttributes\fP changeLineColor (string targetColorName, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&. 
+.RE
+.PP
+
+.PP
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimatedAttributes\fP changeLineOpacity (number target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate stroke opacity\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBlineOpacity()\fP setter interrupts this channel; unrelated channels continue\&. Resolves lineStyle_Auto to a solid stroke\&.
+Animate stroke opacity\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBlineOpacity()\fP setter interrupts this channel; unrelated channels continue\&. Resolves lineStyle_Auto to a solid stroke\&.
 
 .PP
 \fBParameters\fP
@@ -1221,11 +1637,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimatedAttributes\fP changeLineThickness (number target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate stroke thickness\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBlineThickness()\fP setter interrupts this channel; unrelated channels continue\&. Resolves lineStyle_Auto to a solid stroke\&.
+Animate stroke thickness\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBlineThickness()\fP setter interrupts this channel; unrelated channels continue\&. Resolves lineStyle_Auto to a solid stroke\&.
 
 .PP
 \fBParameters\fP
@@ -1249,27 +1672,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeMovementBy (number xPerSecond, number yPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeMovementBy (\fBVector\fP value, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeMovementTo (number xPerSecond, number yPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeMovementTo (\fBVector\fP value, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimatedAttributes\fP changePolarOffset (\fBOffset\fP target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate sphere polar offset\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBpolarOffset()\fP setter interrupts this channel; unrelated channels continue\&.
+Animate sphere polar offset\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBpolarOffset()\fP setter interrupts this channel; unrelated channels continue\&.
 
 .PP
 \fBParameters\fP
@@ -1293,11 +1707,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimatedAttributes\fP changeRoundedCorners (number target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate corner radius\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBroundedCorners()\fP setter interrupts this channel; unrelated channels continue\&.
+Animate corner radius\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBroundedCorners()\fP setter interrupts this channel; unrelated channels continue\&.
 
 .PP
 \fBParameters\fP
@@ -1321,19 +1742,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeScaleBy (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP changeScaleTo (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP\&.
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimatedAttributes\fP changeSkew (number x, number y, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate a relative shear\&. Postmultiplies the current transform by the requested shear, then interpolates the six affine matrix coefficients\&. This can pass through singular matrices\&. Replaces transform tracks; a later component request interrupts the matrix tween\&.
+Animate a relative shear\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Postmultiplies the current transform by the requested shear, then interpolates the six affine matrix coefficients\&. This can pass through singular matrices\&. Replaces transform tracks; a later component request interrupts the matrix tween\&.
 
 .PP
 \fBParameters\fP
@@ -1359,11 +1779,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimatedAttributes\fP changeSphereRotation (number radians, number seconds, int easing = \fR\fBlinearTween\fP\fP, int direction = \fR\fBrotationDirection_AsSpecified\fP\fP)"
 
 .PP
-Animate spherical-image rotation\&. Targets an absolute angle\&. Replaces the matching track and consumes the pending wait\&. Positive angles rotate clockwise\&.
+Animate spherical-image rotation\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Targets an absolute angle\&. Replaces the matching track and consumes the pending wait\&. Positive angles rotate clockwise\&.
 
 .PP
 \fBParameters\fP
@@ -1401,27 +1828,18 @@ style\&.changeSphereRotation(Math\&.PI, 0\&.5, pdg\&.easeInOutQuad,
 .PP
 
 .PP
-References \fBpdg::linearTween\fP, and \fBpdg::rotationDirection_AsSpecified\fP\&.
-.SS "\fBAnimated\fP changeSpinBy (number radiansPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeSpinTo (number radiansPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeStretchingBy (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeStretchingTo (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimatedAttributes()\fP, \fBpdg::linearTween\fP, and \fBpdg::rotationDirection_AsSpecified\fP\&.
 .SS "\fBAnimatedAttributes\fP changeSubsection (\fBRect\fP target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate image subsection\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBsubsection()\fP setter interrupts this channel; unrelated channels continue\&.
+Animate image subsection\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBsubsection()\fP setter interrupts this channel; unrelated channels continue\&.
 
 .PP
 \fBParameters\fP
@@ -1445,11 +1863,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimatedAttributes\fP changeTextSize (number target, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate text size\&. Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBtextSize()\fP setter interrupts this channel; unrelated channels continue\&.
+Animate text size\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Replaces the matching pending transition and consumes the pending wait\&. The immediate \fBtextSize()\fP setter interrupts this channel; unrelated channels continue\&.
 
 .PP
 \fBParameters\fP
@@ -1473,11 +1898,18 @@ This object, for chaining\&.
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
 .SS "\fBAnimatedAttributes\fP changeTransform (array number matrix, number seconds, int easing = \fR\fBlinearTween\fP\fP)"
 
 .PP
-Animate a replacement affine matrix\&. Interpolates the six affine coefficients, which may pass through singular matrices\&. Preserves logical width and height; matrix scale updates the independent scale components\&. A nonzero matrix column requires a nonzero corresponding logical dimension\&. Use \fBrotateTo()\fP for angular paths and direction control\&. Replaces transform tracks and constant transform rates; subsequent component requests interrupt the matrix tween at its current sample\&.
+Animate a replacement affine matrix\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fReasing:\fP \fBEasingFunction\fP\&.
+.RE
+.PP
+Interpolates the six affine coefficients, which may pass through singular matrices\&. Preserves logical width and height; matrix scale updates the independent scale components\&. A nonzero matrix column requires a nonzero corresponding logical dimension\&. Use \fBrotateTo()\fP for angular paths and direction control\&. Replaces transform tracks and constant transform rates; subsequent component requests interrupt the matrix tween at its current sample\&.
 
 .PP
 \fBParameters\fP
@@ -1512,298 +1944,7 @@ style\&.changeTransform([1, 0, 0, 0\&.25, 1, 0, 30, 10, 1], 0\&.5);
 .PP
 
 .PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP clearAnimationHelpers ()"
-
-.SS "\fBAnimatedAttributes\fP clipOverflow (boolean clip)"
-
-.SS "fillColor (\fBColor\fP color)"
-
-.SS "fillGradient (\fBPoint\fP start, \fBColor\fP startColor, \fBPoint\fP end, \fBColor\fP endColor)"
-
-.SS "fillOpacity (number float opacity)"
-
-.SS "fillRadialGradient (\fBPoint\fP center, \fBColor\fP centerColor, number float radius, \fBColor\fP endColor)"
-
-.SS "fitType (int fit)"
-
-.SS "\fBAnimated\fP flipX ()"
-
-.SS "\fBAnimated\fP flipY ()"
-
-.SS "font (\fBFont\fP font)"
-
-.PP
-References \fBfont()\fP\&.
-.PP
-Referenced by \fBfont()\fP\&.
-.SS "frame (int frame)"
-
-.PP
-References \fBframe()\fP\&.
-.PP
-Referenced by \fBframe()\fP\&.
-.SS "\fBColor\fP getAmbientLight ()"
-
-.SS "int getBlendMode ()"
-
-.SS "\fBRect\fP getBoundingBox ()"
-
-.SS "\fBOffset\fP getCenterOffset ()"
-
-.SS "boolean getClipOverflow ()"
-
-.SS "\fBColor\fP getFillColor ()"
-
-.SS "number float getFillOpacity ()"
-
-.SS "int getFitType ()"
-
-.SS "\fBFont\fP getFont ()"
-
-.SS "int getFrame ()"
-
-.SS "\fBPoint\fP getGradientEnd ()"
-
-.SS "\fBColor\fP getGradientEndColor ()"
-
-.SS "\fBPoint\fP getGradientStart ()"
-
-.SS "\fBColor\fP getGradientStartColor ()"
-
-.SS "int getGradientType ()"
-
-.SS "number getHeight ()"
-
-.SS "\fBOffset\fP getLightOffset ()"
-
-.SS "\fBColor\fP getLineColor ()"
-
-.SS "number float getLineOpacity ()"
-
-.SS "uint getLineStyle ()"
-
-.SS "number float getLineThickness ()"
-
-.SS "\fBPoint\fP getLocation ()"
-
-.SS "\fBOffset\fP getMovement ()"
-
-.SS "\fBOffset\fP getPolarOffset ()"
-
-.SS "\fBPoint\fP getRadialGradientCenter ()"
-
-.SS "\fBColor\fP getRadialGradientCenterColor ()"
-
-.SS "\fBColor\fP getRadialGradientEndColor ()"
-
-.SS "number float getRadialGradientRadius ()"
-
-.SS "\fBRotatedRect\fP getRotatedBounds ()"
-
-.SS "number getRotation ()"
-
-.SS "number float getRoundedCornerRadius ()"
-
-.SS "\fBOffset\fP getScale ()"
-
-.SS "\fBOffset\fP getSize ()"
-
-.SS "number float getSphereRotation ()"
-
-.SS "number getSpin ()"
-
-.SS "\fBOffset\fP getStretching ()"
-
-.SS "\fBRect\fP getSubsection ()"
-
-.SS "number float getTextSize ()"
-
-.SS "int getTextStyle ()"
-
-.SS "\fBImage\fP getTexture ()"
-
-.SS "array number getTransform ()"
-
-.SS "number getWidth ()"
-
-.SS "\fBAnimated\fP grow (number factor, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "boolean hasScheduledAnimations ()"
-
-.SS "boolean isFlippedX ()"
-
-.SS "boolean isFlippedY ()"
-
-.SS "boolean isSchedulePaused ()"
-
-.SS "lightOffset (\fBOffset\fP offset)"
-
-.SS "lineColor (\fBColor\fP color)"
-
-.SS "lineOpacity (number float opacity)"
-
-.SS "lineStyle (int lineStyle)"
-
-.PP
-References \fBlineStyle()\fP\&.
-.PP
-Referenced by \fBlineStyle()\fP\&.
-.SS "lineThickness (number float thickness)"
-
-.SS "\fBAnimated\fP moveBy (number x, number y, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP moveBy (\fBOffset\fP value, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP moveTo (number x, number y, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP moveTo (\fBPoint\fP value, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP pauseSchedule ()"
-
-.SS "polarOffset (\fBOffset\fP offset)"
-
-.SS "\fBAnimated\fP removeAnimationHelper (\fBIAnimationHelper\fP helper)"
-
-.SS "\fBAnimated\fP resizeBy (number deltaWidth, number deltaHeight, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP resizeTo (number width, number height, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP resumeSchedule ()"
-
-.SS "\fBAnimated\fP rotateBy (number radians, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP, int direction = \fR\fBrotationDirection_AsSpecified\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP, and \fBpdg::rotationDirection_AsSpecified\fP\&.
-.SS "\fBAnimated\fP rotateTo (number radians, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP, int direction = \fR\fBrotationDirection_AsSpecified\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP, and \fBpdg::rotationDirection_AsSpecified\fP\&.
-.SS "rotation (number float radians, \fBPoint\fP center = \fR\fBPoint\fP(0, 0)\fP)"
-
-.PP
-Referenced by \fBsphereRotation()\fP\&.
-.SS "roundedCorners (number float radius)"
-
-.SS "scale (number float xFactor, number float yFactor = \fRxFactor\fP, \fBPoint\fP center = \fR\fBPoint\fP(0, 0)\fP)"
-
-.SS "\fBAnimated\fP setCenterOffset (\fBOffset\fP offset)"
-
-.SS "\fBAnimated\fP setFlipX (boolean flip)"
-
-.SS "\fBAnimated\fP setFlipY (boolean flip)"
-
-.SS "\fBAnimated\fP setGrowing (number value)"
-
-.SS "\fBAnimated\fP setHeight (number value)"
-
-.SS "\fBAnimated\fP setLocation (number x, number y)"
-
-.SS "\fBAnimated\fP setLocation (\fBPoint\fP value)"
-
-.SS "\fBAnimated\fP setMovement (number xPerSecond, number yPerSecond)"
-
-.SS "\fBAnimated\fP setMovement (\fBVector\fP value)"
-
-.SS "\fBAnimated\fP setRotation (number value)"
-
-.SS "\fBAnimated\fP setScale (number x, number y = \fRx\fP)"
-
-.SS "\fBAnimated\fP setSize (number width, number height)"
-
-.SS "\fBAnimated\fP setSize (\fBOffset\fP value)"
-
-.SS "\fBAnimated\fP setSpin (number value)"
-
-.SS "\fBAnimated\fP setStretching (number widthPerSecond, number heightPerSecond)"
-
-.SS "\fBAnimatedAttributes\fP setTransform (array number matrix)"
-
-.PP
-Replace the affine transform immediately\&. Unlike \fBtransform()\fP, replaces the matrix instead of postmultiplying it\&. \fBAnimatedAttributes\fP preserves its logical width and height, updates its shared \fBAnimated\fP transform components, and cancels conflicting transform animation\&. It rejects nonfinite or non-affine matrices and nonzero matrix columns whose corresponding logical dimension is zero\&.
-
-.PP
-\fBParameters\fP
-.RS 4
-\fImatrix\fP Array of nine numbers in column-major order\&. For a 2D affine transform use [a, b, 0, c, d, 0, tx, ty, 1], mapping (x,y) to (a*x+c*y+tx, b*x+d*y+ty)\&.
-.RE
-.PP
-\fBReturns\fP
-.RS 4
-This object, for chaining\&.
-.RE
-.PP
-\fBExample\fP
-.RS 4
-
-.PP
-.nf
-style\&.setTransform([1, 0, 0, 0, 1, 0, 20, 10, 1]);
-
-.fi
-.PP
-.RE
-.PP
-\fBSee also\fP
-.RS 4
-\fBtransform()\fP, \fBgetTransform()\fP 
-.RE
-.PP
-
-.SS "\fBAnimated\fP setWidth (number value)"
-
-.SS "skew (number float xSkew, number float ySkew, \fBPoint\fP center = \fR\fBPoint\fP(0, 0)\fP)"
-
-.SS "sphereRotation (number float rotation)"
-
-.PP
-References \fBrotation()\fP\&.
-.SS "\fBAnimated\fP stopGrowing ()"
-
-.SS "\fBAnimated\fP stopMovement ()"
-
-.SS "\fBAnimated\fP stopSpinning ()"
-
-.SS "\fBAnimated\fP stopStretching ()"
-
-.SS "\fBAnimated\fP stretch (number widthFactor, number heightFactor, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "subsection (\fBRect\fP section)"
-
-.SS "textSize (number float size)"
-
-.SS "textStyle (int style)"
-
-.SS "texture (\fBImage\fP texture)"
-
-.PP
-References \fBtexture()\fP\&.
-.PP
-Referenced by \fBtexture()\fP\&.
-.SS "transform (array number matrix)"
-
-.SS "translation (\fBOffset\fP offset)"
-
-.SS "\fBAnimated\fP wait (number durationSeconds)"
-
-.SS "\fBAttributes\fP withAppearance (\fBAttributes\fP overrides, boolean textOnly = \fRfalse\fP)"
-
+References \fBAnimatedAttributes()\fP, and \fBpdg::linearTween\fP\&.
 
 .SH "Author"
 .PP 

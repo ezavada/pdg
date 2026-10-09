@@ -26,7 +26,7 @@
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="titlearea">
    <div id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></div>
-   <div id="projectname">PDG <span id="projectnumber">engine v1.1.1</span>
+   <div id="projectname">PDG <span id="projectnumber">engine v1.2.0</span>
    </div>
 </div>
 <!-- end header part -->
@@ -115,10 +115,10 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a1c790e5d5bb8ac38415e826b4d207f34" id="r_a1c790e5d5bb8ac38415e826b4d207f34"><td class="memItemLeft">string&#160;</td><td class="memItemRight"><a class="el" href="#a1c790e5d5bb8ac38415e826b4d207f34">binaryDump</a> (BinaryString inData, int length=0, int bytesPerLine=20)</td></tr>
-<tr class="memdesc:a1c790e5d5bb8ac38415e826b4d207f34"><td class="mdescLeft">&#160;</td><td class="mdescRight">get hex and ascii representations in a hex dump format.  <br /></td></tr>
 <tr class="memitem:a0ca57bf4d7db34174582aecf999c4bcb" id="r_a0ca57bf4d7db34174582aecf999c4bcb"><td class="memItemLeft">string&#160;</td><td class="memItemRight"><a class="el" href="#a0ca57bf4d7db34174582aecf999c4bcb">binaryDump</a> (<a class="el" href="classpdg_1_1_mem_block.html">MemBlock</a> inData, int length=0, int bytesPerLine=20)</td></tr>
 <tr class="memdesc:a0ca57bf4d7db34174582aecf999c4bcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">get hex and ascii representations in a hex dump format.  <br /></td></tr>
+<tr class="memitem:a83f4b6c17a9ce6ee3c690b59f95027a3" id="r_a83f4b6c17a9ce6ee3c690b59f95027a3"><td class="memItemLeft">string&#160;</td><td class="memItemRight"><a class="el" href="#a83f4b6c17a9ce6ee3c690b59f95027a3">binaryDump</a> (Uint8Array inData, int length=0, int bytesPerLine=20)</td></tr>
+<tr class="memdesc:a83f4b6c17a9ce6ee3c690b59f95027a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">get hex and ascii representations in a hex dump format.  <br /></td></tr>
 <tr class="memitem:a8592f2407ea21519c7761c9bd3c095d7" id="r_a8592f2407ea21519c7761c9bd3c095d7"><td class="memItemLeft">number&#160;</td><td class="memItemRight"><a class="el" href="#a8592f2407ea21519c7761c9bd3c095d7">getLogLevel</a> ()</td></tr>
 <tr class="memdesc:a8592f2407ea21519c7761c9bd3c095d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">return the current logging level  <br /></td></tr>
 <tr class="memitem:a2bd69db5ae34acce85e4d643a21ad741" id="r_a2bd69db5ae34acce85e4d643a21ad741"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a2bd69db5ae34acce85e4d643a21ad741">initialize</a> (string inLogNameBase, int initMode=<a class="el" href="#a90fb7f7cb4c30ab6ff46518f73dd6804">LogManager.init_StdOut</a>)</td></tr>
@@ -213,45 +213,8 @@ Usage Examples:</h2>
 <dd>
 <a class="el" href="namespacepdg.html#a5ef2090e8b593e167deb7907b8cdcba0">pdg.captureConsole()</a> </dd></dl>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
-<a id="a1c790e5d5bb8ac38415e826b4d207f34" name="a1c790e5d5bb8ac38415e826b4d207f34"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1c790e5d5bb8ac38415e826b4d207f34">&#9670;&#160;</a></span>binaryDump() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">string binaryDump </td>
-          <td>(</td>
-          <td class="paramtype">BinaryString</td>          <td class="paramname"><span class="paramname"><em>inData</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>length</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>bytesPerLine</em></span><span class="paramdefsep"> = </span><span class="paramdefval">20</span>&#160;)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>get hex and ascii representations in a hex dump format. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">inData</td><td>the binary string you want to dump </td></tr>
-    <tr><td class="paramname">length</td><td>the number of bytes to dump, or 0 for entire contents of the BinaryString given </td></tr>
-    <tr><td class="paramname">bytesPerLine</td><td>how many bytes should be on each row of the output</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section note"><dt>Note</dt><dd>a BinaryString is a JavaScript string where each character's integer value is from [0..255]. Normal JavaScript strings are UTF-16, so they have 2 bytes per character, but for these purposes we ignore the high byte. </dd></dl>
-
-</div>
-</div>
 <a id="a0ca57bf4d7db34174582aecf999c4bcb" name="a0ca57bf4d7db34174582aecf999c4bcb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ca57bf4d7db34174582aecf999c4bcb">&#9670;&#160;</a></span>binaryDump() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ca57bf4d7db34174582aecf999c4bcb">&#9670;&#160;</a></span>binaryDump() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -277,8 +240,44 @@ Usage Examples:</h2>
 <p>get hex and ascii representations in a hex dump format. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">inData</td><td>the <a class="el" href="classpdg_1_1_mem_block.html" title="holds arbitrary blocks of memory">MemBlock</a> you want to dump </td></tr>
-    <tr><td class="paramname">length</td><td>the number of bytes to dump, or 0 for entire contents of the <a class="el" href="classpdg_1_1_mem_block.html" title="holds arbitrary blocks of memory">MemBlock</a> given </td></tr>
+    <tr><td class="paramname">inData</td><td>the <a class="el" href="classpdg_1_1_mem_block.html" title="Hold native memory for exchange between PDG APIs.">MemBlock</a> you want to dump </td></tr>
+    <tr><td class="paramname">length</td><td>the number of bytes to dump, or 0 for entire contents of the <a class="el" href="classpdg_1_1_mem_block.html" title="Hold native memory for exchange between PDG APIs.">MemBlock</a> given </td></tr>
+    <tr><td class="paramname">bytesPerLine</td><td>how many bytes should be on each row of the output </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a83f4b6c17a9ce6ee3c690b59f95027a3" name="a83f4b6c17a9ce6ee3c690b59f95027a3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83f4b6c17a9ce6ee3c690b59f95027a3">&#9670;&#160;</a></span>binaryDump() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">string binaryDump </td>
+          <td>(</td>
+          <td class="paramtype">Uint8Array</td>          <td class="paramname"><span class="paramname"><em>inData</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>length</em></span><span class="paramdefsep"> = </span><span class="paramdefval">0</span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int</td>          <td class="paramname"><span class="paramname"><em>bytesPerLine</em></span><span class="paramdefsep"> = </span><span class="paramdefval">20</span>&#160;)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>get hex and ascii representations in a hex dump format. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">inData</td><td>the Uint8Array you want to dump </td></tr>
+    <tr><td class="paramname">length</td><td>the number of bytes to dump, or 0 for entire contents of the Uint8Array given </td></tr>
     <tr><td class="paramname">bytesPerLine</td><td>how many bytes should be on each row of the output </td></tr>
   </table>
   </dd>
@@ -398,7 +397,7 @@ Usage Examples:</h2>
 
 <p>write a message to the log, if it is high enough priority </p>
 <p>Write a message to the log. If the level is lower priority (higher numeric value) than the current log level, the message will be filtered and not written to the log. Category is a short string used to define the area of functionality the logging is about, useful for debugging to narrow down the number of log entries you need to examine. Message is the actual log message</p>
-<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="#a1c790e5d5bb8ac38415e826b4d207f34" title="get hex and ascii representations in a hex dump format.">binaryDump()</a> for converting binary data to a hex dump</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>see <a class="el" href="#a83f4b6c17a9ce6ee3c690b59f95027a3" title="get hex and ascii representations in a hex dump format.">binaryDump()</a> for converting binary data to a hex dump</dd></dl>
 <p>Log levels (highest to lowest priority, lowest to highest numeric value): </p><pre class="fragment">fatal = 0, 
 error = 2, 
 inform = 4, 
@@ -413,7 +412,7 @@ trace = 10,
   </table>
   </dd>
 </dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a1c790e5d5bb8ac38415e826b4d207f34" title="get hex and ascii representations in a hex dump format.">binaryDump()</a> </dd>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a83f4b6c17a9ce6ee3c690b59f95027a3" title="get hex and ascii representations in a hex dump format.">binaryDump()</a> </dd>
 <dd>
 <a class="el" href="#a128f70b759e785f51b511ee857e9f33e" title="set the current logging level">setLogLevel()</a> </dd>
 <dd>

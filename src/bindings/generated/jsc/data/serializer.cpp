@@ -277,7 +277,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""val"")");
-        long val_temp = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        long val_temp = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (val_temp < -32768 || val_temp > 32767)
         {
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number in range [-32768, 32767] (""val"")");
@@ -311,7 +311,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""val"")");
-        long val_temp = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        long val_temp = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (val_temp < -128 || val_temp > 127)
         {
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number in range [-128, 127] (""val"")");
@@ -357,7 +357,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""val"")");
-        uint32 val = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+        uint32 val = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->serialize_uint(val);
         return JSValueMakeUndefined(ctx);
     }
@@ -495,22 +495,43 @@ namespace pdg
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-        bool isStr = JSValueIsString(ctx, arguments[0]);
-        if (!isStr && !JSValueIsObject(ctx, arguments[0]))
+        bool isBytes = IsUint8Array(arguments[0]);
+        if (!isBytes && !JSValueIsObjectOfClass(ctx, arguments[0], MemBlock_class()))
         {
             std::ostringstream excpt_;
-            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "argument 1 (mem) must be either a binary string or an object of type MemBlock" << "')";
+            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "argument 1 (mem) must be either a Uint8Array or an object of type MemBlock" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         }
-        if (isStr)
+        if (isBytes)
         {
             size_t bytes = 0;
-            uint8* ptr = (uint8*) DecodeBinary(arguments[0], &bytes);
+            const uint8* ptr = nullptr;
+            if (!GetUint8ArrayData(arguments[0], ptr, bytes))
+            {
+                std::ostringstream excpt_;
+                excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "expected an attached, non-shared Uint8Array" << "')";
+                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+            }
+            if (bytes > UINT32_MAX)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "byte array exceeds the supported size" << "')";
+                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+            }
             self->serialize_mem(ptr, bytes);
         }
         else
         {
+            if (!JSValueIsObjectOfClass(ctx, arguments[0], MemBlock_class()))
+            {
+                std::ostringstream excpt_;
+                excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "expected Uint8Array or MemBlock" << "')";
+                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+            }
             MemBlock* memBlock = 0;
             if (JSValueIsObject(ctx, arguments[1 -1]))
             {
@@ -565,15 +586,12 @@ namespace pdg
     JSValueRef Serializer_Sizeof_1(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "[number int]" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""val"")");
-        long val_temp = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        long val_temp = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (val_temp < -128 || val_temp > 127)
         {
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number in range [-128, 127] (""val"")");
@@ -585,10 +603,7 @@ namespace pdg
     JSValueRef Serializer_Sizeof_1u(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "[number uint]" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
@@ -605,15 +620,12 @@ namespace pdg
     JSValueRef Serializer_Sizeof_2(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "[number int]" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""val"")");
-        long val_temp = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        long val_temp = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (val_temp < -32768 || val_temp > 32767)
         {
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number in range [-32768, 32767] (""val"")");
@@ -625,10 +637,7 @@ namespace pdg
     JSValueRef Serializer_Sizeof_2u(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "[number uint]" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
@@ -645,10 +654,7 @@ namespace pdg
     JSValueRef Serializer_Sizeof_3u(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "[number uint]" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
@@ -665,10 +671,7 @@ namespace pdg
     JSValueRef Serializer_Sizeof_4(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "[number int]" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
@@ -685,10 +688,7 @@ namespace pdg
     JSValueRef Serializer_Sizeof_4u(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "[number uint]" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
@@ -705,10 +705,7 @@ namespace pdg
     JSValueRef Serializer_Sizeof_8(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "[number int]" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
@@ -720,10 +717,7 @@ namespace pdg
     JSValueRef Serializer_Sizeof_8u(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "[number uint]" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
@@ -735,10 +729,7 @@ namespace pdg
     JSValueRef Serializer_Sizeof_f(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "number" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
@@ -750,10 +741,7 @@ namespace pdg
     JSValueRef Serializer_Sizeof_d(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "number" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
@@ -765,25 +753,19 @@ namespace pdg
     JSValueRef Serializer_Sizeof_uint(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "[number uint]" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""val"")");
-        uint32 val = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+        uint32 val = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
         size_t n = self->sizeof_uint(val);
         return JSValueMakeNumber(ctx, n);
     }
     JSValueRef Serializer_Sizeof_str(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "string" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsString(ctx, arguments[1 -1]))
@@ -799,10 +781,7 @@ namespace pdg
     JSValueRef Serializer_Sizeof_bool(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "boolean" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsBoolean(ctx, arguments[1 -1]))
@@ -814,10 +793,7 @@ namespace pdg
     JSValueRef Serializer_Sizeof_point(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "[object Point]" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         pdg::Point val;
@@ -833,10 +809,7 @@ namespace pdg
     JSValueRef Serializer_Sizeof_offset(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "[object Offset]" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         pdg::Offset val;
@@ -852,10 +825,7 @@ namespace pdg
     JSValueRef Serializer_Sizeof_vector(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "[object Vector]" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         pdg::Vector val;
@@ -871,10 +841,7 @@ namespace pdg
     JSValueRef Serializer_Sizeof_rect(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "[object Rect]" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         pdg::Rect val;
@@ -890,10 +857,7 @@ namespace pdg
     JSValueRef Serializer_Sizeof_rotr(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "[object RotatedRect]" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         pdg::RotatedRect val;
@@ -909,10 +873,7 @@ namespace pdg
     JSValueRef Serializer_Sizeof_quad(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "[object Quad]" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         pdg::Quad val;
@@ -928,10 +889,7 @@ namespace pdg
     JSValueRef Serializer_Sizeof_color(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "[object Color]" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         pdg::Color val;
@@ -947,10 +905,7 @@ namespace pdg
     JSValueRef Serializer_Sizeof_ref(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
-        if (argumentCount == 1 && JSValueIsNull(ctx, arguments[0]))
-        {
-            return JSC_MakeValueFromCString(ctx, "[number uint] function(" "object" " val) - ");
-        }
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsObject(ctx, arguments[1 -1]))
@@ -963,6 +918,7 @@ namespace pdg
     JSValueRef Serializer_Sizeof_obj(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         Serializer* self = static_cast<Serializer*>(JSObjectGetPrivate(thisObject));
+        ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (JSValueIsNull(ctx, arguments[0]))
@@ -1013,23 +969,44 @@ namespace pdg
         ;
         if (argumentCount != 1)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
-        bool isStr = JSValueIsString(ctx, arguments[0]);
-        if (!isStr && !JSValueIsObject(ctx, arguments[0]))
+        bool isBytes = IsUint8Array(arguments[0]);
+        if (!isBytes && !JSValueIsObjectOfClass(ctx, arguments[0], MemBlock_class()))
         {
             std::ostringstream excpt_;
-            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "argument 1 (mem) must be either a binary string or an object of type MemBlock" << "')";
+            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "argument 1 (mem) must be either a Uint8Array or an object of type MemBlock" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx);
+            return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
         }
         size_t n = 0;
-        if (isStr)
+        if (isBytes)
         {
             size_t bytes = 0;
-            uint8* ptr = (uint8*) DecodeBinary(arguments[0], &bytes);
+            const uint8* ptr = nullptr;
+            if (!GetUint8ArrayData(arguments[0], ptr, bytes))
+            {
+                std::ostringstream excpt_;
+                excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "expected an attached, non-shared Uint8Array" << "')";
+                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+            }
+            if (bytes > UINT32_MAX)
+            {
+                std::ostringstream excpt_;
+                excpt_ << "throw "<< "RangeError" << "('" << "Range Error: " << "byte array exceeds the supported size" << "')";
+                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+            }
             n = self->sizeof_mem(ptr, bytes);
         }
         else
         {
+            if (!JSValueIsObjectOfClass(ctx, arguments[0], MemBlock_class()))
+            {
+                std::ostringstream excpt_;
+                excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "expected Uint8Array or MemBlock" << "')";
+                JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
+                return JSValueMakeNull(ctx); return JSValueMakeNull(ctx);
+            }
             MemBlock* memBlock = 0;
             if (JSValueIsObject(ctx, arguments[1 -1]))
             {

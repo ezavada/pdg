@@ -6,8 +6,17 @@ var searchData=
   ['wantsmouseover_3',['wantsMouseOver',['../classpdg_1_1_sprite.html#ac0da528d2b5714ebfe71217cef20b983',1,'pdg::Sprite']]],
   ['wantsoffscreen_4',['wantsOffscreen',['../classpdg_1_1_sprite.html#a9cb51fb07875f4269ea9a3f3486a89e3',1,'pdg::Sprite']]],
   ['wantswallcollide_5',['wantsWallCollide',['../classpdg_1_1_sprite.html#aa273a821a654f106fb825cc0a53b232b',1,'pdg::Sprite']]],
-  ['wholerig_6',['wholeRig',['../structpdg_1_1_sprite_animation_physics_recovery_info.html#ad932b3768f41d67ba23f4ad79e2ba5ce',1,'pdg::SpriteAnimationPhysicsRecoveryInfo']]],
-  ['width_7',['width',['../structpdg_1_1_graphics_manager_1_1_screen_mode.html#a64c73e3e65252a03218faa1701fc9e84',1,'pdg::GraphicsManager::ScreenMode']]],
-  ['withcollisionname_8',['withCollisionName',['../structpdg_1_1_sprite_collide_info.html#ac6e9f604f4bbe8aa461be0e765686f1c',1,'pdg::SpriteCollideInfo']]],
-  ['world_9',['world',['../structpdg_1_1_animation_drawing_submission.html#a57761973fdd90e7c6f19f64b67dfc934',1,'pdg::AnimationDrawingSubmission']]]
+  ['webpath_6',['webPath',['../structpdg_1_1_net_connect_options.html#a4e6380e6a6d8b9772493d31c1413dc5e',1,'pdg::NetConnectOptions']]],
+  ['webport_7',['webPort',['../structpdg_1_1_net_connect_options.html#a73774ed6f37a66247eb7ad7d26e5abfc',1,'pdg::NetConnectOptions']]],
+  ['websocket_8',['webSocket',['../structpdg_1_1_net_server_options.html#a8a3d37c472e95074eeb2a122cbc9f927',1,'pdg::NetServerOptions']]],
+  ['websocketurl_9',['webSocketUrl',['../structpdg_1_1_net_connect_options.html#a311011b155c93cc5727cc7e45e968af1',1,'pdg::NetConnectOptions']]],
+  ['webtransport_10',['webTransport',['../structpdg_1_1_net_server_options.html#a61cbfbe41f68d3a80990519a18afcf31',1,'pdg::NetServerOptions']]],
+  ['webtransporttimeout_11',['webTransportTimeout',['../structpdg_1_1_net_connect_options.html#a41d1a44cf99e4b18685b6c70d0c1ab0d',1,'pdg::NetConnectOptions']]],
+  ['webtransporturl_12',['webTransportUrl',['../structpdg_1_1_net_connect_options.html#abfb6b8af56db88f507c313b0f281a43c',1,'pdg::NetConnectOptions']]],
+  ['wholerig_13',['wholeRig',['../structpdg_1_1_sprite_animation_physics_recovery_info.html#ad932b3768f41d67ba23f4ad79e2ba5ce',1,'pdg::SpriteAnimationPhysicsRecoveryInfo']]],
+  ['width_14',['width',['../structpdg_1_1_graphics_manager_1_1_screen_mode.html#a64c73e3e65252a03218faa1701fc9e84',1,'pdg::GraphicsManager::ScreenMode::width'],['../structpdg_1_1_particle_trail_options.html#ae426f00e82704fa09578f5446e22d915',1,'pdg::ParticleTrailOptions::width']]],
+  ['withcollisionname_15',['withCollisionName',['../structpdg_1_1_sprite_collide_info.html#ac6e9f604f4bbe8aa461be0e765686f1c',1,'pdg::SpriteCollideInfo']]],
+  ['withingeometricreach_16',['withinGeometricReach',['../structpdg_1_1_animation_f_a_b_r_i_k_result.html#a43406e556fba2a3d0b68b155a772d294',1,'pdg::AnimationFABRIKResult']]],
+  ['world_17',['world',['../structpdg_1_1_animation_drawing_submission.html#a57761973fdd90e7c6f19f64b67dfc934',1,'pdg::AnimationDrawingSubmission']]],
+  ['write_18',['write',['../structpdg_1_1_animation_value_codec.html#a245b95d4b728db9ccddcde71db88640d',1,'pdg::AnimationValueCodec']]]
 ];

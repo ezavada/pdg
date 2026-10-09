@@ -1,4 +1,4 @@
-.TH "KeyCodes" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "KeyCodes" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -314,7 +314,7 @@ Linux/GLFW: 341 (same as keyCode_LeftControl)
 .SS "const keyCode_LeftAlt = 58"
 
 .PP
-platform-specific keycode for the left Alt/Option key This constant contains the correct keycode value for the left Alt (Windows/Linux) or Option (Mac) key on the current platform\&. Use this when checking #KeyEvent\&.keyCode in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect left Alt/Option key presses in a cross-platform way\&.
+platform-specific keycode for the left Alt/Option key This constant contains the correct keycode value for the left Alt (Windows/Linux) or Option (Mac) key on the current platform\&. Use this when checking \fBkeyCode\fP in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect left Alt/Option key presses in a cross-platform way\&.
 
 .PP
 Platform values:**
@@ -348,7 +348,7 @@ Linux/GLFW: 342 (GLFW_KEY_LEFT_ALT)
 .SS "const keyCode_LeftControl = 59"
 
 .PP
-platform-specific keycode for the left Control key This constant contains the correct keycode value for the left Control key on the current platform\&. Use this when checking #KeyEvent\&.keyCode in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect left Control key presses in a cross-platform way\&.
+platform-specific keycode for the left Control key This constant contains the correct keycode value for the left Control key on the current platform\&. Use this when checking \fBkeyCode\fP in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect left Control key presses in a cross-platform way\&.
 
 .PP
 Platform values:**
@@ -382,7 +382,7 @@ Linux/GLFW: 341 (GLFW_KEY_LEFT_CONTROL)
 .SS "const keyCode_LeftMeta = 55"
 
 .PP
-platform-specific keycode for the left Meta/Command/Windows key This constant contains the correct keycode value for the left Meta/Command (Mac) or Windows (Windows/Linux) key on the current platform\&. Use this when checking #KeyEvent\&.keyCode in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect left Meta/Command/Windows key presses in a cross-platform way\&.
+platform-specific keycode for the left Meta/Command/Windows key This constant contains the correct keycode value for the left Meta/Command (Mac) or Windows (Windows/Linux) key on the current platform\&. Use this when checking \fBkeyCode\fP in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect left Meta/Command/Windows key presses in a cross-platform way\&.
 
 .PP
 Platform values:**
@@ -416,7 +416,7 @@ Linux/GLFW: 343 (GLFW_KEY_LEFT_SUPER)
 .SS "const keyCode_LeftShift = 56"
 
 .PP
-platform-specific keycode for the left Shift key This constant contains the correct keycode value for the left Shift key on the current platform\&. Use this when checking #KeyEvent\&.keyCode in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect left Shift key presses in a cross-platform way\&.
+platform-specific keycode for the left Shift key This constant contains the correct keycode value for the left Shift key on the current platform\&. Use this when checking \fBkeyCode\fP in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect left Shift key presses in a cross-platform way\&.
 
 .PP
 Platform values:**
@@ -486,7 +486,7 @@ Linux/GLFW: 343 (same as keyCode_LeftMeta)
 .SS "const keyCode_RightAlt = 61"
 
 .PP
-platform-specific keycode for the right Alt/Option key This constant contains the correct keycode value for the right Alt (Windows/Linux) or Option (Mac) key on the current platform\&. Use this when checking #KeyEvent\&.keyCode in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect right Alt/Option key presses in a cross-platform way\&.
+platform-specific keycode for the right Alt/Option key This constant contains the correct keycode value for the right Alt (Windows/Linux) or Option (Mac) key on the current platform\&. Use this when checking \fBkeyCode\fP in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect right Alt/Option key presses in a cross-platform way\&.
 
 .PP
 Platform values:**
@@ -520,7 +520,7 @@ Linux/GLFW: 346 (GLFW_KEY_RIGHT_ALT)
 .SS "const keyCode_RightControl = 62"
 
 .PP
-platform-specific keycode for the right Control key This constant contains the correct keycode value for the right Control key on the current platform\&. Use this when checking #KeyEvent\&.keyCode in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect right Control key presses in a cross-platform way\&.
+platform-specific keycode for the right Control key This constant contains the correct keycode value for the right Control key on the current platform\&. Use this when checking \fBkeyCode\fP in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect right Control key presses in a cross-platform way\&.
 
 .PP
 Platform values:**
@@ -554,7 +554,7 @@ Linux/GLFW: 345 (GLFW_KEY_RIGHT_CONTROL)
 .SS "const keyCode_RightMeta = 54"
 
 .PP
-platform-specific keycode for the right Meta/Command/Windows key This constant contains the correct keycode value for the right Meta/Command (Mac) or Windows (Windows/Linux) key on the current platform\&. Use this when checking #KeyEvent\&.keyCode in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect right Meta/Command/Windows key presses in a cross-platform way\&.
+platform-specific keycode for the right Meta/Command/Windows key This constant contains the correct keycode value for the right Meta/Command (Mac) or Windows (Windows/Linux) key on the current platform\&. Use this when checking \fBkeyCode\fP in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect right Meta/Command/Windows key presses in a cross-platform way\&.
 
 .PP
 Platform values:**
@@ -588,7 +588,7 @@ Linux/GLFW: 347 (GLFW_KEY_RIGHT_SUPER)
 .SS "const keyCode_RightShift = 60"
 
 .PP
-platform-specific keycode for the right Shift key This constant contains the correct keycode value for the right Shift key on the current platform\&. Use this when checking #KeyEvent\&.keyCode in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect right Shift key presses in a cross-platform way\&.
+platform-specific keycode for the right Shift key This constant contains the correct keycode value for the right Shift key on the current platform\&. Use this when checking \fBkeyCode\fP in \fBeventType_KeyDown\fP or \fBeventType_KeyUp\fP event handlers to detect right Shift key presses in a cross-platform way\&.
 
 .PP
 Platform values:**

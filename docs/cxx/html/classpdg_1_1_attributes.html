@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Pixel Dust Game Engine
-   &#160;<span id="projectnumber">v1.1.1</span>
+   &#160;<span id="projectnumber">v1.2.0</span>
    </div>
   </td>
  </tr>
@@ -527,17 +527,17 @@ Friends</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Confine drawing overflow to the operation's bounds. </p>
-<p>Defaults to false. When true, the operation temporarily intersects the current <a class="el" href="classpdg_1_1_port.html">Port</a> clip with its transformed axis-aligned bounds, restoring the <a class="el" href="classpdg_1_1_port.html">Port</a> clip on return. False allows operation overflow but never disables the <a class="el" href="classpdg_1_1_port.html">Port</a> clip.</p>
-<p>Bounds are the supplied rectangle, quad or polygon bounds for closed shapes; the ellipse or sphere bounding rectangle; measured text bounds for point text; the supplied rectangle for rectangle text; and <a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> geometry bounds mapped into the requested destination for <a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> replay. Line and spline bounds include half the stroke width in <a class="el" href="classpdg_1_1_port.html">Port</a> pixels, so horizontal and vertical paths remain visible; arc bounds use their ellipse with the same stroke allowance. Other closed-shape bounds exclude the outer half of their stroke. Bounds follow translation, rotation, scaling and reflection as an axis-aligned enclosing rectangle.</p>
+<p>Defaults to false. When true, the operation temporarily intersects the current <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> clip with its transformed axis-aligned bounds, restoring the <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> clip on return. False allows operation overflow but never disables the <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> clip.</p>
+<p>Bounds are the supplied rectangle, quad or polygon bounds for closed shapes; the ellipse or sphere bounding rectangle; measured text bounds for point text; the supplied rectangle for rectangle text; and <a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> geometry bounds mapped into the requested destination for <a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> replay. Line and spline bounds include half the stroke width in <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> pixels, so horizontal and vertical paths remain visible; arc bounds use their ellipse with the same stroke allowance. Other closed-shape bounds exclude the outer half of their stroke. Bounds follow translation, rotation, scaling and reflection as an axis-aligned enclosing rectangle.</p>
 <p>Images and image strips also crop fitted artwork to the destination before its transform, including rotated destinations, subsection/frame selection and all fit modes. fit_Clipped always crops; tiling crops partial edge tiles. Nested <a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> replay respects its enclosing operation clip without exposing a public clip stack.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">clip</td><td>True to clip overflow; false to allow it within the <a class="el" href="classpdg_1_1_port.html">Port</a> clip.</td></tr>
+    <tr><td class="paramname">clip</td><td>True to clip overflow; false to allow it within the <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> clip.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>This <a class="el" href="classpdg_1_1_attributes.html">Attributes</a> object, for chaining. </dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="classpdg_1_1_port.html#aca1d5cf197c221389424e78c73dc5e80" title="Replace the clip, intersecting with the drawing area. Empty clips suppress all drawing.">Port::setClipRect()</a>, <a class="el" href="classpdg_1_1_port.html#ad1ea20ce14dc5937063a438006e5e63e" title="Restore clipping to the full drawing area. There is no clip stack.">Port::resetClipRect()</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classpdg_1_1_port.html#a37ce842d4e8a6f4dd4d927ef48dff55d" title="Replace the clip, intersecting with the drawing area. Empty clips suppress all drawing.">Port::setClipRect()</a>, <a class="el" href="classpdg_1_1_port.html#a79e37d9e0afc0e7774769882fafa1222" title="Restore clipping to the full drawing area. There is no clip stack.">Port::resetClipRect()</a> </dd></dl>
 
 <p class="reference">References <a class="el" href="#a2ee6f3658c1eec6d46c09c2494ace6a2">Attributes()</a>.</p>
 
@@ -1773,7 +1773,7 @@ Friends</h2></td></tr>
 
 <p class="reference">References <a class="el" href="#a2ee6f3658c1eec6d46c09c2494ace6a2">Attributes()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="classpdg_1_1_renderer.html#ab954b4d34f782dac9c807891e99dc991">Renderer::drawRoundedRect()</a>, and <a class="el" href="classpdg_1_1_animated_attributes.html#a5c81324c9422bd4b339c953881cbb992">AnimatedAttributes&lt; T &gt;::roundedCorners()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="classpdg_1_1_renderer.html#a91a19f580b445efb3b4601f34cb2dd02">Renderer::drawRoundedRect()</a>, and <a class="el" href="classpdg_1_1_animated_attributes.html#a5c81324c9422bd4b339c953881cbb992">AnimatedAttributes&lt; T &gt;::roundedCorners()</a>.</p>
 
 </div>
 </div>

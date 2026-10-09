@@ -60,17 +60,20 @@ demos, see the [testing guide](test/README.md): `test/unit`, `test/rigs`,
 `test/tools`, `test/ui`, and `test/demo`
 (with `.sh` and `.ps1` launchers).
 
+The [TypeScript guide](docs/typescript/README.md) covers generated engine declarations,
+the separate TypeScript MVC implementation, build commands, and deferred IDL contracts.
+
 Documentation (HTML and Man pages) are included in the docs directory, and can also be found online (along with comment areas) at:
 
 http://ezavada.com/pdg/javascript/html/
 
 To regenerate the documentation locally, run `make docs` after `./configure` (or run
-`./tools/build-docs.sh` directly). This runs Doxygen for the C++ HTML, JavaScript
+`./tools/build-docs.sh` directly). This runs TypeDoc for the TypeScript reference and Doxygen for the C++ HTML, JavaScript
 HTML, and JavaScript manual pages, then packages the results into a ZIP archive.
 Missing Doxygen and Graphviz tools are installed automatically on supported systems.
 
 The regenerated pages replace `docs/cxx/html/`, `docs/javascript/html/`, and
-`docs/javascript/man/`, so existing local bookmarks show the current API. These
+`docs/javascript/man/`, and `docs/typescript/html/`, so existing local bookmarks show the current API. These
 are generated directories; keep documentation edits in the source headers and
 `.dox` files. The complete site is also available at
 `artifacts/docs/site/pdg-docs-v<VERSION>/index.html`, where `<VERSION>` is the value

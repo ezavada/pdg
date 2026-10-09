@@ -1,0 +1,16 @@
+{
+  "name": "pdg-typescript-tools",
+  "private": true,
+  "scripts": {
+    "generate": "node generate.js",
+    "check": "node generate.js --check",
+    "test": "node test.js",
+    "docs": "node build-docs.js",
+    "build": "node build.js"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.1",
+    "typedoc": "0.28.20",
+    "typescript": "5.9.3"
+  }
+}

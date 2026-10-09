@@ -145,5 +145,5 @@ Additional benchmarks to be implemented:
 - **statemark** - State change overhead measurement
 - **batchmark** - Batching efficiency test
 
-See `docs/note-ai/opengl-optimization-analysis.md` for the full performance testing plan.
+See the [shared performance guide](../README.md) for benchmark workloads and baselines.
 

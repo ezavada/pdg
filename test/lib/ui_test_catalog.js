@@ -59,6 +59,14 @@ var UI_TESTS = [
         workingDir: 'test'
     },
     {
+        id: 'camera',
+        name: 'Live camera transitions',
+        // One handoff per transition/match option; wipe right and whip left only.
+        smokeTimeoutMs: 240000,
+        scriptPath: 'ui_tests/camera_test.js',
+        workingDir: 'test'
+    },
+    {
         id: 'particles',
         name: 'Particle effects',
         scriptPath: 'ui_tests/particle_test.js',
@@ -94,6 +102,7 @@ var UI_TESTS = [
 ];
 
 var pageNames = {
+    bones: ['controls'],
     port: ['ports'],
     font: ['comparison', 'styles', 'sizes', 'metrics', 'alignment', 'scaling'],
     drawing: ['lines', 'arcs', 'splines', 'rectangles', 'circles', 'ellipses', 'polygons', 'spheres'],
@@ -102,12 +111,19 @@ var pageNames = {
     image: ['images', 'scaling', 'animation', 'transparency', 'textures'],
     offscreen: ['live-and-snapshot'],
     animation: ['animation'],
+    scene: ['pause-resume-hud'],
+    camera: ['crossfade', 'wipe-left', 'wipe-right', 'wipe-up', 'wipe-down', 'luma-fade', 'whip-left', 'whip-right', 'whip-up', 'whip-down', 'cut', 'match-cut', 'match-cut-return', 'match-fade', 'match-fade-return'],
     'spriter-sound': ['spriter-sound']
 };
 UI_TESTS.push({id: 'spriter', name: 'Grey Guy and Wonky Skeleton',
     scriptPath: 'js/main.js', workingDir: 'test', args: ['--ui-test']});
+UI_TESTS.push({id:'scene',name:'Scene pause/resume with animated HUD',scriptPath:'ui_tests/scene_test.js',workingDir:'test'});
+UI_TESTS.push({id:'bones',name:'Animated bone controls',scriptPath:'ui_tests/bone_test.js',workingDir:'test'});
+UI_TESTS.push({id:'bone-controls',name:'Interactive bone controls',scriptPath:'js/bone-controls-demo.js',workingDir:'test',args:['--ui-test']});
 UI_TESTS.push({id: 'layer-serialization', name: 'Live layer serialization',
     scriptPath: 'test/js/layer-serialization-demo.js', workingDir: 'repo', args: ['--ui-test']});
+UI_TESTS.push({id:'jiggle',name:'Spring tide: chain and IK target jiggle',scriptPath:'js/jiggle-demo.js',workingDir:'test',args:['--ui-test']});
+UI_TESTS.push({id:'fabrik',smokeTimeoutMs:180000,name:'Abyssal reach: long-chain FABRIK',scriptPath:'js/fabrik-demo.js',workingDir:'test',args:['--ui-test']});
 UI_TESTS.forEach(function(entry) {
     entry.kind = pageNames[entry.id] ? 'ui' : 'demo';
     entry.pages = pageNames[entry.id] || [entry.id];

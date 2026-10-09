@@ -195,10 +195,7 @@ namespace pdg
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Color]" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -215,10 +212,7 @@ namespace pdg
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Image]" " function" "([object Color] inTransparentColor)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -248,10 +242,7 @@ namespace pdg
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -268,10 +259,7 @@ namespace pdg
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -288,10 +276,7 @@ namespace pdg
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR [object Rect]" " function" "([object Point] at)" " - " "get image boundary rect, optionally with top left at given point").ToLocalChecked() ); return; };
-        };
+        ;
         pdg::Point at;
         if (args.Length() < 1)
         {
@@ -322,10 +307,7 @@ namespace pdg
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR [object Image]" " function" "({[object Quad]|[object Rect]} quad)" " - " "get image that is an arbitrary subsection of this image").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -363,10 +345,7 @@ namespace pdg
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR number" " function" "()" " - " "get opacity of this image: 0.0 - completely transparent to 1.0 - completely solid").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -383,10 +362,7 @@ namespace pdg
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR undefined" " function" "(number opacity)" " - " "set opacity of this image as range from either (0-255) or (0.0 to 1.0)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -409,7 +385,7 @@ namespace pdg
         }
         if (opacity > 255) opacity = 255;
         self->setOpacity(opacity);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void ImageWrap::SetEdgeClamping(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -418,10 +394,7 @@ namespace pdg
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR undefined" " function" "(boolean inUseEdgeClamp)" " - " "set whether image uses edge clamping or not").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -434,7 +407,7 @@ namespace pdg
         }
         bool inUseEdgeClamp = args[1 -1]->BooleanValue(isolate);
         self->setEdgeClamping(inUseEdgeClamp);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void ImageWrap::RetainData(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -443,10 +416,7 @@ namespace pdg
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR undefined" " function" "()" " - " "retain pixel data for use by Image.getPixel()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -462,10 +432,7 @@ namespace pdg
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR undefined" " function" "()" " - " "retain alpha data for use by Image.getAlphaValue() or per-pixel sprite collisions").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -481,10 +448,7 @@ namespace pdg
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR number" " function" "()" " - " "bind the image into an OpenGL texture and free image data from main memory").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -500,10 +464,7 @@ namespace pdg
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "({[object Point] p|[number int] x, [number int] y})" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -552,10 +513,7 @@ namespace pdg
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Color]" " function" "({[object Point] p|[number int] x, [number int] y})" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -604,10 +562,7 @@ namespace pdg
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -624,10 +579,7 @@ namespace pdg
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR [number uint]" " function" "([object Serializer] serializer)" " - " "get size of this object's data for the given stream").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -659,10 +611,7 @@ namespace pdg
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR undefined" " function" "([object Serializer] serializer)" " - " "write this object's data into the given stream").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -690,10 +639,7 @@ namespace pdg
         ImageWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageWrap>(args.This());
         Image* self = dynamic_cast<Image*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR undefined" " function" "([object Deserializer] deserializer)" " - " "read this object's data from the given stream").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -1010,10 +956,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Color]" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -1030,10 +973,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object ImageStrip]" " function" "([object Color] inTransparentColor)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1063,10 +1003,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -1083,10 +1020,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -1103,10 +1037,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR [object Rect]" " function" "([object Point] at)" " - " "get image boundary rect, optionally with top left at given point").ToLocalChecked() ); return; };
-        };
+        ;
         pdg::Point at;
         if (args.Length() < 1)
         {
@@ -1137,10 +1068,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR [object Image]" " function" "({[object Quad]|[object Rect]} quad)" " - " "get image that is an arbitrary subsection of this image").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1178,10 +1106,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR number" " function" "()" " - " "get opacity of this image: 0.0 - completely transparent to 1.0 - completely solid").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -1198,10 +1123,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR undefined" " function" "(number opacity)" " - " "set opacity of this image as range from either (0-255) or (0.0 to 1.0)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1224,7 +1146,7 @@ namespace pdg
         }
         if (opacity > 255) opacity = 255;
         self->setOpacity(opacity);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void ImageStripWrap::SetEdgeClamping(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1233,10 +1155,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR undefined" " function" "(boolean inUseEdgeClamp)" " - " "set whether image uses edge clamping or not").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1249,7 +1168,7 @@ namespace pdg
         }
         bool inUseEdgeClamp = args[1 -1]->BooleanValue(isolate);
         self->setEdgeClamping(inUseEdgeClamp);
-        args.GetReturnValue().SetUndefined();
+        { args.GetReturnValue().Set( args.This() ); return; };
     }
 
     void ImageStripWrap::RetainData(const v8::FunctionCallbackInfo<v8::Value>& args)
@@ -1258,10 +1177,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR undefined" " function" "()" " - " "retain pixel data for use by Image.getPixel()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -1277,10 +1193,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR undefined" " function" "()" " - " "retain alpha data for use by Image.getAlphaValue() or per-pixel sprite collisions").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -1296,10 +1209,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR number" " function" "()" " - " "bind the image into an OpenGL texture and free image data from main memory").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -1315,10 +1225,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "({[object Point] p|[number int] x, [number int] y})" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -1367,10 +1274,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Color]" " function" "({[object Point] p|[number int] x, [number int] y})" " - " "").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -1419,10 +1323,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -1439,10 +1340,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR [number uint]" " function" "([object Serializer] serializer)" " - " "get size of this object's data for the given stream").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -1474,10 +1372,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR undefined" " function" "([object Serializer] serializer)" " - " "write this object's data into the given stream").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -1505,10 +1400,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "CR undefined" " function" "([object Deserializer] deserializer)" " - " "read this object's data from the given stream").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -1584,10 +1476,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -1604,10 +1493,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object ImageStrip]" " function" "([number int] inNumFrames)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1630,10 +1516,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -1650,10 +1533,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object ImageStrip]" " function" "([number int] inFrameWidth)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -1676,11 +1556,7 @@ namespace pdg
         ImageStripWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ImageStripWrap>(args.This());
         ImageStrip* self = dynamic_cast<ImageStrip*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Image]" " function" "([number int] frameNum)" " - " "get image that is a single frame of this multi-frame image").ToLocalChecked() ); return; };
-        };
-
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);

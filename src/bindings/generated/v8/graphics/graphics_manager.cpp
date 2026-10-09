@@ -223,10 +223,7 @@ namespace pdg
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -243,10 +240,7 @@ namespace pdg
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -263,10 +257,7 @@ namespace pdg
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "()").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -283,10 +274,7 @@ namespace pdg
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object GraphicsManager]" " function" "(number inTargetFPS)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -309,10 +297,7 @@ namespace pdg
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Point]" " function" "([number int] mouseNumber = 0)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0, true);
@@ -335,10 +320,7 @@ namespace pdg
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "([number int] screen = PRIMARY_SCREEN)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() < 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0, true);
@@ -361,11 +343,8 @@ namespace pdg
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
         ;
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([number int] width, [number int] height, [number int] screenNum = PRIMARY_SCREEN, [number int] bpp = 0)" " - " "changes specified screen to closest matching mode").ToLocalChecked() ); return; };
-        };
 
+        ;
         if (args.Length() < 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2, true);
@@ -405,11 +384,7 @@ namespace pdg
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Port]" " function" "([object Rect] rect, string windName = \"\", [number int] bpp = 0)" " - " "create windowed drawing port with given dimensions, title and depth").ToLocalChecked() ); return; };
-        };
-
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -460,11 +435,7 @@ namespace pdg
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Image]" " function" "([object Port] port, boolean copyPixels = true)" " - " "create a snapshot or live image of an offscreen port").ToLocalChecked() ); return; };
-        };
-
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -496,11 +467,7 @@ namespace pdg
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Port]" " function" "([object Rect] rect)" " - " "create a persistent transparent drawing surface without a window").ToLocalChecked() ); return; };
-        };
-
+        ;
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -538,11 +505,7 @@ namespace pdg
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Port]" " function" "([object Rect] rect, [number int] screenNum = PRIMARY_SCREEN, boolean allowResChange = true, [number int] bpp = 0)" " - " "create full screen drawing port with given dimensions on given screen, optionally changing depth").ToLocalChecked() ); return; };
-        };
-
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -598,11 +561,7 @@ namespace pdg
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "([object Port] port = MAIN_PORT)" " - " "close given port, along with its window and restore screen mode if changed").ToLocalChecked() ); return; };
-        };
-
+        ;
         Port* port = 0;
         if (args.Length() >= 1)
         {
@@ -628,10 +587,7 @@ namespace pdg
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "()" " - " "close all active graphics ports (e.g. for test cleanup)").ToLocalChecked() ); return; };
-        };
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -647,11 +603,7 @@ namespace pdg
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Font]" " function" "(string fontName, number scalingFactor = 1.0)" " - " "get a font with optional scaling adjust").ToLocalChecked() ); return; };
-        };
-
+        ;
         if (args.Length() < 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1, true);
@@ -689,11 +641,7 @@ namespace pdg
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "[object Port]" " function" "()" " - " "return the primary graphics port").ToLocalChecked() ); return; };
-        };
-
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -718,11 +666,7 @@ namespace pdg
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "(boolean allowResChange = false, [object Port] port = MAIN_PORT)" " - " "change a port to fullscreen mode, return true on success").ToLocalChecked() ); return; };
-        };
-
+        ;
         if (args.Length() >= 1 && !args[1 -1]->IsBoolean())
         {
             v8_ThrowArgTypeException(isolate, 1, "a boolean (""allowResChange"")");
@@ -754,11 +698,7 @@ namespace pdg
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "([object Port] port = MAIN_PORT, string windName = \"\")" " - " "change a port to window mode, return true on success").ToLocalChecked() ); return; };
-        };
-
+        ;
         Port* port = 0;
         if (args.Length() >= 1)
         {
@@ -791,11 +731,7 @@ namespace pdg
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "()" " - " "return whether primary graphics port is fullscreen or not").ToLocalChecked() ); return; };
-        };
-
+        ;
         if (args.Length() != 0)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 0);
@@ -811,11 +747,8 @@ namespace pdg
         GraphicsManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<GraphicsManagerWrap>(args.This());
         GraphicsManager* self = dynamic_cast<GraphicsManager*>(objWrapper->cppPtr_);
         ;
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "object Rect" " function" "([number int] screenNum = PRIMARY_SCREEN)" " - " "returns the bounds (position and size) of a screen in the global coordinate space").ToLocalChecked() ); return; };
-        };
 
+        ;
         if (args.Length() >= 1 && !args[1 -1]->IsNumber())
         {
             v8_ThrowArgTypeException(isolate, 1, "a number (""screenNum"")");

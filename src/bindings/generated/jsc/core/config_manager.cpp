@@ -132,6 +132,7 @@ namespace pdg
         bool result = self->useConfig(inConfigName);
         return JSValueMakeBoolean(ctx, result);
     }
+
     JSValueRef ConfigManager_GetConfigString(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         ConfigManager* self = static_cast<ConfigManager*>(JSObjectGetPrivate(thisObject));
@@ -156,6 +157,7 @@ namespace pdg
             return JSValueMakeUndefined(ctx);
         }
     }
+
     JSValueRef ConfigManager_GetConfigLong(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         ConfigManager* self = static_cast<ConfigManager*>(JSObjectGetPrivate(thisObject));
@@ -180,6 +182,7 @@ namespace pdg
             return JSValueMakeUndefined(ctx);
         }
     }
+
     JSValueRef ConfigManager_GetConfigFloat(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         ConfigManager* self = static_cast<ConfigManager*>(JSObjectGetPrivate(thisObject));
@@ -204,6 +207,7 @@ namespace pdg
             return JSValueMakeUndefined(ctx);
         }
     }
+
     JSValueRef ConfigManager_GetConfigBool(JSContextRef ctx, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
     {
         ConfigManager* self = static_cast<ConfigManager*>(JSObjectGetPrivate(thisObject));
@@ -267,7 +271,7 @@ namespace pdg
         JSStringRelease(inConfigItemName_Str);
         if (!JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""inValue"")");
-        int32 inValue = (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        int32 inValue = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         self->setConfigLong(inConfigItemName, inValue);
         return JSValueMakeUndefined(ctx);
     }

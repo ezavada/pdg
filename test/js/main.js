@@ -42,8 +42,8 @@ var drawSpinner = true;
 var drawWalkingHero = true;
 var drawStandingHero = true;
 var drawGlobe = true;
-var playMusic = true;
-var playSounds = true;
+var playMusic = pdg.hasSound;
+var playSounds = pdg.hasSound;
 
 var gBackgroundColor = new pdg.Color("teal");  // was teal
 
@@ -142,10 +142,10 @@ function main()
     pdg.on(pdg.eventType_PortDraw, function() {
         if (automatedDemo && !demoFinished && ++demoFrames >= 180) {
             if (!gWonkyAim || !gGreyGuyAim) throw new Error('Character demos did not initialize');
-            if (Math.abs(gSpriteLayer.getZoom() - kFinalLayerZoom) > 0.00001 ||
+            if (Math.abs(gPort.getCamera().getZoom() - kFinalLayerZoom) > 0.00001 ||
                 !Number.isFinite(gWonkyAim.cycleStartSeconds) ||
                 !gGreyGuyIK || !Number.isFinite(gGreyGuyIK.riseStartSeconds)) {
-                throw new Error('Introductory layer zoom did not complete and start the character demos');
+                throw new Error('Introductory camera zoom did not complete and start the character demos');
             }
             demoFinished = true;
             console.log('PASS: rendered Grey Guy and Wonky Skeleton');
@@ -194,12 +194,28 @@ function SetUpSpriteWorld() {
 	gSpriteLayer = pdg.createSpriteLayer(gPort);
 	gSpriteLayer.setUseChipmunkPhysics();
     if (gCollisions) gSpriteLayer.enableCollisions();
-	gSpriteLayer.zoomTo(kFinalLayerZoom, automatedDemo ? 0.25 : 10.0);
+    // Layers inherit the port camera. Keep direct background/HUD drawing and
+    // already projected overlays in port coordinates, as before.
+    gPort.setCameraDrawingEnabled(false);
+    var camera = gPort.getCamera();
+    camera.zoomTo(kFinalLayerZoom, automatedDemo ? 0.25 : 10.0);
+    var zoomComplete = false;
     
     	// Set the background color
 	console.log("  setup spritelayer erase callback");
     gSpriteLayer.onErasePort( function(evt) {
         var animationMs = pdg.visualTestSession ? pdg.visualTestSession.now() : evt.millisec;
+        // Camera completion has no timestamp. Start on the next drawing frame
+        // so playback and its updates use the same animation clock.
+        if (zoomComplete) {
+            zoomComplete = false;
+            if (gWonkyAim) gWonkyAim.start(animationMs / 1000);
+            if (gOriginalWonky && gOriginalWonky.startSeconds === null) gOriginalWonky.startSeconds = animationMs / 1000;
+            if (gGreyGuyIK && gGreyGuyIK.riseStartSeconds === null) {
+                gGreyGuyIK.riseStartSeconds = animationMs / 1000;
+                console.log("Zoom complete: raising the rock over " + kRockRiseSeconds + " seconds.");
+            }
+        }
  		var portRect = gPort.getDrawingArea();
 		//var backgroundAttrs = new pdg.Attributes().fillColor(gBackgroundColor);
 		//gPort.drawRect(portRect, backgroundAttrs);
@@ -234,14 +250,8 @@ function SetUpSpriteWorld() {
 		return true; // completely handled
 	});
 
-    gSpriteLayer.onZoomComplete(function(evt) {
-        var animationMs = pdg.visualTestSession ? pdg.visualTestSession.now() : evt.millisec;
-        if (gWonkyAim) gWonkyAim.start(animationMs / 1000);
-        if (gOriginalWonky && gOriginalWonky.startSeconds === null) gOriginalWonky.startSeconds = animationMs / 1000;
-        if (gGreyGuyIK && gGreyGuyIK.riseStartSeconds === null) {
-            gGreyGuyIK.riseStartSeconds = animationMs / 1000;
-            console.log("Zoom complete: raising the rock over " + kRockRiseSeconds + " seconds.");
-        }
+    camera.onZoomComplete(function() {
+        zoomComplete = true;
         return false;
     });
 
@@ -520,7 +530,7 @@ function SetUpGreyGuyIK(sprite, worldScale) {
     var height = lift * 64 / (61 - 3);
     var left = contactX - width / 2;
     var top = groundY - lift - height * 3 / 64;
-    // Begin eight display pixels below the sole; wait for the layer's actual
+    // Begin eight display pixels below the sole; wait for the camera's actual
     // zoom-complete event before raising the rock to the support position.
     var riseDistance = lift + 8 * worldScale;
     gGreyGuyIK = {

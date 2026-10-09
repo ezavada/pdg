@@ -1,4 +1,4 @@
-.TH "FileManager" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "FileManager" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -13,7 +13,7 @@ FileManager \- extras beyond what Node\&.js FileSystem provides
 
 .in +1c
 .ti -1c
-.RI "\fBfindClose\fP (object inFindData)"
+.RI "\fBfindClose\fP (\fBFileFindData\fP inFindData)"
 .br
 .RI "closes a file search operation and cleans up resources "
 .ti -1c
@@ -25,11 +25,11 @@ FileManager \- extras beyond what Node\&.js FileSystem provides
 .br
 .RI "return a sorted list of files that match the given name "
 .ti -1c
-.RI "object \fBfindFirst\fP (string inFindName)"
+.RI "\fBFileFindData\fP \fBfindFirst\fP (string inFindName)"
 .br
 .RI "get the first matching file or directory "
 .ti -1c
-.RI "object \fBfindNext\fP (object inFindData)"
+.RI "boolean \fBfindNext\fP (\fBFileFindData\fP ioFindData)"
 .br
 .RI "finds the next file matching the search criteria "
 .ti -1c
@@ -79,18 +79,18 @@ http://nodejs.org/api/fs.html
 
 .SH "Member Function Documentation"
 .PP 
-.SS "findClose (object inFindData)"
+.SS "findClose (\fBFileFindData\fP inFindData)"
 
 .PP
 closes a file search operation and cleans up resources stop and cleanup after a file/directory search
 
 .PP
-This takes the object returned from a \fBfindFirst()\fP or \fBfindNext()\fP, and cleans up after the search, releasing all resources used by the search\&.
+This takes the original object returned from \fBfindFirst()\fP, and cleans up after the search, releasing all resources used by the search\&.
 
 .PP
 \fBParameters\fP
 .RS 4
-\fIinFindData\fP the object returned from a prior call to \fBfindFirst()\fP or \fBfindNext()\fP
+\fIinFindData\fP the original object returned from \fBfindFirst()\fP, which \fBfindNext()\fP updates in place
 .RE
 .PP
 \fBSee also\fP
@@ -152,7 +152,7 @@ a lexicographically sorted array of files that match the name
 .RE
 .PP
 
-.SS "object findFirst (string inFindName)"
+.SS "\fBFileFindData\fP findFirst (string inFindName)"
 
 .PP
 get the first matching file or directory This searches for any files or directories that match the name passed in, and returns the first one it finds\&. The name can contain wildcard characters (*\&.txt, or f1?\&.dat)\&. If the name includes a path, it must use Unix format (forward slash "/" as path separators)\&. Colon and backslash are both illegal characters\&.
@@ -177,23 +177,23 @@ an object with nodeName, isDirectory, and found fields: \fBnodeName\fP is the fu
 .RE
 .PP
 
-.SS "object findNext (object inFindData)"
+.SS "boolean findNext (\fBFileFindData\fP ioFindData)"
 
 .PP
-finds the next file matching the search criteria return the next matching file or directory
+finds the next file matching the search criteria advance a file/directory search and update its search object
 
 .PP
-This uses the object returned from a \fBfindFirst()\fP call to continue the search and find additional matching files or directories\&.
+Continue the search using the same object returned by \fBfindFirst()\fP\&. This updates that object's nodeName, isDirectory, and found fields in place\&. When the return value is true, nodeName and isDirectory describe the next matching item\&. When it is false, the search is exhausted and found is false; do not use the other fields as a new result\&. Call \fBfindClose()\fP with this same object to release the search resources\&.
 
 .PP
 \fBParameters\fP
 .RS 4
-\fIinFindData\fP the object returned from a prior call to \fBfindFirst()\fP or \fBfindNext()\fP
+\fIioFindData\fP the original object returned by \fBfindFirst()\fP, updated in place 
 .RE
 .PP
 \fBReturns\fP
 .RS 4
-an object with nodeName, isDirectory, and found fields: \fBnodeName\fP is the full path of the next found item; \fBisDirectory\fP is true if the node is a directory, false for files; \fBfound\fP is false if no additional matching item was found\&.
+true if another matching item was found, otherwise false
 .RE
 .PP
 \fBSee also\fP

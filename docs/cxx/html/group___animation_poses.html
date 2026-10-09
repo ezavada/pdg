@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Pixel Dust Game Engine
-   &#160;<span id="projectnumber">v1.1.1</span>
+   &#160;<span id="projectnumber">v1.2.0</span>
    </div>
   </td>
  </tr>
@@ -189,7 +189,7 @@ Variables</h2></td></tr>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Rig structure, owned pose snapshots, coordinate spaces, and authored metadata. </p>
 <p><a class="el" href="classpdg_1_1_animation_rig.html">pdg::AnimationRig</a> stores immutable bones, sockets, and bindings. A <a class="el" href="classpdg_1_1_animation_pose.html">pdg::AnimationPose</a> owns its mutable transforms and shares the rig; copying a pose does not share mutable transforms. <a class="el" href="structpdg_1_1_animation_transform.html">pdg::AnimationTransform</a> describes translation, rotation, scale, and opacity. <a class="el" href="#ga80df5f78196cc0830cfbad6fa9c1112a">pdg::AnimationSpace</a> selects local, rig, or world coordinates; world coordinates belong to the <a class="el" href="classpdg_1_1_sprite.html" title="Animated image frames, Spriter playback, and pose-based animation extensions.">Sprite</a>'s owning layer.</p>
-<p><a class="el" href="structpdg_1_1_animation_metadata.html">pdg::AnimationMetadata</a> retains authored variables and tags. Bone, socket, and binding IDs are scoped to their rig instance and revision.</p>
+<p><a class="el" href="structpdg_1_1_animation_metadata.html">pdg::AnimationMetadata</a> retains authored variables and tags. <a class="el" href="classpdg_1_1_bone.html">Bone</a>, socket, and binding IDs are scoped to their rig instance and revision.</p>
 </div><a name="doc-typedef-members" id="doc-typedef-members"></a><h2 id="header-doc-typedef-members" class="groupheader">Typedef Documentation</h2>
 <a id="gafae99d99d16995ad38012154e152f4ff" name="gafae99d99d16995ad38012154e152f4ff"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gafae99d99d16995ad38012154e152f4ff">&#9670;&#160;</a></span>AnimationBindingId</h2>

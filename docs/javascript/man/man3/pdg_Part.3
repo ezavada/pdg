@@ -1,4 +1,4 @@
-.TH "Part" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Part" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -14,12 +14,6 @@ Inherits \fBAnimated\fP\&.
 .SS "Public Member Functions"
 
 .in +1c
-.ti -1c
-.RI "\fBAnimated\fP \fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBandThen\fP ()"
-.br
 .ti -1c
 .RI "boolean \fBanimate\fP (number deltaSeconds)"
 .br
@@ -44,60 +38,6 @@ Inherits \fBAnimated\fP\&.
 .br
 .RI "Follow a bone while preserving local offsets\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBcancelSchedule\fP ()"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeCenterOffsetBy\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeCenterOffsetTo\fP (\fBOffset\fP value, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeGrowingBy\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeGrowingTo\fP (number amountPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeMovementBy\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeMovementBy\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeMovementTo\fP (number xPerSecond, number yPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeMovementTo\fP (\fBVector\fP value, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeScaleBy\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeScaleTo\fP (number x, number y, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeSpinBy\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeSpinTo\fP (number radiansPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeStretchingBy\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBchangeStretchingTo\fP (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing=\fBlinearTween\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBclearAnimationHelpers\fP ()"
-.br
-.ti -1c
 .RI "\fBPart\fP \fBclearContent\fP ()"
 .br
 .RI "Remove artwork from the \fBPart\fP\&. "
@@ -110,15 +50,13 @@ Inherits \fBAnimated\fP\&.
 .br
 .RI "Stop this root’s scheduled IK controller\&. "
 .ti -1c
+.RI "\fBPart\fP \fBclearJiggle\fP ()"
+.br
+.RI "Remove jiggle and restore the underlying programmed rotations\&. "
+.ti -1c
 .RI "\fBPart\fP \fBdetachSprite\fP ()"
 .br
 .RI "Release a mounted \fBSprite\fP\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBflipX\fP ()"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBflipY\fP ()"
-.br
 .ti -1c
 .RI "string \fBgetAnimationBindingName\fP ()"
 .br
@@ -140,18 +78,13 @@ Inherits \fBAnimated\fP\&.
 .br
 .RI "Read the directly followed bone ID\&. "
 .ti -1c
-.RI "\fBRect\fP \fBgetBoundingBox\fP ()"
-.br
-.ti -1c
-.RI "\fBOffset\fP \fBgetCenterOffset\fP ()"
-.br
-.ti -1c
 .RI "\fBRect\fP \fBgetContentBounds\fP (int space=\fBpartSpace_Local\fP)"
 .br
 .RI "Read the artwork bounds\&. "
 .ti -1c
-.RI "number \fBgetHeight\fP ()"
+.RI "\fBFABRIKResult\fP \fBgetFABRIKResult\fP ()"
 .br
+.RI "Return the latest scheduled FABRIK diagnostics\&. "
 .ti -1c
 .RI "uint \fBgetId\fP ()"
 .br
@@ -169,11 +102,21 @@ Inherits \fBAnimated\fP\&.
 .br
 .RI "Read the minimum local IK rotation\&. "
 .ti -1c
-.RI "\fBPoint\fP \fBgetLocation\fP ()"
+.RI "string \fBgetJiggleError\fP ()"
 .br
+.RI "Return the last chain jiggle or FABRIK evaluation error\&. "
 .ti -1c
-.RI "\fBOffset\fP \fBgetMovement\fP ()"
+.RI "\fBPartJiggleOptions\fP \fBgetJiggleOptions\fP ()"
 .br
+.RI "Return an independent configuration record\&. "
+.ti -1c
+.RI "\fBJiggleResult\fP \fBgetJiggleResult\fP ()"
+.br
+.RI "Return the most recently evaluated jiggle diagnostics\&. "
+.ti -1c
+.RI "\fBJiggleState\fP \fBgetJiggleState\fP ()"
+.br
+.RI "Return an independent numerical state snapshot\&. "
 .ti -1c
 .RI "string \fBgetName\fP ()"
 .br
@@ -183,37 +126,13 @@ Inherits \fBAnimated\fP\&.
 .br
 .RI "Read the explicit \fBPart\fP parent\&. "
 .ti -1c
-.RI "\fBRotatedRect\fP \fBgetRotatedBounds\fP ()"
-.br
-.ti -1c
-.RI "number \fBgetRotation\fP ()"
-.br
-.ti -1c
-.RI "\fBOffset\fP \fBgetScale\fP ()"
-.br
-.ti -1c
-.RI "\fBOffset\fP \fBgetSize\fP ()"
-.br
-.ti -1c
-.RI "number \fBgetSpin\fP ()"
-.br
-.ti -1c
 .RI "\fBSprite\fP \fBgetSprite\fP ()"
 .br
 .RI "Read the owning \fBSprite\fP\&. "
 .ti -1c
-.RI "\fBOffset\fP \fBgetStretching\fP ()"
-.br
-.ti -1c
-.RI "object \fBgetTransform\fP (int space=\fBpartSpace_Local\fP)"
+.RI "\fBAffineTransform\fP \fBgetTransform\fP (int space=\fBpartSpace_Local\fP)"
 .br
 .RI "Copy the \fBPart\fP's affine transform\&. "
-.ti -1c
-.RI "number \fBgetWidth\fP ()"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBgrow\fP (number factor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
-.br
 .ti -1c
 .RI "boolean \fBhasContent\fP ()"
 .br
@@ -227,8 +146,9 @@ Inherits \fBAnimated\fP\&.
 .br
 .RI "Check whether this \fBPart\fP owns a scheduled IK controller\&. "
 .ti -1c
-.RI "boolean \fBhasScheduledAnimations\fP ()"
+.RI "boolean \fBhasJiggle\fP ()"
 .br
+.RI "Return whether this \fBPart\fP owns a jiggle controller\&. "
 .ti -1c
 .RI "boolean \fBisAttached\fP ()"
 .br
@@ -238,12 +158,6 @@ Inherits \fBAnimated\fP\&.
 .br
 .RI "Test for a current direct bone binding\&. "
 .ti -1c
-.RI "boolean \fBisFlippedX\fP ()"
-.br
-.ti -1c
-.RI "boolean \fBisFlippedY\fP ()"
-.br
-.ti -1c
 .RI "boolean \fBisIKDriven\fP ()"
 .br
 .RI "Check whether this \fBPart\fP owns a physical IK controller\&. "
@@ -252,26 +166,13 @@ Inherits \fBAnimated\fP\&.
 .br
 .RI "Check whether the scheduled IK controller has reached its target\&. "
 .ti -1c
-.RI "boolean \fBisSchedulePaused\fP ()"
+.RI "boolean \fBisJiggleEnabled\fP ()"
 .br
+.RI "Return whether jiggle is enabled\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBmoveBy\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBPart\fP \fBkickJiggle\fP (\fBPartJiggleKick\fP kick)"
 .br
-.ti -1c
-.RI "\fBAnimated\fP \fBmoveBy\fP (\fBOffset\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBmoveTo\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBmoveTo\fP (\fBPoint\fP value, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBpauseSchedule\fP ()"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
-.br
+.RI "Add angular or target velocity\&. "
 .ti -1c
 .RI "\fBremoveCollider\fP ()"
 .br
@@ -281,39 +182,17 @@ Inherits \fBAnimated\fP\&.
 .br
 .RI "Detach the optional physics body\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBresizeBy\fP (number deltaWidth, number deltaHeight, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
+.RI "\fBPart\fP \fBresetJiggle\fP ()"
 .br
-.ti -1c
-.RI "\fBAnimated\fP \fBresizeTo\fP (number width, number height, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBresumeSchedule\fP ()"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBrotateBy\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBrotateTo\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP offset)"
-.br
+.RI "Reseed jiggle from the desired pose or target\&. "
 .ti -1c
 .RI "\fBPart\fP \fBsetDrawing\fP (\fBDrawing\fP drawing)"
 .br
 .RI "Assign editable \fBDrawing\fP artwork\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetFlipX\fP (boolean flip)"
+.RI "\fBPart\fP \fBsetFABRIKTarget\fP (\fBPart\fP[] chain, \fBPoint\fP target, \fBPartFABRIKOptions\fP options=undefined)"
 .br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetFlipY\fP (boolean flip)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetGrowing\fP (number value)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetHeight\fP (number value)"
-.br
+.RI "Solve or schedule a contiguous independent \fBPart\fP chain; chain excludes the receiver\&. "
 .ti -1c
 .RI "\fBPart\fP \fBsetIKDriveTarget\fP (\fBPart\fP middle, \fBPart\fP tip, \fBPoint\fP target, number maxForce, number maxTorque, int space=\fBpartSpace_World\fP, int bendDirection=1, number influence=1, number frequency=4, number dampingRatio=1)"
 .br
@@ -335,17 +214,25 @@ Inherits \fBAnimated\fP\&.
 .br
 .RI "Assign an image to a local rectangle\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetLocation\fP (number x, number y)"
+.RI "\fBPart\fP \fBsetJiggle\fP (\fBPartJiggleOptions\fP options)"
 .br
+.RI "Install chain jiggle or decorate an existing \fBPart\fP IK target\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetLocation\fP (\fBPoint\fP value)"
+.RI "\fBPart\fP \fBsetJiggleEnabled\fP (boolean enabled)"
 .br
+.RI "Enable or freeze jiggle; reenabling reseeds from the current pose\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetMovement\fP (number xPerSecond, number yPerSecond)"
+.RI "\fBPart\fP \fBsetJiggleInfluence\fP (number influence, number seconds=undefined)"
 .br
+.RI "Set or linearly fade influence using simulation seconds\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetMovement\fP (\fBVector\fP value)"
+.RI "\fBPart\fP \fBsetJiggleSettings\fP (\fBPartJiggleSettings\fP settings)"
 .br
+.RI "Patch tuning without changing topology\&. "
+.ti -1c
+.RI "\fBPart\fP \fBsetJiggleState\fP (\fBJiggleState\fP state)"
+.br
+.RI "Restore validated numerical state on the same topology\&. "
 .ti -1c
 .RI "\fBPart\fP \fBsetParentPart\fP ()"
 .br
@@ -354,24 +241,6 @@ Inherits \fBAnimated\fP\&.
 .RI "\fBPart\fP \fBsetParentPart\fP (\fBPart\fP parent)"
 .br
 .RI "Select an explicit parent \fBPart\fP\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBsetRotation\fP (number value)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetScale\fP (number x, number y=x)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetSize\fP (number width, number height)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetSize\fP (\fBOffset\fP value)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetSpin\fP (number value)"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBsetStretching\fP (number widthPerSecond, number heightPerSecond)"
-.br
 .ti -1c
 .RI "\fBCollider\fP \fBsetupAnimationCollider\fP (string boxName)"
 .br
@@ -389,42 +258,32 @@ Inherits \fBAnimated\fP\&.
 .br
 .RI "Set up the optional physics body with the specified mass and inertia\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBsetWidth\fP (number value)"
+.RI "\fBFABRIKResult\fP \fBsolveFABRIK\fP (\fBPart\fP[] chain, \fBPoint\fP target, \fBPartFABRIKOptions\fP options=undefined)"
 .br
+.RI "Solve or schedule a contiguous independent \fBPart\fP chain; chain excludes the receiver\&. "
 .ti -1c
 .RI "boolean \fBsolveIK\fP (\fBPart\fP middle, \fBPart\fP tip, \fBPoint\fP target, int space=\fBpartSpace_World\fP, int bendDirection=1, number influence=1)"
 .br
 .RI "Aim a contiguous two-segment \fBPart\fP chain\&. "
 .ti -1c
-.RI "\fBAnimated\fP \fBstopGrowing\fP ()"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBstopMovement\fP ()"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBstopSpinning\fP ()"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBstopStretching\fP ()"
-.br
-.ti -1c
-.RI "\fBAnimated\fP \fBstretch\fP (number widthFactor, number heightFactor, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
-.br
-.ti -1c
 .RI "\fBPart\fP \fBunbindFromBone\fP ()"
 .br
 .RI "Clear authored frame bindings\&. "
-.ti -1c
-.RI "\fBAnimated\fP \fBwait\fP (number durationSeconds)"
-.br
 .in -1c
 
 Public Member Functions inherited from \fBAnimated\fP
 .in +1c
 .ti -1c
+.RI "\fBAnimated\fP ()"
+.br
+.ti -1c
 .RI "\fBAnimated\fP \fBaddAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
 .br
 .RI "Register a callback after the object's normal animation step\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBandAlso\fP ()"
+.br
+.RI "Join the following operand to the preceding parallel chain\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBandThen\fP ()"
 .br
@@ -433,6 +292,10 @@ Public Member Functions inherited from \fBAnimated\fP
 .RI "boolean \fBanimate\fP (number deltaSeconds)"
 .br
 .RI "Advance programmed animation by elapsed seconds\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBbatch\fP ()"
+.br
+.RI "Open an anonymous animation block\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBcancelSchedule\fP ()"
 .br
@@ -506,6 +369,26 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Retire all helpers on this object\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBdiminish\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Reduce the preceding block amplitude around its baseline\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendBatch\fP ()"
+.br
+.RI "Close and select the innermost anonymous block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendOtherwise\fP ()"
+.br
+.RI "Close a conditional with an alternative\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendSeries\fP ()"
+.br
+.RI "Close and select the innermost series\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBendWhen\fP ()"
+.br
+.RI "Close a conditional without an alternative\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBflipX\fP ()"
 .br
 .RI "Toggle the x reflection flag immediately\&. "
@@ -570,6 +453,10 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Test whether animations are running or queued\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBincrease\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Increase the preceding block amplitude around its baseline\&. "
+.ti -1c
 .RI "boolean \fBisFlippedX\fP ()"
 .br
 .RI "Read the x reflection flag\&. "
@@ -581,6 +468,14 @@ Public Member Functions inherited from \fBAnimated\fP
 .RI "boolean \fBisSchedulePaused\fP ()"
 .br
 .RI "Test whether scheduled animation advancement is paused\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBjumpToMark\fP (string name, boolean restoreState=true)"
+.br
+.RI "Continue execution at the operation following a mark\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBmark\fP (string name, boolean saveState=true)"
+.br
+.RI "Create a named script location and optionally save state on arrival\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBmoveBy\fP (number x, number y, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
@@ -598,13 +493,64 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Move to a location\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBon\fP (string event, function handler)"
+.br
+.RI "Observe a selected animation block's lifecycle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonFinished\fP (function handler)"
+.br
+.RI "Observe finished events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonMark\fP (function handler)"
+.br
+.RI "Observe mark events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonRepeat\fP (function handler)"
+.br
+.RI "Observe repeat events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonScriptFinished\fP (function handler)"
+.br
+.RI "Observe scriptFinished events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonStarted\fP (function handler)"
+.br
+.RI "Observe started events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonUntilFired\fP (function handler)"
+.br
+.RI "Observe untilFired events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBonYoyo\fP (function handler)"
+.br
+.RI "Observe yoyo events on the selected animation block\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBotherwise\fP ()"
+.br
+.RI "Open the alternative of the innermost conditional\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBpauseIt\fP ()"
+.br
+.RI "Pause the most recently selected animation element\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBpauseSchedule\fP ()"
 .br
 .RI "Pause scheduled animations and their delays\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBplayScript\fP (string name)"
+.br
+.RI "Instantiate a named animation script on this target\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBremoveAnimationHelper\fP (\fBIAnimationHelper\fP helper)"
 .br
 .RI "Retire a specific animation helper\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrepeat\fP ()"
+.br
+.ti -1c
+.RI "\fBAnimated\fP \fBrepeat\fP (int additionalExecutions)"
+.br
+.RI "Repeat the preceding block\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBresizeBy\fP (number deltaWidth, number deltaHeight, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP)"
 .br
@@ -613,6 +559,14 @@ Public Member Functions inherited from \fBAnimated\fP
 .RI "\fBAnimated\fP \fBresizeTo\fP (number width, number height, number durationSeconds, int easing=\fBeaseInOutQuad\fP)"
 .br
 .RI "Animate logical size to a target\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBrestartIt\fP ()"
+.br
+.RI "Restart the most recently selected animation element from its baseline\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBresumeIt\fP ()"
+.br
+.RI "Resume the most recently selected paused animation element\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBresumeSchedule\fP ()"
 .br
@@ -625,6 +579,10 @@ Public Member Functions inherited from \fBAnimated\fP
 .RI "\fBAnimated\fP \fBrotateTo\fP (number radians, number durationSeconds=0, int easing=\fBeaseInOutQuad\fP, int direction=\fBrotationDirection_AsSpecified\fP)"
 .br
 .RI "Rotate to an absolute angle\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBseries\fP ()"
+.br
+.RI "Open a block whose successive operands wait for completion\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBsetCenterOffset\fP (\fBOffset\fP offset)"
 .br
@@ -690,9 +648,25 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Set logical width immediately\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBslowDown\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Divide the preceding block playback rate\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBspeedUp\fP (number factor, number seconds, int easing=\fBlinearTween\fP)"
+.br
+.RI "Increase the preceding block playback rate\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstagger\fP (number intervalSeconds)"
+.br
+.RI "\fBOffset\fP the selected block's start across successive \fBTroupe\fP members\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBstopGrowing\fP ()"
 .br
 .RI "Stop all programmed changes to logical size\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBstopIt\fP ()"
+.br
+.RI "Stop the most recently selected animation element\&. "
 .ti -1c
 .RI "\fBAnimated\fP \fBstopMovement\fP ()"
 .br
@@ -710,9 +684,25 @@ Public Member Functions inherited from \fBAnimated\fP
 .br
 .RI "Multiply logical width and height by independent factors\&. "
 .ti -1c
+.RI "\fBAnimated\fP \fBtriggerEvent\fP (string name)"
+.br
+.RI "Emit a custom named animation event or record an event step\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBuntil\fP (function evaluator)"
+.br
+.RI "Finish the preceding block when its evaluator returns true\&. "
+.ti -1c
 .RI "\fBAnimated\fP \fBwait\fP (number durationSeconds)"
 .br
 .RI "Delay the next timed animation request\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fBwhen\fP (function evaluator)"
+.br
+.RI "Open a conditional animation branch\&. "
+.ti -1c
+.RI "\fBAnimated\fP \fByoyo\fP ()"
+.br
+.RI "Play the preceding trajectory forward and back\&. "
 .in -1c
 .SS "Public Attributes"
 
@@ -724,6 +714,20 @@ Public Member Functions inherited from \fBAnimated\fP
 .ti -1c
 .RI "\fBPhysicsBody\fP \fBphysics\fP"
 .br
+.in -1c
+.SS "Additional Inherited Members"
+
+
+Static Public Member Functions inherited from \fBAnimated\fP
+.in +1c
+.ti -1c
+.RI "static \fBAnimationScript\fP \fBdefineScript\fP (string name)"
+.br
+.RI "Create a library-owned named animation recorder\&. "
+.ti -1c
+.RI "static boolean \fBdeleteScript\fP (string name)"
+.br
+.RI "Remove a definition and release its memory in the shared script library\&. "
 .in -1c
 .SH "Detailed Description"
 .PP 
@@ -752,7 +756,7 @@ part\&.moveTo(new pdg\&.Point(12, 0), 0\&.25, pdg\&.easeInOutQuad);
 \fBPart\fP inherits \fBAnimated\fP's programmed movement, rotation and size operations\&. All animation durations are floating-point seconds\&. The owning \fBSprite\fP advances its attached Parts; do not also call \fBanimate()\fP on an attached \fBPart\fP every frame\&.
 
 .PP
-Bone binding is optional\&. \fBgetBoneId()\fP is safe on an unbound \fBPart\fP and returns \fR\fBpdg\&.boneId_None\fP\fP\&. Binding and hierarchy belong to \fBPart\fP, not \fBAnimated\fP\&. \fBPart\fP has an optional \fBPhysicsBody\fP through its physics property\&. \fBsetupPhysicsBody()\fP creates it explicitly; otherwise physics returns \fBpdg\&.PhysicsBody\&.NoPhysics\fP\&. Only \fBsetupPhysicsBody()\fP/removePhysicsBody() can change the property association\&. Compare physics with \fBpdg\&.PhysicsBody\&.NoPhysics\fP to test absence\&. Removing a \fBPart\fP detaches its body and stops automatic stepping\&.
+\fBBone\fP binding is optional\&. \fBgetBoneId()\fP is safe on an unbound \fBPart\fP and returns \fR\fBpdg\&.boneId_None\fP\fP\&. Binding and hierarchy belong to \fBPart\fP, not \fBAnimated\fP\&. \fBPart\fP has an optional \fBPhysicsBody\fP through its physics property\&. \fBsetupPhysicsBody()\fP creates it explicitly; otherwise physics returns \fBpdg\&.PhysicsBody\&.NoPhysics\fP\&. Only \fBsetupPhysicsBody()\fP/removePhysicsBody() can change the property association\&. Compare physics with \fBpdg\&.PhysicsBody\&.NoPhysics\fP to test absence\&. Removing a \fBPart\fP detaches its body and stops automatic stepping\&.
 
 .PP
 A retained \fBPart\fP remains valid after removal from its \fBSprite\fP; \fBisAttached()\fP reports false and its independent local transform remains available\&.
@@ -788,13 +792,9 @@ held\&.detachSprite();
 solveIK(middle,tip,target,space,bendDirection,influence) solves two segments whose joint offsets come from the local locations of a contiguous three-Part chain\&. It requires neither artwork nor bones\&. The target defaults to owning-layer/world coordinates; partSpace_Local means the root \fBPart\fP's parent frame\&. The root's local scale must have equal absolute axes; ancestor transforms may be affine/reflected\&. The bend direction is +1 or -1, and influence is in [0,1]\&. Unreachable targets clamp to the available reach and return false\&. Invalid topology or dynamic bodies reject the operation before changing either joint\&. Direct IK replaces rotation programming; \fBsetIKTarget()\fP and \fBsetIKDriveTarget()\fP install recurring controllers, and \fBsetIKLimits()\fP supplies fixed or shared rotary limits\&. Controller takeover requires explicit release with \fBclearIKTarget()\fP\&.
 .SH "Part bodies"
 .PP
-An unbound \fBPart\fP can create its own \fBPhysicsBody\fP without a \fBSprite\fP root body\&. It joins the Chipmunk world on a physics-enabled layer and publishes the solved state once; removal detaches the retained body back to basic integration\&. This currently covers free bodies, shared constraints, contact reporting and kinematic target scheduling\&. Use \fBsetupCollider()\fP for explicit geometry, \fBsetupFrameCollider()\fP for owned artwork or an explicitly selected image binding, and setupAnimationCollider(boxName) for one authored box\&. Bone binding alone does not create a physical joint or give the body authority to write a bone\&. Generated animation physics requires Chipmunk\&. 
+An unbound \fBPart\fP can create its own \fBPhysicsBody\fP without a \fBSprite\fP root body\&. It joins the Chipmunk world on a physics-enabled layer and publishes the solved state once; removal detaches the retained body back to basic integration\&. This currently covers free bodies, shared constraints, contact reporting and kinematic target scheduling\&. Use \fBsetupCollider()\fP for explicit geometry, \fBsetupFrameCollider()\fP for owned artwork or an explicitly selected image binding, and setupAnimationCollider(boxName) for one authored box\&. \fBBone\fP binding alone does not create a physical joint or give the body authority to write a bone\&. Generated animation physics requires Chipmunk\&. 
 .SH "Member Function Documentation"
 .PP 
-.SS "\fBAnimated\fP addAnimationHelper (\fBIAnimationHelper\fP helper)"
-
-.SS "\fBAnimated\fP andThen ()"
-
 .SS "boolean animate (number deltaSeconds)"
 
 .SS "\fBPart\fP attachSprite (\fBSprite\fP child, int placement, \fBPart\fP childMount)"
@@ -965,74 +965,6 @@ part\&.bindToBone(boneId);
 .RE
 .PP
 
-.SS "\fBAnimated\fP cancelSchedule ()"
-
-.SS "\fBAnimated\fP changeCenterOffsetBy (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP changeCenterOffsetBy (\fBOffset\fP value, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP changeCenterOffsetTo (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP changeCenterOffsetTo (\fBOffset\fP value, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP changeGrowingBy (number amountPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeGrowingTo (number amountPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeMovementBy (number xPerSecond, number yPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeMovementBy (\fBVector\fP value, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeMovementTo (number xPerSecond, number yPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeMovementTo (\fBVector\fP value, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeScaleBy (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP changeScaleTo (number x, number y, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP changeSpinBy (number radiansPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeSpinTo (number radiansPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeStretchingBy (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP changeStretchingTo (number widthPerSecond, number heightPerSecond, number durationSeconds, int easing = \fR\fBlinearTween\fP\fP)"
-
-.PP
-References \fBpdg::linearTween\fP\&.
-.SS "\fBAnimated\fP clearAnimationHelpers ()"
-
 .SS "\fBPart\fP clearContent ()"
 
 .PP
@@ -1078,6 +1010,18 @@ This \fBPart\fP, for chaining\&.
 .RE
 .PP
 
+.SS "\fBPart\fP clearJiggle ()"
+
+.PP
+Remove jiggle and restore the underlying programmed rotations\&. See \fBprocedural_jiggle_options\fP and \fBprocedural_jiggle_state\fP\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPart\fP for chaining\&. 
+.RE
+.PP
+
 .SS "\fBPart\fP detachSprite ()"
 
 .PP
@@ -1094,10 +1038,6 @@ This object, for chaining\&.
 \fBattachSprite()\fP, \fBgetAttachedSprite()\fP 
 .RE
 .PP
-
-.SS "\fBAnimated\fP flipX ()"
-
-.SS "\fBAnimated\fP flipY ()"
 
 .SS "string getAnimationBindingName ()"
 
@@ -1179,10 +1119,6 @@ The bone ID in the current rig, or \fBpdg\&.boneId_None\fP when unbound or the r
 .RE
 .PP
 
-.SS "\fBRect\fP getBoundingBox ()"
-
-.SS "\fBOffset\fP getCenterOffset ()"
-
 .SS "\fBRect\fP getContentBounds (int space = \fR\fBpartSpace_Local\fP\fP)"
 
 .PP
@@ -1207,7 +1143,17 @@ A new \fBRect\fP, or an empty \fBRect\fP when there is no artwork\&.
 
 .PP
 References \fBpdg::partSpace_Local\fP\&.
-.SS "number getHeight ()"
+.SS "\fBFABRIKResult\fP getFABRIKResult ()"
+
+.PP
+Return the latest scheduled FABRIK diagnostics\&. See \fBprocedural_fabrik_options\fP\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+An independent value describing the controller\&. 
+.RE
+.PP
 
 .SS "uint getId ()"
 
@@ -1263,9 +1209,52 @@ The lower bound in local radians, or zero without limits\&. A linked constraint 
 .RE
 .PP
 
-.SS "\fBPoint\fP getLocation ()"
+.SS "string getJiggleError ()"
 
-.SS "\fBOffset\fP getMovement ()"
+.PP
+Return the last chain jiggle or FABRIK evaluation error\&. 
+.PP
+\fBReturns\fP
+.RS 4
+An error message, or the empty string after successful evaluation\&. Target-mode errors are reported by \fBgetIKError()\fP\&. 
+.RE
+.PP
+
+.SS "\fBPartJiggleOptions\fP getJiggleOptions ()"
+
+.PP
+Return an independent configuration record\&. See \fBprocedural_jiggle_options\fP and \fBprocedural_jiggle_state\fP\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+An independent value describing the controller\&. 
+.RE
+.PP
+
+.SS "\fBJiggleResult\fP getJiggleResult ()"
+
+.PP
+Return the most recently evaluated jiggle diagnostics\&. See \fBprocedural_jiggle_options\fP and \fBprocedural_jiggle_state\fP\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+An independent value describing the controller\&. 
+.RE
+.PP
+
+.SS "\fBJiggleState\fP getJiggleState ()"
+
+.PP
+Return an independent numerical state snapshot\&. See \fBprocedural_jiggle_options\fP and \fBprocedural_jiggle_state\fP\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+An independent value describing the controller\&. 
+.RE
+.PP
 
 .SS "string getName ()"
 
@@ -1299,16 +1288,6 @@ The explicit parent \fBPart\fP, or null\&. Authored bone/binding/socket parents 
 .RE
 .PP
 
-.SS "\fBRotatedRect\fP getRotatedBounds ()"
-
-.SS "number getRotation ()"
-
-.SS "\fBOffset\fP getScale ()"
-
-.SS "\fBOffset\fP getSize ()"
-
-.SS "number getSpin ()"
-
 .SS "\fBSprite\fP getSprite ()"
 
 .PP
@@ -1325,9 +1304,7 @@ The owner, or null after this \fBPart\fP is removed\&.
 .RE
 .PP
 
-.SS "\fBOffset\fP getStretching ()"
-
-.SS "object getTransform (int space = \fR\fBpartSpace_Local\fP\fP)"
+.SS "\fBAffineTransform\fP getTransform (int space = \fR\fBpartSpace_Local\fP\fP)"
 
 .PP
 Copy the \fBPart\fP's affine transform\&. Combines the requested parent/owner transforms\&. A detached \fBPart\fP retains its local frame\&. Invalid space constants throw\&.
@@ -1363,12 +1340,6 @@ A local point (x, y) maps to (a*x + c*y + tx, b*x + d*y + ty)\&. Logical width, 
 
 .PP
 References \fBpdg::partSpace_Local\fP\&.
-.SS "number getWidth ()"
-
-.SS "\fBAnimated\fP grow (number factor, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP\&.
 .SS "boolean hasContent ()"
 
 .PP
@@ -1412,7 +1383,17 @@ True even while an invalidated controller is holding an error; false after clear
 .RE
 .PP
 
-.SS "boolean hasScheduledAnimations ()"
+.SS "boolean hasJiggle ()"
+
+.PP
+Return whether this \fBPart\fP owns a jiggle controller\&. See \fBprocedural_jiggle_options\fP and \fBprocedural_jiggle_state\fP\&.
+
+.PP
+\fBReturns\fP
+.RS 4
+An independent value describing the controller\&. 
+.RE
+.PP
 
 .SS "boolean isAttached ()"
 
@@ -1446,10 +1427,6 @@ True when \fBgetBoneId()\fP is not \fBpdg\&.boneId_None\fP\&. Binding to an auth
 .RE
 .PP
 
-.SS "boolean isFlippedX ()"
-
-.SS "boolean isFlippedY ()"
-
 .SS "boolean isIKDriven ()"
 
 .PP
@@ -1477,27 +1454,34 @@ For direct IK, the result of the last scheduled solve, false before the first so
 .RE
 .PP
 
-.SS "boolean isSchedulePaused ()"
-
-.SS "\fBAnimated\fP moveBy (number x, number y, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+.SS "boolean isJiggleEnabled ()"
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP moveBy (\fBOffset\fP value, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+Return whether jiggle is enabled\&. See \fBprocedural_jiggle_options\fP and \fBprocedural_jiggle_state\fP\&.
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP moveTo (number x, number y, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+\fBReturns\fP
+.RS 4
+An independent value describing the controller\&. 
+.RE
+.PP
+
+.SS "\fBPart\fP kickJiggle (\fBPartJiggleKick\fP kick)"
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP moveTo (\fBPoint\fP value, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+Add angular or target velocity\&. See \fBprocedural_jiggle_options\fP and \fBprocedural_jiggle_state\fP\&.
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP pauseSchedule ()"
-
-.SS "\fBAnimated\fP removeAnimationHelper (\fBIAnimationHelper\fP helper)"
+\fBParameters\fP
+.RS 4
+\fIkick\fP Chain joint plus angularVelocity, or target velocityX/velocityY in world units/second\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPart\fP for chaining\&. 
+.RE
+.PP
 
 .SS "removeCollider ()"
 
@@ -1520,25 +1504,17 @@ No value\&.
 .RE
 .PP
 
-.SS "\fBAnimated\fP resizeBy (number deltaWidth, number deltaHeight, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+.SS "\fBPart\fP resetJiggle ()"
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP resizeTo (number width, number height, number durationSeconds, int easing = \fR\fBeaseInOutQuad\fP\fP)"
+Reseed jiggle from the desired pose or target\&. See \fBprocedural_jiggle_options\fP and \fBprocedural_jiggle_state\fP\&.
 
 .PP
-References \fBpdg::easeInOutQuad\fP\&.
-.SS "\fBAnimated\fP resumeSchedule ()"
-
-.SS "\fBAnimated\fP rotateBy (number radians, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP, int direction = \fR\fBrotationDirection_AsSpecified\fP\fP)"
-
+\fBReturns\fP
+.RS 4
+This \fBPart\fP for chaining\&. 
+.RE
 .PP
-References \fBpdg::easeInOutQuad\fP, and \fBpdg::rotationDirection_AsSpecified\fP\&.
-.SS "\fBAnimated\fP rotateTo (number radians, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP, int direction = \fR\fBrotationDirection_AsSpecified\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP, and \fBpdg::rotationDirection_AsSpecified\fP\&.
-.SS "\fBAnimated\fP setCenterOffset (\fBOffset\fP offset)"
 
 .SS "\fBPart\fP setDrawing (\fBDrawing\fP drawing)"
 
@@ -1575,13 +1551,35 @@ part\&.setDrawing(artwork);
 .RE
 .PP
 
-.SS "\fBAnimated\fP setFlipX (boolean flip)"
+.SS "\fBPart\fP setFABRIKTarget (\fBPart\fP[] chain, \fBPoint\fP target, \fBPartFABRIKOptions\fP options = \fRundefined\fP)"
 
-.SS "\fBAnimated\fP setFlipY (boolean flip)"
+.PP
+Solve or schedule a contiguous independent \fBPart\fP chain; chain excludes the receiver\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRchain:\fP Array of \fR\fBPart\fP\fP\&.
+.RE
+.PP
+See \fBprocedural_fabrik_options\fP\&.
 
-.SS "\fBAnimated\fP setGrowing (number value)"
-
-.SS "\fBAnimated\fP setHeight (number value)"
+.PP
+The last chain entry is the endpoint\&. Call again to update its target\&. Use \fBclearIKTarget()\fP to remove the scheduled solver\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIchain\fP Contiguous descendants, excluding this \fBPart\fP\&. 
+.br
+\fItarget\fP Desired endpoint in the configured coordinate frame\&. 
+.br
+\fIoptions\fP Configuration described in the shared options reference\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPart\fP for chaining\&. 
+.RE
+.PP
 
 .SS "\fBPart\fP setIKDriveTarget (\fBPart\fP middle, \fBPart\fP tip, \fBPoint\fP target, number maxForce, number maxTorque, int space = \fR\fBpartSpace_World\fP\fP, int bendDirection = \fR1\fP, number influence = \fR1\fP, number frequency = \fR4\fP, number dampingRatio = \fR1\fP)"
 
@@ -1826,13 +1824,113 @@ part\&.setImage(image, new pdg\&.Rect(\-8, \-8, 8, 8));
 .RE
 .PP
 
-.SS "\fBAnimated\fP setLocation (number x, number y)"
+.SS "\fBPart\fP setJiggle (\fBPartJiggleOptions\fP options)"
 
-.SS "\fBAnimated\fP setLocation (\fBPoint\fP value)"
+.PP
+Install chain jiggle or decorate an existing \fBPart\fP IK target\&. See \fBprocedural_jiggle_options\fP and \fBprocedural_jiggle_state\fP\&.
 
-.SS "\fBAnimated\fP setMovement (number xPerSecond, number yPerSecond)"
+.PP
+\fBNote\fP
+.RS 4
+Create a parent/child chain of independent Parts before installing chain jiggle\&. 
+.RE
+.PP
+\fBExample\fP
+.RS 4
 
-.SS "\fBAnimated\fP setMovement (\fBVector\fP value)"
+.PP
+.nf
+root\&.setJiggle({mode: pdg\&.jiggleMode_Chain, chain: [middle, tip],
+    length: 12, frequency: 2, dampingRatio: 0\&.3,
+    joints: [{part: tip, frequency: 4}]});
+root\&.kickJiggle({joint: middle, angularVelocity: 2});
+// Angular velocity is in radians/second, rather than an angle offset\&.
+
+.fi
+.PP
+ 
+.RE
+.PP
+\fBParameters\fP
+.RS 4
+\fIoptions\fP Configuration described in the shared options reference\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPart\fP for chaining\&. 
+.RE
+.PP
+
+.SS "\fBPart\fP setJiggleEnabled (boolean enabled)"
+
+.PP
+Enable or freeze jiggle; reenabling reseeds from the current pose\&. See \fBprocedural_jiggle_options\fP and \fBprocedural_jiggle_state\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIenabled\fP Whether to apply and simulate the controller\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPart\fP for chaining\&. 
+.RE
+.PP
+
+.SS "\fBPart\fP setJiggleInfluence (number influence, number seconds = \fRundefined\fP)"
+
+.PP
+Set or linearly fade influence using simulation seconds\&. See \fBprocedural_jiggle_options\fP and \fBprocedural_jiggle_state\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIinfluence\fP Influence in [0,1]\&. 
+.br
+\fIseconds\fP Linear fade duration in simulation seconds; omitted or zero applies immediately\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPart\fP for chaining\&. 
+.RE
+.PP
+
+.SS "\fBPart\fP setJiggleSettings (\fBPartJiggleSettings\fP settings)"
+
+.PP
+Patch tuning without changing topology\&. See \fBprocedural_jiggle_options\fP and \fBprocedural_jiggle_state\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIsettings\fP Sparse tuning patch; omitted fields retain their current values\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPart\fP for chaining\&. 
+.RE
+.PP
+
+.SS "\fBPart\fP setJiggleState (\fBJiggleState\fP state)"
+
+.PP
+Restore validated numerical state on the same topology\&. See \fBprocedural_jiggle_options\fP and \fBprocedural_jiggle_state\fP\&.
+
+.PP
+\fBParameters\fP
+.RS 4
+\fIstate\fP Previously captured state for the same mode and topology\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This \fBPart\fP for chaining\&. 
+.RE
+.PP
 
 .SS "\fBPart\fP setParentPart ()"
 
@@ -1885,18 +1983,6 @@ This object, for chaining\&.
 \fBgetParentPart()\fP, \fBgetTransform()\fP 
 .RE
 .PP
-
-.SS "\fBAnimated\fP setRotation (number value)"
-
-.SS "\fBAnimated\fP setScale (number x, number y = \fRx\fP)"
-
-.SS "\fBAnimated\fP setSize (number width, number height)"
-
-.SS "\fBAnimated\fP setSize (\fBOffset\fP value)"
-
-.SS "\fBAnimated\fP setSpin (number value)"
-
-.SS "\fBAnimated\fP setStretching (number widthPerSecond, number heightPerSecond)"
 
 .SS "\fBCollider\fP setupAnimationCollider (string boxName)"
 
@@ -2055,7 +2141,35 @@ body\&.applyImpulse(new pdg\&.Vector(4, 0));
 .RE
 .PP
 
-.SS "\fBAnimated\fP setWidth (number value)"
+.SS "\fBFABRIKResult\fP solveFABRIK (\fBPart\fP[] chain, \fBPoint\fP target, \fBPartFABRIKOptions\fP options = \fRundefined\fP)"
+
+.PP
+Solve or schedule a contiguous independent \fBPart\fP chain; chain excludes the receiver\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRchain:\fP Array of \fR\fBPart\fP\fP\&.
+.RE
+.PP
+See \fBprocedural_fabrik_options\fP\&.
+
+.PP
+One-shot solve returns diagnostics and applies angles immediately\&. Scheduled controller owners must be cleared before installing competing controllers\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIchain\fP Contiguous descendants, excluding this \fBPart\fP\&. 
+.br
+\fItarget\fP Desired endpoint in the configured coordinate frame\&. 
+.br
+\fIoptions\fP Configuration described in the shared options reference\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+An independent value describing the controller\&. 
+.RE
+.PP
 
 .SS "boolean solveIK (\fBPart\fP middle, \fBPart\fP tip, \fBPoint\fP target, int space = \fR\fBpartSpace_World\fP\fP, int bendDirection = \fR1\fP, number influence = \fR1\fP)"
 
@@ -2112,18 +2226,6 @@ root\&.solveIK(middle, tip, new pdg\&.Point(12, 8), pdg\&.partSpace_Sprite);
 
 .PP
 References \fBpdg::partSpace_World\fP\&.
-.SS "\fBAnimated\fP stopGrowing ()"
-
-.SS "\fBAnimated\fP stopMovement ()"
-
-.SS "\fBAnimated\fP stopSpinning ()"
-
-.SS "\fBAnimated\fP stopStretching ()"
-
-.SS "\fBAnimated\fP stretch (number widthFactor, number heightFactor, number durationSeconds = \fR0\fP, int easing = \fR\fBeaseInOutQuad\fP\fP)"
-
-.PP
-References \fBpdg::easeInOutQuad\fP\&.
 .SS "\fBPart\fP unbindFromBone ()"
 
 .PP
@@ -2140,8 +2242,6 @@ This object, for chaining\&.
 \fBbindToBone()\fP, \fBsetParentPart()\fP 
 .RE
 .PP
-
-.SS "\fBAnimated\fP wait (number durationSeconds)"
 
 .SH "Member Data Documentation"
 .PP 

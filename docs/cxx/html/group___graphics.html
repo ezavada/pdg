@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Pixel Dust Game Engine
-   &#160;<span id="projectnumber">v1.1.1</span>
+   &#160;<span id="projectnumber">v1.2.0</span>
    </div>
   </td>
  </tr>
@@ -117,13 +117,13 @@ Collaboration diagram for Graphics:</div>
 <div class="dyncontent">
 <div class="center"><img src="group___graphics.png" border="0" usemap="#agroup______graphics" loading="lazy" alt=""/></div>
 <map name="agroup______graphics" id="agroup______graphics">
-<area shape="rect" href="group___animation.html" title="Sprite playback, poses, procedural animation, constraints, and custom artwork." alt="" coords="333,139,412,165"/>
-<area shape="rect" href="group___animation_drawing.html" title="Shared Drawing artwork attached to the evaluated pose and authored slots." alt="" coords="297,208,448,248"/>
-<area shape="rect" href="group___events.html" title="Things used to notify your code of user input or other significant events." alt="" coords="341,295,404,321"/>
-<area shape="rect" title="Things related to drawing graphics on screen." alt="" coords="5,326,79,352"/>
-<area shape="rect" href="group___managers.html" title="The main points of interface to the Pixel Dust Game Framework." alt="" coords="333,355,412,381"/>
-<area shape="rect" href="group___sound.html" title="Things used for audio (sound and music)." alt="" coords="343,405,402,430"/>
-<area shape="rect" href="group___sprites.html" title="Sprite and tile layers, drawing helpers, collision helpers, and events." alt="" coords="309,474,436,500"/>
+<area shape="rect" href="group___animation.html" title="Sprite playback, poses, procedural animation, constraints, and custom artwork." alt="" coords="333,169,412,195"/>
+<area shape="rect" href="group___animation_drawing.html" title="Shared Drawing artwork attached to the evaluated pose and authored slots." alt="" coords="297,238,448,278"/>
+<area shape="rect" href="group___events.html" title="Things used to notify your code of user input or other significant events." alt="" coords="341,325,404,351"/>
+<area shape="rect" title="Things related to drawing graphics on screen." alt="" coords="5,356,79,382"/>
+<area shape="rect" href="group___managers.html" title="The main points of interface to the Pixel Dust Game Framework." alt="" coords="333,385,412,411"/>
+<area shape="rect" href="group___sound.html" title="Things used for audio (sound and music)." alt="" coords="343,435,402,460"/>
+<area shape="rect" href="group___sprites.html" title="Sprite and tile layers, drawing helpers, collision helpers, and events." alt="" coords="309,504,436,530"/>
 </map>
 </div>
 <table class="memberdecls">
@@ -139,13 +139,15 @@ Classes</h2></td></tr>
 <tr class="memitem:AnimatedAttributesBase" id="r_AnimatedAttributesBase"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_attributes_base.html">AnimatedAttributesBase</a></td></tr>
 <tr class="memitem:AnimatedAttributes_3C_20T_20_3E" id="r_AnimatedAttributes_3C_20T_20_3E"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_attributes.html">AnimatedAttributes&lt; T &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> attributes with programmed movement and appearance animation.  <a href="classpdg_1_1_animated_attributes.html#details">More...</a><br /></td></tr>
+<tr class="memitem:Camera" id="r_Camera"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_camera.html">Camera</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpdg_1_1_animated.html" title="Programmed transforms, constant rates and scheduled animation.">Animated</a> view owned by a <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> or shared by layers.Each <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> owns its camera. A layer uses its retained explicit camera, otherwise its port's built-in camera. Layer cameras own their destination viewport. Location plus center offset maps to the <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> anchor or layer viewport center. Rotation is the view's world orientation; zoom and scale magnify the view. Size is animation metadata and does not resize the destination viewport.  <a href="classpdg_1_1_camera.html#details">More...</a><br /></td></tr>
 <tr class="memitem:Color" id="r_Color"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structpdg_1_1_color.html">Color</a></td></tr>
 <tr class="memitem:PortResizeInfo" id="r_PortResizeInfo"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structpdg_1_1_port_resize_info.html">PortResizeInfo</a></td></tr>
 <tr class="memitem:PortDrawInfo" id="r_PortDrawInfo"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structpdg_1_1_port_draw_info.html">PortDrawInfo</a></td></tr>
 <tr class="memitem:Font" id="r_Font"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_font.html">Font</a></td></tr>
 <tr class="memitem:Image" id="r_Image"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_image.html">Image</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Appearance setters return this image by reference for chaining.  <a href="classpdg_1_1_image.html#details">More...</a><br /></td></tr>
 <tr class="memitem:ImageStrip" id="r_ImageStrip"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_image_strip.html">ImageStrip</a></td></tr>
-<tr class="memitem:Port" id="r_Port"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_port.html">Port</a></td></tr>
 <tr class="memitem:ResourceManager" id="r_ResourceManager"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_resource_manager.html">ResourceManager</a></td></tr>
 <tr class="memitem:Drawing" id="r_Drawing"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_drawing.html">Drawing</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Editable artwork shared by animation attachments and other drawing users.  <a href="classpdg_1_1_drawing.html#details">More...</a><br /></td></tr>
@@ -155,6 +157,7 @@ Classes</h2></td></tr>
 <tr class="memitem:Polygon" id="r_Polygon"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_polygon.html">Polygon</a></td></tr>
 <tr class="memitem:Spline" id="r_Spline"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_spline.html">Spline</a></td></tr>
 <tr class="memitem:Renderer" id="r_Renderer"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_renderer.html">Renderer</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> operations return the renderer by reference for chaining.  <a href="classpdg_1_1_renderer.html#details">More...</a><br /></td></tr>
 <tr class="memitem:OffsetT_3C_20T_20_3E" id="r_OffsetT_3C_20T_20_3E"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_offset_t.html">OffsetT&lt; T &gt;</a></td></tr>
 <tr class="memitem:PointT_3C_20T_20_3E" id="r_PointT_3C_20T_20_3E"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_point_t.html">PointT&lt; T &gt;</a></td></tr>
 <tr class="memitem:VectorT_3C_20T_20_3E" id="r_VectorT_3C_20T_20_3E"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_vector_t.html">VectorT&lt; T &gt;</a></td></tr>

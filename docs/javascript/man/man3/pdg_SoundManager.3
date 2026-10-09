@@ -1,4 +1,4 @@
-.TH "SoundManager" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "SoundManager" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -68,18 +68,46 @@ used for application wide sound settings and options
 
 .PP
 Register an event handler for sound events with the specified event code\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRfunc:\fP \fBSoundEventCallback\fP\&. 
+.RE
+.PP
+
 .SS "\fBIEventHandler\fP onDonePlaying (function func)"
 
 .PP
 Register a callback function to be called when a sound finishes playing\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRfunc:\fP \fBSoundEventCallback\fP\&. 
+.RE
+.PP
+
 .SS "\fBIEventHandler\fP onFailedToPlay (function func)"
 
 .PP
 Register a callback function to be called when a sound fails to play\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRfunc:\fP \fBSoundEventCallback\fP\&. 
+.RE
+.PP
+
 .SS "\fBIEventHandler\fP onLooping (function func)"
 
 .PP
 Register a callback function to be called when a sound loops\&. 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRfunc:\fP \fBSoundEventCallback\fP\&. 
+.RE
+.PP
+
 .SS "setMute (boolean muted)"
 
 .PP

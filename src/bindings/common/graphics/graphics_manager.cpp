@@ -77,7 +77,7 @@ namespace pdg {
         END
     METHOD_IMPL(GraphicsManager, CreateWindowPort)
         METHOD_SIGNATURE("create windowed drawing port with given dimensions, title and depth", 
-            [object Port], 3, ([object Rect] rect, string windName = "", [number int] bpp = 0));
+            [object Port*], 3, ([object Rect const&] rect, string windName = "", [number int] bpp = 0));
         REQUIRE_ARG_MIN_COUNT(1);
         REQUIRE_RECT_ARG(1, rect);
         OPTIONAL_STRING_ARG(2, windName, "");
@@ -87,7 +87,7 @@ namespace pdg {
         END
     METHOD_IMPL(GraphicsManager, CreateImageFromOffscreenPort)
         METHOD_SIGNATURE("create a snapshot or live image of an offscreen port",
-            [object Image], 2, ([object Port] port, boolean copyPixels = true));
+            [object Image*], 2, ([object Port*] port, boolean copyPixels = true));
         REQUIRE_ARG_MIN_COUNT(1);
         REQUIRE_CPP_OBJECT_ARG(1, port, Port);
         OPTIONAL_BOOL_ARG(2, copyPixels, true);
@@ -96,7 +96,7 @@ namespace pdg {
         END
     METHOD_IMPL(GraphicsManager, CreateOffscreenPort)
         METHOD_SIGNATURE("create a persistent transparent drawing surface without a window",
-            [object Port], 1, ([object Rect] rect));
+            [object Port*], 1, ([object Rect const&] rect));
         REQUIRE_ARG_COUNT(1);
         REQUIRE_RECT_ARG(1, rect);
         Port* port = self->createOffscreenPort(rect);
@@ -104,7 +104,7 @@ namespace pdg {
         END
     METHOD_IMPL(GraphicsManager, CreateFullScreenPort)
         METHOD_SIGNATURE("create full screen drawing port with given dimensions on given screen, optionally changing depth", 
-            [object Port], 3, ([object Rect] rect, [number int] screenNum = PRIMARY_SCREEN, boolean allowResChange = true, [number int] bpp = 0));
+            [object Port*], 3, ([object Rect const&] rect, [number int] screenNum = PRIMARY_SCREEN, boolean allowResChange = true, [number int] bpp = 0));
         REQUIRE_ARG_MIN_COUNT(1);
         REQUIRE_RECT_ARG(1, rect);
         OPTIONAL_INT32_ARG(2, screenNum, screenNum_PrimaryScreen);
@@ -115,7 +115,7 @@ namespace pdg {
         END
     METHOD_IMPL(GraphicsManager, CloseGraphicsPort)
         METHOD_SIGNATURE("close given port, along with its window and restore screen mode if changed", 
-            undefined, 1, ([object Port] port = MAIN_PORT));
+            undefined, 1, ([object Port*] port = MAIN_PORT));
         OPTIONAL_CPP_OBJECT_ARG(1, port, Port, 0);
         self->closeGraphicsPort(port);
         NO_RETURN;
@@ -128,7 +128,7 @@ namespace pdg {
         END
     METHOD_IMPL(GraphicsManager, CreateFont)
         METHOD_SIGNATURE("get a font with optional scaling adjust", 
-            [object Font], 2, (string fontName, number scalingFactor = 1.0));
+            [object Font*], 2, (string fontName, number scalingFactor = 1.0));
         REQUIRE_ARG_MIN_COUNT(1);
         REQUIRE_STRING_ARG(1, fontName);
         OPTIONAL_NUMBER_ARG(2, scalingFactor, 1.0f);
@@ -137,14 +137,14 @@ namespace pdg {
         END
     METHOD_IMPL(GraphicsManager, GetMainPort)
         METHOD_SIGNATURE("return the primary graphics port", 
-            [object Port], 0, ());
+            [object Port*], 0, ());
         REQUIRE_ARG_COUNT(0);
         Port* port = self->getMainPort();
         RETURN_CPP_OBJECT(port, Port);
         END
     METHOD_IMPL(GraphicsManager, SwitchToFullScreenMode)
         METHOD_SIGNATURE("change a port to fullscreen mode, return true on success", 
-            boolean, 0, (boolean allowResChange = false, [object Port] port = MAIN_PORT));
+            boolean, 0, (boolean allowResChange = false, [object Port*] port = MAIN_PORT));
         OPTIONAL_BOOL_ARG(1, allowResChange, 0);
         OPTIONAL_CPP_OBJECT_ARG(2, port, Port, 0);
         bool result = self->switchToFullScreenMode(allowResChange, port);
@@ -152,7 +152,7 @@ namespace pdg {
         END
     METHOD_IMPL(GraphicsManager, SwitchToWindowMode)
         METHOD_SIGNATURE("change a port to window mode, return true on success", 
-            boolean, 0, ([object Port] port = MAIN_PORT, string windName = ""));
+            boolean, 0, ([object Port*] port = MAIN_PORT, string windName = ""));
         OPTIONAL_CPP_OBJECT_ARG(1, port, Port, 0);
         OPTIONAL_STRING_ARG(2, windName, "");
         bool result = self->switchToWindowMode(port, windName);
@@ -179,3 +179,26 @@ namespace pdg {
 %#endif //!PDG_NO_GUI
 
 } // pdg namespace
+
+// @pdg-class {"name":"GraphicsManager","native_binding":{"browser":{"generate":true,"guard":"!PDG_NO_GUI","base":null}}}
+
+
+// @pdg-member {"name":"GraphicsManager.createWindowPort","native_binding":{"adapter":"browser.emscriptenGraphicsCreateWindowPort","allow_raw_pointers":true,"binding_name":"_createWindowPort"}}
+
+// @pdg-member {"name":"GraphicsManager.createOffscreenPort","native_binding":{"allow_raw_pointers":true}}
+
+// @pdg-member {"name":"GraphicsManager.closeGraphicsPort","native_binding":{"allow_raw_pointers":true}}
+
+
+// @pdg-member {"name":"GraphicsManager.createFont","native_binding":{"adapter":"browser.emscriptenGraphicsCreateFont","allow_raw_pointers":true,"binding_name":"_createFont"}}
+
+// @pdg-member {"name":"GraphicsManager.getMainPort","native_binding":{"allow_raw_pointers":true}}
+
+
+// Fullscreen factories/transitions still need port, string and default conversion.
+// @pdg-member {"name":"GraphicsManager.createFullScreenPort","native_binding":{"browser":{"generate":false}}}
+
+
+// @pdg-member {"name":"GraphicsManager.switchToFullScreenMode","native_binding":{"browser":{"generate":false}}}
+
+// @pdg-member {"name":"GraphicsManager.switchToWindowMode","native_binding":{"browser":{"generate":false}}}

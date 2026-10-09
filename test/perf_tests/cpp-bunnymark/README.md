@@ -167,8 +167,7 @@ The C++ version measures:
 ## Renderer investigations
 
 Use the [shared performance guide](../README.md) for Quick baselines and
-comparison settings, and the [renderer status note](../../../docs/note-ai/opengl-optimization-analysis.md)
-for current implementation and possible future work. Compare like workloads
+comparison settings. Compare like workloads
 and hardware; cross-language score differences also include runtime and workload
 costs, so they do not isolate binding overhead by themselves.
 
@@ -322,7 +321,6 @@ clean:
 - **JavaScript version:** `test/perf_tests/bunnymark/bunnymark.js`
 - **Comparison tool:** `test/perf_tests/bunnymark/compare_results.js`
 - **Test runner and baselines:** [Performance tests](../README.md)
-- **Optimization plan:** `docs/note-ai/opengl-optimization-analysis.md`
 - **CMake config:** `src/CMakeLists.txt` (pdg-lib and bunnymark targets)
 - **Main Makefile:** `Makefile` (pdg-tests target)
 

@@ -1,4 +1,4 @@
-.TH "PhysicsBody" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "PhysicsBody" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -121,7 +121,7 @@ PhysicsBody \- Optional physical motion for a \fBSprite\fP or \fBPart\fP, using 
 .br
 .RI "Count connected constraints on this body\&. "
 .ti -1c
-.RI "object \fBgetDriveState\fP ()"
+.RI "\fBPhysicsDriveState\fP \fBgetDriveState\fP ()"
 .br
 .RI "Copy the drive target, last actuation and current target error\&. "
 .ti -1c
@@ -161,7 +161,7 @@ PhysicsBody \- Optional physical motion for a \fBSprite\fP or \fBPart\fP, using 
 .br
 .RI "Read the body's speed\&. "
 .ti -1c
-.RI "object \fBgetState\fP ()"
+.RI "\fBPhysicsBodyState\fP \fBgetState\fP ()"
 .br
 .RI "Copy the current physical state\&. "
 .ti -1c
@@ -1017,7 +1017,7 @@ Number of active connections; zero for NoPhysics\&.
 .RE
 .PP
 
-.SS "object getDriveState ()"
+.SS "\fBPhysicsDriveState\fP getDriveState ()"
 
 .PP
 Copy the drive target, last actuation and current target error\&. Returns an independent snapshot\&. When disabled, enabled is false and numeric fields are zero\&. Reading never creates a body or emits a NoPhysics warning\&.
@@ -1182,7 +1182,7 @@ The current speed\&. Returns zero for NoPhysics\&. Units are distance per second
 .RE
 .PP
 
-.SS "object getState ()"
+.SS "\fBPhysicsBodyState\fP getState ()"
 
 .PP
 Copy the current physical state\&. Reads the active solver when one is attached\&. Changing the returned object does not change the body\&.
@@ -1381,7 +1381,7 @@ Changing the threshold or reference rearms monitoring\&. Repeating the same sett
 With a reference, speed means \fRabs(body\&.angularVelocity - referenceBody\&.angularVelocity)\fP; otherwise it means \fRabs(body\&.angularVelocity)\fP\&. The reference must be a different present body in the same \fBSpriteLayer\fP, or both bodies must be outside a layer\&. The association is weak: removing its body from its owner or destroying it disables dependent monitors\&. A world mismatch detected at sampling also disables the monitor\&. A detached body retains its absolute threshold; relative monitoring is cleared on detachment\&.
 
 .PP
-\fBSprite\fP bodies emit eventType_SpriteBreak on their \fBSprite\fP; \fBPart\fP bodies emit it on the owning \fBSprite\fP with the \fBPart\fP identified\&. Returning false leaves the body and joints unchanged\&. Snapshots preserve settings and the notification latch\&. Relative references require a Sprite/Layer graph containing both bodies; external references are rejected\&. Event handlers are not saved\&.
+\fBSprite\fP bodies emit eventType_SpriteBreak on their \fBSprite\fP; \fBPart\fP bodies emit it on the owning \fBSprite\fP with the \fBPart\fP identified\&. Returning false leaves the body and joints unchanged\&. Snapshots preserve settings and the notification latch\&. Relative references require a Sprite/Layer graph containing both bodies; external references are rejected\&. \fBEvent\fP handlers are not saved\&.
 
 .PP
 \fBParameters\fP

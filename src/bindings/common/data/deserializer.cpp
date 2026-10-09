@@ -333,24 +333,31 @@ METHOD_IMPL(Deserializer, Deserialize_memGetLen)
 	}
 	END
 METHOD_IMPL(Deserializer, SetDataPtr)
-	METHOD_SIGNATURE("", undefined, 1, ({[string Binary]|[object MemBlock]} data));
+	METHOD_SIGNATURE("", undefined, 1, ({[object ByteArray]|[object MemBlock]} data));
     REQUIRE_ARG_COUNT(1);
-    if (!VALUE_IS_STRING(ARGV[0]) && !VALUE_IS_OBJECT(ARGV[0])) {
-    	THROW_TYPE_ERR("argument 1 (mem) must be either a binary string or an object of type MemBlock");
+    if (!IsUint8Array(ARGV[0]) && !VALUE_IS_MEMBLOCK(ARGV[0])) {
+        THROW_TYPE_ERR("argument 1 (mem) must be either a Uint8Array or an object of type MemBlock"); RETURN_NULL;
     }
-    if (VALUE_IS_STRING(ARGV[0])) {
+    try {
+    if (IsUint8Array(ARGV[0])) {
     	size_t bytes = 0;
-    	uint8* ptr = (uint8*) DecodeBinary(ARGV[0], &bytes);
-		self->setDataPtr(ptr, bytes);
+        const uint8* ptr = nullptr;
+        if (!GetUint8ArrayData(ARGV[0], ptr, bytes)) {
+            THROW_TYPE_ERR("expected an attached, non-shared Uint8Array"); RETURN_NULL;
+        }
+        if (bytes > UINT32_MAX) { THROW_RANGE_ERR("byte array exceeds the supported size"); RETURN_NULL; }
+		self->setDataCopy(ptr, static_cast<uint32>(bytes));
 	} else {
+        if (!VALUE_IS_MEMBLOCK(ARGV[0])) { THROW_TYPE_ERR("expected Uint8Array or MemBlock"); RETURN_NULL; }
     	REQUIRE_CPP_OBJECT_ARG(1, memBlock, MemBlock);
     	self->setDataPtr(memBlock->ptr, memBlock->bytes);
     }
+    } catch (const std::exception& error) { THROW_ERR(error.what()); RETURN_NULL; }
 	NO_RETURN;
 	END
 METHOD_IMPL(Deserializer, Deserialize_obj)
 	OBJECT_SAVE(self->mDeserializerScriptObj, THIS);
-	METHOD_SIGNATURE("", [object ISerializable], 1, ());
+	METHOD_SIGNATURE("", [object ISerializable*], 1, ());
     REQUIRE_ARG_COUNT(0);
 	try {
 		ISerializable* obj = self->deserialize_obj();
@@ -360,6 +367,14 @@ METHOD_IMPL(Deserializer, Deserialize_obj)
 		}
       %#endif
         if (!obj) { RETURN_NULL; }
+        if (auto* camera = dynamic_cast<Camera*>(obj)) {
+          %#ifdef PDG_USING_V8
+            auto result = camera->mCameraScriptObj.IsEmpty() ? CameraWrap::NewFromCpp(isolate,camera) : v8::Local<v8::Object>::New(isolate,camera->mCameraScriptObj);
+          %#else
+            auto result = camera->mCameraScriptObj ? camera->mCameraScriptObj : Camera_newFromCpp(ctx,camera);
+          %#endif
+            camera->release(); RETURN_OBJECT(result);
+        }
         if (auto* sprite = dynamic_cast<Sprite*>(obj)) {
           %#ifdef PDG_USING_V8
             auto result = SpriteWrap::NewFromCpp(isolate, sprite);
@@ -368,6 +383,22 @@ METHOD_IMPL(Deserializer, Deserialize_obj)
           %#endif
             sprite->release(); // the wrapper now owns the returned reference
             RETURN_OBJECT(result);
+        }
+        if (auto* troupe = dynamic_cast<Troupe*>(obj)) {
+          %#ifdef PDG_USING_V8
+            auto result = troupe->mAnimatedScriptObj.IsEmpty() ? TroupeWrap::NewFromCpp(isolate,troupe) : v8::Local<v8::Object>::New(isolate,troupe->mAnimatedScriptObj);
+          %#else
+            auto result = troupe->mAnimatedScriptObj ? troupe->mAnimatedScriptObj : Troupe_newFromCpp(ctx,troupe);
+          %#endif
+            troupe->release(); RETURN_OBJECT(result);
+        }
+        if (auto* animated = dynamic_cast<AnimatedBase*>(obj)) {
+          %#ifdef PDG_USING_V8
+            auto result = animated->mAnimatedScriptObj.IsEmpty() ? AnimatedBaseWrap::NewFromCpp(isolate,animated) : v8::Local<v8::Object>::New(isolate,animated->mAnimatedScriptObj);
+          %#else
+            auto result = animated->mAnimatedScriptObj ? animated->mAnimatedScriptObj : AnimatedBase_newFromCpp(ctx,animated);
+          %#endif
+            animated->release(); RETURN_OBJECT(result);
         }
         // Headless ImageImpl also implements ImageStrip, including frame views.
         if (auto* image = dynamic_cast<ImageStrip*>(obj)) { RETURN_CPP_OBJECT(image, ImageStrip); }
@@ -430,7 +461,6 @@ FUNCTION_IMPL(RegisterSerializableClass)
     END
 
 
-
 CLEANUP_IMPL(Deserializer)
 
 CPP_MANAGED_CONSTRUCTOR_IMPL(Deserializer)
@@ -439,3 +469,37 @@ CPP_MANAGED_CONSTRUCTOR_IMPL(Deserializer)
 
 
 } // pdg namespace
+
+/* @pdg-member
+{
+  "name": "Deserializer.Deserializer",
+  "type": "constructor",
+  "params": [],
+  "returns": "object Deserializer",
+  "brief": "Create a Deserializer instance."
+}
+*/
+
+/* @pdg-contract
+{
+  "name": "Deserializer.deserialize_ref",
+  "value": {
+    "returns": {
+      "builtin": "object"
+    }
+  }
+}
+*/
+
+// @pdg-member {"name":"Deserializer.setDataPtr","native_binding":{"adapter":"Deserializer.setDataPtr","browser":{"wrapper":{}}}}
+
+
+// @pdg-member {"name":"Deserializer.deserialize_color","native_binding":{"allow_raw_pointers":true}}
+
+
+// @pdg-member {"name":"Deserializer.deserialize_obj","native_binding":{"allow_raw_pointers":true}}
+
+// @pdg-class {"name":"Deserializer","native_binding":{"browser":{"base":null,"generate":true,"constructors":[{"types":[]}]}}}
+
+// Script reference deserialization requires the serialization bridge.
+// @pdg-member {"name":"Deserializer.deserialize_ref","native_binding":{"browser":{"generate":false}}}

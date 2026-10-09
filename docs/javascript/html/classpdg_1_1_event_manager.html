@@ -26,7 +26,7 @@
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="titlearea">
    <div id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></div>
-   <div id="projectname">PDG <span id="projectnumber">engine v1.1.1</span>
+   <div id="projectname">PDG <span id="projectnumber">engine v1.2.0</span>
    </div>
 </div>
 <!-- end header part -->
@@ -134,8 +134,8 @@ Collaboration diagram for EventManager:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a26ebaf3859a5d97438ae01d492209630" id="r_a26ebaf3859a5d97438ae01d492209630"><td class="memItemLeft">object&#160;</td><td class="memItemRight"><a class="el" href="#a26ebaf3859a5d97438ae01d492209630">getDeviceOrientation</a> (boolean absolute=false)</td></tr>
-<tr class="memdesc:a26ebaf3859a5d97438ae01d492209630"><td class="mdescLeft">&#160;</td><td class="mdescRight"><em>NOT IMPLEMENTED</em> get the roll, pitch and yaw of the device  <br /></td></tr>
+<tr class="memitem:a06e88b00d64484ee52dd6a23464173a4" id="r_a06e88b00d64484ee52dd6a23464173a4"><td class="memItemLeft"><a class="el" href="group___structured_data_types.html#structpdg_1_1_device_orientation">DeviceOrientation</a>&#160;</td><td class="memItemRight"><a class="el" href="#a06e88b00d64484ee52dd6a23464173a4">getDeviceOrientation</a> (boolean absolute=false)</td></tr>
+<tr class="memdesc:a06e88b00d64484ee52dd6a23464173a4"><td class="mdescLeft">&#160;</td><td class="mdescRight"><em>NOT IMPLEMENTED</em> get the roll, pitch and yaw of the device  <br /></td></tr>
 <tr class="memitem:aa2bd55590e79e13cfa85c677640d71a9" id="r_aa2bd55590e79e13cfa85c677640d71a9"><td class="memItemLeft">boolean&#160;</td><td class="memItemRight"><a class="el" href="#aa2bd55590e79e13cfa85c677640d71a9">isButtonDown</a> (int buttonNumber=0)</td></tr>
 <tr class="memdesc:aa2bd55590e79e13cfa85c677640d71a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">check if button is down  <br /></td></tr>
 <tr class="memitem:a7773e0b5ac46e46550554de3cd983871" id="r_a7773e0b5ac46e46550554de3cd983871"><td class="memItemLeft">boolean&#160;</td><td class="memItemRight"><a class="el" href="#a7773e0b5ac46e46550554de3cd983871">isKeyDown</a> (string unicodeChar)</td></tr>
@@ -145,13 +145,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a91457baa200ee63cd1029217de073f9a" id="r_a91457baa200ee63cd1029217de073f9a"><td class="memItemLeft">boolean&#160;</td><td class="memItemRight"><a class="el" href="#a91457baa200ee63cd1029217de073f9a">isRawKeyDown</a> (int keyCode)</td></tr>
 <tr class="memdesc:a91457baa200ee63cd1029217de073f9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">check if a key is down  <br /></td></tr>
 <tr class="inherit_header pub_methods_classpdg_1_1_event_emitter"><td colspan="2">Public Member Functions inherited from <a class="el" href="classpdg_1_1_event_emitter.html">EventEmitter</a></td></tr>
-<tr class="memitem:a1a8637e4144d64c8093ad39412de4a0c pub_methods_classpdg_1_1_event_emitter" id="r_a1a8637e4144d64c8093ad39412de4a0c"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_event_emitter.html#a1a8637e4144d64c8093ad39412de4a0c">addHandler</a> (<a class="el" href="group___events.html#classpdg_1_1_i_event_handler">IEventHandler</a> inHandler, int inEventType=<a class="el" href="group___events.html#gaaf50a52ec4d1157cbfcfae7d3f98b4cc">all_events</a>)</td></tr>
+<tr class="memitem:a1b064cb939c42c4886307e43ed070a18 pub_methods_classpdg_1_1_event_emitter" id="r_a1b064cb939c42c4886307e43ed070a18"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_event_emitter.html#a1b064cb939c42c4886307e43ed070a18">EventEmitter</a> ()</td></tr>
+<tr class="memitem:a1a8637e4144d64c8093ad39412de4a0c pub_methods_classpdg_1_1_event_emitter" id="r_a1a8637e4144d64c8093ad39412de4a0c"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_event_emitter.html#a1a8637e4144d64c8093ad39412de4a0c">addHandler</a> (<a class="el" href="classpdg_1_1_i_event_handler.html">IEventHandler</a> inHandler, int inEventType=<a class="el" href="group___events.html#gaaf50a52ec4d1157cbfcfae7d3f98b4cc">all_events</a>)</td></tr>
 <tr class="memdesc:a1a8637e4144d64c8093ad39412de4a0c pub_methods_classpdg_1_1_event_emitter"><td class="mdescLeft">&#160;</td><td class="mdescRight">add a new handler for some event type, or for all events if no type specified.  <br /></td></tr>
 <tr class="memitem:aba429c2b717331bb7e04dd9b923a55f4 pub_methods_classpdg_1_1_event_emitter" id="r_aba429c2b717331bb7e04dd9b923a55f4"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_event_emitter.html#aba429c2b717331bb7e04dd9b923a55f4">blockEvent</a> (int inEventType)</td></tr>
 <tr class="memdesc:aba429c2b717331bb7e04dd9b923a55f4 pub_methods_classpdg_1_1_event_emitter"><td class="mdescLeft">&#160;</td><td class="mdescRight">temporarily ignore all events of a particular type.  <br /></td></tr>
 <tr class="memitem:aa821bec12eaa7e0f649397c9675ff505 pub_methods_classpdg_1_1_event_emitter" id="r_aa821bec12eaa7e0f649397c9675ff505"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_event_emitter.html#aa821bec12eaa7e0f649397c9675ff505">clear</a> ()</td></tr>
 <tr class="memdesc:aa821bec12eaa7e0f649397c9675ff505 pub_methods_classpdg_1_1_event_emitter"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove all handlers  <br /></td></tr>
-<tr class="memitem:ae2aec6b415d052c4f9f8db6be8adcbe7 pub_methods_classpdg_1_1_event_emitter" id="r_ae2aec6b415d052c4f9f8db6be8adcbe7"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_event_emitter.html#ae2aec6b415d052c4f9f8db6be8adcbe7">removeHandler</a> (<a class="el" href="group___events.html#classpdg_1_1_i_event_handler">IEventHandler</a> inHandler, int inEventType=<a class="el" href="group___events.html#gaaf50a52ec4d1157cbfcfae7d3f98b4cc">all_events</a>)</td></tr>
+<tr class="memitem:ae2aec6b415d052c4f9f8db6be8adcbe7 pub_methods_classpdg_1_1_event_emitter" id="r_ae2aec6b415d052c4f9f8db6be8adcbe7"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_event_emitter.html#ae2aec6b415d052c4f9f8db6be8adcbe7">removeHandler</a> (<a class="el" href="classpdg_1_1_i_event_handler.html">IEventHandler</a> inHandler, int inEventType=<a class="el" href="group___events.html#gaaf50a52ec4d1157cbfcfae7d3f98b4cc">all_events</a>)</td></tr>
 <tr class="memdesc:ae2aec6b415d052c4f9f8db6be8adcbe7 pub_methods_classpdg_1_1_event_emitter"><td class="mdescLeft">&#160;</td><td class="mdescRight">remove a handler for some event type, or for all events (see note) if no type specified.  <br /></td></tr>
 <tr class="memitem:ae23a415d502f48861eae1939744fe46b pub_methods_classpdg_1_1_event_emitter" id="r_ae23a415d502f48861eae1939744fe46b"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_event_emitter.html#ae23a415d502f48861eae1939744fe46b">unblockEvent</a> (int inEventType)</td></tr>
 <tr class="memdesc:ae23a415d502f48861eae1939744fe46b pub_methods_classpdg_1_1_event_emitter"><td class="mdescLeft">&#160;</td><td class="mdescRight">stop ignoring events of a particular type  <br /></td></tr>
@@ -168,17 +169,17 @@ Related Symbols</h2></td></tr>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Distributes events to event handlers. </p>
 <dl class="section note"><dt>Note</dt><dd><b>API Stability: 3 — Stable</b>. This public contract is established. Compatible changes are expected; intentional breaking changes require an announced breaking release and migration guidance. See <a class="el" href="index.html#api_stability" title="API stability">API stability</a>.</dd></dl>
-<p>The <a class="el" href="classpdg_1_1_event_manager.html" title="Distributes events to event handlers.">EventManager</a> is the core ofthe Pixel Dust Games Framework. All inputs to your game arrive as events via the Event Manager. This includes network messages and system level notifications in addition to user inputs such as keystrokes and mouse movements.</p>
-<p>The <a class="el" href="classpdg_1_1_event_manager.html" title="Distributes events to event handlers.">EventManager</a> expects the game developer to implement <a class="el" href="group___events.html#classpdg_1_1_i_event_handler" title="Interface for any class which handles events.">IEventHandler</a> subclasses and register them to handle various events they are interested in. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="group___events.html#classpdg_1_1_i_event_handler" title="Interface for any class which handles events.">IEventHandler</a> </dd></dl>
+<p>The <a class="el" href="classpdg_1_1_event_manager.html" title="Distributes events to event handlers.">EventManager</a> is the core ofthe Pixel Dust Games Framework. All inputs to your game arrive as events via the <a class="el" href="group___structured_data_types.html#structpdg_1_1_event" title="Event.">Event</a> Manager. This includes network messages and system level notifications in addition to user inputs such as keystrokes and mouse movements.</p>
+<p>The <a class="el" href="classpdg_1_1_event_manager.html" title="Distributes events to event handlers.">EventManager</a> expects the game developer to implement <a class="el" href="classpdg_1_1_i_event_handler.html" title="Interface for any class which handles events.">IEventHandler</a> subclasses and register them to handle various events they are interested in. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="classpdg_1_1_i_event_handler.html" title="Interface for any class which handles events.">IEventHandler</a> </dd></dl>
 </div><a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Member Function Documentation</h2>
-<a id="a26ebaf3859a5d97438ae01d492209630" name="a26ebaf3859a5d97438ae01d492209630"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a26ebaf3859a5d97438ae01d492209630">&#9670;&#160;</a></span>getDeviceOrientation()</h2>
+<a id="a06e88b00d64484ee52dd6a23464173a4" name="a06e88b00d64484ee52dd6a23464173a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a06e88b00d64484ee52dd6a23464173a4">&#9670;&#160;</a></span>getDeviceOrientation()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">object getDeviceOrientation </td>
+          <td class="memname"><a class="el" href="group___structured_data_types.html#structpdg_1_1_device_orientation">DeviceOrientation</a> getDeviceOrientation </td>
           <td>(</td>
           <td class="paramtype">boolean</td>          <td class="paramname"><span class="paramname"><em>absolute</em></span><span class="paramdefsep"> = </span><span class="paramdefval">false</span></td><td>)</td>
           <td></td>
@@ -242,7 +243,7 @@ Related Symbols</h2></td></tr>
 </div><div class="memdoc">
 
 <p>check if a key is down </p>
-<p>Check the state of a particular key as passed in a string. The string should be a single character that matches the value returned in KeyPressEvent.unicode for the desired key. If the string passed has multiple characters, only the first character will be used. This form of the call is typically used for printable characters.</p>
+<p>Check the state of a particular key as passed in a string. The string should be a single character that matches the value returned in <a class="el" href="group___structured_data_types.html#aec4ab2bbe3f70222be00f90f73dc4f73" title="unicode Type: number. Required.">KeyPressEvent.unicode</a> for the desired key. If the string passed has multiple characters, only the first character will be used. This form of the call is typically used for printable characters.</p>
 <div class="fragment"><div class="line">var eKeyDown = <a class="code hl_namespace" href="namespacepdg.html">pdg</a>.evt.isKeyDown(<span class="charliteral">&#39;E&#39;</span>);</div>
 <div class="ttc" id="anamespacepdg_html"><div class="ttname"><a href="namespacepdg.html">pdg</a></div><div class="ttdef"><b>Definition</b> pdg-js.h:5</div></div>
 </div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
@@ -252,7 +253,7 @@ Related Symbols</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if the key is pressed, or false if not</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="group___events.html#structpdg_1_1_key_press_event" title="the user pressed and released a key">KeyPressEvent</a> </dd>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group___structured_data_types.html#structpdg_1_1_key_press_event" title="KeyPressEvent.">KeyPressEvent</a> </dd>
 <dd>
 <a class="el" href="group___key_codes.html" title="Constants that represent special key codes.">Key Code Constants</a> </dd></dl>
 
@@ -274,7 +275,7 @@ Related Symbols</h2></td></tr>
 </div><div class="memdoc">
 
 <p>check if a key is down </p>
-<p>Check the state of a particular key as passed as a UTF-16 character code value. This code matches the value returned in KeyPressEvent.unicode for the desired key. This is the form that would be used for non-printable codes such as key_UpArrow, key_Enter, etc...</p>
+<p>Check the state of a particular key as passed as a UTF-16 character code value. This code matches the value returned in <a class="el" href="group___structured_data_types.html#aec4ab2bbe3f70222be00f90f73dc4f73" title="unicode Type: number. Required.">KeyPressEvent.unicode</a> for the desired key. This is the form that would be used for non-printable codes such as key_UpArrow, key_Enter, etc...</p>
 <div class="fragment"><div class="line">var upKeyPressed = <a class="code hl_namespace" href="namespacepdg.html">pdg</a>.evt.isKeyDown(<a class="code hl_namespace" href="namespacepdg.html">pdg</a>.key_UpArrow);</div>
 </div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -283,7 +284,7 @@ Related Symbols</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if the key is pressed, or false if not</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="group___events.html#structpdg_1_1_key_press_event" title="the user pressed and released a key">KeyPressEvent</a> </dd>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group___structured_data_types.html#structpdg_1_1_key_press_event" title="KeyPressEvent.">KeyPressEvent</a> </dd>
 <dd>
 <a class="el" href="group___key_codes.html" title="Constants that represent special key codes.">Key Code Constants</a> </dd></dl>
 
@@ -305,7 +306,7 @@ Related Symbols</h2></td></tr>
 </div><div class="memdoc">
 
 <p>check if a key is down </p>
-<p>Check the state of a particular key as passed as raw OS/hardware specific value. This code matches the value returned in KeyEvent.keyCode for the desired key. Since the keyCode values usually won't be known ahead of time, this is mainly useful when your app gives the user the ability to custom map keys to particular functions.</p>
+<p>Check the state of a particular key as passed as raw OS/hardware specific value. This code matches the value returned in <a class="el" href="group___structured_data_types.html#ad34a44a2ec60fef355a1d6812987963b" title="keyCode Type: number. Required.">KeyEvent.keyCode</a> for the desired key. Since the keyCode values usually won't be known ahead of time, this is mainly useful when your app gives the user the ability to custom map keys to particular functions.</p>
 <div class="fragment"><div class="line">var mappedKeyValue = <span class="keyword">event</span>.keyCode;  <span class="comment">// save the user&#39;s key mapping</span></div>
 <div class="line">...</div>
 <div class="line"><span class="comment">// check to see if the key the user mapped is pressed</span></div>
@@ -317,7 +318,7 @@ Related Symbols</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if the key is pressed, or false if not</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="group___events.html#structpdg_1_1_key_event" title="a key down or up event">KeyEvent</a> </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="group___structured_data_types.html#structpdg_1_1_key_event" title="KeyEvent.">KeyEvent</a> </dd></dl>
 
 </div>
 </div>

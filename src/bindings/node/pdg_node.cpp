@@ -63,6 +63,26 @@
 #include <signal.h>
 #include <cstdio>
 
+#ifdef PDG_USE_WEBTRANSPORT
+#include "webtransport/pdg_webtransport.h"
+static void webTransportCommand(const v8::FunctionCallbackInfo<v8::Value>& args) {
+    auto* isolate=args.GetIsolate();
+    if(args.Length()!=1 || !args[0]->IsString()) {
+        isolate->ThrowException(v8::Exception::TypeError(v8::String::NewFromUtf8Literal(isolate,"Expected a WebTransport JSON request")));return;
+    }
+    v8::String::Utf8Value request(isolate,args[0]);
+    char* result=pdg_wt_command(*request);
+    auto value=v8::String::NewFromUtf8(isolate,result?result:"null").ToLocalChecked();
+    pdg_wt_free(result);args.GetReturnValue().Set(value);
+}
+static void installWebTransport(v8::Local<v8::Object> exports) {
+    auto* isolate=v8::Isolate::GetCurrent();auto context=isolate->GetCurrentContext();
+    exports->Set(context,v8::String::NewFromUtf8Literal(isolate,"_webTransportCommand"),v8::Function::New(context,webTransportCommand).ToLocalChecked()).Check();
+}
+#else
+static void installWebTransport(v8::Local<v8::Object>) {}
+#endif
+
 // Linux-specific headers
 #ifndef _WIN32
 #include <execinfo.h>
@@ -91,6 +111,7 @@ extern "C" const char* cpVersionString;
 #endif
 
 static void cleanupPdgModule(void*) {
+    pdg::ClearAnimationEvaluatorCallbacks();
     // These sentinels outlive the Node environment. Release their JavaScript
     // handles while V8 is alive, before the process runs static destructors.
     pdg::Collider::NoCollider.mColliderScriptObj.Reset();
@@ -249,7 +270,8 @@ void pdg::setupCppBindings(v8::Local<v8::Object> process) {
               << exports->GetPropertyNames(isolate->GetCurrentContext()).ToLocalChecked()->Length() << " properties" << std::endl;
 #endif
     
-    pdg::initBindings(exports); // pdg C++ module init
+    pdg::initBindings(exports);
+    installWebTransport(exports); // pdg C++ module init
     
 #ifdef WANT_DEBUG_LOG
     v8::Local<v8::Array> prop_names = exports->GetPropertyNames(isolate->GetCurrentContext()).ToLocalChecked();
@@ -574,6 +596,7 @@ void pdg::installIntoNodeApplication(node::Environment* env) {
                           << prop_names_before->Length() << " properties" << std::endl;
 #endif
                 pdg::initBindings(exports);
+    installWebTransport(exports);
 #ifdef WANT_VERBOSE_DEBUG_LOG
                 v8::Local<v8::Array> prop_names_after = exports->GetPropertyNames(context).ToLocalChecked();
                 std::cerr << "[PDG] C++ register_func(" << native_name << "): After initBindings - exports has " 
@@ -1293,6 +1316,7 @@ static void initializePdgModule(v8::Local<v8::Object> exports,
     pdg::addProcessVersionsAddon(); // set up the version flags
     pdg_LibInit();
     pdg::initBindings(exports);
+    installWebTransport(exports);
     
     // Also set up process.pdg for addon mode compatibility
     v8::Isolate* isolate = context->GetIsolate();

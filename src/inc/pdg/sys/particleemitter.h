@@ -27,7 +27,10 @@ public:
     bool hasParticleTemplate() const { return bool(mTemplate); }
     ParticleEmitter& setEmissionRate(double particlesPerSecond);
     double getEmissionRate() const { return mRate; }
-    ParticleEmitter& setParticleSpeed(double speed) { return setParticleSpeed(speed, speed); }
+    ParticleEmitter& setParticleSpeed(double speed) {
+        if(recordOperation("setParticleSpeed", captureAnimationArguments(speed))) return *this;
+        return setParticleSpeed(speed, speed);
+    }
     ParticleEmitter& setParticleSpeed(double minimum, double maximum);
     double getMinParticleSpeed() const { return mMinSpeed; }
     double getMaxParticleSpeed() const { return mMaxSpeed; }

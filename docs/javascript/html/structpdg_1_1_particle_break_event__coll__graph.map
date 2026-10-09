@@ -1,0 +1,8 @@
+<map id="ParticleBreakEvent" name="ParticleBreakEvent">
+<area shape="rect" id="Node000001" title="ParticleBreakEvent." alt="" coords="142,122,276,148"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_physics_body.html" title="Optional physical motion for a Sprite or Part, using seconds." alt="" coords="5,5,104,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="74,41,102,69,133,96,179,121,173,122,130,101,98,73,73,46"/>
+<area shape="poly" id="edge2_Node000002_Node000002" title=" " alt="" coords="118,7,127,11,130,19,122,28,105,31,103,27,120,24,125,18,123,15,119,12"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="223,5,320,31"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="261,44,218,124,214,120,256,46"/>
+</map>

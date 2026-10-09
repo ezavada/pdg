@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "strict": true,
+    "declaration": true,
+    "sourceMap": true,
+    "skipLibCheck": false,
+    "outDir": "../../../build/typescript/mvc-app",
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "types": [],
+    "noEmitOnError": true,
+    "useDefineForClassFields": false,
+    "typeRoots": [
+      "../../../tools/typescript/node_modules/@types"
+    ]
+  },
+  "include": [
+    "*.ts"
+  ]
+}

@@ -1,7 +1,8 @@
 <map id="Graphics" name="Graphics">
-<area shape="rect" id="Node000003" href="$group___animation.html" title="Things related to animation." alt="" coords="290,178,370,204"/>
-<area shape="rect" id="Node000005" href="$group___events.html" title="Things used to notify your code of user input or other significant events." alt="" coords="299,239,361,265"/>
-<area shape="rect" id="Node000001" title="Things related to drawing graphics on screen." alt="" coords="5,301,79,326"/>
-<area shape="rect" id="Node000004" href="$group___managers.html" title="The main points of interface to the Pixel Dust Game Framework." alt="" coords="291,301,369,326"/>
-<area shape="rect" id="Node000002" href="$group___sprites.html" title="Sprite and tile layers, drawing helpers, and collision helpers." alt="" coords="267,387,393,413"/>
+<area shape="rect" id="Node000003" href="$group___animation.html" title="Things related to animation." alt="" coords="303,196,382,221"/>
+<area shape="rect" id="Node000006" href="$group___events.html" title="Things used to notify your code of user input or other significant events." alt="" coords="312,257,374,283"/>
+<area shape="rect" id="Node000001" title="Things related to drawing graphics on screen." alt="" coords="5,341,79,367"/>
+<area shape="rect" id="Node000004" href="$group___managers.html" title="The main points of interface to the Pixel Dust Game Framework." alt="" coords="304,318,382,344"/>
+<area shape="rect" id="Node000002" href="$group___sprites.html" title="Sprite and tile layers, drawing helpers, and collision helpers." alt="" coords="280,402,406,428"/>
+<area shape="rect" id="Node000005" href="$group___structured_data_types.html" title="Data records, options, event payloads, and value types used by the JavaScript API." alt="" coords="267,488,419,513"/>
 </map>

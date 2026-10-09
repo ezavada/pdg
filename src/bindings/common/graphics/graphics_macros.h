@@ -3,6 +3,7 @@
 #define ATTRIBUTES_ELSE %#else
 #define ATTRIBUTES_ENDIF %#endif
 #define IMAGE_METHODS(klass)  \
+    METHODS_FROM(klass, Image, \
   PROPERTY(klass, TransparentColor) CR \
   PROPERTY(klass, Opacity)  		 CR \
   METHOD(klass, GetWidth)  		 CR \
@@ -14,10 +15,12 @@
   METHOD(klass, RetainAlpha)  		 CR \
   METHOD(klass, PrepareToRasterize) CR \
   METHOD(klass, GetAlphaValue)  	 CR \
-  METHOD(klass, GetPixel)
+  METHOD(klass, GetPixel) \
+    )
 
 
 #define ATTRIBUTES_METHODS(klass) \
+    METHODS_FROM(klass, Attributes, \
     METHOD(klass, WithAppearance) CR \
   METHOD(klass, LineColor) CR \
   METHOD(klass, LineThickness) CR \
@@ -80,7 +83,8 @@ ATTRIBUTES_ENDIF CR \
   METHOD(klass, GetPolarOffset) CR \
   METHOD(klass, GetLightOffset) CR \
   METHOD(klass, GetAmbientLight) CR \
-  METHOD(klass, GetTexture)
+  METHOD(klass, GetTexture) \
+    )
 
 #define REQUIRE_ATTRIBUTES_ARG(n, name) CR \
     Attributes* name = ExtractAttributes(ARGV[n-1]); CR \

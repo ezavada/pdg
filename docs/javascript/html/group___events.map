@@ -1,9 +1,10 @@
 <map id="Events" name="Events">
-<area shape="rect" id="Node000006" href="$group___animation.html" title="Things related to animation." alt="" coords="255,28,334,53"/>
-<area shape="rect" id="Node000001" title="Things used to notify your code of user input or other significant events." alt="" coords="5,189,68,215"/>
-<area shape="rect" id="Node000004" href="$group___graphics.html" title="Things related to drawing graphics on screen." alt="" coords="258,89,332,115"/>
-<area shape="rect" id="Node000003" href="$group___managers.html" title="The main points of interface to the Pixel Dust Game Framework." alt="" coords="256,150,334,176"/>
-<area shape="rect" id="Node000002" href="$group___physics.html" title="Things used for handling physics simulation." alt="" coords="261,225,329,251"/>
-<area shape="rect" id="Node000005" href="$group___sound.html" title="Things used for audio (sound and music)." alt="" coords="266,274,324,300"/>
-<area shape="rect" id="Node000007" href="$group___sprites.html" title="Sprite and tile layers, drawing helpers, and collision helpers." alt="" coords="232,334,358,360"/>
+<area shape="rect" id="Node000007" href="$group___animation.html" title="Things related to animation." alt="" coords="304,35,384,60"/>
+<area shape="rect" id="Node000001" title="Things used to notify your code of user input or other significant events." alt="" coords="5,233,68,259"/>
+<area shape="rect" id="Node000005" href="$group___graphics.html" title="Things related to drawing graphics on screen." alt="" coords="307,96,380,122"/>
+<area shape="rect" id="Node000004" href="$group___managers.html" title="The main points of interface to the Pixel Dust Game Framework." alt="" coords="305,157,383,183"/>
+<area shape="rect" id="Node000003" href="$group___physics.html" title="Things used for handling physics simulation." alt="" coords="310,232,378,258"/>
+<area shape="rect" id="Node000006" href="$group___sound.html" title="Things used for audio (sound and music)." alt="" coords="315,281,373,307"/>
+<area shape="rect" id="Node000008" href="$group___sprites.html" title="Sprite and tile layers, drawing helpers, and collision helpers." alt="" coords="281,340,407,366"/>
+<area shape="rect" id="Node000002" href="$group___structured_data_types.html" title="Data records, options, event payloads, and value types used by the JavaScript API." alt="" coords="268,581,420,607"/>
 </map>

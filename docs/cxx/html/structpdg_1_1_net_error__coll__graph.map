@@ -1,0 +1,10 @@
+<map id="NetError" name="NetError">
+<area shape="rect" id="Node000001" title=" " alt="" coords="42,291,112,317"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="50,80,104,106"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="74,118,71,177,71,220,78,291,73,291,65,220,65,177,72,123"/>
+<area shape="rect" id="Node000004" href="$structpdg_1_1_net_endpoint.html" title=" " alt="" coords="141,186,234,212"/>
+<area shape="poly" id="edge4_Node000004_Node000002" title=" " alt="" coords="101,114,177,184,172,186,100,119"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,5,149,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="77,44,80,80,74,80,77,49"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="167,223,92,293,88,289,162,221"/>
+</map>

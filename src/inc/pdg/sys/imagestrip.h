@@ -62,8 +62,11 @@ class Port;
 class ImageStrip : public Image {
     friend class Sprite;
 public:
+    ImageStrip& setTransparentColor(Color rgb) override = 0;
+    ImageStrip& setOpacity(uint8 opacity) override = 0;
+    ImageStrip& setEdgeClamping(bool inUseEdgeClamp) override = 0;
 
-	virtual long	getWidth();
+	virtual long getWidth() override;
 
 	long    getFrameWidth();
 	int     getNumFrames();
@@ -74,8 +77,8 @@ public:
 
 	//! convenient shortcuts to get the bounds of the image as a rectangle, offset by a point if desired
 	//! if the image has multiple frames, it returns the bounds as the frame width, not the total width
-	virtual Rect getImageBounds();
-	virtual Rect getImageBounds( Point& at );
+	virtual Rect getImageBounds() override;
+	virtual Rect getImageBounds( Point& at ) override;
 
 	//! return a frame of the image an image which can be passed to port draw calls
 	virtual Image*  getFrame(int frame) = 0;

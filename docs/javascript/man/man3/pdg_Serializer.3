@@ -1,4 +1,4 @@
-.TH "Serializer" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Serializer" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -12,6 +12,9 @@ Serializer \- serialize data into memory
 .SS "Public Member Functions"
 
 .in +1c
+.ti -1c
+.RI "\fBSerializer\fP ()"
+.br
 .ti -1c
 .RI "\fBMemBlock\fP \fBgetDataPtr\fP ()"
 .br
@@ -69,6 +72,12 @@ Serializer \- serialize data into memory
 .br
 .RI "serialize a \fBColor\fP "
 .ti -1c
+.RI "\fBserialize_color\fP (number rgba)"
+.br
+.ti -1c
+.RI "\fBserialize_color\fP (string colorName)"
+.br
+.ti -1c
 .RI "\fBserialize_d\fP (number val)"
 .br
 .RI "serialize a double precision floating point number "
@@ -77,13 +86,13 @@ Serializer \- serialize data into memory
 .br
 .RI "serialize a single precision floating point number "
 .ti -1c
-.RI "\fBserialize_mem\fP (BinaryString mem)"
-.br
-.RI "serialize a binary string "
-.ti -1c
 .RI "\fBserialize_mem\fP (\fBMemBlock\fP mem)"
 .br
 .RI "serialize a block of memory "
+.ti -1c
+.RI "\fBserialize_mem\fP (Uint8Array mem)"
+.br
+.RI "Serialize bytes from a Uint8Array\&. "
 .ti -1c
 .RI "\fBserialize_obj\fP (\fBISerializable\fP obj)"
 .br
@@ -173,6 +182,12 @@ Serializer \- serialize data into memory
 .br
 .RI "get the number of bytes used to serialize the given \fBColor\fP "
 .ti -1c
+.RI "uint \fBsizeof_color\fP (number rgba)"
+.br
+.ti -1c
+.RI "uint \fBsizeof_color\fP (string colorName)"
+.br
+.ti -1c
 .RI "uint \fBsizeof_d\fP (number val)"
 .br
 .RI "Calculate the number of bytes needed to serialize a double-precision floating point number\&. "
@@ -181,13 +196,13 @@ Serializer \- serialize data into memory
 .br
 .RI "Calculate the number of bytes needed to serialize a single-precision floating point number\&. "
 .ti -1c
-.RI "uint \fBsizeof_mem\fP (BinaryString mem)"
-.br
-.RI "Calculate the number of bytes needed to serialize a BinaryString object\&. "
-.ti -1c
 .RI "uint \fBsizeof_mem\fP (\fBMemBlock\fP mem)"
 .br
 .RI "Calculate the number of bytes needed to serialize a \fBMemBlock\fP object\&. "
+.ti -1c
+.RI "uint \fBsizeof_mem\fP (Uint8Array mem)"
+.br
+.RI "Calculate the number of bytes needed to serialize a Uint8Array object\&. "
 .ti -1c
 .RI "uint \fBsizeof_obj\fP (\fBISerializable\fP obj)"
 .br
@@ -270,6 +285,12 @@ The data stream format is platform neutral, so it is suitable for saved game fil
 .RE
 .PP
 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "Serializer ()"
+
+.PP
+Referenced by \fBsetResourceMode()\fP\&.
 .SH "Member Function Documentation"
 .PP 
 .SS "\fBMemBlock\fP getDataPtr ()"
@@ -554,7 +575,7 @@ serializedSize(bool)
 .SS "serialize_color (\fBColor\fP val)"
 
 .PP
-serialize a \fBColor\fP Write a \fBColor\fP's RBGA values into the data stream\&.
+serialize a \fBColor\fP Write a \fBColor\fP's RGBA values into the data stream\&. Also accepts a CSS color string or a packed RGBA number\&.
 
 .PP
 \fBWarning\fP
@@ -564,17 +585,21 @@ the \fBColor\fP is written as a 24 (no alpha channel) or 32 bit color (with alph
 .PP
 \fBNote\fP
 .RS 4
-data size: varies, call serializedSize(Color) to determine
+data size: varies, call \fBsizeof_color(Color)\fP to determine
 .RE
 .PP
 \fBSee also\fP
 .RS 4
-serializedSize(Color) 
+\fBsizeof_color(Color)\fP 
 
 .PP
 \fBDeserializer\&.deserialize_color()\fP 
 .RE
 .PP
+
+.SS "serialize_color (number rgba)"
+
+.SS "serialize_color (string colorName)"
 
 .SS "serialize_d (number val)"
 
@@ -620,29 +645,6 @@ data size: 4 bytes (IEEE 754-2008 binary32 format)
 .RE
 .PP
 
-.SS "serialize_mem (BinaryString mem)"
-
-.PP
-serialize a binary string Binary strings are a Node\&.js way of handling blocks of arbitrary binary data\&. This serializes that data into the stream\&.
-
-.PP
-\fBNote\fP
-.RS 4
-data size: varies, call serializedSize(MemBlock) to determine\&. Because binary strings used 2 bytes for each actual byte stored, the serialized data takes less memory than the original string\&.
-.RE
-.PP
-\fBSee also\fP
-.RS 4
-\fBserialize_mem(MemBlock)\fP 
-
-.PP
-serializedSize(MemBlock) 
-
-.PP
-\fBDeserializer\&.deserialize_mem\fP 
-.RE
-.PP
-
 .SS "serialize_mem (\fBMemBlock\fP mem)"
 
 .PP
@@ -660,6 +662,25 @@ serializedSize(MemBlock)
 
 .PP
 \fBDeserializer\&.deserialize_mem\fP 
+.RE
+.PP
+
+.SS "serialize_mem (Uint8Array mem)"
+
+.PP
+Serialize bytes from a Uint8Array\&. Node Buffer is also accepted\&. Only the view's bytes are serialized, respecting byteOffset and byteLength\&. The bytes are copied into serializer storage during this call; later source changes do not affect the stream\&. Strings and other typed-array element types are rejected\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fImem\fP The Uint8Array to serialize\&. 
+.RE
+.PP
+\fBSee also\fP
+.RS 4
+\fBserialize_mem(MemBlock)\fP 
+
+.PP
+\fBsizeof_mem(Uint8Array)\fP 
 .RE
 .PP
 
@@ -931,6 +952,8 @@ const saved = writer\&.getDataPtr();
 .RE
 .PP
 
+.PP
+References \fBSerializer()\fP\&.
 .SS "uint sizeof_1 (int val)"
 
 .PP
@@ -1006,6 +1029,10 @@ the number of bytes needed (3-5)
 .RE
 .PP
 
+.SS "uint sizeof_color (number rgba)"
+
+.SS "uint sizeof_color (string colorName)"
+
 .SS "uint sizeof_d (number val)"
 
 .PP
@@ -1014,18 +1041,22 @@ Calculate the number of bytes needed to serialize a double-precision floating po
 
 .PP
 Calculate the number of bytes needed to serialize a single-precision floating point number\&. 
-.SS "uint sizeof_mem (BinaryString mem)"
+.SS "uint sizeof_mem (\fBMemBlock\fP mem)"
 
 .PP
-Calculate the number of bytes needed to serialize a BinaryString object\&. This function calculates the total number of bytes that would be required to serialize a BinaryString object using the serializer\&. This is useful for determining buffer sizes needed for serialization operations\&.
+Calculate the number of bytes needed to serialize a \fBMemBlock\fP object\&. 
+.SS "uint sizeof_mem (Uint8Array mem)"
+
+.PP
+Calculate the number of bytes needed to serialize a Uint8Array object\&. This function calculates the total number of bytes that would be required to serialize a Uint8Array object using the serializer\&. This is useful for determining buffer sizes needed for serialization operations\&.
 
 .PP
 \fBParameters\fP
 .RS 4
-\fImem\fP The BinaryString object to calculate the serialization size for
+\fImem\fP The Uint8Array object to calculate the serialization size for
 .RE
 .PP
-The function returns the exact number of bytes that would be written to the serialization stream when serializing the given BinaryString\&. This includes any overhead for type information and length prefixes\&.
+The function returns the exact number of bytes that would be written to the serialization stream when serializing the given Uint8Array\&. This includes any overhead for type information and length prefixes\&.
 
 .PP
 This is particularly useful when you need to pre-allocate buffers for serialization or when implementing custom serialization logic that needs to know the exact size requirements\&.
@@ -1033,7 +1064,7 @@ This is particularly useful when you need to pre-allocate buffers for serializat
 .PP
 \fBReturns\fP
 .RS 4
-The number of bytes required to serialize the BinaryString
+The number of bytes required to serialize the Uint8Array
 .RE
 .PP
 \fBNote\fP
@@ -1052,14 +1083,10 @@ This is a calculation function and does not actually perform serialization
 \fBSerializer::sizeof_mem(MemBlock)\fP 
 
 .PP
-BinaryString 
+\fBMemBlock\fP 
 .RE
 .PP
 
-.SS "uint sizeof_mem (\fBMemBlock\fP mem)"
-
-.PP
-Calculate the number of bytes needed to serialize a \fBMemBlock\fP object\&. 
 .SS "uint sizeof_obj (\fBISerializable\fP obj)"
 
 .PP

@@ -26,7 +26,7 @@
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="titlearea">
    <div id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></div>
-   <div id="projectname">PDG <span id="projectnumber">engine v1.1.1</span>
+   <div id="projectname">PDG <span id="projectnumber">engine v1.2.0</span>
    </div>
 </div>
 <!-- end header part -->
@@ -123,6 +123,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:af65fa9613424ba3843a8cd142f93cf23"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the control point at the specified index  <br /></td></tr>
 <tr class="memitem:a752f7ce344c6bc9dc8c594d8f31d6a22" id="r_a752f7ce344c6bc9dc8c594d8f31d6a22"><td class="memItemLeft">array&#160;</td><td class="memItemRight"><a class="el" href="#a752f7ce344c6bc9dc8c594d8f31d6a22">getControlPoints</a> ()</td></tr>
 <tr class="memdesc:a752f7ce344c6bc9dc8c594d8f31d6a22"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns all control points of the element  <br /></td></tr>
+<tr class="memitem:a787a8b4145449843adff9e020d9a4ffb" id="r_a787a8b4145449843adff9e020d9a4ffb"><td class="memItemLeft">string&#160;</td><td class="memItemRight"><a class="el" href="#a787a8b4145449843adff9e020d9a4ffb">getText</a> ()</td></tr>
+<tr class="memdesc:a787a8b4145449843adff9e020d9a4ffb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current text of a text element.  <br /></td></tr>
 <tr class="memitem:a35872c2456e81bbb721e3e83e0486cca" id="r_a35872c2456e81bbb721e3e83e0486cca"><td class="memItemLeft">boolean&#160;</td><td class="memItemRight"><a class="el" href="#a35872c2456e81bbb721e3e83e0486cca">hasLiveAttributes</a> ()</td></tr>
 <tr class="memdesc:a35872c2456e81bbb721e3e83e0486cca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Test whether this element holds a live sample association.  <br /></td></tr>
 <tr class="memitem:acc0db2cd57e2a3cadcd0642227d4de51" id="r_acc0db2cd57e2a3cadcd0642227d4de51"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#acc0db2cd57e2a3cadcd0642227d4de51">moveBackward</a> ()</td></tr>
@@ -139,6 +141,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a7633700b3a47743376d88cf4af40c5f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the attributes of the element  <br /></td></tr>
 <tr class="memitem:ab0e50125721249a91d8d9d652e0f7766" id="r_ab0e50125721249a91d8d9d652e0f7766"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#ab0e50125721249a91d8d9d652e0f7766">setLiveAttributes</a> (<a class="el" href="classpdg_1_1_attributes.html">Attributes</a> attrs)</td></tr>
 <tr class="memdesc:ab0e50125721249a91d8d9d652e0f7766"><td class="mdescLeft">&#160;</td><td class="mdescRight">Associate an element with a live <a class="el" href="classpdg_1_1_attributes.html" title="Container for styling and transformation attributes used in drawing operations.">Attributes</a> or <a class="el" href="classpdg_1_1_animated_attributes.html" title="Drawing attributes with programmed movement and appearance animation.">AnimatedAttributes</a> source.  <br /></td></tr>
+<tr class="memitem:a6488b77784170bfed41262ac8954ecff" id="r_a6488b77784170bfed41262ac8954ecff"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="#a6488b77784170bfed41262ac8954ecff">setText</a> (string text)</td></tr>
+<tr class="memdesc:a6488b77784170bfed41262ac8954ecff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replace a text element's text while retaining its rectangle and styling.  <br /></td></tr>
 <tr class="memitem:a2efad4dffc86b8e7e835a21b0201c0e5" id="r_a2efad4dffc86b8e7e835a21b0201c0e5"><td class="memItemLeft">uint&#160;</td><td class="memItemRight"><a class="el" href="#a2efad4dffc86b8e7e835a21b0201c0e5">type</a> ()</td></tr>
 <tr class="memdesc:a2efad4dffc86b8e7e835a21b0201c0e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the type of the element  <br /></td></tr>
 </table>
@@ -245,6 +249,27 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>returns all control points of the element </p>
+
+</div>
+</div>
+<a id="a787a8b4145449843adff9e020d9a4ffb" name="a787a8b4145449843adff9e020d9a4ffb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a787a8b4145449843adff9e020d9a4ffb">&#9670;&#160;</a></span>getText()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">string getText </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the current text of a text element. </p>
+<dl class="section return"><dt>Returns</dt><dd>The text string. Throws for a non-text or removed element. </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a6488b77784170bfed41262ac8954ecff" title="Replace a text element&#39;s text while retaining its rectangle and styling.">setText()</a>, <a class="el" href="classpdg_1_1_drawing.html#a33aebd0d624b68b105e865ddc5af0807" title="Add editable text to a drawing.">Drawing.addText()</a> </dd></dl>
 
 </div>
 </div>
@@ -401,7 +426,7 @@ Public Member Functions</h2></td></tr>
 <p>Associate an element with a live <a class="el" href="classpdg_1_1_attributes.html" title="Container for styling and transformation attributes used in drawing operations.">Attributes</a> or <a class="el" href="classpdg_1_1_animated_attributes.html" title="Drawing attributes with programmed movement and appearance animation.">AnimatedAttributes</a> source. </p>
 <p>Rendering, bounds queries and hit tests read the source's current values. Multiple elements may share one source. Geometry and control points remain unchanged. The association follows the element when it is reordered; removed references never retarget a different element. Calling <a class="el" href="#a7633700b3a47743376d88cf4af40c5f6" title="sets the attributes of the element">setAttributes()</a> replaces the association with a copy. <a class="el" href="#a011fe020f6206745b43f2b6cfa518955" title="Freeze the current attribute sample and release its live association.">clearLiveAttributes()</a> freezes its current sample.</p>
 <p>The association retains its final values and image/font resources if the source is destroyed or garbage collected. It does not retain or run the source's animation schedule. Advance a standalone <a class="el" href="classpdg_1_1_animated_attributes.html" title="Drawing attributes with programmed movement and appearance animation.">AnimatedAttributes</a> with animate(deltaSeconds), once per update regardless of how many elements share it or how often they are drawn. Keep a reference to the source while you intend to edit or advance it.</p>
-<p><a class="el" href="classpdg_1_1_drawing.html" title="Container for drawing elements (lines, shapes, images) that can be rendered to a Port.">Drawing</a> snapshots serialize current values, not the association or its schedule. <a class="el" href="#afd6b44beae695b3943c13ec84c978f73" title="returns the attributes of the element">getAttributes()</a> continues to return an independent value snapshot.</p>
+<p><a class="el" href="classpdg_1_1_drawing.html" title="Container for drawing elements (lines, shapes, images, text) that can be rendered to a Port.">Drawing</a> snapshots serialize current values, not the association or its schedule. <a class="el" href="#afd6b44beae695b3943c13ec84c978f73" title="returns the attributes of the element">getAttributes()</a> continues to return an independent value snapshot.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">attrs</td><td>Source whose values the element should follow.</td></tr>
@@ -418,6 +443,33 @@ Public Member Functions</h2></td></tr>
 <div class="line">// Every subsequent draw uses the current sample automatically.</div>
 </div><!-- fragment --> </dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="#a011fe020f6206745b43f2b6cfa518955" title="Freeze the current attribute sample and release its live association.">clearLiveAttributes()</a>, <a class="el" href="#a35872c2456e81bbb721e3e83e0486cca" title="Test whether this element holds a live sample association.">hasLiveAttributes()</a>, <a class="el" href="#a7633700b3a47743376d88cf4af40c5f6" title="sets the attributes of the element">setAttributes()</a>, <a class="el" href="#afd6b44beae695b3943c13ec84c978f73" title="returns the attributes of the element">getAttributes()</a> </dd></dl>
+
+</div>
+</div>
+<a id="a6488b77784170bfed41262ac8954ecff" name="a6488b77784170bfed41262ac8954ecff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6488b77784170bfed41262ac8954ecff">&#9670;&#160;</a></span>setText()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">setText </td>
+          <td>(</td>
+          <td class="paramtype">string</td>          <td class="paramname"><span class="paramname"><em>text</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Replace a text element's text while retaining its rectangle and styling. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">text</td><td>Replacement string, at most 1 MiB in UTF-8; an empty string is allowed. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>undefined. Throws for a non-string, non-text or removed element. </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="#a787a8b4145449843adff9e020d9a4ffb" title="Get the current text of a text element.">getText()</a>, <a class="el" href="classpdg_1_1_drawing.html#a33aebd0d624b68b105e865ddc5af0807" title="Add editable text to a drawing.">Drawing.addText()</a> </dd></dl>
 
 </div>
 </div>

@@ -1,6 +1,6 @@
 namespace pdg { /**
 
-\fn pdg::Point::Point(object xy)
+\fn pdg::Point::Point(XY xy)
 
 \brief create and set x & y values
 

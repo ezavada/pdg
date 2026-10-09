@@ -379,7 +379,8 @@
       "notes": [
         "Requires Emscripten and Chrome or Chromium on the macOS host.",
         "Covers WebAssembly initialization, the complete browser unit specs, and rendered UI behavior.",
-        "If the browser module is missing, this lane will print the Emscripten build command to run."
+        "If the browser module is missing, this lane will print the Emscripten build command to run.",
+        "Browser networking starts a separate standalone WSS host; requires a current native PDG executable. Writes websocket-transport.json and websocket-host.log."
       ],
       "requiredBuilds": [
         {
@@ -405,6 +406,21 @@
           ],
           "buildCommands": [
             "make pdg-js"
+          ]
+        },
+        {
+          "label": "Standalone WSS test host",
+          "paths": [
+            "pdg"
+          ],
+          "freshnessPath": "pdg",
+          "staleInputs": [
+            "src",
+            "CMakeLists.txt",
+            "tools/bundle-websocket.js"
+          ],
+          "buildCommands": [
+            "make pdg"
           ]
         }
       ],

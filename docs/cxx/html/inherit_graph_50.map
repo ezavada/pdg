@@ -1,13 +1,15 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$structpdg_1_1_modifier_key_info.html" title=" " alt="" coords="5,55,118,80"/>
-<area shape="rect" id="Node000001" href="$structpdg_1_1_key_press_info.html" title=" " alt="" coords="172,5,272,31"/>
-<area shape="poly" id="edge50_Node000000_Node000001" title=" " alt="" coords="119,47,180,30,176,33,121,52"/>
-<area shape="rect" id="Node000002" href="$structpdg_1_1_mouse_info.html" title=" " alt="" coords="181,55,264,80"/>
-<area shape="poly" id="edge51_Node000000_Node000002" title=" " alt="" coords="133,65,183,67,178,68,134,70"/>
-<area shape="rect" id="Node000005" href="$structpdg_1_1_scroll_wheel_info.html" title=" " alt="" coords="166,104,279,130"/>
-<area shape="poly" id="edge54_Node000000_Node000005" title=" " alt="" coords="121,83,180,103,175,104,120,88"/>
-<area shape="rect" id="Node000003" href="$structpdg_1_1_mouse_tracking_info.html" title=" " alt="" coords="327,31,459,56"/>
-<area shape="poly" id="edge52_Node000002_Node000003" title=" " alt="" coords="278,57,330,52,324,53,279,62"/>
-<area shape="rect" id="Node000004" href="$structpdg_1_1_sprite_touch_info.html" title=" " alt="" coords="337,80,449,106"/>
-<area shape="poly" id="edge53_Node000002_Node000004" title=" " alt="" coords="279,73,339,84,334,85,279,78"/>
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,105,83,131"/>
+<area shape="rect" id="Node000001" href="$classpdg_1_1_p_d_g_exception.html" title=" " alt="" coords="133,80,241,106"/>
+<area shape="poly" id="edge51_Node000000_Node000001" title=" " alt="" coords="97,106,135,101,130,104,99,111"/>
+<area shape="rect" id="Node000006" href="$classpdg_1_1_timer_exception.html" title=" " alt="" coords="131,129,243,155"/>
+<area shape="poly" id="edge56_Node000000_Node000006" title=" " alt="" coords="98,125,133,132,128,133,98,130"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1bad__tag.html" title=" " alt="" coords="315,5,382,31"/>
+<area shape="poly" id="edge52_Node000001_Node000002" title=" " alt="" coords="227,70,290,40,317,30,313,33,292,45,229,75"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1out__of__data.html" title=" " alt="" coords="304,55,393,80"/>
+<area shape="poly" id="edge53_Node000001_Node000003" title=" " alt="" coords="256,79,306,74,301,75,257,85"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1sync__error.html" title=" " alt="" coords="308,104,390,130"/>
+<area shape="poly" id="edge54_Node000001_Node000004" title=" " alt="" coords="256,100,310,110,304,111,256,106"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1unknown__object.html" title=" " alt="" coords="291,153,406,179"/>
+<area shape="poly" id="edge55_Node000001_Node000005" title=" " alt="" coords="234,110,244,114,292,140,318,153,312,153,290,145,242,119,233,115"/>
 </map>

@@ -1,14 +1,20 @@
 var searchData=
 [
   ['emit_0',['emit',['../classpdg_1_1_particle_emitter.html#a3f3702171b754935684a2101b824f079',1,'pdg::ParticleEmitter']]],
-  ['empty_1',['empty',['../classpdg_1_1_polygon.html#a952d6ee1578865e93cb6d9003eb9cff5',1,'pdg::Polygon::empty()'],['../classpdg_1_1_drawing.html#a952d6ee1578865e93cb6d9003eb9cff5',1,'pdg::Drawing::empty()'],['../classpdg_1_1_rect.html#a952d6ee1578865e93cb6d9003eb9cff5',1,'pdg::Rect::empty()']]],
+  ['empty_1',['empty',['../classpdg_1_1_drawing.html#a952d6ee1578865e93cb6d9003eb9cff5',1,'pdg::Drawing::empty()'],['../classpdg_1_1_polygon.html#a952d6ee1578865e93cb6d9003eb9cff5',1,'pdg::Polygon::empty()'],['../classpdg_1_1_rect.html#a952d6ee1578865e93cb6d9003eb9cff5',1,'pdg::Rect::empty()']]],
   ['enableanimationpose_2',['enableAnimationPose',['../classpdg_1_1_sprite.html#aca480e671f56fd3da8b3d961cf775fbf',1,'pdg::Sprite']]],
   ['enablecollisions_3',['enableCollisions',['../classpdg_1_1_sprite_layer.html#a900f2d167ff0109c3b24e27a61918859',1,'pdg::SpriteLayer']]],
   ['enablecollisionswithlayer_4',['enableCollisionsWithLayer',['../classpdg_1_1_sprite_layer.html#afb9d2fc0575491e912f852ff3f414143',1,'pdg::SpriteLayer']]],
   ['enablespriterevents_5',['enableSpriterEvents',['../group___animation.html#gaf5826371f1238805c75b16e6ecfa0b44',1,'pdg::Sprite::enableSpriterEvents()'],['../classpdg_1_1_sprite_layer.html#af5826371f1238805c75b16e6ecfa0b44',1,'pdg::SpriteLayer::enableSpriterEvents()']]],
-  ['equals_6',['equals',['../classpdg_1_1_polygon.html#ae539aca0eeaa45061c645b755de3b8e8',1,'pdg::Polygon::equals()'],['../classpdg_1_1_offset.html#a7623504dd100fd68467f90ed7e26c3bb',1,'pdg::Offset::equals()'],['../classpdg_1_1_rect.html#a25a84de072230bf7177bca6ce4a1a01f',1,'pdg::Rect::equals()'],['../classpdg_1_1_quad.html#a9a83efec06f60250f2a875abc56f8aca',1,'pdg::Quad::equals()'],['../classpdg_1_1_color.html#ab6494122b6493de17479de1ca2becfa5',1,'pdg::Color::equals()']]],
-  ['error_7',['error',['../namespacepdg.html#a343a78c185e997b3c153f36928a7d326',1,'pdg']]],
-  ['evt_8',['evt',['../group___managers.html#ga74f412475bd97ef8aab16b10561f1b9f',1,'pdg::EventManager::evt()'],['../group___managers.html#ga74f412475bd97ef8aab16b10561f1b9f',1,'pdg::evt()']]],
-  ['expectclient_9',['expectClient',['../classpdg_1_1_net_server.html#a043dab23ed00e10c564b4c7e1cf0fcc8',1,'pdg::NetServer']]],
-  ['expire_10',['expire',['../classpdg_1_1_particle.html#a9391ae5e11c880cb0320c9e44dcb99d0',1,'pdg::Particle']]]
+  ['endbatch_6',['endBatch',['../classpdg_1_1_animated.html#aa557e24dab1dbb06ddd0d83cb15c8716',1,'pdg::Animated']]],
+  ['endotherwise_7',['endOtherwise',['../classpdg_1_1_animated.html#a93dbebbf5228bd0d1e1614dab41961dd',1,'pdg::Animated']]],
+  ['endscript_8',['endScript',['../classpdg_1_1_animation_script.html#a4bc10a0fb21d1805243bd254fbe8167d',1,'pdg::AnimationScript']]],
+  ['endseries_9',['endSeries',['../classpdg_1_1_animated.html#ab8804b6a2e0342aad7b5478488e2608c',1,'pdg::Animated']]],
+  ['endwhen_10',['endWhen',['../classpdg_1_1_animated.html#a069bfdc5da1299f29219ebb6e9e9aada',1,'pdg::Animated']]],
+  ['equals_11',['equals',['../classpdg_1_1_color.html#ab6494122b6493de17479de1ca2becfa5',1,'pdg::Color::equals()'],['../classpdg_1_1_offset.html#a7623504dd100fd68467f90ed7e26c3bb',1,'pdg::Offset::equals()'],['../classpdg_1_1_polygon.html#ae539aca0eeaa45061c645b755de3b8e8',1,'pdg::Polygon::equals()'],['../classpdg_1_1_quad.html#a9a83efec06f60250f2a875abc56f8aca',1,'pdg::Quad::equals()'],['../classpdg_1_1_rect.html#a25a84de072230bf7177bca6ce4a1a01f',1,'pdg::Rect::equals()']]],
+  ['error_12',['error',['../namespacepdg.html#a343a78c185e997b3c153f36928a7d326',1,'pdg']]],
+  ['eventemitter_13',['EventEmitter',['../classpdg_1_1_event_emitter.html#a1b064cb939c42c4886307e43ed070a18',1,'pdg::EventEmitter']]],
+  ['evt_14',['evt',['../group___managers.html#ga74f412475bd97ef8aab16b10561f1b9f',1,'pdg::EventManager::evt()'],['../group___managers.html#ga74f412475bd97ef8aab16b10561f1b9f',1,'pdg::evt()']]],
+  ['expectclient_15',['expectClient',['../classpdg_1_1_net_server.html#a043dab23ed00e10c564b4c7e1cf0fcc8',1,'pdg::NetServer']]],
+  ['expire_16',['expire',['../classpdg_1_1_particle.html#a9391ae5e11c880cb0320c9e44dcb99d0',1,'pdg::Particle']]]
 ];

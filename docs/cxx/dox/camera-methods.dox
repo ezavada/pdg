@@ -1,0 +1,39 @@
+/**
+\class pdg::Camera
+\brief Animated view shared by ports and layers.
+
+Scene-owned cameras advance on their scene clock. Layer overrides remain available;
+\ref pdg::Scene describes ownership and pause behavior.
+
+See \ref camera_output for camera visibility, composed opacity, fades and crossfades.
+
+Camera also inherits EventEmitter. Subscribe on the camera, rather than on a
+layer, to receive eventType_ZoomComplete with CameraZoomInfo {camera, zoom}.
+zoomTo() targets an absolute magnification; zoom() multiplies the starting zoom.
+Queued factors resolve when the operation starts. Both emit once per completed
+operation, including a zero-duration operation (synchronously unless queued or
+delayed). Cancelled/replaced operations and setZoom() do not emit. Pausing the
+schedule delays completion. Shared attachments do not duplicate notifications.
+
+\note Include pdg/sys/camera.h, pdg/sys/events.h and pdg/sys/ieventhandler.h.
+
+\code{.cpp}
+class ZoomListener : public pdg::IEventHandler {
+public:
+    bool handleEvent(pdg::EventEmitter*, long type, void* data) noexcept override {
+        if (type != pdg::eventType_ZoomComplete) return false;
+        const auto& completion = *static_cast<pdg::CameraZoomInfo*>(data);
+        // completion.camera identifies the camera; completion.zoom is its final zoom.
+        return false;
+    }
+};
+// The listener must outlive its registration when using default no-op refcounts.
+ZoomListener listener;
+pdg::Camera camera;
+camera.addHandler(&listener, pdg::eventType_ZoomComplete);
+camera.zoomTo(2, 0.5).andThen().zoom(0.5, 0.5);
+// Detached cameras are advanced manually; attached cameras use the runtime clock.
+camera.animate(1);
+camera.removeHandler(&listener, pdg::eventType_ZoomComplete);
+\endcode
+*/

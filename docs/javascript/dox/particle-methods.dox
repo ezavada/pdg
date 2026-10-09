@@ -537,3 +537,75 @@ radians per second) and breakAngularSpeed (the configured threshold).
 It fires once per threshold crossing without clamping speed or disconnecting
 constraints. See PhysicsBody::setBreakAngularSpeed() and \ref ParticleEffects.
 */
+
+/**
+\fn this Particle::setTrail(ParticleTrailOptions options)
+\brief Configure a bounded ribbon following the particle's motion.
+\param options Trail settings; omitted fields use \ref ParticleTrailOptions defaults.
+\return The receiver for call chaining.
+
+The ribbon records positions in layer coordinates after particle motion and physics.
+Camera motion does not add history. Width and minimum distance are layer units;
+lifetime and sampleInterval are simulation seconds. Width and opacity interpolate
+linearly toward endWidth and endOpacity as each sample ages. Color alpha multiplies
+the sampled particle opacity. A temporary head joins the latest stored point to the
+current position. maxPoints bounds stored history; reaching that limit shortens the
+visible trail. Rendering uses solid, antialiased CPU ribbons with normal alpha blending.
+
+Calling setTrail again replaces the configuration and clears history. Particle
+emitter templates copy settings with empty history. Expiring particles release their
+physics and particle budget slot immediately; the layer retains only their fading
+ribbon. Retired ribbons are limited to the layer's particle budget and 65536 reserved
+history points, evicting oldest tails first when necessary. Removing a particle
+explicitly clears its history; removeAllParticles and layer disposal also clear
+retired tails. Trail configuration and recorded script arguments are portable;
+live trail histories are transient and omitted from layer snapshots.
+
+Layer animation pauses and scene simulation clocks also govern trail aging.
+Explicit setLocation calls reset history. breakDistance resets it when one simulation
+step moves farther than its limit; use 0 to disable this safeguard. Use breakTrail
+for other discontinuities. No ribbon is drawn until it has two distinct points.
+
+\note GUI targets render trails. Headless targets still simulate and validate them.
+No Image, Drawing, collider or physics body is required. This call is also available
+on AnimationScript and Troupe recorders for Particle playback targets.
+
+\code{.js}
+const prototype = new pdg.Particle().setLifetime(1.5)
+    .setTrail({lifetime:0.4, width:6, endWidth:0, color:'orange',
+               minDistance:2, maxPoints:32});
+layer.createParticleEmitter().setParticleTemplate(prototype)
+    .setLocation(200,300).setRotation(-Math.PI/2)
+    .setParticleSpeed(150,200).setSpread(0.5)
+    .setEmissionRate(25).startEmitting();
+\endcode
+\see Particle::clearTrail, Particle::breakTrail, SpriteLayer::getParticleTrailCount
+*/
+
+/**
+\fn this Particle::clearTrail()
+\brief Disable the trail and release its history.
+\return The receiver for call chaining.
+*/
+/**
+\fn this Particle::breakTrail()
+\brief Start fresh history at the current position, keeping trail settings.
+Does nothing when no trail is configured.
+\return The receiver for call chaining.
+*/
+/**
+\fn boolean Particle::hasTrail()
+\brief Test whether a trail is configured, including an empty history.
+\return True when configured. Expiry transfers the trail to its layer, or clears it if detached, and returns false.
+*/
+/**
+\fn number Particle::getTrailPointCount()
+\brief Count retained history points, excluding the temporary render head.
+\return Zero for disabled, uninitialized or fully aged history; otherwise at most maxPoints.
+Includes the boundary point used to clip the oldest visible segment.
+*/
+/**
+\fn number SpriteLayer::getParticleTrailCount()
+\brief Count live unexpired histories and retained fading tails.
+\return Trail count, including one-point histories not yet visible.
+*/

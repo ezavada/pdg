@@ -1,17 +1,10 @@
 var searchData=
 [
-  ['radians_0',['radians',['../classpdg_1_1_rotated_rect.html#a794ac4d6e037924d24af3882fa987a9e',1,'pdg::RotatedRect']]],
-  ['red_1',['red',['../classpdg_1_1_color.html#ac4d8569417bac19a623ee068a8759c14',1,'pdg::Color']]],
-  ['remoteaddr_2',['remoteAddr',['../classpdg_1_1_net_connection.html#af4214cc5ead9aaf7f7f31ef27d829ff0',1,'pdg::NetConnection']]],
-  ['remoteport_3',['remotePort',['../classpdg_1_1_net_connection.html#ac25e2e9ae9f15ab5d45b8eb7e06c4395',1,'pdg::NetConnection']]],
-  ['res_4',['res',['../namespacepdg.html#a8f27657c3f95ec846907704f3e2fb660',1,'pdg']]],
-  ['reservationrequired_5',['reservationRequired',['../classpdg_1_1_net_server.html#a59c96a6051f9e9a6d37bd1a831558519',1,'pdg::NetServer']]],
-  ['rgtbot_6',['rgtBot',['../namespacepdg.html#af1c7b4584d1a6380ee40c4ef161fd195',1,'pdg']]],
-  ['rgttop_7',['rgtTop',['../namespacepdg.html#afb24c82a90e2d9d45f0da140c72dfc36',1,'pdg']]],
-  ['right_8',['right',['../classpdg_1_1_rect.html#aec7af6ad24e4c06da3066ef1ad155837',1,'pdg::Rect::right'],['../classpdg_1_1_rotated_rect.html#aec7af6ad24e4c06da3066ef1ad155837',1,'pdg::RotatedRect::right']]],
-  ['rotationdirection_5fasspecified_9',['rotationDirection_AsSpecified',['../namespacepdg.html#acbb255bec4017e1180a9f0cc8723c763',1,'pdg']]],
-  ['rotationdirection_5fclockwise_10',['rotationDirection_Clockwise',['../namespacepdg.html#aad0814358f2db379279662eca780db15',1,'pdg']]],
-  ['rotationdirection_5fcounterclockwise_11',['rotationDirection_CounterClockwise',['../namespacepdg.html#a6995e9e31ebe372d22f4809504c2eac2',1,'pdg']]],
-  ['rotationdirection_5fshortest_12',['rotationDirection_Shortest',['../namespacepdg.html#a458db03c94813e18c0faef391b54171f',1,'pdg']]],
-  ['running_13',['running',['../namespacepdg.html#a2bb58b88ac256b165a95a806ae3b41e5',1,'pdg']]]
+  ['name_0',['name',['../group___structured_data_types.html#a8ccf841cb59e451791bcb2e1ac4f1edc',1,'pdg::AnimationBindingPose::name'],['../group___structured_data_types.html#a8ccf841cb59e451791bcb2e1ac4f1edc',1,'pdg::AnimationBonePose::name'],['../group___structured_data_types.html#a8ccf841cb59e451791bcb2e1ac4f1edc',1,'pdg::AnimationVariable::name'],['../group___structured_data_types.html#a8ccf841cb59e451791bcb2e1ac4f1edc',1,'pdg::InterfaceMetadata::name'],['../group___structured_data_types.html#a8ccf841cb59e451791bcb2e1ac4f1edc',1,'pdg::ParameterMetadata::name']]],
+  ['native_1',['native',['../group___structured_data_types.html#ab965913c9bf111e94167d822eae7a223',1,'pdg::NetServerOptions']]],
+  ['nocollider_2',['NoCollider',['../classpdg_1_1_collider.html#a68dc04bc12e650936e8b8faf8c693ecd',1,'pdg::Collider']]],
+  ['nodatagram_3',['noDatagram',['../group___structured_data_types.html#ac5b0ef1beb850ecfd8163e161f1951fb',1,'pdg::NetClientOptions::noDatagram'],['../group___structured_data_types.html#ac5b0ef1beb850ecfd8163e161f1951fb',1,'pdg::NetServerOptions::noDatagram']]],
+  ['nodename_4',['nodeName',['../group___structured_data_types.html#a6a5b6cee99023961a726deed7b56d3fa',1,'pdg::FileFindData']]],
+  ['nophysics_5',['NoPhysics',['../classpdg_1_1_physics_body.html#aee637a9d5e94d342843712d1b784e376',1,'pdg::PhysicsBody']]],
+  ['normal_6',['normal',['../group___structured_data_types.html#a17b60d2ea978aaa649afa01787786110',1,'pdg::ColliderContact::normal'],['../group___structured_data_types.html#a17b60d2ea978aaa649afa01787786110',1,'pdg::ColliderContactEvent::normal'],['../group___structured_data_types.html#a17b60d2ea978aaa649afa01787786110',1,'pdg::CollisionQueryHit::normal'],['../group___structured_data_types.html#a17b60d2ea978aaa649afa01787786110',1,'pdg::SpriteCollisionEvent::normal']]]
 ];

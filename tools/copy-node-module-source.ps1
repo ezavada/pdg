@@ -1,6 +1,7 @@
 param(
     [Parameter(Mandatory = $true)]
-    [string]$TargetDir
+    [string]$TargetDir,
+    [string]$NodeExecutable
 )
 
 $ErrorActionPreference = "Stop"
@@ -11,6 +12,16 @@ $repoRoot = Split-Path -Parent $PSScriptRoot
 if (-not (Ensure-RepoSubmodule -RepoRoot $repoRoot -SubmodulePath "deps/node" -SentinelRelativePath "deps\node\src\node_version.h" -DisplayName "Node.js source checkout")) {
     throw "Node.js source checkout is required."
 }
+
+if (-not $NodeExecutable) {
+    $NodeExecutable = Join-Path $repoRoot "tools\node.exe"
+}
+if (-not (Test-Path -LiteralPath $NodeExecutable)) {
+    throw "Could not find Node.js executable: $NodeExecutable"
+}
+
+& $NodeExecutable (Join-Path $repoRoot "tools/bundle-websocket.js")
+if ($LASTEXITCODE -ne 0) { throw "WebSocket bundle generation failed." }
 
 if ([System.IO.Path]::IsPathRooted($TargetDir)) {
     $resolvedTargetDir = [System.IO.Path]::GetFullPath($TargetDir)
@@ -106,14 +117,14 @@ Write-Host " * src/inc ==> $resolvedTargetDir\src\inc"
 Copy-TreeFiltered (Get-RepoPath "src\inc") (Join-Path $resolvedTargetDir "src\inc") {
     param($relativePath, $item)
     $normalizedPath = $relativePath -replace '/', '\'
-    return $normalizedPath -eq "pdg\app" -or $normalizedPath.StartsWith("pdg\app\")
+    return $normalizedPath -eq "pdg\app" -or $normalizedPath.StartsWith("pdg\app\") -or $normalizedPath -eq "pdg\net" -or $normalizedPath.StartsWith("pdg\net\")
 }
 
 Write-Host " * src/sys ==> $resolvedTargetDir\src\sys"
 Copy-TreeFiltered (Get-RepoPath "src\sys") (Join-Path $resolvedTargetDir "src\sys") {
     param($relativePath, $item)
     $segments = ($relativePath -replace '/', '\').Split('\', [System.StringSplitOptions]::RemoveEmptyEntries)
-    return ($segments -contains "gles") -or ($segments -contains "ios") -or ($segments -contains "ipad")
+    return ($segments[0] -eq "net") -or ($segments -contains "gles") -or ($segments -contains "ios") -or ($segments -contains "ipad")
 }
 
 Copy-Item -LiteralPath (Get-RepoPath "src\sys\macosx\platform-image-macosx.mm") -Destination (Join-Path $resolvedTargetDir "src\sys\macosx\platform-image-macosx-objc.cxx") -Force

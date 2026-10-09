@@ -1,0 +1,154 @@
+{
+  "version": "1.2.0",
+  "runtimeProfile": {
+    "capabilities": {
+      "graphics": true,
+      "network": true,
+      "sound": true
+    },
+    "runtime": "native",
+    "scope": "Root exports and build capabilities of the runtime generating this inventory; instance members are declared contracts."
+  },
+  "typePackages": [
+    "node"
+  ],
+  "emittedSignaturesAndProperties": 3586,
+  "nonConstructible": [
+    {
+      "symbol": "AnimationScript",
+      "factory": "Animated.defineScript",
+      "kind": "factory"
+    },
+    {
+      "symbol": "Bone",
+      "factory": "Sprite.getBone",
+      "kind": "factory"
+    },
+    {
+      "symbol": "Collider",
+      "factory": "Sprite.setupCollider or Part.setupCollider",
+      "kind": "factory"
+    },
+    {
+      "symbol": "ConfigManager",
+      "access": "pdg.cfg",
+      "kind": "singleton"
+    },
+    {
+      "symbol": "CpArbiter",
+      "kind": "borrowed"
+    },
+    {
+      "symbol": "CpConstraint",
+      "kind": "borrowed"
+    },
+    {
+      "symbol": "CpSpace",
+      "kind": "borrowed"
+    },
+    {
+      "symbol": "Drawing",
+      "factory": "pdg.createDrawing",
+      "kind": "factory"
+    },
+    {
+      "symbol": "ElementRef",
+      "factory": "Drawing.addLine and other element factories",
+      "kind": "factory"
+    },
+    {
+      "symbol": "EventManager",
+      "access": "pdg.evt",
+      "kind": "singleton"
+    },
+    {
+      "symbol": "FileManager",
+      "access": "pdg.fs",
+      "kind": "singleton"
+    },
+    {
+      "symbol": "Font",
+      "factory": "GraphicsManager.createFont",
+      "kind": "factory"
+    },
+    {
+      "symbol": "GraphicsManager",
+      "access": "pdg.gfx",
+      "kind": "singleton"
+    },
+    {
+      "symbol": "LogManager",
+      "access": "pdg.lm",
+      "kind": "singleton"
+    },
+    {
+      "symbol": "Part",
+      "factory": "Sprite.createPart",
+      "kind": "factory"
+    },
+    {
+      "symbol": "PhysicsBody",
+      "factory": "Sprite.setupPhysicsBody or Part.setupPhysicsBody",
+      "kind": "factory"
+    },
+    {
+      "symbol": "PhysicsConstraint",
+      "factory": "PhysicsBody.createPinJoint and other constraint factories",
+      "kind": "factory"
+    },
+    {
+      "symbol": "Port",
+      "factory": "GraphicsManager port factories",
+      "kind": "factory"
+    },
+    {
+      "symbol": "ResourceManager",
+      "access": "pdg.res",
+      "kind": "singleton"
+    },
+    {
+      "symbol": "SoundManager",
+      "access": "pdg.snd",
+      "kind": "singleton"
+    },
+    {
+      "symbol": "SpriteLayer",
+      "factory": "createSpriteLayer",
+      "kind": "factory"
+    },
+    {
+      "symbol": "TileLayer",
+      "factory": "createTileLayer",
+      "kind": "factory"
+    },
+    {
+      "symbol": "TimerManager",
+      "access": "pdg.tm",
+      "kind": "singleton"
+    }
+  ],
+  "deferred": [
+    {
+      "symbol": "NetServer.NetServer",
+      "reason": "Unresolved schema NetServerOptions"
+    },
+    {
+      "symbol": "NetServer.listeners",
+      "reason": "Unresolved type \"object\" at NetServer.listeners"
+    },
+    {
+      "symbol": "NetServer.ready",
+      "reason": "Unresolved type \"object\" at NetServer.ready return"
+    },
+    {
+      "symbol": "NetServer.serverInfo",
+      "reason": "Unresolved schema NetServerOptions"
+    },
+    {
+      "symbol": "NetServerOptions",
+      "reason": "Unresolved type \"object\" at NetServerOptions.tls"
+    }
+  ],
+  "input": "docs/javascript/pdg-js.json",
+  "sha256": "422aca6348dba23f418bb987a37f8e3eb596066c2b569775a1add72b81c6923f"
+}

@@ -72,9 +72,8 @@ public:
 	
 	virtual void	setWorldSize(long width, long height, bool repeatingX = false, bool repeatingY = false);
 	virtual Rect	getWorldSize();
-	virtual Rect	getWorldBounds();  // size * tile size (no zoom)
 	virtual void	defineTileSet(int tileWidth, int tileHeight, Image* tiles, bool hasTransparency = true, bool flipTiles = false);
-	virtual void    loadMapData(uint8* dataPtr, long mapWidth = 0, long mapHeight = 0, long dstX = 0, long dstY = 0);
+	virtual void    loadMapData(const uint8* dataPtr, long mapWidth = 0, long mapHeight = 0, long dstX = 0, long dstY = 0);
 	virtual uint8*	getMapData(long mapWidth = 0, long mapHeight = 0, long srcX = 0, long srcY = 0);
 	virtual Image*	getTileSetImage();
 	virtual Point	getTileSize() const;
@@ -104,7 +103,7 @@ protected:
 #ifndef PDG_NO_GUI
 	virtual void drawLayer();
 #endif // ! PDG_NO_GUI
-	virtual void animateLayer(ms_delta msElapsed);
+	virtual void animateLayer(double msElapsed);
 
 	Image*  mTiles;
 	uint8*  mTileData;

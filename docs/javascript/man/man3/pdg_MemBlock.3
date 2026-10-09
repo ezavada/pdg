@@ -1,8 +1,8 @@
-.TH "MemBlock" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "MemBlock" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-MemBlock \- holds arbitrary blocks of memory  
+MemBlock \- Hold native memory for exchange between PDG APIs\&.  
 
 .SH SYNOPSIS
 .br
@@ -13,29 +13,28 @@ MemBlock \- holds arbitrary blocks of memory
 
 .in +1c
 .ti -1c
+.RI "\fBMemBlock\fP ()"
+.br
+.ti -1c
 .RI "number \fBgetByte\fP (uint i)"
 .br
 .RI "get a single byte from an specific location in the block "
 .ti -1c
-.RI "BinaryString \fBgetBytes\fP (uint start, uint len)"
+.RI "Uint8Array \fBgetBytes\fP (uint start, uint len)"
 .br
-.RI "get a subset of the memory block "
+.RI "Copy a bounded byte range into a plain Uint8Array\&. "
 .ti -1c
-.RI "BinaryString \fBgetData\fP ()"
+.RI "Uint8Array \fBgetData\fP ()"
 .br
-.RI "get the data as a JavaScript string "
+.RI "Copy the block's bytes into a new plain Uint8Array\&. "
 .ti -1c
 .RI "number \fBgetDataSize\fP ()"
 .br
 .RI "get the number of bytes in the block "
-.ti -1c
-.RI "Buffer \fBtoBuffer\fP ()"
-.br
-.RI "convert \fBMemBlock\fP to Node\&.js Buffer object "
 .in -1c
 .SH "Detailed Description"
 .PP 
-holds arbitrary blocks of memory 
+Hold native memory for exchange between PDG APIs\&. 
 
 
 .PP
@@ -44,10 +43,14 @@ holds arbitrary blocks of memory
 \fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
 .RE
 .PP
-Many functions of PDG, such as \fBImage\fP and Resource data, Streaming I/O, and Networking deal with blocks of memory\&. Since JavaScript has no way to natively deal with these, PDG adds the \fBMemBlock\fP class to pass those blocks of data between various parts of the PDG libraries\&.
+A \fBMemBlock\fP is either an owned block or a borrowed view of another native object's storage\&. \fBSerializer\&.getDataPtr()\fP returns a borrowed block: keep the serializer alive and do not modify or clear it while using that block\&.
 
 .PP
-This class is very similar to the Node\&.js Buffer class, but has no Node\&.js dependencies\&. 
+\fBgetData()\fP and \fBgetBytes()\fP return independent Uint8Array copies\&. Use those snapshots when the data must outlive its native owner\&. See \fBgetData()\fP for Node\&.js Buffer conversion and the copy cost of each conversion form\&. 
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "MemBlock ()"
+
 .SH "Member Function Documentation"
 .PP 
 .SS "number getByte (uint i)"
@@ -66,44 +69,84 @@ the byte value stored at the offset (0\&.\&.255), or 0 if the offset is outside 
 .RE
 .PP
 
-.SS "BinaryString getBytes (uint start, uint len)"
+.SS "Uint8Array getBytes (uint start, uint len)"
 
 .PP
-get a subset of the memory block The data is returned as a JavaScript string with binary data (values from 0\&.\&.255 represented in JavaScript's native 2 byte per char string format)\&. Use pdg\&.log\&.binaryDump() to see the data contents in a human readable hex-dump form\&.
-
+Copy a bounded byte range into a plain Uint8Array\&. The requested length is clamped to the remaining bytes\&. An offset at or beyond the end returns an empty array\&. 
 .PP
 \fBParameters\fP
 .RS 4
-\fIstart\fP the offset in the block to start from 
+\fIstart\fP Zero-based byte offset\&. 
 .br
-\fIlen\fP the maximum number of bytes to fetch; clamped to the bytes remaining in the block
+\fIlen\fP Maximum number of bytes to copy\&. 
 .RE
 .PP
 \fBReturns\fP
 .RS 4
-a JavaScript string with binary data, or an empty string if start is outside the block
-.RE
-.PP
-\fBSee also\fP
-.RS 4
-\fBLogManager\&.binaryDump\fP 
+A fresh, independently owned Uint8Array\&. 
 .RE
 .PP
 
-.SS "BinaryString getData ()"
+.SS "Uint8Array getData ()"
 
 .PP
-get the data as a JavaScript string The data is returned as a JavaScript string with binary data (values from 0\&.\&.255 represented in JavaScript's native 2 byte per char string format)\&. Use pdg\&.log\&.binaryDump() to see the data contents in a human readable hex-dump form\&.
+Copy the block's bytes into a new plain Uint8Array\&. Returns the same standard JavaScript array type on desktop native, Node, browser, and iOS runtimes\&. Each call copies all bytes without text decoding, including zero and values above 127\&. Changing the returned array does not change this \fBMemBlock\fP or arrays returned by earlier calls\&.
 
 .PP
 \fBReturns\fP
 .RS 4
-a JavaScript string with binary data
+An independently owned Uint8Array with \fBgetDataSize()\fP elements, or an empty Uint8Array for an empty block\&. The result is not a Node Buffer; slice() copies bytes and subarray() shares the returned array's memory\&.
 .RE
+.PP
+\fBExample\fP
+.RS 4
+
+.PP
+.nf
+const writer = new pdg\&.Serializer();
+writer\&.serialize_1u(255);
+const bytes = writer\&.getDataPtr()\&.getData();
+const copy = bytes\&.slice();
+
+.fi
+.PP
+.RE
+.PP
+\fBNode\&.js Buffer conversion\fP
+.RS 4
+Use this form when a Node\&.js API specifically requires a Buffer\&. \fBgetData()\fP copies the native block once; the Buffer then shares that snapshot without another payload copy\&. Include the offset and length so only the array's visible bytes are exposed, even when converting a subarray\&.
+.RE
+.PP
+\fBNote\fP
+.RS 4
+These examples require Node\&.js Buffer support\&. The shared Buffer and Uint8Array reflect each other's mutations, but neither changes the \fBMemBlock\fP\&.
+.RE
+.PP
+.PP
+.nf
+const bytes = writer\&.getDataPtr()\&.getData();
+const buffer = Buffer\&.from(bytes\&.buffer, bytes\&.byteOffset, bytes\&.byteLength);
+.fi
+.PP
+
+.PP
+\fBWarning\fP
+.RS 4
+The shorter form below makes an additional full copy of the bytes: one copy from native memory into the Uint8Array, then another into the Buffer\&. For an N-byte block, it copies 2N bytes and needs storage for both N-byte payloads until the temporary array can be collected\&. This adds copy time and memory/garbage-collection pressure, especially for large or frequent transfers\&. Use it when an independent Buffer copy is intentional\&.
+.RE
+.PP
+.PP
+.nf
+const bufferCopy = Buffer\&.from(writer\&.getDataPtr()\&.getData());
+.fi
+.PP
+
+.PP
+The removed MemBlock\&.toBuffer() method can be replaced by the shared-view form above with the same single payload copy\&. 
 .PP
 \fBSee also\fP
 .RS 4
-\fBLogManager\&.binaryDump\fP 
+\fBgetBytes()\fP 
 .RE
 .PP
 
@@ -118,10 +161,6 @@ the count of bytes in the block
 .RE
 .PP
 
-.SS "Buffer toBuffer ()"
-
-.PP
-convert \fBMemBlock\fP to Node\&.js Buffer object Converts a \fBMemBlock\fP into a Node\&.js Buffer object\&. See Node\&.js docs for details on the Buffer class\&. This makes it easier to use a \fBMemBlock\fP with Node\&.js calls that work with Buffers\&. 
 
 .SH "Author"
 .PP 

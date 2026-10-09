@@ -143,7 +143,7 @@ namespace pdg
         SCRIPT_DEBUG_ONLY( JSC_DebugPrintValue(ctx, arguments[0], "Dumping " "IEventHandler" " object:") );
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""inType"")");
-        long inType = (argumentCount<2) ? pdg::all_events : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long inType = (argumentCount<2) ? pdg::all_events : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         self->addHandler(inHandler, inType);
         return JSValueMakeUndefined(ctx);
     }
@@ -163,7 +163,7 @@ namespace pdg
             return JSC_ThrowArgTypeException(ctx, exception, 1, "an object derived from ""IEventHandler"" (""inHandler"")");
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""inType"")");
-        long inType = (argumentCount<2) ? pdg::all_events : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long inType = (argumentCount<2) ? pdg::all_events : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         self->removeHandler(inHandler, inType);
         return JSValueMakeUndefined(ctx);
     }
@@ -184,7 +184,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""inEventType"")");
-        int32 inEventType = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 inEventType = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->blockEvent(inEventType);
         return JSValueMakeUndefined(ctx);
     }
@@ -196,7 +196,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""inEventType"")");
-        int32 inEventType = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 inEventType = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->unblockEvent(inEventType);
         return JSValueMakeUndefined(ctx);
     }
@@ -208,10 +208,10 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""id"")");
-        int32 id = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 id = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (!JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""delay"")");
-        uint32 delay = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[2 -1], exception)));
+        uint32 delay = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (argumentCount >= 3 && !JSValueIsBoolean(ctx, arguments[3 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 3, "a boolean (""oneShot"")");
         bool oneShot = (argumentCount<3) ? true : JSValueToBoolean(ctx, arguments[3 -1]);
@@ -226,7 +226,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""id"")");
-        int32 id = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 id = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->cancelTimer(id);
         return JSValueMakeUndefined(ctx);
     }
@@ -247,10 +247,10 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""id"")");
-        int32 id = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 id = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (!JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""delay"")");
-        uint32 delay = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[2 -1], exception)));
+        uint32 delay = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[2 -1], exception));
         self->delayTimer(id, delay);
         return JSValueMakeUndefined(ctx);
     }
@@ -262,7 +262,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""id"")");
-        int32 id = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 id = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (!JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""msTime"")");
         double msTime_temp = JSValueToNumber(ctx, arguments[2 -1], exception);
@@ -309,7 +309,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""id"")");
-        int32 id = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 id = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->pauseTimer(id);
         return JSValueMakeUndefined(ctx);
     }
@@ -321,7 +321,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""id"")");
-        int32 id = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 id = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         self->unpauseTimer(id);
         return JSValueMakeUndefined(ctx);
     }
@@ -333,7 +333,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""id"")");
-        int32 id = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 id = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         bool isPaused = self->isTimerPaused(id);
         return JSValueMakeBoolean(ctx, isPaused);
     }
@@ -345,7 +345,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""id"")");
-        int32 id = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 id = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         ms_time when = self->getWhenTimerFiresNext(id);
 
         if (when == 0xffffffff)

@@ -28,12 +28,15 @@ Sprite& Sprite::changeAnimationPhysicsMode(int mode,std::optional<AnimationBoneI
     return *this;
 }
 Sprite& Sprite::setAnimationPhysicsMode(int mode,double seconds,int direction) {
+    if(recordOperation("setAnimationPhysicsMode", captureAnimationArguments(mode, seconds, direction))) return *this;
     return changeAnimationPhysicsMode(mode,{},false,seconds,direction);
 }
 Sprite& Sprite::setAnimationPhysicsMode(int mode,AnimationBoneId bone,bool descendants,double seconds,int direction) {
+    if(recordOperation("setAnimationPhysicsMode", captureAnimationArguments(mode, bone, descendants, seconds, direction))) return *this;
     return changeAnimationPhysicsMode(mode,bone,descendants,seconds,direction);
 }
 Sprite& Sprite::setAnimationPhysicsMode(int mode,const char* bone,bool descendants,double seconds,int direction) {
+    if(recordOperation("setAnimationPhysicsMode", captureAnimationArguments(mode, bone, descendants, seconds, direction))) return *this;
     return setAnimationPhysicsMode(mode,animationPhysicsBone(bone),descendants,seconds,direction);
 }
 int Sprite::getAnimationPhysicsMode() const {
@@ -52,6 +55,7 @@ int Sprite::getAnimationPhysicsMode(AnimationBoneId bone,bool descendants) const
 }
 int Sprite::getAnimationPhysicsMode(const char* bone,bool descendants) const { return getAnimationPhysicsMode(animationPhysicsBone(bone),descendants); }
 Sprite& Sprite::setAnimationPhysicsDriveSettings(const AnimationPhysicsDriveSettings& settings) {
+    if(recordOperation("setAnimationPhysicsDriveSettings", captureAnimationArguments(settings))) return *this;
     if(AnimationPipeline::isInsideCallback())throw std::logic_error("Change physical control outside modifiers");
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
     auto& rig=animationPhysicsControl();rig.setDriveSettings(settings,rig.select({},false));
@@ -61,6 +65,7 @@ Sprite& Sprite::setAnimationPhysicsDriveSettings(const AnimationPhysicsDriveSett
     return *this;
 }
 Sprite& Sprite::setAnimationPhysicsDriveSettings(const AnimationPhysicsDriveSettings& settings,AnimationBoneId bone,bool descendants) {
+    if(recordOperation("setAnimationPhysicsDriveSettings", captureAnimationArguments(settings, bone, descendants))) return *this;
     if(AnimationPipeline::isInsideCallback())throw std::logic_error("Change physical control outside modifiers");
 #ifdef PDG_USE_CHIPMUNK_PHYSICS
     auto& rig=animationPhysicsControl();rig.setDriveSettings(settings,rig.select(bone,descendants));
@@ -70,6 +75,7 @@ Sprite& Sprite::setAnimationPhysicsDriveSettings(const AnimationPhysicsDriveSett
     return *this;
 }
 Sprite& Sprite::setAnimationPhysicsDriveSettings(const AnimationPhysicsDriveSettings& settings,const char* bone,bool descendants) {
+    if(recordOperation("setAnimationPhysicsDriveSettings", captureAnimationArguments(settings, bone, descendants))) return *this;
     return setAnimationPhysicsDriveSettings(settings,animationPhysicsBone(bone),descendants);
 }
 std::optional<AnimationPhysicsDriveSettings> Sprite::getAnimationPhysicsDriveSettings(AnimationBoneId bone) const {

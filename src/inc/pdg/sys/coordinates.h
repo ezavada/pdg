@@ -633,19 +633,19 @@ public:
 	bool contains(const PointT<T> &point) const;
     // move the quad
 	//! move the rectangle to the left by some amount
-    void    moveLeft(T delta)   { points[0].x -= delta; points[1].x -= delta; points[2].x -= delta; points[3].x -= delta; }
+    QuadT<T>& moveLeft(T delta)   { points[0].x -= delta; points[1].x -= delta; points[2].x -= delta; points[3].x -= delta; return *this; }
 	//! move the rectangle to the right by some amount
-    void    moveRight(T delta)  { points[0].x += delta; points[1].x += delta; points[2].x += delta; points[3].x += delta; }
+    QuadT<T>& moveRight(T delta)  { points[0].x += delta; points[1].x += delta; points[2].x += delta; points[3].x += delta; return *this; }
 	//! move the rectangle up by some amount
-    void    moveUp(T delta)     { points[0].y -= delta; points[1].y -= delta; points[2].y -= delta; points[3].y -= delta; }
+    QuadT<T>& moveUp(T delta)     { points[0].y -= delta; points[1].y -= delta; points[2].y -= delta; points[3].y -= delta; return *this; }
 	//! move the rectangle down by some amount
-    void    moveDown(T delta)   { points[0].y += delta; points[1].y += delta; points[2].y += delta; points[3].y += delta; }
+    QuadT<T>& moveDown(T delta)   { points[0].y += delta; points[1].y += delta; points[2].y += delta; points[3].y += delta; return *this; }
 	//! rotate the quad by a rotation in radians (around the calculated center point of the quad)
-	void	rotate(float rotationRadians) { rotate(rotationRadians, PointT<T>((T)0,(T)0)); }
+	QuadT<T>& rotate(float rotationRadians) { rotate(rotationRadians, PointT<T>((T)0,(T)0)); return *this; }
 	//! rotate the quad by a rotation in radians around an offset center point
-	void	rotate(float rotationRadians, const PointT<T>& centerPtOffset);
+	QuadT<T>& rotate(float rotationRadians, const PointT<T>& centerPtOffset);
 	//! rotate the quad by a rotation in radians around a center point
-	void	rotateAround(float rotationRadians, const PointT<T>& centerPoint);
+	QuadT<T>& rotateAround(float rotationRadians, const PointT<T>& centerPoint);
 };
 
 typedef QuadT<PDG_BASE_COORD_TYPE> Quad;
@@ -746,15 +746,16 @@ bool QuadT<T>::contains(const PointT<T> &point) const {
 }
 
 template <typename T>
-void	QuadT<T>::rotate(float rotationRadians, const PointT<T>& centerPtOffset) {
+QuadT<T>&	QuadT<T>::rotate(float rotationRadians, const PointT<T>& centerPtOffset) {
 	PointT<float> cp = centerPoint();
 	PointT<float> coff(centerPtOffset.x, centerPtOffset.y);
 	cp += coff;
 	rotateAround(rotationRadians, cp);
+    return *this;
 }
 
 template <typename T>
-void	QuadT<T>::rotateAround(float rotationRadians, const PointT<T>& centerPoint) {
+QuadT<T>&	QuadT<T>::rotateAround(float rotationRadians, const PointT<T>& centerPoint) {
 	// calc points with rotation
 	VectorT<float> v;
 	for (int i = 0; i < 4; i++) {
@@ -766,6 +767,7 @@ void	QuadT<T>::rotateAround(float rotationRadians, const PointT<T>& centerPoint)
 		points[i].x = (T) ((len * cos(rot + rotationRadians)) + centerPoint.x);
 		points[i].y = (T) ((len * sin(rot + rotationRadians)) + centerPoint.y);
 	}
+    return *this;
 }
 
 //! \endcond
@@ -793,10 +795,10 @@ public:
 	float      radians;
 	OffsetT<T> centerOffset;
 	// operations
-	void	setCenterOffset(const PointT<T>& centerPtOffset) { centerOffset = centerPtOffset; }
-	void	setRotation(float rotationRadians) { radians = rotationRadians; }
-	void    setRotation(float rotationRadians, const PointT<T>& centerPtOffset) { radians = rotationRadians; centerOffset = centerPtOffset; }
-	void	rotate(float rotateRadians) { radians += rotateRadians; }
+	RotatedRectT<T>& setCenterOffset(const PointT<T>& centerPtOffset) { centerOffset = centerPtOffset; return *this; }
+	RotatedRectT<T>& setRotation(float rotationRadians) { radians = rotationRadians; return *this; }
+	RotatedRectT<T>& setRotation(float rotationRadians, const PointT<T>& centerPtOffset) { radians = rotationRadians; centerOffset = centerPtOffset; return *this; }
+	RotatedRectT<T>& rotate(float rotateRadians) { radians += rotateRadians; return *this; }
 	// conversions
 	QuadT<T>  getQuad() const;
 	RectT<T>   getBounds() const {return getQuad().getBounds(); }

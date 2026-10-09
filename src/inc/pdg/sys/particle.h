@@ -6,6 +6,7 @@
 #include "pdg/sys/collider.h"
 #include "pdg/sys/particleemitter.h"
 #include <memory>
+#include "pdg/sys/color.h"
 
 namespace pdg {
 class Drawing;
@@ -13,6 +14,22 @@ class Image;
 class SpriteLayer;
 class SpriteManager;
 class ParticleEmitter;
+class ParticleTrail;
+/** Solid ribbon settings. Distances are layer units; times are simulation seconds. */
+/** Pure ribbon settings, copied by Particle::setTrail and emitter templates.
+ * @ingroup Animation
+ * See Particle::setTrail for units, validation, and lifetime behavior.
+ */
+struct ParticleTrailOptions {
+    double lifetime = .4;
+    float width = 6, endWidth = 0;
+    Color color = Color(1.f, .5f, 0.f, 1.f);
+    float endOpacity = 0;
+    double minDistance = 2, sampleInterval = 1.0/60.0;
+    uint32 maxPoints = 32;
+    double breakDistance = 256;
+    void validate() const;
+};
 
 /** Lightweight whole-body artwork, animation and optional physics.
  * @ingroup Animation Physics
@@ -41,6 +58,13 @@ public:
     ParticleEmitter& setupParticleEmitter();
     ParticleEmitter* getParticleEmitter() const { return emitter.get(); }
     void removeParticleEmitter();
+    /// Configure a ribbon and clear its previous history; no renderer is needed to sample it.
+    Particle& setTrail(const ParticleTrailOptions& options);
+    Particle& clearTrail();
+    /// Break the ribbon at the current position, e.g. when teleporting.
+    Particle& breakTrail();
+    bool hasTrail() const { return bool(mTrail); }
+    uint32 getTrailPointCount() const;
     Particle& setImage(const Image& image);
     Particle& setDrawing(const Drawing& drawing);
     Particle& clearContent();
@@ -48,6 +72,14 @@ public:
     Particle& setOpacity(float opacity);
     float getOpacity() const { return mOpacity; }
     Particle& fadeTo(float opacity, double seconds, EasingFunc easing = linearTween);
+    Particle& fadeIn(double seconds, EasingFunc easing = linearTween) {
+        if(recordOperation("fadeIn", captureAnimationArguments(seconds,easing))) return *this;
+        return fadeTo(1,seconds,easing);
+    }
+    Particle& fadeOut(double seconds, EasingFunc easing = linearTween) {
+        if(recordOperation("fadeOut", captureAnimationArguments(seconds,easing))) return *this;
+        return fadeTo(0,seconds,easing);
+    }
     Particle& setLifetime(double seconds);
     double getLifetime() const { return mLifetime; }
     double getAge() const { return mAge; }
@@ -69,6 +101,7 @@ private:
     void place(const Point& point, double rotation, const Vector& velocity);
     void advance(double seconds);
     void finish();
+    void finishTrailStep();
     void syncPhysicsSolver();
     void draw();
     SpatialTransform transform() const;
@@ -80,8 +113,10 @@ private:
     std::vector<const float*> tweenFields() const override;
     SpriteLayer* mLayer = nullptr;
     std::shared_ptr<Drawing> mDrawing;
+    std::unique_ptr<ParticleTrail> mTrail;
+    bool mTrailStepping = false;
     float mOpacity = 1;
-    double mLifetime = 1, mAge = 0, mStepSeconds = 0;
+    double mLifetime = 1, mAge = 0, mStepSeconds = 0, mFrameSeconds = 0;
     bool mAlive = true;
 };
 }

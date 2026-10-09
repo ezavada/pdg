@@ -136,3 +136,23 @@ CLEANUP_IMPL(Spline)
 #endif // !PDG_NO_GUI
 
 } // end namespace pdg
+
+/* @pdg-member
+{
+  "name": "Spline.Spline",
+  "type": "constructor",
+  "params": [
+    {
+      "name": "splineType",
+      "type": "number",
+      "optional": true,
+      "default_value": "SPLINE_CUBIC_BEZIER"
+    }
+  ],
+  "returns": "object Spline",
+  "brief": "Create a spline of the selected type."
+}
+*/
+
+
+// @pdg-class {"name":"Spline","native_binding":{"browser":{"generate":true,"base":null,"constructors":[{"types":["int"]}]}}}

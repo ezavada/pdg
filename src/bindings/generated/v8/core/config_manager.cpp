@@ -173,10 +173,6 @@ namespace pdg
         ConfigManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ConfigManagerWrap>(args.This());
         ConfigManager* self = dynamic_cast<ConfigManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "(string inConfigName)" " - " "").ToLocalChecked() ); return; };
-        }
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -199,10 +195,6 @@ namespace pdg
         ConfigManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ConfigManagerWrap>(args.This());
         ConfigManager* self = dynamic_cast<ConfigManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "string" " function" "(string inConfigItemName)" " - " "").ToLocalChecked() ); return; };
-        }
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -233,10 +225,6 @@ namespace pdg
         ConfigManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ConfigManagerWrap>(args.This());
         ConfigManager* self = dynamic_cast<ConfigManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "(string inConfigItemName)" " - " "").ToLocalChecked() ); return; };
-        }
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -267,10 +255,6 @@ namespace pdg
         ConfigManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ConfigManagerWrap>(args.This());
         ConfigManager* self = dynamic_cast<ConfigManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "number" " function" "(string inConfigItemName)" " - " "").ToLocalChecked() ); return; };
-        }
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -301,10 +285,6 @@ namespace pdg
         ConfigManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ConfigManagerWrap>(args.This());
         ConfigManager* self = dynamic_cast<ConfigManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "boolean" " function" "(string inConfigItemName)" " - " "").ToLocalChecked() ); return; };
-        }
         if (args.Length() != 1)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 1);
@@ -335,10 +315,6 @@ namespace pdg
         ConfigManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ConfigManagerWrap>(args.This());
         ConfigManager* self = dynamic_cast<ConfigManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(string inConfigItemName, string inValue)" " - " "").ToLocalChecked() ); return; };
-        }
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -369,10 +345,6 @@ namespace pdg
         ConfigManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ConfigManagerWrap>(args.This());
         ConfigManager* self = dynamic_cast<ConfigManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(string inConfigItemName, [number int] inValue)" " - " "").ToLocalChecked() ); return; };
-        }
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -401,10 +373,6 @@ namespace pdg
         ConfigManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ConfigManagerWrap>(args.This());
         ConfigManager* self = dynamic_cast<ConfigManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(string inConfigItemName, number inValue)" " - " "").ToLocalChecked() ); return; };
-        }
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);
@@ -433,10 +401,6 @@ namespace pdg
         ConfigManagerWrap* objWrapper = jswrap::ObjectWrap::Unwrap<ConfigManagerWrap>(args.This());
         ConfigManager* self = dynamic_cast<ConfigManager*>(objWrapper->cppPtr_);
 
-        if (args.Length() == 1 && args[0]->IsNull())
-        {
-            { args.GetReturnValue().Set( v8::String::NewFromUtf8(isolate, "undefined" " function" "(string inConfigItemName, boolean inValue)" " - " "").ToLocalChecked() ); return; };
-        }
         if (args.Length() != 2)
         {
             v8_ThrowArgCountException(isolate, args.Length(), 2);

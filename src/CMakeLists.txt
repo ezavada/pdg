@@ -2,6 +2,9 @@
 
 SET( PDG_SOURCES  
 	sys/animated.cpp
+	sys/bone.cpp
+	sys/scene.cpp
+	sys/camera.cpp
 	sys/particle.cpp
 	sys/physicsbody.cpp
 	sys/collider.cpp
@@ -82,9 +85,13 @@ SET (PDG_JAVASCRIPT_BINDINGS_SOURCES
 	bindings/generated/v8/physics/cp_arbiter.cpp
 	bindings/generated/v8/physics/cp_constraint.cpp
 	bindings/generated/v8/physics/cp_space.cpp
+	bindings/generated/v8/physics/collider.cpp
+	bindings/generated/v8/physics/physics_body.cpp
+	bindings/generated/v8/physics/physics_constraint.cpp
 	bindings/generated/v8/core/config_manager.cpp
 	bindings/generated/v8/core/log_manager.cpp
 	bindings/generated/v8/core/event_manager.cpp
+	bindings/generated/v8/core/event_emitter.cpp
 	bindings/generated/v8/core/timer_manager.cpp
 	bindings/generated/v8/data/file_manager.cpp
 	bindings/generated/v8/data/mem_block.cpp
@@ -98,9 +105,19 @@ SET (PDG_JAVASCRIPT_BINDINGS_SOURCES
 	bindings/generated/v8/graphics/spline.cpp
 	bindings/generated/v8/graphics/polygon.cpp
 	bindings/generated/v8/graphics/drawing.cpp
+	bindings/generated/v8/graphics/element_ref.cpp
 	bindings/generated/v8/graphics/font.cpp
 	bindings/generated/v8/graphics/attributes.cpp
+	bindings/generated/v8/graphics/animated_attributes.cpp
 	bindings/generated/v8/animation/animated.cpp
+	bindings/generated/v8/animation/animation_helper.cpp
+	bindings/generated/v8/animation/animation_script.cpp
+	bindings/generated/v8/animation/scene.cpp
+	bindings/generated/v8/animation/camera.cpp
+	bindings/generated/v8/animation/bone.cpp
+	bindings/generated/v8/animation/part.cpp
+	bindings/generated/v8/animation/particle.cpp
+	bindings/generated/v8/animation/particle_emitter.cpp
 	bindings/generated/v8/animation/sprite.cpp
 	bindings/generated/v8/animation/sprite_layer.cpp
 	bindings/generated/v8/animation/tile_layer.cpp
@@ -115,6 +132,7 @@ IF(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 	SET_SOURCE_FILES_PROPERTIES(
 		bindings/generated/v8/pdg_interfaces.cpp
 		bindings/generated/v8/graphics/attributes.cpp
+		bindings/generated/v8/graphics/animated_attributes.cpp
 		PROPERTIES COMPILE_OPTIONS "-Wno-unused-result"
 	)
 ENDIF()
@@ -549,6 +567,10 @@ ADD_EXECUTABLE(pdg WIN32 MACOSX_BUNDLE
 	${PDG_SOURCES}
 	${PDG_JAVASCRIPT_BINDINGS_SOURCES}
 )
+OPTION(PDG_USE_WEBTRANSPORT "Enable native HTTP/3 WebTransport clients and listeners" ON)
+IF(PDG_USE_WEBTRANSPORT)
+    INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/sys/webtransport/integration.cmake")
+ENDIF()
 
 # V8 requires C++20; ensure MSVC gets /std:c++20 and updates __cplusplus (needed for v8config.h)
 SET_TARGET_PROPERTIES(pdg PROPERTIES CXX_STANDARD 20 CXX_STANDARD_REQUIRED ON)
@@ -609,7 +631,7 @@ ENDIF( WIN32 )
 IF( NOT MACOSX AND NOT WIN32 )
 	TARGET_INCLUDE_DIRECTORIES(pdg PRIVATE
 		${PDG_SOURCE_DIR}/deps/png
-		${PDG_SOURCE_DIR}/deps/libjpeg-turbo/src
+		${JPEG_INCLUDE_DIRS}
 	)
 ENDIF( NOT MACOSX AND NOT WIN32 )
 
@@ -700,7 +722,7 @@ ENDIF( WIN32 )
 IF( NOT MACOSX AND NOT WIN32 )
 	TARGET_INCLUDE_DIRECTORIES(pdg-lib PRIVATE
 		${PDG_SOURCE_DIR}/deps/png
-		${PDG_SOURCE_DIR}/deps/libjpeg-turbo/src
+		${JPEG_INCLUDE_DIRS}
 	)
 ENDIF()
 
@@ -824,7 +846,7 @@ ENDIF( WIN32 )
 IF( NOT MACOSX AND NOT WIN32 )
 	TARGET_INCLUDE_DIRECTORIES(pdg-lib-debug PRIVATE
 		${PDG_SOURCE_DIR}/deps/png
-		${PDG_SOURCE_DIR}/deps/libjpeg-turbo/src
+		${JPEG_INCLUDE_DIRS}
 	)
 ENDIF()
 
@@ -1047,7 +1069,53 @@ IF(CAN_BUILD_INTERFACES)
 		SET(GEN_SCRIPT_INTERFACE_CMD "${CMAKE_SOURCE_DIR}/tools/gen-script-interface.sh")
 	ENDIF()
 
+	FIND_PROGRAM(PDG_METADATA_NODE NAMES node node.exe HINTS "${PDG_SOURCE_DIR}/tools")
+	IF(NOT PDG_METADATA_NODE)
+		MESSAGE(FATAL_ERROR "Node is required to generate interface metadata")
+	ENDIF()
+	FILE(GLOB_RECURSE PDG_METADATA_INPUTS CONFIGURE_DEPENDS
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/*.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/*.inc"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/emscripten/*.h"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/emscripten/*.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/js/*.js"
+	)
+	LIST(REMOVE_ITEM PDG_METADATA_INPUTS "${CMAKE_CURRENT_SOURCE_DIR}/js/interface_metadata_data.js")
+	ADD_CUSTOM_COMMAND(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/js/interface_metadata_data.js"
+		COMMAND ${PDG_METADATA_NODE} "${PDG_SOURCE_DIR}/tools/build-interface-metadata.js"
+		DEPENDS ${PDG_METADATA_INPUTS}
+			"${PDG_SOURCE_DIR}/tools/build-interface-metadata.js"
+			"${PDG_SOURCE_DIR}/tools/animation-recorder.js"
+			"${PDG_SOURCE_DIR}/tools/animation-operations-inventory.json"
+			"${PDG_SOURCE_DIR}/tools/interface-metadata-source.js"
+			"${PDG_SOURCE_DIR}/tools/interface-metadata-macros.h"
+			"${PDG_SOURCE_DIR}/tools/api-contracts.js"
+			"${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/pdg.js"
+			"${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/v8/pdg_js_classes.cpp"
+			"${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/v8/pdg_script_macros.h"
+			"${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/v8/pdg_js_macros.h"
+			"${PDG_SOURCE_DIR}/deps/node/deps/acorn/acorn/dist/acorn.js"
+			"${PDG_SOURCE_DIR}/VERSION"
+	)
+    FILE(GLOB PDG_WS_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/js/vendor/ws/lib/*.js")
+    ADD_CUSTOM_COMMAND(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/js/net_ws_bundle.js"
+        COMMAND ${PDG_METADATA_NODE} "${PDG_SOURCE_DIR}/tools/bundle-websocket.js"
+        DEPENDS ${PDG_WS_SOURCES} "${CMAKE_CURRENT_SOURCE_DIR}/js/vendor/ws/index.js"
+            "${CMAKE_CURRENT_SOURCE_DIR}/js/vendor/ws/LICENSE" "${PDG_SOURCE_DIR}/tools/bundle-websocket.js"
+    )
 	SET( JS_FILES
+		"${CMAKE_CURRENT_SOURCE_DIR}/js/net_bytes.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/js/net_transport.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/js/net_websocket_client.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/js/net_websocket_server.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/js/net_transport_selector.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/js/net_webtransport_client.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/js/net_webtransport_native.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/js/net_webtransport_server.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/js/net_ws_bundle.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/js/interface_metadata.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/js/interface_metadata_data.js"
 		"${CMAKE_CURRENT_SOURCE_DIR}/js/coordinates.js"
 		"${CMAKE_CURRENT_SOURCE_DIR}/js/color.js"
 		"${CMAKE_CURRENT_SOURCE_DIR}/js/netclient.js"
@@ -1056,7 +1124,11 @@ IF(CAN_BUILD_INTERFACES)
 		"${CMAKE_CURRENT_SOURCE_DIR}/js/dump.js"
 	) 
 
+    # iOS is a client-only TCP/UDP runtime; omit Node server/WebSocket modules.
+    SET(JS_JSC_SHARED_FILES ${JS_FILES})
+    LIST(FILTER JS_JSC_SHARED_FILES EXCLUDE REGEX "/(netserver|net_websocket_client|net_websocket_server|net_webtransport_server|net_ws_bundle)\\.js$")
 	SET( JS_JSC_IOS_FILES
+        "${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/net_ios_transport.js"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/pdg.js"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/linkedlist.js"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/assert.js"
@@ -1099,8 +1171,8 @@ IF(CAN_BUILD_INTERFACES)
 
 	IF(CAN_BUILD_JSC_INTERFACES)
 		ADD_CUSTOM_COMMAND(OUTPUT "${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/pdg_natives.h"
-			COMMAND ${PDG_PYTHON3} "${PDG_SOURCE_DIR}/tools/js2c.py" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/pdg_natives.h" ${JS_FILES} ${JS_JSC_IOS_FILES}
-			DEPENDS ${JS_FILES} ${JS_JSC_IOS_FILES}
+			COMMAND ${PDG_PYTHON3} "${PDG_SOURCE_DIR}/tools/js2c.py" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/jsc-ios/pdg_natives.h" ${JS_JSC_SHARED_FILES} ${JS_JSC_IOS_FILES}
+			DEPENDS ${JS_JSC_SHARED_FILES} ${JS_JSC_IOS_FILES}
 		)
 	ENDIF(CAN_BUILD_JSC_INTERFACES)
 	ADD_CUSTOM_TARGET(pdg_js2native ALL DEPENDS ${JS_NATIVE_FILES}) 
@@ -1113,10 +1185,14 @@ IF(CAN_BUILD_INTERFACES)
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/physics/cp_arbiter.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/physics/cp_constraint.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/physics/cp_space.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/physics/collider.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/physics/physics_body.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/physics/physics_constraint.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/core/core_bindings.h"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/core/config_manager.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/core/log_manager.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/core/event_manager.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/core/event_emitter.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/core/timer_manager.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/data/data_bindings.h"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/data/file_manager.cpp"
@@ -1132,10 +1208,20 @@ IF(CAN_BUILD_INTERFACES)
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/graphics/spline.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/graphics/polygon.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/graphics/drawing.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/graphics/element_ref.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/graphics/font.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/graphics/attributes.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/graphics/animated_attributes.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/animation_bindings.h"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/animated.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/animation_helper.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/animation_script.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/scene.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/camera.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/bone.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/part.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/particle.cpp"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/particle_emitter.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/sprite.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/sprite_layer.cpp"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/tile_layer.cpp"
@@ -1147,6 +1233,8 @@ IF(CAN_BUILD_INTERFACES)
 	# Add macro files as dependencies for binding generation
 	# These are the main macro files that are included by multiple binding files
 	SET( BINDING_MACRO_FILES
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/physics/physics_impl_macros.h"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/physics/physics_object_impl_macros.h"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/core/core_impl_macros.h"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/core/core_macros.h"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/data/data_impl_macros.h"
@@ -1155,6 +1243,7 @@ IF(CAN_BUILD_INTERFACES)
         "${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/graphics/attributes_impl_macros.h"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/graphics/graphics_macros.h"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/animation_impl_macros.h"
+		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/layer_lifecycle_macros.h"
 		"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/animation_macros.h"
 	)
 	
@@ -1218,12 +1307,18 @@ IF(CAN_BUILD_INTERFACES)
                 "${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/animation_macros.h"
                 "${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/animation_impl_macros.h"
             )
+		ELSEIF( "${parentdir}" STREQUAL "physics" )
+			SET( macro_deps
+                "${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/physics/physics_impl_macros.h"
+                "${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/physics/physics_object_impl_macros.h"
+            )
 		ELSEIF( "${parentdir}" STREQUAL "core" )
 			SET( macro_deps "${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/core/core_impl_macros.h" )
 		ELSEIF( "${parentdir}" STREQUAL "data" )
 			SET( macro_deps "${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/data/data_impl_macros.h" )
 		ELSEIF( "${parentdir}" STREQUAL "animation" )
 			SET( macro_deps 
+                "${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/animation_recorder_body.inc"
 				"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/animation/animation_impl_macros.h"
 				"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/core/core_impl_macros.h"
 				"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/data/data_impl_macros.h"
@@ -1236,6 +1331,7 @@ IF(CAN_BUILD_INTERFACES)
 		ADD_CUSTOM_COMMAND(OUTPUT "${outfile}"
 			COMMAND ${GEN_SCRIPT_INTERFACE_CMD} "javascript/v8" "${srcfile}" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/v8/${outdir}" "./" "${filename}"
 			DEPENDS "${srcfile}" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/v8/pdg_script_macros.h" 
+				"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/binding_groups.h"
 				"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/v8/physics/.dir" 
 				"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/v8/core/.dir"
 				"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/v8/data/.dir"
@@ -1251,6 +1347,7 @@ IF(CAN_BUILD_INTERFACES)
 			ADD_CUSTOM_COMMAND(OUTPUT "${outfile}"
 				COMMAND ${GEN_SCRIPT_INTERFACE_CMD} "javascript/jsc" "${srcfile}" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/${outdir}" "./" "${filename}"
 				DEPENDS "${srcfile}" "${CMAKE_CURRENT_SOURCE_DIR}/bindings/javascript/jsc/pdg_script_macros.h"
+					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/common/binding_groups.h"
 					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/physics/.dir"
 					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/core/.dir"
 					"${CMAKE_CURRENT_SOURCE_DIR}/bindings/generated/jsc/data/.dir"
@@ -1822,6 +1919,11 @@ IF(BUILD_TESTING)
     TARGET_COMPILE_DEFINITIONS(pdg-animated-contract-tests PRIVATE PDG_INTERNAL_LIB=1)
     TARGET_INCLUDE_DIRECTORIES(pdg-animated-contract-tests PRIVATE ${PDG_SOURCE_DIR}/src/inc)
     ADD_TEST(NAME pdg-animated-contract COMMAND pdg-animated-contract-tests)
+    ADD_EXECUTABLE(pdg-animation-script-tests
+        ${PDG_SOURCE_DIR}/test/cxx/test-animation-scripts.cpp sys/animated.cpp)
+    TARGET_COMPILE_DEFINITIONS(pdg-animation-script-tests PRIVATE PDG_INTERNAL_LIB=1)
+    TARGET_INCLUDE_DIRECTORIES(pdg-animation-script-tests PRIVATE ${PDG_SOURCE_DIR}/src/inc)
+    ADD_TEST(NAME pdg-animation-scripts COMMAND pdg-animation-script-tests)
 ENDIF()
 
 # The basic physical integrator must work without Spriter, Chipmunk or rendering.
@@ -1880,6 +1982,9 @@ IF(BUILD_TESTING)
     ELSEIF(NOT MACOSX AND PDG_NODE_STATIC_ZLIB_LIBS)
         # Node splits zlib across archives, including ARM64 SIMD implementations.
         TARGET_LINK_LIBRARIES(pdg-png-decoder-tests PRIVATE ${PDG_NODE_STATIC_ZLIB_LIBS})
+    ELSEIF(NOT MACOSX AND PDG_NODE_STATIC_ZLIB_LIBS)
+        # Node splits zlib across archives, including ARM64 SIMD implementations.
+        TARGET_LINK_LIBRARIES(pdg-png-decoder-tests PRIVATE ${PDG_NODE_STATIC_ZLIB_LIBS})
     ELSE()
         FIND_PACKAGE(ZLIB REQUIRED)
         TARGET_LINK_LIBRARIES(pdg-png-decoder-tests PRIVATE ZLIB::ZLIB)
@@ -1904,11 +2009,12 @@ IF(BUILD_TESTING AND NOT PDG_HEADLESS)
     ADD_TEST(NAME pdg-polygon-tessellation COMMAND pdg-polygon-tessellation-tests)
 
     ADD_EXECUTABLE(pdg-view-animation-tests
-        ${PDG_SOURCE_DIR}/test/cxx/test-view-animation.cpp app/View.cpp app/ScrollingView.cpp)
+        ${PDG_SOURCE_DIR}/test/cxx/test-view-animation.cpp
+        ${PDG_SOURCE_DIR}/test/cxx/test-text-cache.cpp app/View.cpp app/ScrollingView.cpp)
     TARGET_COMPILE_DEFINITIONS(pdg-view-animation-tests PRIVATE
         PDG_INTERNAL_LIB=1 PDG_PROJECT=PDG_PROJECT_C_ONLY_APP)
     TARGET_INCLUDE_DIRECTORIES(pdg-view-animation-tests PRIVATE
-        ${PDG_INCLUDE_DIRECTORIES} ${PDG_SOURCE_DIR}/deps
+        ${PDG_INCLUDE_DIRECTORIES} ${PDG_SOURCE_DIR}/src/sys ${PDG_SOURCE_DIR}/deps
         ${PDG_SOURCE_DIR}/deps/SpriterPlusPlus ${PDG_SOURCE_DIR}/deps/chipmunk/include)
     TARGET_LINK_DIRECTORIES(pdg-view-animation-tests PRIVATE
         ${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/glfw/src)
@@ -1929,6 +2035,22 @@ IF(BUILD_TESTING AND NOT PDG_HEADLESS)
         TARGET_LINK_LIBRARIES(pdg-view-animation-tests PRIVATE ${OPENGL_LIBRARIES} dl pthread)
     ENDIF()
     ADD_TEST(NAME pdg-view-animation COMMAND pdg-view-animation-tests)
+    IF(MACOSX AND USE_GLFW_MAC)
+        ADD_EXECUTABLE(pdg-retina-placement-tests ${PDG_SOURCE_DIR}/test/cxx/test-retina-placement.mm)
+        TARGET_COMPILE_DEFINITIONS(pdg-retina-placement-tests PRIVATE
+            PDG_INTERNAL_LIB=1 PDG_PROJECT=PDG_PROJECT_C_ONLY_APP)
+        TARGET_INCLUDE_DIRECTORIES(pdg-retina-placement-tests PRIVATE
+            ${PDG_INCLUDE_DIRECTORIES} ${PDG_SOURCE_DIR}/src/sys ${PDG_SOURCE_DIR}/deps
+            ${PDG_SOURCE_DIR}/deps/glfw/include)
+        TARGET_LINK_DIRECTORIES(pdg-retina-placement-tests PRIVATE
+            ${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/glfw/src)
+        TARGET_LINK_LIBRARIES(pdg-retina-placement-tests PRIVATE pdg-lib-debug
+            "-framework AppKit" "-framework CoreGraphics" "-framework AudioToolbox"
+            "-framework CoreFoundation" "-framework Security" "-framework IOKit"
+            "-framework OpenGL" "-framework GLUT" ${OPENGL_LIBRARIES})
+        ADD_TEST(NAME pdg-retina-placement COMMAND pdg-retina-placement-tests)
+        SET_TESTS_PROPERTIES(pdg-retina-placement PROPERTIES TIMEOUT 30)
+    ENDIF()
 ENDIF()
 
 # Attribute animation is independent of a graphics context or physics solver.
@@ -1940,4 +2062,75 @@ IF(BUILD_TESTING)
     TARGET_INCLUDE_DIRECTORIES(pdg-animated-attributes-tests PRIVATE
         ${PDG_SOURCE_DIR}/src/inc ${PDG_SOURCE_DIR}/deps)
     ADD_TEST(NAME pdg-animated-attributes COMMAND pdg-animated-attributes-tests)
+ENDIF()
+
+IF(BUILD_TESTING)
+    ADD_EXECUTABLE(pdg-camera-tests ${PDG_SOURCE_DIR}/test/cxx/test-camera.cpp sys/camera.cpp sys/animated.cpp sys/eventemitter.cpp sys/eventmanager.cpp sys/userdata.cpp)
+    TARGET_COMPILE_DEFINITIONS(pdg-camera-tests PRIVATE PDG_INTERNAL_LIB=1 PDG_NO_GUI=1)
+    TARGET_INCLUDE_DIRECTORIES(pdg-camera-tests PRIVATE ${PDG_SOURCE_DIR}/src/inc ${PDG_SOURCE_DIR}/src/sys ${PDG_SOURCE_DIR}/deps/chipmunk/include)
+    ADD_TEST(NAME pdg-camera COMMAND pdg-camera-tests)
+ENDIF()
+
+# Scene behavior is verified natively, including headless-compatible updates.
+IF(BUILD_TESTING)
+    ADD_EXECUTABLE(pdg-scene-tests
+        ${PDG_SOURCE_DIR}/test/cxx/test-scene.cpp)
+    TARGET_COMPILE_DEFINITIONS(pdg-scene-tests PRIVATE
+        PDG_INTERNAL_LIB=1 PDG_PROJECT=PDG_PROJECT_C_ONLY_APP)
+    TARGET_INCLUDE_DIRECTORIES(pdg-scene-tests PRIVATE
+        ${PDG_INCLUDE_DIRECTORIES} ${PDG_SOURCE_DIR}/deps
+        ${PDG_SOURCE_DIR}/deps/SpriterPlusPlus ${PDG_SOURCE_DIR}/deps/chipmunk/include)
+    TARGET_LINK_DIRECTORIES(pdg-scene-tests PRIVATE
+        ${PDG_SOURCE_DIR}/build/${BUILD_SUBDIR}/glfw/src)
+    TARGET_LINK_LIBRARIES(pdg-scene-tests PRIVATE pdg-lib-debug)
+    IF(MACOSX)
+        TARGET_LINK_LIBRARIES(pdg-scene-tests PRIVATE
+            "-framework AppKit" "-framework CoreGraphics" "-framework AudioToolbox"
+            "-framework CoreFoundation" "-framework Security" "-framework IOKit")
+        IF(NOT PDG_HEADLESS)
+            TARGET_LINK_LIBRARIES(pdg-scene-tests PRIVATE
+                "-framework OpenGL" "-framework GLUT" ${OPENGL_LIBRARIES})
+        ENDIF()
+    ELSEIF(WIN32)
+        TARGET_LINK_LIBRARIES(pdg-scene-tests PRIVATE
+            imm32 psapi winmm user32 strmiids bcrypt advapi32 crypt32 userenv msvcrt
+            ${OPENGL_LIBRARIES})
+    ELSE()
+        TARGET_LINK_LIBRARIES(pdg-scene-tests PRIVATE ${OPENGL_LIBRARIES} dl pthread)
+    ENDIF()
+    ADD_TEST(NAME pdg-scene COMMAND pdg-scene-tests)
+ENDIF()
+
+OPTION(PDG_BUILD_NATIVE_NETWORK "Build the optional C++ network API and its unit tests" OFF)
+IF(PDG_BUILD_NATIVE_NETWORK)
+    IF(EMSCRIPTEN)
+        MESSAGE(FATAL_ERROR "PDG_BUILD_NATIVE_NETWORK cannot be used in Web builds")
+    ENDIF()
+    INCLUDE("${CMAKE_CURRENT_SOURCE_DIR}/sys/net/integration.cmake")
+ENDIF()
+
+# Linux uses the system libjpeg headers and ABI for its UI textures.
+IF(BUILD_TESTING AND NOT MACOSX AND NOT WIN32)
+    ADD_EXECUTABLE(pdg-jpeg-decoder-tests
+        ${PDG_SOURCE_DIR}/test/cxx/jpeg_decoder_test.cpp sys/image-jpeg.cpp)
+    TARGET_COMPILE_DEFINITIONS(pdg-jpeg-decoder-tests PRIVATE PDG_INTERNAL_LIB=1 PDG_NO_GUI=1)
+    TARGET_INCLUDE_DIRECTORIES(pdg-jpeg-decoder-tests PRIVATE
+        ${PDG_SOURCE_DIR}/src/inc ${PDG_SOURCE_DIR}/src/sys ${PDG_SOURCE_DIR}/deps)
+    TARGET_LINK_LIBRARIES(pdg-jpeg-decoder-tests PRIVATE JPEG::JPEG)
+    ADD_TEST(NAME pdg-jpeg-decoder COMMAND pdg-jpeg-decoder-tests
+        ${PDG_SOURCE_DIR}/test/data/earthmap.jpg
+        ${PDG_SOURCE_DIR}/test/data/jupitermap2.jpg
+        ${PDG_SOURCE_DIR}/test/data/moonmap2.jpg)
+    IF(NOT PDG_HEADLESS)
+        ADD_EXECUTABLE(pdg-unix-font-tests
+            ${PDG_SOURCE_DIR}/test/cxx/unix_font_test.cpp sys/font-impl.cpp)
+        TARGET_COMPILE_DEFINITIONS(pdg-unix-font-tests PRIVATE PDG_INTERNAL_LIB=1)
+        TARGET_INCLUDE_DIRECTORIES(pdg-unix-font-tests PRIVATE
+            ${PDG_SOURCE_DIR}/src/inc ${PDG_SOURCE_DIR}/src/sys ${PDG_SOURCE_DIR}/deps)
+        TARGET_COMPILE_OPTIONS(pdg-unix-font-tests PRIVATE -ffunction-sections -fdata-sections)
+        TARGET_LINK_OPTIONS(pdg-unix-font-tests PRIVATE -Wl,--gc-sections)
+        TARGET_LINK_LIBRARIES(pdg-unix-font-tests PRIVATE Freetype::Freetype Fontconfig::Fontconfig)
+        ADD_TEST(NAME pdg-unix-font COMMAND pdg-unix-font-tests)
+        SET_TESTS_PROPERTIES(pdg-unix-font PROPERTIES SKIP_RETURN_CODE 77)
+    ENDIF()
 ENDIF()

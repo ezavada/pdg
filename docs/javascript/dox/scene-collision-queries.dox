@@ -1,0 +1,158 @@
+/**
+\fn pdg::Scene::raycast(Point start, Point end, CollisionQueryOptions options)
+\brief Return the closest accepted segment entry hit, or null.
+Queries inspect current authoritative scene geometry before stepping and while
+paused, independently of cameras, render interpolation, visibility, input and
+collision-response switches. Enabled attached Sprite, Part and Particle colliders
+are eligible, including bodyless colliders. Basic and Chipmunk configurations use
+the same geometry algorithms. Touching counts and a zero-length ray tests containment.
+
+Call outside scene update/draw traversal. Queries during advance(), including timer
+and contact callbacks, and recursive queries from predicates throw. Predicates must
+not mutate geometry, scene membership or results, advance scenes, or dispose scenes
+or layers. Predicate errors propagate and leave the reused array empty.
+
+The scene reuses one array and a pool of hit records, including their Point and
+Vector fields. All returned arrays and hits are valid until the next query on that
+scene or disposal. This includes single-hit queries. Copy fields and coordinates
+when keeping a result; copying the array alone does not copy its hit records.
+Queries on another scene do not invalidate these results. Treat returned arrays,
+records and coordinates as read-only. Disposal empties the array and clears its
+collider references. Hit records retain colliders while active; shape IDs may cease
+to exist after geometry changes.
+
+\htmlonly[block]
+<div class="shared-api-options">
+\endhtmlonly
+\anchor scene_collision_query_options
+\par Shared query options
+
+| Field | Default | Meaning |
+| --- | --- | --- |
+| maxHits | 16 | Overlap limit, integer 0 to 1048576; zero returns an empty array. Cast array overloads take maxHits as a separate parameter. |
+| layerMask | 4294967295 | Unsigned 32-bit mask intersecting layer queryBits. Zero selects none. Layers default to bit 1. |
+| layers | All scene layers | Optional SpriteLayer array intersected with layerMask. Empty selects none; foreign/detached layers throw. |
+| categoryMask | 4294967295 | Unsigned 32-bit mask intersecting collider categories. |
+| includeSensors | true | Include sensor colliders. |
+| excludedColliders | Empty | Collider identities to exclude. |
+| excludedBodies | Empty | PhysicsBody identities whose colliders are excluded. |
+| predicate | None | Synchronous boolean function(collider), called once per eligible collider before limiting results. |
+
+\anchor scene_collision_query_hit
+\par CollisionQueryHit fields
+
+| Field | Meaning |
+| --- | --- |
+| collider, shapeId | Collider and public shape identity. |
+| point | Cast target point or nearest point on filled geometry. Initial overlaps can return an interior point. |
+| normal | Outward normal toward the query; zero for initial overlaps and nearest points inside a shape. |
+| fraction | Cast travel fraction in [0,1]. |
+| distance | Cast travel distance or nearest filled-geometry distance in world units. |
+| initialOverlap | Cast starts touching/overlapping; distance and fraction are zero. |
+
+Overlap results expose identity only; other fields are zero. Array overloads of raycast(start, end, maxHits, options) and
+sweepCircle(center, radius, delta, maxHits, options), and overlap methods,
+return at most maxHits entries, sorted by distance, collider ID and shape ID.
+Overlaps use identity ordering. Decomposition pieces do not duplicate a public
+shape hit. Arrays have exactly the stored hit count; a miss returns an empty array.
+No truncation flag is exposed. Circle sweeps translate against current stationary
+geometry; nonuniform scale/shear uses the existing curved-boundary approximation.
+Layer queryBits are runtime settings and are not serialized in layer snapshots.
+Finite coordinates and nonnegative finite radii/distances are required. Boxes must
+have positive dimensions. Invalid requests throw.
+\htmlonly[block]
+</div>
+\endhtmlonly
+
+Storage is reused after warming up to the requested capacity. Geometry snapshots,
+candidate collection, script/native argument transport and sorting may still
+allocate; the API does not promise allocation-free queries.
+
+\param start Scene world-space segment start.
+\param end Scene world-space segment end.
+\param options Optional selection; see \ref scene_collision_query_options.
+\return Closest accepted CollisionQueryHit, or null. The hit is reused on the next query.
+\note Attach searched layers to a live scene; no physics step is required.
+\par Example
+\code{.js}
+const game = new pdg.Scene();
+const terrain = game.createSpriteLayer();
+terrain.createSprite().setupCollider().setBox(new pdg.Rect(100, 0, 120, 100));
+const hit = game.raycast(new pdg.Point(0, 50), new pdg.Point(200, 50));
+if (hit) console.log(hit.distance); // 100 world units
+const hits = game.overlapCircle(new pdg.Point(110, 50), 20, {maxHits: 8});
+for (const entry of hits) console.log(entry.shapeId);
+// Keep a copy before another query reuses entry and its coordinate objects.
+const saved = hits.map(entry => ({collider: entry.collider, shapeId: entry.shapeId}));
+game.dispose();
+\endcode
+*/
+/**
+\fn pdg::Scene::raycast(Point start, Point end, uint maxHits, CollisionQueryOptions options)
+\brief Query matching scene geometry using shared result storage.
+\param start Segment start.
+\param end Segment end.
+\param maxHits Integer limit 0 to 1048576; zero returns an empty array.
+\param options Optional selection; see \ref scene_collision_query_options.
+\return CollisionQueryHit[] with at most maxHits entries; empty on a miss. Valid until the next query on this scene or disposal.
+*/
+/**
+\fn pdg::Scene::sweepCircle(Point center, number radius, Vector delta, CollisionQueryOptions options)
+\brief Query matching scene geometry using shared result storage.
+\param center Initial world center.
+\param radius Finite nonnegative world radius.
+\param delta World translation.
+\param options Optional selection; see \ref scene_collision_query_options.
+\return Closest hit or null. Valid until the next query on this scene or disposal.
+*/
+/**
+\fn pdg::Scene::sweepCircle(Point center, number radius, Vector delta, uint maxHits, CollisionQueryOptions options)
+\brief Query matching scene geometry using shared result storage.
+\param center Initial world center.
+\param radius Finite nonnegative world radius.
+\param delta World translation.
+\param maxHits Integer limit 0 to 1048576; zero returns an empty array.
+\param options Optional selection; see \ref scene_collision_query_options.
+\return CollisionQueryHit[] with at most maxHits entries; empty on a miss. Valid until the next query on this scene or disposal.
+*/
+/**
+\fn pdg::Scene::overlapPoint(Point point, CollisionQueryOptions options)
+\brief Query matching scene geometry using shared result storage.
+\param point World point.
+\param options Optional selection; see \ref scene_collision_query_options.
+\return CollisionQueryHit[] with at most maxHits entries; empty on a miss. Valid until the next query on this scene or disposal.
+*/
+/**
+\fn pdg::Scene::overlapCircle(Point center, number radius, CollisionQueryOptions options)
+\brief Query matching scene geometry using shared result storage.
+\param center World center.
+\param radius Finite nonnegative world radius.
+\param options Optional selection; see \ref scene_collision_query_options.
+\return CollisionQueryHit[] with at most maxHits entries; empty on a miss. Valid until the next query on this scene or disposal.
+*/
+/**
+\fn pdg::Scene::overlapBox(RotatedRect box, CollisionQueryOptions options)
+\brief Query matching scene geometry using shared result storage.
+\param box Positive-size oriented world box.
+\param options Optional selection; see \ref scene_collision_query_options.
+\return CollisionQueryHit[] with at most maxHits entries; empty on a miss. Valid until the next query on this scene or disposal.
+*/
+/**
+\fn pdg::Scene::overlapCapsule(Point start, Point end, number radius, CollisionQueryOptions options)
+\brief Query matching scene geometry using shared result storage.
+\param start First cap center.
+\param end Second cap center.
+\param radius Finite nonnegative world radius.
+\param options Optional selection; see \ref scene_collision_query_options.
+\return CollisionQueryHit[] with at most maxHits entries; empty on a miss. Valid until the next query on this scene or disposal.
+*/
+/**
+\fn pdg::Scene::nearestPoint(Point point, number maxDistance, CollisionQueryOptions options)
+\brief Find the closest point on matching filled geometry.
+Points inside a shape return themselves at distance zero. This is not a signed
+distance or nearest-boundary search inside geometry.
+\param point World search point.
+\param maxDistance Finite nonnegative inclusive search distance.
+\param options Optional selection; see \ref scene_collision_query_options.
+\return Closest hit or null. Valid until the next query on this scene or disposal.
+*/

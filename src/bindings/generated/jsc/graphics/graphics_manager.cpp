@@ -177,7 +177,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0, true);
         if (argumentCount >= 1 && !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""mouseNumber"")");
-        long mouseNumber = (argumentCount<1) ? 0 : (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        long mouseNumber = (argumentCount<1) ? 0 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         pdg::Point theMouse = self->getMouse(mouseNumber);
         return JSC_PointToValue(ctx, theMouse, exception);
     }
@@ -190,7 +190,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0, true);
         if (argumentCount >= 1 && !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""screenNum"")");
-        long screenNum = (argumentCount<1) ? screenNum_PrimaryScreen : (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        long screenNum = (argumentCount<1) ? screenNum_PrimaryScreen : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         int32 theNumSupportedScreenModes = self->getNumSupportedScreenModes(screenNum);
         return JSValueMakeNumber(ctx, theNumSupportedScreenModes);
     }
@@ -204,16 +204,16 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2, true);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""width"")");
-        int32 width = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 width = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         if (!JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""height"")");
-        int32 height = (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        int32 height = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""screenNum"")");
-        long screenNum = (argumentCount<3) ? screenNum_PrimaryScreen : (int32)floor(JSValueToNumber(ctx, arguments[3 -1], exception));
+        long screenNum = (argumentCount<3) ? screenNum_PrimaryScreen : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[3 -1], exception));
         if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""bpp"")");
-        long bpp = (argumentCount<4) ? 0 : (int32)floor(JSValueToNumber(ctx, arguments[4 -1], exception));
+        long bpp = (argumentCount<4) ? 0 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[4 -1], exception));
         self->setScreenMode(width, height, screenNum, bpp);
         return JSValueMakeUndefined(ctx);
     }
@@ -242,7 +242,7 @@ namespace pdg
         const char* windName = (argumentCount < 2) ? "" : (const char*)windName_Mem.ptr;
         if (argumentCount >= 3 && !JSValueIsNumber(ctx, arguments[3 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 3, "a number (""bpp"")");
-        long bpp = (argumentCount<3) ? 0 : (int32)floor(JSValueToNumber(ctx, arguments[3 -1], exception));
+        long bpp = (argumentCount<3) ? 0 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[3 -1], exception));
         Port* port = self->createWindowPort(rect, windName, bpp);
         if (!port) return JSValueMakeNull(ctx);
         if (!port->mPortScriptObj)
@@ -324,13 +324,13 @@ namespace pdg
         };
         if (argumentCount >= 2 && !JSValueIsNumber(ctx, arguments[2 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 2, "a number (""screenNum"")");
-        long screenNum = (argumentCount<2) ? screenNum_PrimaryScreen : (int32)floor(JSValueToNumber(ctx, arguments[2 -1], exception));
+        long screenNum = (argumentCount<2) ? screenNum_PrimaryScreen : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[2 -1], exception));
         if (argumentCount >= 3 && !JSValueIsBoolean(ctx, arguments[3 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 3, "a boolean (""allowResChange"")");
         bool allowResChange = (argumentCount<3) ? true : JSValueToBoolean(ctx, arguments[3 -1]);
         if (argumentCount >= 4 && !JSValueIsNumber(ctx, arguments[4 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 4, "a number (""bpp"")");
-        long bpp = (argumentCount<4) ? 0 : (int32)floor(JSValueToNumber(ctx, arguments[4 -1], exception));
+        long bpp = (argumentCount<4) ? 0 : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[4 -1], exception));
         Port* port = self->createFullScreenPort(rect, screenNum, allowResChange, bpp);
         if (!port) return JSValueMakeNull(ctx);
         if (!port->mPortScriptObj)
@@ -490,7 +490,7 @@ namespace pdg
         ;
         if (argumentCount >= 1 && !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""screenNum"")");
-        long screenNum = (argumentCount<1) ? screenNum_PrimaryScreen : (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        long screenNum = (argumentCount<1) ? screenNum_PrimaryScreen : pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         pdg::Rect bounds = self->getScreenBounds(screenNum);
         return JSC_RectToValue(ctx, bounds, exception);
     }

@@ -271,19 +271,19 @@ namespace pdg
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
         cpVect anchor;
-        if (strcmp((const char*)cpConstraintGetUserData(self), "PinJoint") == 0)
+        if (cpConstraintIsPinJoint(self))
         {
             anchor = cpPinJointGetAnchorA(self);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "SlideJoint") == 0)
+        else if (cpConstraintIsSlideJoint(self))
         {
             anchor = cpSlideJointGetAnchorA(self);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "PivotJoint") == 0)
+        else if (cpConstraintIsPivotJoint(self))
         {
             anchor = cpPivotJointGetAnchorA(self);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") == 0)
+        else if (cpConstraintIsDampedSpring(self))
         {
             anchor = cpDampedSpringGetAnchorA(self);
         }
@@ -309,19 +309,19 @@ namespace pdg
             return JSC_ThrowArgTypeException(ctx, exception, 1, "Offset", arguments[1 -1]);
         };
         cpVect anchor = cpv(theAnchor.x, theAnchor.y);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "PinJoint") == 0)
+        if (cpConstraintIsPinJoint(self))
         {
             cpPinJointSetAnchorA(self, anchor);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "SlideJoint") == 0)
+        else if (cpConstraintIsSlideJoint(self))
         {
             cpSlideJointSetAnchorA(self, anchor);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "PivotJoint") == 0)
+        else if (cpConstraintIsPivotJoint(self))
         {
             cpPivotJointSetAnchorA(self, anchor);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") == 0)
+        else if (cpConstraintIsDampedSpring(self))
         {
             cpDampedSpringSetAnchorA(self, anchor);
         }
@@ -329,7 +329,7 @@ namespace pdg
         {
             std::ostringstream msg;
             msg << "cpConstraint.setAnchor() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
+                << "unsupported joint";
             std::ostringstream excpt_;
             excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << msg.str().c_str() << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
@@ -345,23 +345,23 @@ namespace pdg
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
         cpVect anchor;
-        if (strcmp((const char*)cpConstraintGetUserData(self), "PinJoint") == 0)
+        if (cpConstraintIsPinJoint(self))
         {
             anchor = cpPinJointGetAnchorB(self);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "SlideJoint") == 0)
+        else if (cpConstraintIsSlideJoint(self))
         {
             anchor = cpSlideJointGetAnchorB(self);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "PivotJoint") == 0)
+        else if (cpConstraintIsPivotJoint(self))
         {
             anchor = cpPivotJointGetAnchorB(self);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "GrooveJoint") == 0)
+        else if (cpConstraintIsGrooveJoint(self))
         {
             anchor = cpGrooveJointGetAnchorB(self);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") == 0)
+        else if (cpConstraintIsDampedSpring(self))
         {
             anchor = cpDampedSpringGetAnchorB(self);
         }
@@ -387,23 +387,23 @@ namespace pdg
             return JSC_ThrowArgTypeException(ctx, exception, 1, "Offset", arguments[1 -1]);
         };
         cpVect anchor = cpv(theOtherAnchor.x, theOtherAnchor.y);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "PinJoint") == 0)
+        if (cpConstraintIsPinJoint(self))
         {
             cpPinJointSetAnchorB(self, anchor);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "SlideJoint") == 0)
+        else if (cpConstraintIsSlideJoint(self))
         {
             cpSlideJointSetAnchorB(self, anchor);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "PivotJoint") == 0)
+        else if (cpConstraintIsPivotJoint(self))
         {
             cpPivotJointSetAnchorB(self, anchor);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "GrooveJoint") == 0)
+        else if (cpConstraintIsGrooveJoint(self))
         {
             cpGrooveJointSetAnchorB(self, anchor);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") == 0)
+        else if (cpConstraintIsDampedSpring(self))
         {
             cpDampedSpringSetAnchorB(self, anchor);
         }
@@ -411,7 +411,7 @@ namespace pdg
         {
             std::ostringstream msg;
             msg << "cpConstraint.setOtherAnchor() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
+                << "unsupported joint";
             std::ostringstream excpt_;
             excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << msg.str().c_str() << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
@@ -426,7 +426,7 @@ namespace pdg
 
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "PinJoint") != 0)
+        if (!cpConstraintIsPinJoint(self))
         {
             return JSValueMakeUndefined(ctx);
         };
@@ -442,15 +442,13 @@ namespace pdg
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""thePinDist"")");
         double thePinDist = JSValueToNumber(ctx, arguments[1 -1], exception);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "PinJoint") != 0)
+        if (!cpConstraintIsPinJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "PinDist" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << msg.str().c_str() << "')";
+            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "cpConstraint.set" "PinDist" "() not valid for this constraint type" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx) ;
+            return JSValueMakeNull(ctx);
+            return JSValueMakeUndefined(ctx);
         };
         cpPinJointSetDist(self, thePinDist);
         return thisObject;
@@ -461,7 +459,7 @@ namespace pdg
 
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SlideJoint") != 0)
+        if (!cpConstraintIsSlideJoint(self))
         {
             return JSValueMakeUndefined(ctx);
         };
@@ -477,15 +475,13 @@ namespace pdg
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""theSlideMinDist"")");
         double theSlideMinDist = JSValueToNumber(ctx, arguments[1 -1], exception);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SlideJoint") != 0)
+        if (!cpConstraintIsSlideJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "SlideMinDist" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << msg.str().c_str() << "')";
+            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "cpConstraint.set" "SlideMinDist" "() not valid for this constraint type" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx) ;
+            return JSValueMakeNull(ctx);
+            return JSValueMakeUndefined(ctx);
         };
         cpSlideJointSetMin(self, theSlideMinDist);
         return thisObject;
@@ -496,7 +492,7 @@ namespace pdg
 
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SlideJoint") != 0)
+        if (!cpConstraintIsSlideJoint(self))
         {
             return JSValueMakeUndefined(ctx);
         };
@@ -512,15 +508,13 @@ namespace pdg
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""theSlideMaxDist"")");
         double theSlideMaxDist = JSValueToNumber(ctx, arguments[1 -1], exception);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SlideJoint") != 0)
+        if (!cpConstraintIsSlideJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "SlideMaxDist" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << msg.str().c_str() << "')";
+            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "cpConstraint.set" "SlideMaxDist" "() not valid for this constraint type" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx) ;
+            return JSValueMakeNull(ctx);
+            return JSValueMakeUndefined(ctx);
         };
         cpSlideJointSetMax(self, theSlideMaxDist);
         return thisObject;
@@ -531,7 +525,7 @@ namespace pdg
 
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "GrooveJoint") != 0)
+        if (!cpConstraintIsGrooveJoint(self))
         {
             return JSValueMakeUndefined(ctx);
         };
@@ -552,15 +546,13 @@ namespace pdg
         {
             return JSC_ThrowArgTypeException(ctx, exception, 1, "Offset", arguments[1 -1]);
         };
-        if (strcmp((const char*)cpConstraintGetUserData(self), "GrooveJoint") != 0)
+        if (!cpConstraintIsGrooveJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "GrooveStart" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << msg.str().c_str() << "')";
+            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "cpConstraint.set" "GrooveStart" "() not valid for this constraint type" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx) ;
+            return JSValueMakeNull(ctx);
+            return JSValueMakeUndefined(ctx);
         };
         cpGrooveJointSetGrooveA(self, cpv(theGrooveStart.x, theGrooveStart.y));
         return thisObject;
@@ -572,7 +564,7 @@ namespace pdg
 
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "GrooveJoint") != 0)
+        if (!cpConstraintIsGrooveJoint(self))
         {
             return JSValueMakeUndefined(ctx);
         };
@@ -593,15 +585,13 @@ namespace pdg
         {
             return JSC_ThrowArgTypeException(ctx, exception, 1, "Offset", arguments[1 -1]);
         };
-        if (strcmp((const char*)cpConstraintGetUserData(self), "GrooveJoint") != 0)
+        if (!cpConstraintIsGrooveJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "GrooveEnd" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << msg.str().c_str() << "')";
+            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "cpConstraint.set" "GrooveEnd" "() not valid for this constraint type" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx) ;
+            return JSValueMakeNull(ctx);
+            return JSValueMakeUndefined(ctx);
         };
         cpGrooveJointSetGrooveB(self, cpv(theGrooveEnd.x, theGrooveEnd.y));
         return thisObject;
@@ -613,7 +603,7 @@ namespace pdg
 
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") != 0)
+        if (!cpConstraintIsDampedSpring(self))
         {
             return JSValueMakeUndefined(ctx);
         };
@@ -629,15 +619,13 @@ namespace pdg
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""theSpringRestLength"")");
         double theSpringRestLength = JSValueToNumber(ctx, arguments[1 -1], exception);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") != 0)
+        if (!cpConstraintIsDampedSpring(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "SpringRestLength" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << msg.str().c_str() << "')";
+            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "cpConstraint.set" "SpringRestLength" "() not valid for this constraint type" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx) ;
+            return JSValueMakeNull(ctx);
+            return JSValueMakeUndefined(ctx);
         };
         cpDampedSpringSetRestLength(self, theSpringRestLength);
         return thisObject;
@@ -648,7 +636,7 @@ namespace pdg
 
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "RotarySpring") != 0)
+        if (!cpConstraintIsDampedRotarySpring(self))
         {
             return JSValueMakeUndefined(ctx);
         };
@@ -664,15 +652,13 @@ namespace pdg
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""theRotarySpringRestAngle"")");
         double theRotarySpringRestAngle = JSValueToNumber(ctx, arguments[1 -1], exception);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "RotarySpring") != 0)
+        if (!cpConstraintIsDampedRotarySpring(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "RotarySpringRestAngle" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << msg.str().c_str() << "')";
+            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "cpConstraint.set" "RotarySpringRestAngle" "() not valid for this constraint type" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx) ;
+            return JSValueMakeNull(ctx);
+            return JSValueMakeUndefined(ctx);
         };
         cpDampedRotarySpringSetRestAngle(self, theRotarySpringRestAngle);
         return thisObject;
@@ -683,7 +669,7 @@ namespace pdg
 
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "RotaryLimit") != 0)
+        if (!cpConstraintIsRotaryLimitJoint(self))
         {
             return JSValueMakeUndefined(ctx);
         };
@@ -699,15 +685,13 @@ namespace pdg
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""theMinAngle"")");
         double theMinAngle = JSValueToNumber(ctx, arguments[1 -1], exception);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "RotaryLimit") != 0)
+        if (!cpConstraintIsRotaryLimitJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "MinAngle" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << msg.str().c_str() << "')";
+            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "cpConstraint.set" "MinAngle" "() not valid for this constraint type" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx) ;
+            return JSValueMakeNull(ctx);
+            return JSValueMakeUndefined(ctx);
         };
         cpRotaryLimitJointSetMin(self, theMinAngle);
         return thisObject;
@@ -718,7 +702,7 @@ namespace pdg
 
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "RotaryLimit") != 0)
+        if (!cpConstraintIsRotaryLimitJoint(self))
         {
             return JSValueMakeUndefined(ctx);
         };
@@ -734,15 +718,13 @@ namespace pdg
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""theMaxAngle"")");
         double theMaxAngle = JSValueToNumber(ctx, arguments[1 -1], exception);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "RotaryLimit") != 0)
+        if (!cpConstraintIsRotaryLimitJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "MaxAngle" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << msg.str().c_str() << "')";
+            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "cpConstraint.set" "MaxAngle" "() not valid for this constraint type" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx) ;
+            return JSValueMakeNull(ctx);
+            return JSValueMakeUndefined(ctx);
         };
         cpRotaryLimitJointSetMax(self, theMaxAngle);
         return thisObject;
@@ -753,7 +735,7 @@ namespace pdg
 
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Ratchet") != 0)
+        if (!cpConstraintIsRatchetJoint(self))
         {
             return JSValueMakeUndefined(ctx);
         };
@@ -769,15 +751,13 @@ namespace pdg
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""theRatchetAngle"")");
         double theRatchetAngle = JSValueToNumber(ctx, arguments[1 -1], exception);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Ratchet") != 0)
+        if (!cpConstraintIsRatchetJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "RatchetAngle" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << msg.str().c_str() << "')";
+            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "cpConstraint.set" "RatchetAngle" "() not valid for this constraint type" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx) ;
+            return JSValueMakeNull(ctx);
+            return JSValueMakeUndefined(ctx);
         };
         cpRatchetJointSetAngle(self, theRatchetAngle);
         return thisObject;
@@ -788,7 +768,7 @@ namespace pdg
 
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Ratchet") != 0)
+        if (!cpConstraintIsRatchetJoint(self))
         {
             return JSValueMakeUndefined(ctx);
         };
@@ -804,15 +784,13 @@ namespace pdg
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""theRatchetPhase"")");
         double theRatchetPhase = JSValueToNumber(ctx, arguments[1 -1], exception);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Ratchet") != 0)
+        if (!cpConstraintIsRatchetJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "RatchetPhase" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << msg.str().c_str() << "')";
+            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "cpConstraint.set" "RatchetPhase" "() not valid for this constraint type" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx) ;
+            return JSValueMakeNull(ctx);
+            return JSValueMakeUndefined(ctx);
         };
         cpRatchetJointSetPhase(self, theRatchetPhase);
         return thisObject;
@@ -823,7 +801,7 @@ namespace pdg
 
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Ratchet") != 0)
+        if (!cpConstraintIsRatchetJoint(self))
         {
             return JSValueMakeUndefined(ctx);
         };
@@ -839,15 +817,13 @@ namespace pdg
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""theRatchetInterval"")");
         double theRatchetInterval = JSValueToNumber(ctx, arguments[1 -1], exception);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Ratchet") != 0)
+        if (!cpConstraintIsRatchetJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "RatchetInterval" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << msg.str().c_str() << "')";
+            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "cpConstraint.set" "RatchetInterval" "() not valid for this constraint type" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx) ;
+            return JSValueMakeNull(ctx);
+            return JSValueMakeUndefined(ctx);
         };
         cpRatchetJointSetRatchet(self, theRatchetInterval);
         return thisObject;
@@ -858,7 +834,7 @@ namespace pdg
 
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Gear") != 0)
+        if (!cpConstraintIsGearJoint(self))
         {
             return JSValueMakeUndefined(ctx);
         };
@@ -874,15 +850,13 @@ namespace pdg
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""theGearRatio"")");
         double theGearRatio = JSValueToNumber(ctx, arguments[1 -1], exception);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Gear") != 0)
+        if (!cpConstraintIsGearJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "GearRatio" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << msg.str().c_str() << "')";
+            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "cpConstraint.set" "GearRatio" "() not valid for this constraint type" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx) ;
+            return JSValueMakeNull(ctx);
+            return JSValueMakeUndefined(ctx);
         };
         cpGearJointSetRatio(self, theGearRatio);
         return thisObject;
@@ -893,7 +867,7 @@ namespace pdg
 
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Gear") != 0)
+        if (!cpConstraintIsGearJoint(self))
         {
             return JSValueMakeUndefined(ctx);
         };
@@ -909,15 +883,13 @@ namespace pdg
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""theGearInitialAngle"")");
         double theGearInitialAngle = JSValueToNumber(ctx, arguments[1 -1], exception);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Gear") != 0)
+        if (!cpConstraintIsGearJoint(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "GearInitialAngle" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << msg.str().c_str() << "')";
+            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "cpConstraint.set" "GearInitialAngle" "() not valid for this constraint type" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx) ;
+            return JSValueMakeNull(ctx);
+            return JSValueMakeUndefined(ctx);
         };
         cpGearJointSetPhase(self, theGearInitialAngle);
         return thisObject;
@@ -928,7 +900,7 @@ namespace pdg
 
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Motor") != 0)
+        if (!cpConstraintIsSimpleMotor(self))
         {
             return JSValueMakeUndefined(ctx);
         };
@@ -944,15 +916,13 @@ namespace pdg
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""theMotorSpinRate"")");
         double theMotorSpinRate = JSValueToNumber(ctx, arguments[1 -1], exception);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "Motor") != 0)
+        if (!cpConstraintIsSimpleMotor(self))
         {
-            std::ostringstream msg;
-            msg << "cpConstraint.set" "MotorSpinRate" "() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
             std::ostringstream excpt_;
-            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << msg.str().c_str() << "')";
+            excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << "cpConstraint.set" "MotorSpinRate" "() not valid for this constraint type" << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
-            return JSValueMakeNull(ctx) ;
+            return JSValueMakeNull(ctx);
+            return JSValueMakeUndefined(ctx);
         };
         cpSimpleMotorSetRate(self, theMotorSpinRate);
         return thisObject;
@@ -964,11 +934,11 @@ namespace pdg
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
         cpFloat theSpringStiffness;
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") == 0)
+        if (cpConstraintIsDampedSpring(self))
         {
             theSpringStiffness = cpDampedSpringGetStiffness(self);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "RotarySpring") == 0)
+        else if (cpConstraintIsDampedRotarySpring(self))
         {
             theSpringStiffness = cpDampedRotarySpringGetStiffness(self);
         }
@@ -991,11 +961,11 @@ namespace pdg
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""theSpringStiffness"")");
         double theSpringStiffness = JSValueToNumber(ctx, arguments[1 -1], exception);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") == 0)
+        if (cpConstraintIsDampedSpring(self))
         {
             cpDampedSpringSetStiffness(self, theSpringStiffness);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "RotarySpring") == 0)
+        else if (cpConstraintIsDampedRotarySpring(self))
         {
             cpDampedRotarySpringSetStiffness(self, theSpringStiffness);
         }
@@ -1003,7 +973,7 @@ namespace pdg
         {
             std::ostringstream msg;
             msg << "cpConstraint.setSpringStiffness() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
+                << "unsupported joint";
             std::ostringstream excpt_;
             excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << msg.str().c_str() << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);
@@ -1019,11 +989,11 @@ namespace pdg
         if (argumentCount != 0)
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 0);
         cpFloat theSpringDamping;
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") == 0)
+        if (cpConstraintIsDampedSpring(self))
         {
             theSpringDamping = cpDampedSpringGetDamping(self);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "RotarySpring") == 0)
+        else if (cpConstraintIsDampedRotarySpring(self))
         {
             theSpringDamping = cpDampedRotarySpringGetDamping(self);
         }
@@ -1046,11 +1016,11 @@ namespace pdg
         if (argumentCount < 1 || !JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""theSpringDamping"")");
         double theSpringDamping = JSValueToNumber(ctx, arguments[1 -1], exception);
-        if (strcmp((const char*)cpConstraintGetUserData(self), "SpringJoint") == 0)
+        if (cpConstraintIsDampedSpring(self))
         {
             cpDampedSpringSetDamping(self, theSpringDamping);
         }
-        else if (strcmp((const char*)cpConstraintGetUserData(self), "RotarySpring") == 0)
+        else if (cpConstraintIsDampedRotarySpring(self))
         {
             cpDampedRotarySpringSetDamping(self, theSpringDamping);
         }
@@ -1058,7 +1028,7 @@ namespace pdg
         {
             std::ostringstream msg;
             msg << "cpConstraint.setSpringDamping() not valid for constraint type "
-                << (const char*)cpConstraintGetUserData(self);
+                << "unsupported joint";
             std::ostringstream excpt_;
             excpt_ << "throw "<< "TypeError" << "('" << "Type Error: " << msg.str().c_str() << "')";
             JSEvaluateScript(ctx, JSStringCreateWithUTF8CString( excpt_.str().c_str()), NULL, 0, 1, exception);

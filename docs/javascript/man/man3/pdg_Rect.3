@@ -1,4 +1,4 @@
-.TH "Rect" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Rect" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -30,6 +30,9 @@ Inherited by \fBRotatedRect\fP\&.
 .RI "\fBRect\fP (\fBPoint\fP topLeft, number w, number h)"
 .br
 .ti -1c
+.RI "\fBRect\fP (Rect source)"
+.br
+.ti -1c
 .RI "\fBRect\fP \fBadd\fP (\fBPoint\fP p)"
 .br
 .RI "add([Point] p): offset this rectangle's location by adding x & y coordinates of the point; add([Rect] r): add another rectangle to this one by adding corresponding coordinates "
@@ -42,11 +45,11 @@ Inherited by \fBRotatedRect\fP\&.
 .br
 .RI "set this rectangle equal to the given one "
 .ti -1c
-.RI "\fBcenter\fP (\fBPoint\fP p)"
+.RI "\fBRect\fP \fBcenter\fP (\fBPoint\fP p)"
 .br
 .RI "center([Point] p): move the rectangle to be centered over a particular point; center([Rect] r): move the rectangle to be centered within/relative to another rectangle "
 .ti -1c
-.RI "\fBcenter\fP (\fBRect\fP r)"
+.RI "\fBRect\fP \fBcenter\fP (\fBRect\fP r)"
 .br
 .RI "center([Point] p): move the rectangle to be centered over a particular point; center([Rect] r): move the rectangle to be centered within/relative to another rectangle "
 .ti -1c
@@ -86,7 +89,7 @@ Inherited by \fBRotatedRect\fP\&.
 .br
 .RI "return true if this rectangle is equal to the given one "
 .ti -1c
-.RI "\fBgrow\fP (number delta)"
+.RI "\fBRect\fP \fBgrow\fP (number delta)"
 .br
 .RI "increase the height and width of the rectangle while leaving the center point unchanged "
 .ti -1c
@@ -94,15 +97,15 @@ Inherited by \fBRotatedRect\fP\&.
 .br
 .RI "get the height of this rectangle "
 .ti -1c
-.RI "\fBhorzGrow\fP (number delta)"
+.RI "\fBRect\fP \fBhorzGrow\fP (number delta)"
 .br
 .RI "increase the width of the rectangle while leaving the center point unchanged "
 .ti -1c
-.RI "\fBhorzScale\fP (number f)"
+.RI "\fBRect\fP \fBhorzScale\fP (number f)"
 .br
 .RI "change the x coordinates of the rectangle by a multiplier "
 .ti -1c
-.RI "\fBhorzShrink\fP (number delta)"
+.RI "\fBRect\fP \fBhorzShrink\fP (number delta)"
 .br
 .RI "reduce the width of the rectangle while leaving the center point unchanged "
 .ti -1c
@@ -126,35 +129,35 @@ Inherited by \fBRotatedRect\fP\&.
 .br
 .RI "Subtract another rectangle from this rectangle, returning the difference\&. "
 .ti -1c
-.RI "\fBmoveDown\fP (number delta)"
+.RI "\fBRect\fP \fBmoveDown\fP (number delta)"
 .br
 .RI "move the rectangle down by some amount "
 .ti -1c
-.RI "\fBmoveLeft\fP (number delta)"
+.RI "\fBRect\fP \fBmoveLeft\fP (number delta)"
 .br
 .RI "move the rectangle to the left by some amount "
 .ti -1c
-.RI "\fBmoveRight\fP (number delta)"
+.RI "\fBRect\fP \fBmoveRight\fP (number delta)"
 .br
 .RI "move the rectangle to the right by some amount "
 .ti -1c
-.RI "\fBmoveTo\fP (number x, number y)"
+.RI "\fBRect\fP \fBmoveTo\fP (number x, number y)"
 .br
 .RI "moveTo(x,y): the rectangle to a particular (x, y) location; moveTo([Point] p): move the rectangle to a particular point "
 .ti -1c
-.RI "\fBmoveTo\fP (\fBPoint\fP p)"
+.RI "\fBRect\fP \fBmoveTo\fP (\fBPoint\fP p)"
 .br
 .RI "moveTo(x,y): the rectangle to a particular (x, y) location; moveTo([Point] p): move the rectangle to a particular point "
 .ti -1c
-.RI "\fBmoveUp\fP (number delta)"
+.RI "\fBRect\fP \fBmoveUp\fP (number delta)"
 .br
 .RI "move the rectangle up by some amount "
 .ti -1c
-.RI "\fBmoveXTo\fP (number x)"
+.RI "\fBRect\fP \fBmoveXTo\fP (number x)"
 .br
 .RI "move the rectangle to a particular x location, leaving y unchanged "
 .ti -1c
-.RI "\fBmoveYTo\fP (number y)"
+.RI "\fBRect\fP \fBmoveYTo\fP (number y)"
 .br
 .RI "move the rectangle to a particular y location, leaving x unchanged "
 .ti -1c
@@ -190,27 +193,27 @@ Inherited by \fBRotatedRect\fP\&.
 .br
 .RI "get top right corner point of this rectangle "
 .ti -1c
-.RI "\fBround\fP ()"
+.RI "\fBRect\fP \fBround\fP ()"
 .br
 .RI "round the coordinates to closest whole number "
 .ti -1c
-.RI "\fBscale\fP (number f)"
+.RI "\fBRect\fP \fBscale\fP (number f)"
 .br
 .RI "change the coordinates of the rectangle by a multiplier "
 .ti -1c
-.RI "\fBsetHeight\fP (number h)"
+.RI "\fBRect\fP \fBsetHeight\fP (number h)"
 .br
 .RI "Set the height of this rectangle, keeping the top edge fixed\&. "
 .ti -1c
-.RI "\fBsetSize\fP (number n)"
+.RI "\fBRect\fP \fBsetSize\fP (number n)"
 .br
 .RI "set the size (width & height) of the rectangle "
 .ti -1c
-.RI "\fBsetWidth\fP (number w)"
+.RI "\fBRect\fP \fBsetWidth\fP (number w)"
 .br
 .RI "Set the width of this rectangle, keeping the left edge fixed\&. "
 .ti -1c
-.RI "\fBshrink\fP (number delta)"
+.RI "\fBRect\fP \fBshrink\fP (number delta)"
 .br
 .RI "reduce the height and width of the rectangle while leaving the center point unchanged "
 .ti -1c
@@ -238,15 +241,15 @@ Inherited by \fBRotatedRect\fP\&.
 .br
 .RI "get the smallest possible new rectangle that contains both rectangles "
 .ti -1c
-.RI "\fBvertGrow\fP (number delta)"
+.RI "\fBRect\fP \fBvertGrow\fP (number delta)"
 .br
 .RI "increase the height of the rectangle while leaving the center point unchanged "
 .ti -1c
-.RI "\fBvertScale\fP (number f)"
+.RI "\fBRect\fP \fBvertScale\fP (number f)"
 .br
 .RI "change the y coordinates of the rectangle by a multiplier "
 .ti -1c
-.RI "\fBvertShrink\fP (number delta)"
+.RI "\fBRect\fP \fBvertShrink\fP (number delta)"
 .br
 .RI "reduce the height of the rectangle while leaving the center point unchanged "
 .ti -1c
@@ -303,7 +306,7 @@ Rectangle for 2D coordinate system\&.
 .SS "Rect ()"
 
 .PP
-Referenced by \fBRotatedRect::RotatedRect()\fP, \fBadd()\fP, \fBadd()\fP, \fBassign()\fP, \fBcenter()\fP, \fBcontains()\fP, \fBdiv()\fP, \fBdiv()\fP, \fBdividedby()\fP, \fBdividedby()\fP, \fBequals()\fP, \fBintersection()\fP, \fBminus()\fP, \fBminus()\fP, \fBmul()\fP, \fBmul()\fP, \fBnotEquals()\fP, \fBoverlaps()\fP, \fBplus()\fP, \fBplus()\fP, \fBsub()\fP, \fBsub()\fP, \fBtimes()\fP, \fBtimes()\fP, and \fBunionWith()\fP\&.
+Referenced by \fBRect()\fP, \fBRotatedRect::RotatedRect()\fP, \fBadd()\fP, \fBadd()\fP, \fBassign()\fP, \fBcenter()\fP, \fBcenter()\fP, \fBcontains()\fP, \fBdiv()\fP, \fBdiv()\fP, \fBdividedby()\fP, \fBdividedby()\fP, \fBequals()\fP, \fBgrow()\fP, \fBhorzGrow()\fP, \fBhorzScale()\fP, \fBhorzShrink()\fP, \fBintersection()\fP, \fBminus()\fP, \fBminus()\fP, \fBmoveDown()\fP, \fBmoveLeft()\fP, \fBmoveRight()\fP, \fBmoveTo()\fP, \fBmoveTo()\fP, \fBmoveUp()\fP, \fBmoveXTo()\fP, \fBmoveYTo()\fP, \fBmul()\fP, \fBmul()\fP, \fBnotEquals()\fP, \fBoverlaps()\fP, \fBplus()\fP, \fBplus()\fP, \fBround()\fP, \fBscale()\fP, \fBsetHeight()\fP, \fBsetSize()\fP, \fBsetWidth()\fP, \fBshrink()\fP, \fBsub()\fP, \fBsub()\fP, \fBtimes()\fP, \fBtimes()\fP, \fBunionWith()\fP, \fBvertGrow()\fP, \fBvertScale()\fP, and \fBvertShrink()\fP\&.
 .SS "Rect (number w, number h)"
 
 .SS "Rect (\fBPoint\fP topLeft, number w, number h)"
@@ -316,6 +319,10 @@ References \fBleftTop()\fP, and \fBrightBottom()\fP\&.
 
 .PP
 References \fBbottom\fP, \fBleft\fP, \fBright\fP, and \fBtop\fP\&.
+.SS "Rect (Rect source)"
+
+.PP
+References \fBRect()\fP\&.
 .SH "Member Function Documentation"
 .PP 
 .SS "\fBRect\fP add (\fBPoint\fP p)"
@@ -336,11 +343,13 @@ References \fBRect()\fP\&.
 set this rectangle equal to the given one 
 .PP
 References \fBRect()\fP\&.
-.SS "center (\fBPoint\fP p)"
+.SS "\fBRect\fP center (\fBPoint\fP p)"
 
 .PP
 center([Point] p): move the rectangle to be centered over a particular point; center([Rect] r): move the rectangle to be centered within/relative to another rectangle 
-.SS "center (\fBRect\fP r)"
+.PP
+References \fBRect()\fP\&.
+.SS "\fBRect\fP center (\fBRect\fP r)"
 
 .PP
 center([Point] p): move the rectangle to be centered over a particular point; center([Rect] r): move the rectangle to be centered within/relative to another rectangle 
@@ -394,26 +403,34 @@ return true if this rectangle is empty (no width or no height)
 return true if this rectangle is equal to the given one 
 .PP
 References \fBRect()\fP\&.
-.SS "grow (number delta)"
+.SS "\fBRect\fP grow (number delta)"
 
 .PP
 increase the height and width of the rectangle while leaving the center point unchanged 
+.PP
+References \fBRect()\fP\&.
 .SS "number height ()"
 
 .PP
 get the height of this rectangle 
-.SS "horzGrow (number delta)"
+.SS "\fBRect\fP horzGrow (number delta)"
 
 .PP
 increase the width of the rectangle while leaving the center point unchanged 
-.SS "horzScale (number f)"
+.PP
+References \fBRect()\fP\&.
+.SS "\fBRect\fP horzScale (number f)"
 
 .PP
 change the x coordinates of the rectangle by a multiplier 
-.SS "horzShrink (number delta)"
+.PP
+References \fBRect()\fP\&.
+.SS "\fBRect\fP horzShrink (number delta)"
 
 .PP
 reduce the width of the rectangle while leaving the center point unchanged 
+.PP
+References \fBRect()\fP\&.
 .SS "\fBRect\fP intersection (\fBRect\fP r)"
 
 .PP
@@ -442,38 +459,54 @@ References \fBRect()\fP\&.
 Subtract another rectangle from this rectangle, returning the difference\&. 
 .PP
 References \fBRect()\fP\&.
-.SS "moveDown (number delta)"
+.SS "\fBRect\fP moveDown (number delta)"
 
 .PP
 move the rectangle down by some amount 
-.SS "moveLeft (number delta)"
+.PP
+References \fBRect()\fP\&.
+.SS "\fBRect\fP moveLeft (number delta)"
 
 .PP
 move the rectangle to the left by some amount 
-.SS "moveRight (number delta)"
+.PP
+References \fBRect()\fP\&.
+.SS "\fBRect\fP moveRight (number delta)"
 
 .PP
 move the rectangle to the right by some amount 
-.SS "moveTo (number x, number y)"
+.PP
+References \fBRect()\fP\&.
+.SS "\fBRect\fP moveTo (number x, number y)"
 
 .PP
 moveTo(x,y): the rectangle to a particular (x, y) location; moveTo([Point] p): move the rectangle to a particular point 
-.SS "moveTo (\fBPoint\fP p)"
+.PP
+References \fBRect()\fP\&.
+.SS "\fBRect\fP moveTo (\fBPoint\fP p)"
 
 .PP
 moveTo(x,y): the rectangle to a particular (x, y) location; moveTo([Point] p): move the rectangle to a particular point 
-.SS "moveUp (number delta)"
+.PP
+References \fBRect()\fP\&.
+.SS "\fBRect\fP moveUp (number delta)"
 
 .PP
 move the rectangle up by some amount 
-.SS "moveXTo (number x)"
+.PP
+References \fBRect()\fP\&.
+.SS "\fBRect\fP moveXTo (number x)"
 
 .PP
 move the rectangle to a particular x location, leaving y unchanged 
-.SS "moveYTo (number y)"
+.PP
+References \fBRect()\fP\&.
+.SS "\fBRect\fP moveYTo (number y)"
 
 .PP
 move the rectangle to a particular y location, leaving x unchanged 
+.PP
+References \fBRect()\fP\&.
 .SS "\fBRect\fP mul (\fBPoint\fP p)"
 
 .PP
@@ -520,30 +553,42 @@ Referenced by \fBRect()\fP\&.
 
 .PP
 get top right corner point of this rectangle 
-.SS "round ()"
+.SS "\fBRect\fP round ()"
 
 .PP
 round the coordinates to closest whole number 
-.SS "scale (number f)"
+.PP
+References \fBRect()\fP\&.
+.SS "\fBRect\fP scale (number f)"
 
 .PP
 change the coordinates of the rectangle by a multiplier 
-.SS "setHeight (number h)"
+.PP
+References \fBRect()\fP\&.
+.SS "\fBRect\fP setHeight (number h)"
 
 .PP
 Set the height of this rectangle, keeping the top edge fixed\&. 
-.SS "setSize (number n)"
+.PP
+References \fBRect()\fP\&.
+.SS "\fBRect\fP setSize (number n)"
 
 .PP
 set the size (width & height) of the rectangle 
-.SS "setWidth (number w)"
+.PP
+References \fBRect()\fP\&.
+.SS "\fBRect\fP setWidth (number w)"
 
 .PP
 Set the width of this rectangle, keeping the left edge fixed\&. 
-.SS "shrink (number delta)"
+.PP
+References \fBRect()\fP\&.
+.SS "\fBRect\fP shrink (number delta)"
 
 .PP
 reduce the height and width of the rectangle while leaving the center point unchanged 
+.PP
+References \fBRect()\fP\&.
 .SS "\fBRect\fP sub (\fBPoint\fP p)"
 
 .PP
@@ -578,18 +623,24 @@ convert rectangle to a \fBQuad\fP
 get the smallest possible new rectangle that contains both rectangles 
 .PP
 References \fBRect()\fP\&.
-.SS "vertGrow (number delta)"
+.SS "\fBRect\fP vertGrow (number delta)"
 
 .PP
 increase the height of the rectangle while leaving the center point unchanged 
-.SS "vertScale (number f)"
+.PP
+References \fBRect()\fP\&.
+.SS "\fBRect\fP vertScale (number f)"
 
 .PP
 change the y coordinates of the rectangle by a multiplier 
-.SS "vertShrink (number delta)"
+.PP
+References \fBRect()\fP\&.
+.SS "\fBRect\fP vertShrink (number delta)"
 
 .PP
 reduce the height of the rectangle while leaving the center point unchanged 
+.PP
+References \fBRect()\fP\&.
 .SS "number width ()"
 
 .PP

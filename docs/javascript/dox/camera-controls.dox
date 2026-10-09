@@ -1,0 +1,215 @@
+/**
+\page camera_controllers Camera following, effects and split-screen
+
+Camera follows world-space Animated targets with optional exponential smoothing, a deadzone, offsets and sampled-velocity look-ahead. Following owns position until a manual position/movement command takes over. Zoom and rotation remain independently animated. Shared cameras still have one runtime update owner. Scripted zoom commands preserve on-camera zoom completion events: each forward tween emits when it completes, and until() on a single zoom emits the retained zoom when it finishes early. Reverse trajectory sampling does not synthesize another zoom command or completion event; until() on a compound group does not synthesize completions for its child operations.
+
+Creating a Camera registers two reusable native script presets if their names are not already defined: shake (horizontal six-unit oscillation diminishing over 0.6 seconds) and impulse (twelve-unit upward kick and return over 0.08 seconds). They use the same Animated recording and playback API as application definitions. Use getEffects().playScript(name) to apply them without changing persistent controller pose; modifiers and playback controls apply to that stage. Custom presets may be defined before creating cameras.
+
+Split-screen uses Camera-owned port-coordinate viewports. Attach each view's layers to its camera; the rendering engine clips the content and composites flash once within each camera output, before output opacity and crossfade composition. Managed offscreen layers also receive runtime frames. Unattached cameras require manual animate(seconds) updates. A single layer has one effective camera, so separate simultaneous views use separate layers.
+
+See \ref camera_output for visibility, composed fades and crossfades.
+
+\par Example
+\code{.js}
+// topWorld and bottomWorld are layers in the same port.
+var top = new pdg.Camera().setViewport(new pdg.Rect(0, 0, 640, 240));
+var bottom = new pdg.Camera().setViewport(new pdg.Rect(0, 240, 640, 480));
+topWorld.setCamera(top); bottomWorld.setCamera(bottom);
+top.follow(player).setSmoothing(0.15);
+top.flash(1, 0.25); // rendered automatically inside the top viewport
+\endcode
+*/
+
+/**
+\fn pdg::Camera::follow(Animated target)
+\brief Follow an Animated target in world coordinates.
+
+\param target Live Animated target. The camera holds a checked weak reference; the application or scene keeps it alive. Destruction safely ends following. Self-following and cycles throw.
+\return This camera for chaining.
+Following takes ownership of position and cancels scheduled position/rate changes. Manual position or movement commands take ownership back and stop following. Rotation, zoom and the transient effects stage remain independent. Follow configuration survives stopFollowing(). Active target references are runtime resources: stop following before creating a portable snapshot.
+\see \ref camera_controllers
+*/
+
+/**
+\fn pdg::Camera::stopFollowing()
+\brief Release the following controller and retain the current pose.
+
+\return This camera for chaining.
+\see \ref camera_controllers
+*/
+
+/**
+\fn pdg::Camera::isFollowing()
+\brief Test whether a live target owns camera position.
+
+\return True while following a live target, otherwise false.
+\see \ref camera_controllers
+*/
+
+/**
+\fn pdg::Camera::setSmoothing(number seconds)
+\brief Set the following smoothing time constant.
+
+\param seconds Finite nonnegative seconds, initially zero for immediate tracking. Positive values use exponential smoothing with weight 1-exp(-deltaSeconds/seconds).
+\return This camera for chaining.
+\see \ref camera_controllers
+*/
+
+/**
+\fn pdg::Camera::getSmoothing()
+\brief Read the following smoothing time constant.
+
+\return Seconds; zero means immediate tracking.
+\see \ref camera_controllers
+*/
+
+/**
+\fn pdg::Camera::setLookAhead(number seconds)
+\brief Set velocity-based following prediction.
+
+\param seconds Finite nonnegative prediction horizon in seconds, initially zero. Velocity comes from successive observed target positions and the owner update interval. Teleports therefore affect prediction; stopFollowing().follow(target) resets the sample.
+\return This camera for chaining.
+\see \ref camera_controllers
+*/
+
+/**
+\fn pdg::Camera::getLookAhead()
+\brief Read the following prediction horizon.
+
+\return Seconds; zero disables prediction.
+\see \ref camera_controllers
+*/
+
+/**
+\fn pdg::Camera::setDeadzone(Rect bounds)
+\brief Set the following deadzone relative to camera focus.
+
+\param bounds Finite ordered world-space offsets from location plus centerOffset. A zero rectangle tracks the target directly. The camera moves only the excess outside this rectangle, after applying prediction and follow offset.
+\return This camera for chaining.
+\see \ref camera_controllers
+*/
+
+/**
+\fn pdg::Camera::getDeadzone()
+\brief Read the following deadzone.
+
+\return A copy of the rectangle of world-space offsets.
+\see \ref camera_controllers
+*/
+
+/**
+\fn pdg::Camera::setFollowOffset(Offset offset)
+\brief Offset the world-space point tracked by following.
+
+\param offset Finite horizontal and vertical offsets; initially zero.
+\return This camera for chaining.
+\see \ref camera_controllers
+*/
+
+/**
+\fn pdg::Camera::getFollowOffset()
+\brief Read the following target offset.
+
+\return A copy of the world-space offset.
+\see \ref camera_controllers
+*/
+
+/**
+\fn pdg::Camera::setViewBounds(Rect bounds)
+\brief Constrain the visible world footprint for each viewport.
+
+\param bounds Finite ordered world rectangle. Initially disabled. Clamping uses the inverse-transformed viewport corners, including rotation, zoom and effects. If a footprint is larger than its bounds, center it on that axis.
+\return This camera for chaining.
+Changes the rendered view without rewriting the persistent camera pose. A shared camera is clamped separately for each attachment or split-screen viewport.
+\see \ref camera_controllers
+*/
+
+/**
+\fn pdg::Camera::clearViewBounds()
+\brief Disable visible-world bounds.
+
+\return This camera for chaining.
+\see \ref camera_controllers
+*/
+
+/**
+\fn pdg::Camera::hasViewBounds()
+\brief Test whether visible-world bounds are enabled.
+
+\return True when setViewBounds() has enabled clamping.
+\see \ref camera_controllers
+*/
+
+/**
+\fn pdg::Camera::getViewBounds()
+\brief Read the stored visible-world bounds.
+
+\return A copy of the world rectangle; use hasViewBounds() to test whether it applies.
+\see \ref camera_controllers
+*/
+
+/**
+\fn pdg::Camera::worldToView(Point point)
+\brief Convert a world point into a centered camera viewport.
+
+\param point World coordinates.
+\return The port-coordinate point including effects, bounds and pixel snapping.
+Uses the stored viewport. Port-owned cameras use the Port anchor; explicit layer cameras center the view in their viewport. For layer parallax, use the layer conversion APIs.
+\see \ref camera_controllers
+*/
+
+/**
+\fn pdg::Camera::viewToWorld(Point point)
+\brief Convert a centered viewport point into world coordinates.
+
+\param point Destination port coordinates, such as a pointer position.
+\return The inverse-transformed world point. Route pointer input by viewport, then use this conversion for hit testing.
+\see \ref camera_controllers
+*/
+
+/**
+\fn pdg::Camera::getEffects()
+\brief Access the camera-owned transient animation stage.
+
+\return The same retained Camera stage on repeated calls. C++ returns a borrowed reference; JavaScript receives a retained handle.
+The owner advances this stage once on each animate() call. It cannot be attached to a port/layer or own nested effects. Play ordinary scripts here to preserve controller position. The stage is composed into rendering around the view anchor before bounds and pixel snapping. Its script controls operate independently; do not additionally animate it while its owner is updating. Its native playback state is included in camera snapshots.
+\see \ref camera_controllers
+*/
+
+/**
+\fn pdg::Camera::flash(number opacity, number seconds, number easing)
+\brief Flash white at the requested opacity, then fade to zero.
+
+\param opacity Finite starting opacity from zero to one.
+\param seconds Finite nonnegative duration in seconds.
+\param easing Easing function for fading to zero, default easeOutQuad.
+\return This camera for chaining.
+At the operation start, sets the white overlay to opacity and fades it to zero over seconds. Supports wait(), andThen(), groups, modifiers and selected-operation controls. Rendering includes the overlay automatically once in the camera image, clipped to its viewport, before camera output opacity and transitions. Screen-space UI drawn after the scene remains above it. AnimationScript does not expose flash commands.
+\see \ref camera_controllers
+*/
+
+/**
+\fn pdg::Camera::getFlashOpacity()
+\brief Read the composited white flash opacity.
+
+\return Opacity from zero to one, combining the camera and its effects stage.
+\see \ref camera_controllers
+*/
+
+
+
+
+
+
+/**
+\fn pdg::Camera::setViewport(Rect viewport)
+\brief Set this Camera's destination rectangle within its Port.
+\param viewport Finite nonempty rectangle in port coordinates.
+\return This camera for chaining.
+Layer content, coordinate conversions, bounds constraints and flash overlays use this viewport. A Port-owned camera always covers the full Port; setting its viewport throws. An explicit layer camera defaults to the full Port when first attached. Multiple layers may share one camera and viewport.
+*/
+/**
+\fn pdg::Camera::getViewport()
+\brief Read this Camera's destination rectangle.
+\return The viewport in port coordinates; a Port-owned camera tracks the Port's drawing area, including resizing. An unattached camera has an empty viewport until setViewport() is called.
+*/

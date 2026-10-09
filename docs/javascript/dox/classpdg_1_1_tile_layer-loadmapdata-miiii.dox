@@ -21,7 +21,7 @@ The function will load the specified rectangular region from the data into the l
 \warning If the data size doesn't match mapWidth * mapHeight, the behavior is undefined
 \note Tile indices in the data should be valid for the layer's tile set
 
-\sa TileLayer::loadMapData(BinaryString, int, int, int, int)
+\sa TileLayer::loadMapData(Uint8Array, int, int, int, int)
 \sa TileLayer::getMapData()
 \sa MemBlock
 

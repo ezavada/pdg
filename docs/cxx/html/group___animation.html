@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Pixel Dust Game Engine
-   &#160;<span id="projectnumber">v1.1.1</span>
+   &#160;<span id="projectnumber">v1.2.0</span>
    </div>
   </td>
  </tr>
@@ -115,7 +115,7 @@ Collaboration diagram for Animation:</div>
 <div class="dyncontent">
 <div class="center"><img src="group___animation.png" border="0" usemap="#agroup______animation" loading="lazy" alt=""/></div>
 <map name="agroup______animation" id="agroup______animation">
-<area shape="rect" title="Sprite playback, poses, procedural animation, constraints, and custom artwork." alt="" coords="5,260,85,285"/>
+<area shape="rect" title="Sprite playback, poses, procedural animation, constraints, and custom artwork." alt="" coords="5,259,85,285"/>
 <area shape="rect" href="group___animation_drawing.html" title="Shared Drawing artwork attached to the evaluated pose and authored slots." alt="" coords="320,5,472,46"/>
 <area shape="rect" href="group___animation_easing.html" title="Built&#45;in interpolation curves and the easing callback signature." alt="" coords="337,70,455,96"/>
 <area shape="rect" href="group___animation_modifiers.html" title="Ordered pose callbacks, animation sources, and two&#45;bone IK." alt="" coords="329,120,463,161"/>
@@ -123,9 +123,9 @@ Collaboration diagram for Animation:</div>
 <area shape="rect" href="group___animation_poses.html" title="Rig structure, owned pose snapshots, coordinate spaces, and authored metadata." alt="" coords="303,234,489,260"/>
 <area shape="rect" href="group___animation_targets.html" title="Spring integration, recoil impulses, and world or platform contact locks." alt="" coords="331,284,461,325"/>
 <area shape="rect" href="group___events.html" title="Things used to notify your code of user input or other significant events." alt="" coords="365,385,427,410"/>
-<area shape="rect" href="group___graphics.html" title="Things related to drawing graphics on screen." alt="" coords="359,550,432,576"/>
-<area shape="rect" href="group___physics.html" title="Things used for handling physics simulation." alt="" coords="362,626,430,652"/>
-<area shape="rect" href="group___sprites.html" title="Sprite and tile layers, drawing helpers, collision helpers, and events." alt="" coords="333,736,459,761"/>
+<area shape="rect" href="group___graphics.html" title="Things related to drawing graphics on screen." alt="" coords="359,581,432,606"/>
+<area shape="rect" href="group___physics.html" title="Things used for handling physics simulation." alt="" coords="362,657,430,682"/>
+<area shape="rect" href="group___sprites.html" title="Sprite and tile layers, drawing helpers, collision helpers, and events." alt="" coords="333,766,459,792"/>
 </map>
 </div>
 <table class="memberdecls">
@@ -134,7 +134,7 @@ Topics</h2></td></tr>
 <tr class="memitem:AnimationDrawing" id="r_AnimationDrawing"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="group___animation_drawing.html">Animation artwork and diagnostics</a></td></tr>
 <tr class="memdesc:group___animation_drawing"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shared <a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> artwork attached to the evaluated pose and authored slots. <br /></td></tr>
 <tr class="memitem:AnimationPhysics" id="r_AnimationPhysics"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="group___animation_physics.html">Animation physics</a></td></tr>
-<tr class="memdesc:group___animation_physics"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bone bodies, joints, simulation state, and recovery to authored animation. <br /></td></tr>
+<tr class="memdesc:group___animation_physics"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpdg_1_1_bone.html">Bone</a> bodies, joints, simulation state, and recovery to authored animation. <br /></td></tr>
 <tr class="memitem:AnimationEasing" id="r_AnimationEasing"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="group___animation_easing.html">Easing functions</a></td></tr>
 <tr class="memdesc:group___animation_easing"><td class="mdescLeft">&#160;</td><td class="mdescRight">Built-in interpolation curves and the easing callback signature. <br /></td></tr>
 <tr class="memitem:AnimationModifiers" id="r_AnimationModifiers"><td class="memItemLeft">&#160;</td><td class="memItemRight"><a class="el" href="group___animation_modifiers.html">Pose modifiers and inverse kinematics</a></td></tr>
@@ -154,6 +154,9 @@ Classes</h2></td></tr>
 <tr class="memitem:AnimatedAttributesBase" id="r_AnimatedAttributesBase"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_attributes_base.html">AnimatedAttributesBase</a></td></tr>
 <tr class="memitem:AnimatedAttributes_3C_20T_20_3E" id="r_AnimatedAttributes_3C_20T_20_3E"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_animated_attributes.html">AnimatedAttributes&lt; T &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpdg_1_1_drawing.html" title="Editable artwork shared by animation attachments and other drawing users.">Drawing</a> attributes with programmed movement and appearance animation.  <a href="classpdg_1_1_animated_attributes.html#details">More...</a><br /></td></tr>
+<tr class="memitem:Bone" id="r_Bone"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_bone.html">Bone</a></td></tr>
+<tr class="memitem:Camera" id="r_Camera"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_camera.html">Camera</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classpdg_1_1_animated.html" title="Programmed transforms, constant rates and scheduled animation.">Animated</a> view owned by a <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> or shared by layers.Each <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> owns its camera. A layer uses its retained explicit camera, otherwise its port's built-in camera. Layer cameras own their destination viewport. Location plus center offset maps to the <a class="el" href="classpdg_1_1_port.html" title="Drawing and setter operations return this port by reference for chaining.">Port</a> anchor or layer viewport center. Rotation is the view's world orientation; zoom and scale magnify the view. Size is animation metadata and does not resize the destination viewport.  <a href="classpdg_1_1_camera.html#details">More...</a><br /></td></tr>
 <tr class="memitem:SpriteAnimateInfo" id="r_SpriteAnimateInfo"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structpdg_1_1_sprite_animate_info.html">SpriteAnimateInfo</a></td></tr>
 <tr class="memitem:SpriteAnimationPhysicsRecoveryInfo" id="r_SpriteAnimationPhysicsRecoveryInfo"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structpdg_1_1_sprite_animation_physics_recovery_info.html">SpriteAnimationPhysicsRecoveryInfo</a></td></tr>
 <tr class="memitem:SpriteCollideInfo" id="r_SpriteCollideInfo"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structpdg_1_1_sprite_collide_info.html">SpriteCollideInfo</a></td></tr>
@@ -162,6 +165,7 @@ Classes</h2></td></tr>
 <tr class="memitem:SpriteTriggerEventInfo" id="r_SpriteTriggerEventInfo"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structpdg_1_1_sprite_trigger_event_info.html">SpriteTriggerEventInfo</a></td></tr>
 <tr class="memitem:Part" id="r_Part"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_part.html">Part</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Independently animated <a class="el" href="classpdg_1_1_sprite.html" title="Animated image frames, Spriter playback, and pose-based animation extensions.">Sprite</a> subsection, artwork holder, or mounting frame.  <a href="classpdg_1_1_part.html#details">More...</a><br /></td></tr>
+<tr class="memitem:ParticleTrailOptions" id="r_ParticleTrailOptions"><td class="memItemLeft">struct &#160;</td><td class="memItemRight"><a class="el" href="structpdg_1_1_particle_trail_options.html">ParticleTrailOptions</a></td></tr>
 <tr class="memitem:Particle" id="r_Particle"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_particle.html">Particle</a></td></tr>
 <tr class="memitem:ParticleEmitter" id="r_ParticleEmitter"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_particle_emitter.html">ParticleEmitter</a></td></tr>
 <tr class="memitem:ParticleEmitterRef" id="r_ParticleEmitterRef"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_particle_emitter_ref.html">ParticleEmitterRef</a></td></tr>
@@ -179,6 +183,8 @@ Classes</h2></td></tr>
 <tr class="memitem:QuadT_3C_20T_20_3E" id="r_QuadT_3C_20T_20_3E"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_quad_t.html">QuadT&lt; T &gt;</a></td></tr>
 <tr class="memitem:RotatedRectT_3C_20T_20_3E" id="r_RotatedRectT_3C_20T_20_3E"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_rotated_rect_t.html">RotatedRectT&lt; T &gt;</a></td></tr>
 <tr class="memitem:TileLayer" id="r_TileLayer"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_tile_layer.html">TileLayer</a></td></tr>
+<tr class="memitem:Scene" id="r_Scene"><td class="memItemLeft">class &#160;</td><td class="memItemRight"><a class="el" href="classpdg_1_1_scene.html">Scene</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Own layers, an isolated physics world, camera advancement and logical timers.  <a href="classpdg_1_1_scene.html#details">More...</a><br /></td></tr>
 </table>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Sprite playback, poses, procedural animation, constraints, and custom artwork. </p>
@@ -242,21 +248,21 @@ Animation events</h1>
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Notification  </th><th class="markdownTableHeadNone">Event type and payload  </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Authored Spriter eventline crossing  </td><td class="markdownTableBodyNone"><a class="el" href="group___events.html#gga79e1146ce81fd3a020b67ce5f448e516acdf732508d77cbfa48c9c97673b64c2e" title="Authored Spriter trigger; payload: SpriteTriggerEventInfo (requires PDG_SPRITER_SUPPORT).">pdg::eventType_SpriteTriggerEvent</a> with <a class="el" href="structpdg_1_1_sprite_trigger_event_info.html">pdg::SpriteTriggerEventInfo</a>; enable with pdg::Sprite::enableSpriterEvents(true)  </td></tr>
+<td class="markdownTableBodyNone">Authored Spriter eventline crossing  </td><td class="markdownTableBodyNone"><a class="el" href="group___events.html#gga48e8fd7d649e3644c0d933153618b618acdf732508d77cbfa48c9c97673b64c2e" title="Authored Spriter trigger; payload: SpriteTriggerEventInfo (requires PDG_SPRITER_SUPPORT).">pdg::eventType_SpriteTriggerEvent</a> with <a class="el" href="structpdg_1_1_sprite_trigger_event_info.html">pdg::SpriteTriggerEventInfo</a>; enable with pdg::Sprite::enableSpriterEvents(true)  </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Blend or independent transition completion  </td><td class="markdownTableBodyNone"><a class="el" href="group___events.html#gga79e1146ce81fd3a020b67ce5f448e516a16876c72ea552b2d455c5ebedf4d7b35">pdg::eventType_SpriteAnimate</a> with <a class="el" href="structpdg_1_1_sprite_animate_info.html">pdg::SpriteAnimateInfo</a> and action <a class="el" href="classpdg_1_1_sprite.html#a1ccc54142fd1dc16a4fe8430705ad559a4377b990f31b3cc9c469e64fbf14d63d" title="blendToAnimation() or transitionToAnimation() completed; eventType_SpriteAnimate with SpriteAnimateIn...">pdg::Sprite::action_AnimationBlendComplete</a>  </td></tr>
+<td class="markdownTableBodyNone">Blend or independent transition completion  </td><td class="markdownTableBodyNone"><a class="el" href="group___events.html#gga48e8fd7d649e3644c0d933153618b618a16876c72ea552b2d455c5ebedf4d7b35">pdg::eventType_SpriteAnimate</a> with <a class="el" href="structpdg_1_1_sprite_animate_info.html">pdg::SpriteAnimateInfo</a> and action <a class="el" href="classpdg_1_1_sprite.html#ade1e3535c4ba29bc884736a2b1b48871a4377b990f31b3cc9c469e64fbf14d63d" title="blendToAnimation() or transitionToAnimation() completed; eventType_SpriteAnimate with SpriteAnimateIn...">pdg::Sprite::action_AnimationBlendComplete</a>  </td></tr>
 </table>
 <p>The authored-trigger payload is listed under Events, Animation, and Sprites. Use <span class="tt">triggerName</span> to identify its authored track. <span class="tt">timeSeconds</span> is relative to clip start; <span class="tt">offsetSeconds</span> is relative to the current update. The inherited <span class="tt">action</span> field is not used to identify triggers. Subscribe to the trigger event type and inspect its authored name. Blend completion covers both <a class="el" href="classpdg_1_1_sprite.html#a20307998ac97511a1f69c8e914ca6124">pdg::Sprite::blendToAnimation()</a> and <a class="el" href="classpdg_1_1_sprite.html#abbcf1135d312a5bb01241eefc3ce15a6" title="Blend the current pose into a selected clip.">pdg::Sprite::transitionToAnimation()</a>, independently of authored-trigger enablement.</p>
 <h1 class="doxsection"><a class="anchor" id="animation_timing"></a>
 Animation timing</h1>
 <p>Floating-point seconds are the current animation timing convention.** For example, pass <span class="tt">0.25</span> for a quarter-second blend, sample time, transition duration, contact-release duration, or physics-recovery duration. Modifier callbacks receive elapsed seconds in <a class="el" href="structpdg_1_1_animation_modifier_context.html#ac80dd97786863b86ae89ecd5b6183334">pdg::AnimationModifierContext::deltaSeconds</a>.</p>
-<p>Timed Animated operations, wait(), sprite fades, layer fades/zoom, IAnimationHelper::animate(), and built-in/custom EasingFunc callbacks now use floating-point seconds. Physical forces and velocities belong to PhysicsBody; Animated contains only programmed transform changes.</p>
+<p>Timed Animated operations, wait(), sprite fades, layer fades and camera zoom, IAnimationHelper::animate(), and built-in/custom EasingFunc callbacks now use floating-point seconds. Physical forces and velocities belong to PhysicsBody; Animated contains only programmed transform changes.</p>
 <p>The remaining millisecond boundaries are:</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Existing API or field  </th><th class="markdownTableHeadNone">Current time units  </th></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone"><a class="el" href="classpdg_1_1_sprite_layer.html#ac4b9f641a08dd2fae240d6295c6373b6">pdg::SpriteLayer::animateLayer()</a>  </td><td class="markdownTableBodyNone"><span class="tt">ms_delta msElapsed</span>; this layer scheduler entry point still takes milliseconds and converts to seconds for Animated stepping  </td></tr>
+<td class="markdownTableBodyNone"><a class="el" href="classpdg_1_1_sprite_layer.html#a1752fad63a280b09c3c6ec8a84f4ffc1">pdg::SpriteLayer::animateLayer()</a>  </td><td class="markdownTableBodyNone"><span class="tt">ms_delta msElapsed</span>; this layer scheduler entry point still takes milliseconds and converts to seconds for Animated stepping  </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone"><a class="el" href="structpdg_1_1_sprite_layer_info.html#a8cb086c4b9ab39bce24f141dcb6b2d03" title="the time stamp at which the action occurred">pdg::SpriteLayerInfo::millisec</a>  </td><td class="markdownTableBodyNone">Integer millisecond timestamp  </td></tr>
 <tr class="markdownTableRowOdd">

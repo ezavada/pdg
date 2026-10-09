@@ -82,7 +82,9 @@ void setupGlfwCallbacks(GLFWwindow* window) {
 	glfwSetInputMode(window, GLFW_STICKY_MOUSE_BUTTONS, GL_FALSE);
 	glfwSetCharCallback(window, handle_char_callback);
 	glfwSetKeyCallback(window, handle_key_callback);
-//	glfwSetCursorEnterCallback(window, handle_cursorenter_callback);
+#ifndef __EMSCRIPTEN__
+    glfwSetCursorEnterCallback(window, handle_cursorenter_callback);
+#endif
 	glfwSetCursorPosCallback(window, handle_cursorpos_callback);
 	glfwSetMouseButtonCallback(window, handle_mousebutton_callback);
 	glfwSetScrollCallback(window, handle_scroll_callback);
@@ -143,7 +145,15 @@ void handle_cursorpos_callback(GLFWwindow* window, double xpos, double ypos) {
 }
 
 void handle_cursorenter_callback(GLFWwindow* window, int entered) {
-	// got cursor enter or leave (entered = GL_TRUE)
+    // Clear the cached pointer when it leaves the window, including fast exits
+    // that do not deliver a final out-of-bounds cursor-position callback.
+    if (!entered) {
+        main_handleMouse(mouseEventType_MouseMoved, -1, -1, 0, sShift, sControl, sAlt, sCmd);
+        return;
+    }
+    double x, y;
+    glfwGetCursorPos(window, &x, &y);
+    handle_cursorpos_callback(window, x, y);
 }
 
 void handle_scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {

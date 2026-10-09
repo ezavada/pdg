@@ -1,0 +1,18 @@
+# Invoked by the backend build, with archive paths supplied by its generator.
+if(PDG_BUNDLE_PLATFORM STREQUAL "Apple")
+    # Configuration-disabled dependency objects legitimately have no symbols.
+    execute_process(COMMAND /usr/bin/libtool -static -no_warning_for_no_symbols -o "${PDG_BUNDLE_OUTPUT}" ${PDG_BUNDLE_ARCHIVES} RESULT_VARIABLE result)
+elseif(PDG_BUNDLE_PLATFORM STREQUAL "MSVC")
+    execute_process(COMMAND "${PDG_BUNDLE_AR}" "/OUT:${PDG_BUNDLE_OUTPUT}" ${PDG_BUNDLE_ARCHIVES} RESULT_VARIABLE result)
+else()
+    set(script "CREATE \"${PDG_BUNDLE_OUTPUT}\"\n")
+    foreach(archive IN LISTS PDG_BUNDLE_ARCHIVES)
+        string(APPEND script "ADDLIB \"${archive}\"\n")
+    endforeach()
+    string(APPEND script "SAVE\nEND\n")
+    file(WRITE "${PDG_BUNDLE_OUTPUT}.mri" "${script}")
+    execute_process(COMMAND "${PDG_BUNDLE_AR}" -M INPUT_FILE "${PDG_BUNDLE_OUTPUT}.mri" RESULT_VARIABLE result)
+endif()
+if(NOT result EQUAL 0)
+    message(FATAL_ERROR "WebTransport archive merge failed: ${result}")
+endif()

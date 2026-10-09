@@ -1,13 +1,52 @@
 namespace pdg { /**
 
-\fn pdg::MemBlock::getData
+\fn Uint8Array pdg::MemBlock::getData()
+\brief Copy the block's bytes into a new plain Uint8Array.
 
-\brief get the data as a JavaScript string
+Returns the same standard JavaScript array type on desktop native, Node,
+browser, and iOS runtimes. Each call copies all bytes without text decoding,
+including zero and values above 127. Changing the returned array does not
+change this MemBlock or arrays returned by earlier calls.
 
-The data is returned as a JavaScript string with binary data (values from 0..255 represented in JavaScript's native 2 byte per char string format). Use pdg.log.binaryDump() to see the data contents in a human readable hex-dump form.
+\return An independently owned Uint8Array with getDataSize() elements, or an
+empty Uint8Array for an empty block. The result is not a Node Buffer;
+slice() copies bytes and subarray() shares the returned array's memory.
 
-\return a JavaScript string with binary data
+\par Example
+\code{.js}
+const writer = new pdg.Serializer();
+writer.serialize_1u(255);
+const bytes = writer.getDataPtr().getData();
+const copy = bytes.slice();
+\endcode
 
-\sa LogManager.binaryDump
+\par Node.js Buffer conversion
+Use this form when a Node.js API specifically requires a Buffer. getData()
+copies the native block once; the Buffer then shares that snapshot without
+another payload copy. Include the offset and length so only the array's visible
+bytes are exposed, even when converting a subarray.
+
+\note These examples require Node.js Buffer support. The shared Buffer and
+Uint8Array reflect each other's mutations, but neither changes the MemBlock.
+
+\code{.js}
+const bytes = writer.getDataPtr().getData();
+const buffer = Buffer.from(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+\endcode
+
+\warning The shorter form below makes an additional full copy of the bytes:
+one copy from native memory into the Uint8Array, then another into the Buffer.
+For an N-byte block, it copies 2N bytes and needs storage for both N-byte
+payloads until the temporary array can be collected. This adds copy time and
+memory/garbage-collection pressure, especially for large or frequent transfers.
+Use it when an independent Buffer copy is intentional.
+
+\code{.js}
+const bufferCopy = Buffer.from(writer.getDataPtr().getData());
+\endcode
+
+The removed MemBlock.toBuffer() method can be replaced by the shared-view form
+above with the same single payload copy.
+\see getBytes()
 
 **/ }

@@ -60,6 +60,7 @@ namespace pdg {
 
 // EventEmitter destructor
 EventEmitter::~EventEmitter() {
+    if(mLifetime)*mLifetime=nullptr;
 	// cleanup all handlers and release them
 	clear();
 }
@@ -194,7 +195,7 @@ EventEmitter::emitEvent(EventEmitter* emitter, long inEventType, void* inEventDa
             HandlerListT& list = (*it).second.handlerList;
             if (list.size() > 0) {
                 HandlerListT::reverse_iterator listIt = list.rbegin();
-                while (listIt != list.rend() && !wasHandled) {
+                while (listIt != list.rend() && !wasHandled && acceptsEvents()) {
                     IEventHandler* handler = (*listIt).handler;
 					bool removed = (*listIt).removed;
 					listIt++;
@@ -220,7 +221,7 @@ EventEmitter::emitEvent(EventEmitter* emitter, long inEventType, void* inEventDa
             HandlerListT& list = (*it).second.handlerList;
             if (list.size() > 0) {
                 HandlerListT::reverse_iterator listIt = list.rbegin();
-                while (listIt != list.rend() && !wasHandled) {
+                while (listIt != list.rend() && !wasHandled && acceptsEvents()) {
                     IEventHandler* handler = (*listIt).handler;
 					bool removed = (*listIt).removed;
 					++listIt;

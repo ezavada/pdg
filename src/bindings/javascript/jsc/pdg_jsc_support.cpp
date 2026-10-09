@@ -22,6 +22,8 @@
 #include "memblock.h"
 
 #include <cstdlib>
+#include <cmath>
+#include <cstring>
 #include <iostream>
 #include <vector>
 #include <map>
@@ -31,8 +33,23 @@
 
 namespace pdg {
 
-VALUE EncodeBinary(const void *buf, size_t len);
-void* DecodeBinary(VALUE val, size_t* outLen);
+uint32 JSC_NumberToUint32(double value) {
+    if (!std::isfinite(value) || value == 0) return 0;
+    double wrapped = std::fmod(std::trunc(value), 4294967296.0);
+    if (wrapped < 0) wrapped += 4294967296.0;
+    return static_cast<uint32>(wrapped);
+}
+
+int32 JSC_NumberToInt32(double value) {
+    const uint32 wrapped = JSC_NumberToUint32(value);
+    return wrapped >= 2147483648u
+        ? static_cast<int32>(static_cast<int64>(wrapped) - 4294967296LL)
+        : static_cast<int32>(wrapped);
+}
+
+VALUE MakeUint8Array(const void* data, size_t size);
+bool IsUint8Array(VALUE value);
+bool GetUint8ArrayData(VALUE value, const uint8*& data, size_t& size);
 
 extern JSContextRef gMainContext;
 
@@ -934,39 +951,32 @@ std::optional<bool> JSC_ValueIsColor(JSContextRef ctx, JSValueRef val, Color& co
 
 
 
-VALUE EncodeBinary(const void *buf, size_t len) {
-	const uint8 *cbuf = static_cast<const uint8*>(buf);
-	JSChar* jsbuf = new JSChar[len];
-	for (size_t i = 0; i < len; i++) {
-	  jsbuf[i] = cbuf[i];
-	}
-	JSStringRef chunk = JSStringCreateWithCharacters(jsbuf, len);
-	VALUE val = JSValueMakeString(gMainContext, chunk);
-	JSStringRelease(chunk);
-	delete [] jsbuf;
-	return val;
+VALUE MakeUint8Array(const void* data, size_t size) {
+    JSObjectRef array = JSObjectMakeTypedArray(gMainContext, kJSTypedArrayTypeUint8Array, size, nullptr);
+    if (size) std::memcpy(JSObjectGetTypedArrayBytesPtr(gMainContext, array, nullptr), data, size);
+    return array;
 }
 
+bool IsUint8Array(VALUE value) {
+    return JSValueGetTypedArrayType(gMainContext, value, nullptr) == kJSTypedArrayTypeUint8Array;
+}
 
-// Returns number of bytes written. 
-// call free on the pointer returned when you are done with it
-void* DecodeBinary(VALUE val, size_t* outLen) {
-	JSStringRef str = JSValueToStringCopy(gMainContext, val, 0);
-	if (!str) return 0;
-	size_t buflen = JSStringGetLength(str);
-	if (outLen) {
-		*outLen = buflen;
-	}
-
-	const JSChar* jsbuf = JSStringGetCharactersPtr(str);
-
-	char* buf = (char*)std::malloc(buflen);
-	for (size_t i = 0; i < buflen; i++) {
-		const unsigned char* bp = reinterpret_cast<const unsigned char*>(&jsbuf[i]);
-		buf[i] = *bp;
-	}
-	JSStringRelease(str);
-	return buf;
+bool GetUint8ArrayData(VALUE value, const uint8*& data, size_t& size) {
+    if (!IsUint8Array(value)) return false;
+    JSValueRef error = nullptr;
+    JSObjectRef array = JSValueToObject(gMainContext, value, &error);
+    size = JSObjectGetTypedArrayByteLength(gMainContext, array, &error);
+    // JSC returns the backing-store base; account for the view's offset.
+    size_t offset = JSObjectGetTypedArrayByteOffset(gMainContext, array, &error);
+    auto buffer = JSObjectGetTypedArrayBuffer(gMainContext, array, &error);
+    if (error || !buffer) return false;
+    // Constructing a view validates attachment, including an empty input.
+    auto checked = JSObjectMakeTypedArrayWithArrayBufferAndOffset(gMainContext, kJSTypedArrayTypeUint8Array, buffer, offset, size, &error);
+    if (error || !checked) return false;
+    auto* base = static_cast<const uint8*>(JSObjectGetTypedArrayBytesPtr(gMainContext, checked, &error));
+    if (error || (size && !base)) return false;
+    data = size ? base + offset : nullptr;
+    return true;
 }
 
 

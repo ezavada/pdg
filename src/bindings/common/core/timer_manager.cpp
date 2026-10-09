@@ -146,4 +146,12 @@ STATIC_METHOD_IMPL(TimerManager, GetMilliseconds)
 
 CPP_SINGLETON_CONSTRUCTOR_IMPL(TimerManager)
 
-} // namespace pdg 
+} // namespace pdg
+
+
+// @pdg-class {"name":"TimerManager","native_binding":{"browser":{"generate":true,"base":null}}}
+
+// Clock queries are platform functions; startTimer has a native-only user-data argument.
+// @pdg-member {"name":"TimerManager.getMilliseconds","native_binding":{"browser":{"generate":false}}}
+
+// @pdg-member {"name":"TimerManager.startTimer","native_binding":{"browser":{"generate":false}}}

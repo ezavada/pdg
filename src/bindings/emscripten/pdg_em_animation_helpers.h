@@ -40,7 +40,6 @@ inline void browserRemoveHelper(AnimatedBase& owner, uint32_t id) {
     if (found != browserHelpers.end() && found->second->owner == &owner)
         owner.removeAnimationHelper(found->second);
 }
-inline void browserClearHelpers(AnimatedBase& owner) { owner.clearAnimationHelpers(); }
 
 inline std::vector<emscripten::val> browserEasings;
 template<size_t I> float browserEasing(double t, float b, float c, double d) {
@@ -61,10 +60,6 @@ inline int browserRegisterEasing(emscripten::val callback) {
     return id;
 }
 }
-#define BrowserAnimationHelpers_Extra \
-    .function("_addBrowserAnimationHelper", &pdg::browserAddHelper) \
-    .function("_removeBrowserAnimationHelper", &pdg::browserRemoveHelper) \
-    .function("_clearBrowserAnimationHelpers", &pdg::browserClearHelpers)
 EMSCRIPTEN_BINDINGS(pdg_browser_easing) {
     emscripten::function("_registerBrowserEasing", &pdg::browserRegisterEasing);
 }

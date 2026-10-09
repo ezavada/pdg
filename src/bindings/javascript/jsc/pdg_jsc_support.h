@@ -33,6 +33,9 @@
 #include <time.h>
 
 namespace pdg {
+  // ECMAScript ToInt32/ToUint32: truncate, then wrap modulo 2^32.
+  int32 JSC_NumberToInt32(double value);
+  uint32 JSC_NumberToUint32(double value);
   class Spline; // Forward declaration
 
 const char* JSC_GetFunctionName(JSContextRef ctx, JSObjectRef func);

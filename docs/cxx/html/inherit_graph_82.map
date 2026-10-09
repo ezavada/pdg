@@ -1,3 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$structpdg_1_1_sprite_layer_info.html" title=" " alt="" coords="5,5,115,31"/>
+<area shape="rect" id="Node000000" href="$classpdg_1_1_offset_t.html" title=" " alt="" coords="5,31,120,56"/>
+<area shape="rect" id="Node000001" href="$classpdg_1_1_point_t.html" title=" " alt="" coords="172,5,280,31"/>
+<area shape="poly" id="edge66_Node000000_Node000001" title=" " alt="" coords="135,30,174,26,169,27,136,35"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_vector_t.html" title=" " alt="" coords="168,55,284,80"/>
+<area shape="poly" id="edge67_Node000000_Node000002" title=" " alt="" coords="135,51,170,59,165,59,135,57"/>
 </map>

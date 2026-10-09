@@ -27,22 +27,21 @@ describe('Animated scale, growth and tween controls', function() {
         expect(a.getScale().x).toBe(4);
     });
 
-    it('round-trips Layer tween updates and paused clock state', function() {
-        const layer=pdg.createSpriteLayer();
+    it('round-trips Camera tween updates and paused clock state', function() {
+        const layer=pdg.createSpriteLayer(); const camera=new pdg.Camera(); layer.setCamera(camera);
         try {
-            // Layers are stepped by their owner in the native script runtime.
-            // Native owner tests also verify resumed curve integration and waits.
-            layer.setSerializationFlags(pdg.ser_Update);
-            layer.setScale(1,2);layer.changeScaleTo(3,4,1,pdg.linearTween);layer.changeMovementTo(8,0,1,pdg.linearTween);
-            layer.pauseSchedule();layer.wait(.125);
+            // Camera animation state travels with the layer drawing state.
+            layer.setSerializationFlags(pdg.ser_Update | pdg.ser_LayerDraw);
+            camera.setScale(1,2);camera.changeScaleTo(3,4,1,pdg.linearTween);camera.changeMovementTo(8,0,1,pdg.linearTween);
+            camera.pauseSchedule();camera.wait(.125);
             const ser=new pdg.Serializer(), size=layer.getSerializedSize(ser);layer.serialize(ser);
             expect(ser.getDataPtr().getDataSize()).toBe(size+3);
-            layer.cancelSchedule();layer.setScale(9);layer.resumeSchedule();
+            camera.cancelSchedule();camera.setScale(9);camera.resumeSchedule();
             const des=new pdg.Deserializer();des.setDataPtr(ser.getDataPtr());layer.deserialize(des);
-            expect(layer.isSchedulePaused()).toBe(true);expect(layer.hasScheduledAnimations()).toBe(true);
-            expect(layer.getScale().x).toBeCloseTo(1,5);expect(layer.getScale().y).toBeCloseTo(2,5);
-            expect(layer.getMovement().x).toBeCloseTo(0,5);
-            layer.resumeSchedule();expect(layer.isSchedulePaused()).toBe(false);expect(layer.hasScheduledAnimations()).toBe(true);
+            expect(layer.getCamera().isSchedulePaused()).toBe(true);expect(layer.getCamera().hasScheduledAnimations()).toBe(true);
+            expect(layer.getCamera().getScale().x).toBeCloseTo(1,5);expect(layer.getCamera().getScale().y).toBeCloseTo(2,5);
+            expect(layer.getCamera().getMovement().x).toBeCloseTo(0,5);
+            layer.getCamera().resumeSchedule();expect(layer.getCamera().isSchedulePaused()).toBe(false);expect(layer.getCamera().hasScheduledAnimations()).toBe(true);
         } finally { pdg.cleanupLayer(layer); }
     });
 

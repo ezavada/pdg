@@ -1,25 +1,27 @@
 namespace pdg { /**
 
-\fn pdg::NetConnection::sendDgram(object message)
+\fn pdg::NetConnection::sendDgram(NetworkData message)
+\brief Send binary bytes or JSON data to the remote endpoint over an available unreliable transport.
 
-\brief send a JavaScript object to the remote endpoint via UDP
+Messages use UDP when available. Delivery and arrival order are not guaranteed; include a sequence number when newer updates supersede older ones. PDG handles packet framing.
 
-The object will be sent using UDP if it is available. Delivery is not guaranteed and neither is in-order deliver of messages. This is ideal for small bits of information that are frequently resent, such as position or status updates. 
+\param message A Uint8Array (including Node Buffer), a JSON-compatible object or
+array, or null. See \ref pdg::NetworkData for the complete contract.
 
-NetConnection handles packet framing for you, so if the packet arrives, the NetConnection on the remote endpoint will receive an onMessage callback with the string you sent. If the message cannot be sent you will not get any notification. It will simply disappear into the ether.
+Uint8Array inputs use binary serialization. Only the view's bytes are copied,
+respecting byteOffset and byteLength. The receiver gets a Node Buffer on the
+current Node-based networking runtimes. Plain objects, arrays and null use JSON
+serialization; they must be JSON-compatible and contain no circular references.
 
-\param message the object to send
+Strings, MemBlock and ISerializable instances have separate overloads. Top-level
+numbers and booleans are not accepted by this method.
 
-\return itself (for call chaining)
+\return The receiver for call chaining.
 
-\sa send(object)
-\sa sendDgram(ISerializable)
+\see sendDgram(string)
+\see sendDgram(MemBlock)
+\see sendDgram(ISerializable)
 
-\remark To guard against out-of-order delivery, you should always use a sequence number so you can drop older updates that arrive after newer ones.
-
-\warning Any string longer than MTU (generally 1500 bytes, but can be smaller) will always fail to send
-
-\warning Only use this for native JavaScript objects. No PDG objects can be sent over the network this way.
-
+WebTransport uses session datagrams after handshake completion. Payloads larger than its confirmed datagram limit, disabled/unavailable datagrams, or rejected datagram writes use the reliable stream. Native UDP falls back to TCP above 1492 serialized bytes. WebSocket always uses reliable delivery. A successful datagram write still has no delivery guarantee.
 
 **/ }

@@ -1,0 +1,8 @@
+<map id="SoundEvent" name="SoundEvent">
+<area shape="rect" id="Node000001" title="SoundEvent." alt="" coords="13,177,106,203"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="5,5,103,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="52,44,53,80,53,106,60,177,55,177,47,106,47,80,51,49"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_sound.html" title="handles both short sounds and music (GUI Only)" alt="" coords="110,80,168,106"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="80,39,128,79,123,81,79,44"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="122,118,72,178,68,175,117,118"/>
+</map>

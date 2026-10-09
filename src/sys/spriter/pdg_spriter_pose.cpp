@@ -289,7 +289,7 @@ void SpriterPoseAdapter::validateWorld(const AnimationPose& pose, const Animatio
     for (AnimationBoneId id = 0; id < rig->getBoneCount(); ++id) pose.getWorldTransform(id, root);
     for (AnimationBindingId id = 0; id < rig->getBindingCount(); ++id) pose.getWorldBindingTransform(id, root);
 }
-void SpriterPoseAdapter::evaluate(const std::string& blendTarget, double blendRatio, const AnimationTransform& root, AnimationPipeline* pipeline, double deltaSeconds) {
+void SpriterPoseAdapter::evaluate(const std::string& blendTarget, double blendRatio, const AnimationTransform& root, AnimationPipeline* pipeline, double deltaSeconds, const std::function<void(AnimationPose&,bool)>& controls, double simulationDeltaSeconds) {
     auto* source = animation(mEntity, mSchema->entityIndex, mEntity.currentAnimationName());
     source->processRefKeys(source->currentTime());
     if (!blendTarget.empty()) {
@@ -307,7 +307,7 @@ void SpriterPoseAdapter::evaluate(const std::string& blendTarget, double blendRa
         if (mTransitionElapsed >= mTransitionDuration) { mTransitionActive=false; mTransitionCompleted=true; mTransitionSnapshot.reset(); }
     }
     auto final = base.copy();
-    if (pipeline) final = pipeline->evaluate(base, root, deltaSeconds, mOverrides);
+    if (pipeline) final = pipeline->evaluate(base, root, deltaSeconds, mOverrides,controls,simulationDeltaSeconds);
     else for (const auto& override : mOverrides) final.setLocalTransform(override.first, override.second);
     mBase = std::move(base);
     publish(std::move(final),root);

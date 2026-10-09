@@ -112,15 +112,15 @@ CPP_MANAGED_CONSTRUCTOR_IMPL(Polygon)
 END
 
 METHOD_IMPL(Polygon, AddPoint)
-    METHOD_SIGNATURE("", undefined, 1, ([object Point] point)); 
+    METHOD_SIGNATURE("adds a point to the end of the polygon", [this], 1, ([object Point const&] point));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_POINT_ARG(1, point);
     self->addPoint(point);
-    NO_RETURN;
+    RETURN_THIS;
     END
 
 METHOD_IMPL(Polygon, AddSpline)
-    METHOD_SIGNATURE("", undefined, 1, ([object Spline] spline, [number] uStep)); 
+    METHOD_SIGNATURE("adds a spline curve to the polygon", [this], 1, ([object Spline*] spline, number uStep = 0.01));
     REQUIRE_ARG_MIN_COUNT(1);
     REQUIRE_CPP_OBJECT_ARG(1, spline, Spline);
     float uStep = 0.01f;
@@ -129,20 +129,20 @@ METHOD_IMPL(Polygon, AddSpline)
         uStep = uStepArg;
     }
     self->addSpline(spline, uStep);
-    NO_RETURN;
+    RETURN_THIS;
     END
 
 METHOD_IMPL(Polygon, InsertPoint)
-    METHOD_SIGNATURE("", undefined, 2, ([number uint] index, [object Point] point)); 
+    METHOD_SIGNATURE("inserts a point at the specified index", [this], 2, ([number uint] index, [object Point const&] point));
     REQUIRE_ARG_COUNT(2);
     REQUIRE_UINT32_ARG(1, index);
     REQUIRE_POINT_ARG(2, point);
     self->insertPoint(index, point);
-    NO_RETURN;
+    RETURN_THIS;
     END
 
 METHOD_IMPL(Polygon, RemovePoint)
-    METHOD_SIGNATURE("", undefined, 1, ([number uint] index)); 
+    METHOD_SIGNATURE("removes the point at the specified index", [this], 1, ([number uint] index));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_UINT32_ARG(1, index);
     try {
@@ -150,18 +150,18 @@ METHOD_IMPL(Polygon, RemovePoint)
     } catch (const std::out_of_range& e) {
         THROW_RANGE_ERR("Polygon::removePoint: index out of range");
     }
-    NO_RETURN;
+    RETURN_THIS;
     END
 
 METHOD_IMPL(Polygon, GetPointCount)
-    METHOD_SIGNATURE("", [number uint], 0, ()); 
+    METHOD_SIGNATURE("", [number uint], 0, ());
     REQUIRE_ARG_COUNT(0);
     size_t count = self->getPointCount();
     RETURN_UINT32(count);
     END
 
 METHOD_IMPL(Polygon, GetPoint)
-    METHOD_SIGNATURE("", [object Point], 1, ([number uint] index)); 
+    METHOD_SIGNATURE("", [object Point], 1, ([number uint] index));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_UINT32_ARG(1, index);
     try {
@@ -173,41 +173,41 @@ METHOD_IMPL(Polygon, GetPoint)
     END
 
 METHOD_IMPL(Polygon, SetPoint)
-    METHOD_SIGNATURE("", undefined, 2, ([number uint] index, [object Point] point)); 
+    METHOD_SIGNATURE("sets the point at the specified index", [this], 2, ([number uint] index, [object Point const&] point));
     REQUIRE_ARG_COUNT(2);
     REQUIRE_UINT32_ARG(1, index);
     REQUIRE_POINT_ARG(2, point);
     try {
         self->setPoint(index, point);
-        NO_RETURN;
+        RETURN_THIS;
     } catch (const std::out_of_range& e) {
         THROW_RANGE_ERR("Polygon::setPoint: index out of range");
     }
     END
 
 METHOD_IMPL(Polygon, ClearPoints)
-    METHOD_SIGNATURE("", undefined, 0, ()); 
+    METHOD_SIGNATURE("removes all points from the polygon", [this], 0, ());
     REQUIRE_ARG_COUNT(0);
     self->clearPoints();
-    NO_RETURN;
+    RETURN_THIS;
     END
 
 METHOD_IMPL(Polygon, GetBounds)
-    METHOD_SIGNATURE("", [object Rect], 0, ()); 
+    METHOD_SIGNATURE("", [object Rect], 0, ());
     REQUIRE_ARG_COUNT(0);
     Rect bounds = self->getBounds();
     RETURN_RECT(bounds);
     END
 
 METHOD_IMPL(Polygon, CenterPoint)
-    METHOD_SIGNATURE("", [object Point], 0, ()); 
+    METHOD_SIGNATURE("", [object Point], 0, ());
     REQUIRE_ARG_COUNT(0);
     Point center = self->centerPoint();
     RETURN_POINT(center);
     END
 
 METHOD_IMPL(Polygon, Contains)
-    METHOD_SIGNATURE("", [boolean], 1, ([object Point] point)); 
+    METHOD_SIGNATURE("", [boolean], 1, ([object Point const&] point));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_POINT_ARG(1, point);
     bool contains = self->contains(point);
@@ -215,144 +215,154 @@ METHOD_IMPL(Polygon, Contains)
     END
 
 METHOD_IMPL(Polygon, Empty)
-    METHOD_SIGNATURE("", [boolean], 0, ()); 
+    METHOD_SIGNATURE("", [boolean], 0, ());
     REQUIRE_ARG_COUNT(0);
     bool empty = self->empty();
     RETURN_BOOL(empty);
     END
 
 METHOD_IMPL(Polygon, Equals)
-    METHOD_SIGNATURE("", [boolean], 1, ([object Polygon] other)); 
+    METHOD_SIGNATURE("", [boolean], 1, ([object Polygon const&] other));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_CPP_OBJECT_ARG(1, other, Polygon);
     RETURN_BOOL(*self == *other); // compare contents, not pointers
     END
 
 METHOD_IMPL(Polygon, Move)
-    METHOD_SIGNATURE("", [object Polygon], 1, ([object Offset] offset)); 
+    METHOD_SIGNATURE("moves the polygon by the specified offset vector", [this], 1, ([object Offset const&] offset));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_OFFSET_ARG(1, offset);
     self->move(offset);
-    NO_RETURN;
+    RETURN_THIS;
     END
 
 METHOD_IMPL(Polygon, MoveLeft)
-    METHOD_SIGNATURE("", undefined, 1, (number delta)); 
+    METHOD_SIGNATURE("moves the polygon left by the specified amount", [this], 1, (number delta));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_NUMBER_ARG(1, delta);
     self->moveLeft(delta);
-    NO_RETURN;
+    RETURN_THIS;
     END
 
 METHOD_IMPL(Polygon, MoveRight)
-    METHOD_SIGNATURE("", [object Polygon], 1, (number delta)); 
+    METHOD_SIGNATURE("moves the polygon right by the specified amount", [this], 1, (number delta));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_NUMBER_ARG(1, delta);
     self->moveRight(delta);
-    NO_RETURN;
+    RETURN_THIS;
     END
 
 METHOD_IMPL(Polygon, MoveUp)
-    METHOD_SIGNATURE("", [object Polygon], 1, (number delta)); 
+    METHOD_SIGNATURE("moves the polygon up by the specified amount", [this], 1, (number delta));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_NUMBER_ARG(1, delta);
     self->moveUp(delta);
-    NO_RETURN;
+    RETURN_THIS;
     END
 
 METHOD_IMPL(Polygon, MoveDown)
-    METHOD_SIGNATURE("", [object Polygon], 1, (number delta)); 
+    METHOD_SIGNATURE("moves the polygon down by the specified amount", [this], 1, (number delta));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_NUMBER_ARG(1, delta);
     self->moveDown(delta);
-    NO_RETURN;
+    RETURN_THIS;
     END
 
 METHOD_IMPL(Polygon, MoveXTo)
-    METHOD_SIGNATURE("", undefined, 1, (number x)); 
+    METHOD_SIGNATURE("moves the polygon to the specified x coordinate", [this], 1, (number x));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_NUMBER_ARG(1, x);
     self->moveXTo(x);
-    NO_RETURN;
+    RETURN_THIS;
     END
 
 METHOD_IMPL(Polygon, MoveYTo)
-    METHOD_SIGNATURE("", undefined, 1, (number y)); 
+    METHOD_SIGNATURE("moves the polygon to the specified y coordinate", [this], 1, (number y));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_NUMBER_ARG(1, y);
     self->moveYTo(y);
-    NO_RETURN;
+    RETURN_THIS;
     END
 
+// @pdg-member {"name":"Polygon.moveTo","native_binding":{"overloads":[{"binding_name":"_moveToPoint","parameters":["point"],"signature":"pdg::Polygon&(const pdg::Point&)"},{"binding_name":"_moveToXY","parameters":["x","y"],"signature":"pdg::Polygon&(float, float)"}]}}
 METHOD_IMPL(Polygon, MoveTo)
-    METHOD_SIGNATURE("", undefined, 2, (number x, number y)); 
-    REQUIRE_ARG_COUNT(2);
-    REQUIRE_NUMBER_ARG(1, x);
-    REQUIRE_NUMBER_ARG(2, y);
-    self->moveTo(x, y);
-    NO_RETURN;
+    METHOD_SIGNATURE("moves the polygon to the specified coordinates", [this], 2, ({[object Point const&] point|number x, number y}));
+    REQUIRE_ARG_MIN_COUNT(1);
+    pdg::Point point;
+    auto isPoint = VALUE_IS_POINT(ARGV[0], point);
+    if (!isPoint.has_value()) { RETURN_NULL; }
+    if (*isPoint) {
+        REQUIRE_ARG_COUNT(1);
+        self->moveTo(point);
+    } else {
+        REQUIRE_ARG_COUNT(2);
+        REQUIRE_NUMBER_ARG(1, x);
+        REQUIRE_NUMBER_ARG(2, y);
+        self->moveTo(x, y);
+    }
+    RETURN_THIS;
     END
 
 METHOD_IMPL(Polygon, Center)
-    METHOD_SIGNATURE("", undefined, 1, ([object Point] point)); 
+    METHOD_SIGNATURE("centers the polygon at the specified point", [this], 1, ([object Point const&] point));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_POINT_ARG(1, point);
     self->center(point);
-    NO_RETURN;
+    RETURN_THIS;
     END
 
 METHOD_IMPL(Polygon, Scale)
-    METHOD_SIGNATURE("", undefined, 1, (number factor)); 
+    METHOD_SIGNATURE("scales the polygon by the specified factor", [this], 1, (number factor));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_NUMBER_ARG(1, factor);
     self->scale(factor);
-    NO_RETURN;
+    RETURN_THIS;
     END
 
 METHOD_IMPL(Polygon, HorzScale)
-    METHOD_SIGNATURE("", undefined, 1, (number factor)); 
+    METHOD_SIGNATURE("scales the polygon horizontally by the specified factor", [this], 1, (number factor));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_NUMBER_ARG(1, factor);
     self->horzScale(factor);
-    NO_RETURN;
+    RETURN_THIS;
     END
 
 METHOD_IMPL(Polygon, VertScale)
-    METHOD_SIGNATURE("", undefined, 1, (number factor)); 
+    METHOD_SIGNATURE("scales the polygon vertically by the specified factor", [this], 1, (number factor));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_NUMBER_ARG(1, factor);
     self->vertScale(factor);
-    NO_RETURN;
+    RETURN_THIS;
     END
 
 METHOD_IMPL(Polygon, ScaleAround)
-    METHOD_SIGNATURE("", undefined, 2, (number factor, [object Point] centerPoint)); 
+    METHOD_SIGNATURE("scales the polygon around the specified center point", [this], 2, (number factor, [object Point const&] centerPoint));
     REQUIRE_ARG_COUNT(2);
     REQUIRE_NUMBER_ARG(1, factor);
     REQUIRE_POINT_ARG(2, centerPoint);
     self->scaleAround(factor, centerPoint);
-    NO_RETURN;
+    RETURN_THIS;
     END
 
 METHOD_IMPL(Polygon, Rotate)
-    METHOD_SIGNATURE("", undefined, 1, (number radians)); 
+    METHOD_SIGNATURE("rotates the polygon by the specified angle in radians", [this], 1, (number radians));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_NUMBER_ARG(1, radians);
     self->rotate(radians);
-    NO_RETURN;
+    RETURN_THIS;
     END
 
 METHOD_IMPL(Polygon, RotateAround)
-    METHOD_SIGNATURE("", undefined, 2, (number radians, [object Point] centerPoint)); 
+    METHOD_SIGNATURE("rotates the polygon around the specified center point", [this], 2, (number radians, [object Point const&] centerPoint));
     REQUIRE_ARG_COUNT(2);
     REQUIRE_NUMBER_ARG(1, radians);
     REQUIRE_POINT_ARG(2, centerPoint);
     self->rotateAround(radians, centerPoint);
-    NO_RETURN;
+    RETURN_THIS;
     END
 
 METHOD_IMPL(Polygon, Intersection)
-    METHOD_SIGNATURE("", [object Polygon], 1, ([object Polygon] other)); 
+    METHOD_SIGNATURE("", [object Polygon], 1, ([object Polygon const&] other));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_CPP_OBJECT_ARG(1, other, Polygon);
     Polygon* result = new Polygon(self->intersection(*other));
@@ -360,7 +370,7 @@ METHOD_IMPL(Polygon, Intersection)
     END
 
 METHOD_IMPL(Polygon, UnionWith)
-    METHOD_SIGNATURE("", [object Polygon], 1, ([object Polygon] other)); 
+    METHOD_SIGNATURE("", [object Polygon], 1, ([object Polygon const&] other));
     REQUIRE_ARG_COUNT(1);
     REQUIRE_CPP_OBJECT_ARG(1, other, Polygon);
     Polygon* result = new Polygon(self->unionWith(*other));
@@ -372,3 +382,51 @@ CLEANUP_IMPL(Polygon)
 #endif // !PDG_NO_GUI
 
 } // namespace pdg
+
+/* @pdg-member
+{
+  "name": "Polygon.Polygon",
+  "type": "constructor",
+  "params": [
+    [],
+    [
+      {
+        "name": "points",
+        "type": "array object Point",
+        "contract": {
+          "items": {
+            "type": "object Point"
+          },
+          "nullable": true
+        }
+      }
+    ],
+    [
+      {
+        "name": "points",
+        "type": "array object Point",
+        "rest": true
+      }
+    ]
+  ],
+  "returns": "object Polygon",
+  "brief": "Create an empty polygon or copy its points."
+}
+*/
+
+
+// @pdg-member {"name":"Polygon.addSpline","native_binding":{"allow_raw_pointers":true}}
+
+
+// @pdg-member {"name":"Polygon.centerPoint","native_binding":{"binding_name":"_centerPointValue"}}
+
+
+// @pdg-member {"name":"Polygon.center","native_binding":{"browser":{"registrations":[{"name":"_centerPoint","signature":"pdg::Polygon&(const pdg::Point&)"},{"name":"_centerRect","signature":"pdg::Polygon&(const pdg::Rect&)"}]}}}
+
+
+// @pdg-member {"name":"Polygon.rotate","native_binding":{"signature":"pdg::Polygon&(float)"}}
+
+
+// @pdg-member {"name":"Polygon.equals","native_binding":{"symbol":"pdg::Polygon::operator=="}}
+
+// @pdg-class {"name":"Polygon","native_binding":{"browser":{"generate":true,"base":null,"constructors":[{"types":[]}],"support_bindings":[{"name":"isSelfIntersecting","symbol":"pdg::Polygon::isSelfIntersecting"}]}}}

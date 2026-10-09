@@ -204,7 +204,7 @@ function createJasmineOptions(envInfo, runConfig, processObj) {
             return path.basename(name).replace(/\.spec\.js$/i, '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         });
         options.regExpSpec = new RegExp('^(' + baseNames.join('|') + ')\\.spec\\.js$', 'i');
-        options.isVerbose = runConfig.verbose || baseNames.length === 1;
+        options.isVerbose = runConfig.verbose;
     }
 
     return options;
@@ -223,7 +223,51 @@ function runJasmineSpecs(envInfo, runConfig, processObj) {
     jasmineNode.getEnv().updateInterval = 10;
 
     jasmineNode.loadHelpersInFolder(envInfo.specDir, new RegExp('^SpecHelper\\.js$', 'i'));
-    jasmineNode.executeSpecsInFolder(options);
+    var env = jasmineNode.getEnv();
+    var addReporter = env.addReporter;
+    var output = require('./unit_output')(processObj.stdout, processObj.env || {});
+    var onComplete = options.onComplete;
+    function finishOutput() { output.finish(); }
+    function interrupt() { output.finish(); processObj.exit(130); }
+    function terminate() { output.finish(); processObj.exit(143); }
+    processObj.once('exit', finishOutput);
+    processObj.once('SIGINT', interrupt);
+    processObj.once('SIGTERM', terminate);
+    options.onComplete = function(runner) {
+        output.finish();
+        processObj.removeListener('exit', finishOutput);
+        processObj.removeListener('SIGINT', interrupt);
+        processObj.removeListener('SIGTERM', terminate);
+        onComplete(runner);
+    };
+    // jasmine-node hardcodes its print callback. Adapt only the terminal
+    // reporter as it is registered, without modifying the vendored package.
+    env.addReporter = function(reporter) {
+        if (reporter instanceof jasmineNode.TerminalReporter) {
+            reporter.print_ = output.print;
+            var starting = reporter.reportRunnerStarting;
+            var results = reporter.reportSpecResults;
+            reporter.reportRunnerStarting = function(runner) {
+                output.start();
+                return starting.call(this, runner);
+            };
+            reporter.reportSpecResults = function(spec) {
+                var result = spec.results();
+                output.progress(this.stringWithColor_(result.skipped ? '-' : result.passed() ? '.' : 'F',
+                    result.skipped ? this.color_.ignore() : result.passed() ? this.color_.pass() : this.color_.fail()));
+                return results.call(this, spec);
+            };
+        }
+        return addReporter.call(this, reporter);
+    };
+    try {
+        jasmineNode.executeSpecsInFolder(options);
+    } catch (error) {
+        output.finish();
+        throw error;
+    } finally {
+        env.addReporter = addReporter;
+    }
 }
 
 module.exports = {

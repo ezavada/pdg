@@ -169,6 +169,8 @@ namespace pdg {
 		// --------------------------------------------
 		
 		void setDataPtr(void* ptr, uint32 ptrSize);
+        /// Copy input bytes; subsequent source mutations do not affect this reader.
+        void setDataCopy(const void* ptr, uint32 ptrSize);
 		
 		// --------------------------------------------
 		// constructors
@@ -184,6 +186,10 @@ namespace pdg {
 		static void registerScriptClass(uint32 classTag, FUNCTION_REF constructorFunc);
 	#endif
 
+        /// @cond INTERNAL
+        const std::vector<ISerializable*>& snapshotInstances() const { return mDeserializedInstances; }
+        void snapshotInstances(std::vector<ISerializable*> values) { mDeserializedInstances=std::move(values); }
+        /// @endcond
 	protected:
 		
 		virtual char* statusDump(int hiliteBytes = 0);
@@ -198,6 +204,7 @@ namespace pdg {
 		bool mUsingTags;
 		
 		std::vector<ISerializable*> mDeserializedInstances;
+        std::vector<uint8> mOwnedData;
 	};
 	
 } // end namespace pdg

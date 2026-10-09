@@ -58,7 +58,7 @@ if (surface) {
 */
 
 /**
-\fn void pdg::Port::clear(const Color& color)
+\fn pdg::Port& pdg::Port::clear(const Color& color)
 \brief Replace pixels inside the current clip with an exact color.
 \param color Defaults to transparent black. Alpha replaces the previous alpha;
 this differs from drawing a translucent rectangle, which blends with existing pixels.
@@ -70,7 +70,7 @@ Live images made from an offscreen port reflect the clear on their next draw.
 */
 
 /**
-\fn void pdg::Port::setDrawingOrigin(const Point& origin)
+\fn pdg::Port& pdg::Port::setDrawingOrigin(const Point& origin)
 \brief Set the Port coordinate at the top left of an offscreen surface.
 \param origin Finite coordinates for the drawing area's top left. Initially (0, 0).
 

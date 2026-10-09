@@ -83,7 +83,7 @@ namespace pdg {
         virtual void serialize(ISerializer* serializer) const;
         virtual void deserialize(IDeserializer* deserializer);
         virtual Image* createImageScaled(float xscale, float yscale, FilterType filterType);
-        virtual void setTransparentColor(Color rgb);
+        virtual ImageOpenGL& setTransparentColor(Color rgb);
         std::shared_ptr<OffscreenSurface> mOffscreen;
         mutable uint64 mPixelRevision = 0;
 		

@@ -179,10 +179,57 @@ void targetAdapters(){
     lock.lockWorld(1,2);contact=lock.update(0,true,false,0,{},.25);expect(!contact.locked,"unreachable contact releases");near(contact.influence,1,"zero-time release starts continuous fade");
 }
 
+void proceduralTests() {
+    using namespace pdg;
+    std::vector<AnimationBone> bones;
+    for(int i=0;i<7;++i)bones.push_back({"joint"+std::to_string(i),i?AnimationBoneId(i-1):animation_NoBone,translated(i?10:0),10});
+    auto rig=AnimationRig::create(bones);AnimationPose pose(rig);
+    AnimationFABRIK c;c.chain={0,1,2,3,4,5,6};c.targetX=23;c.targetY=17;c.maxIterations=128;c.tolerance=1e-5;
+    auto result=solveAnimationFABRIK(pose,c);
+    expect(result.reached,"FABRIK reaches a six-link target");
+    near(pose.getGlobalTransform(0).x,0,"FABRIK root anchored");
+    for(unsigned i=1;i<7;++i){auto a=pose.getGlobalTransform(i-1),b=pose.getGlobalTransform(i);near(std::hypot(b.x-a.x,b.y-a.y),10,"FABRIK preserves segment length");}
+    c.targetX=1000;c.targetY=0;result=solveAnimationFABRIK(pose,c);expect(!result.withinGeometricReach&&!result.reached&&result.iterations<=128,"FABRIK unreachable target bounded");
+    auto before=pose.getLocalTransform(0);c.chain={0,2,3};rejects([&]{solveAnimationFABRIK(pose,c);},"FABRIK rejects noncontiguous chain");near(pose.getLocalTransform(0).rotation,before.rotation,"FABRIK failure atomic");
+    c.chain={0,1,2,3,4,5,6};c.targetX=20;c.targetY=0;pose.resetToReference();result=solveAnimationFABRIK(pose,c);expect(result.reached,"FABRIK escapes straight-chain fold stall");
+    c.influence=0;before=pose.getLocalTransform(0);solveAnimationFABRIK(pose,c);near(pose.getLocalTransform(0).rotation,before.rotation,"FABRIK zero influence read only");
+    c.influence=1;c.minimum=std::vector<double>(6,-.1);c.maximum=std::vector<double>(6,.1);solveAnimationFABRIK(pose,c);
+    for(unsigned i=0;i<6;++i)expect(std::abs(pose.getLocalTransform(i).rotation)<=.10000001,"FABRIK limits survive blend");
+    pose.resetToReference();auto illegal=pose.getLocalTransform(0);illegal.rotation=1;pose.setLocalTransform(0,illegal);
+    c.targetX=pose.getGlobalTransform(6).x;c.targetY=pose.getGlobalTransform(6).y;result=solveAnimationFABRIK(pose,c);
+    expect(result.limited,"FABRIK projects an initially illegal pose before choosing best");
+    for(unsigned i=0;i<6;++i)expect(std::abs(pose.getLocalTransform(i).rotation)<=.10000001,"FABRIK initially illegal joints become legal");
+    // Off-axis links and reflections must use the actual imported axes.
+    for(int flip:{-1,1}){
+        auto skewBones=bones;for(size_t i=1;i<skewBones.size();++i){skewBones[i].reference.y=3;skewBones[i].reference.scaleX=i%2?-1:1;}
+        AnimationPose shaped(AnimationRig::create(skewBones));AnimationTransform frame;frame.x=80;frame.y=20;frame.rotation=.35;frame.scaleX=flip*1.3;frame.scaleY=.8;
+        for(unsigned i=0;i<6;++i){auto l=shaped.getLocalTransform(i);l.rotation=.18*(i%2?-1:1);shaped.setLocalTransform(i,l);}
+        auto target=shaped.getWorldTransform(6,frame);shaped.resetToReference();auto f=c;f.minimum.clear();f.maximum.clear();f.space=animationSpace_World;f.targetX=target.x;f.targetY=target.y;f.maxIterations=256;f.tolerance=.001;
+        auto solved=solveAnimationFABRIK(shaped,f,frame);expect(solved.reached,"FABRIK reaches with imported axes and reflected nonuniform root");
+    }
+    std::vector<AnimationBone> longBones;for(unsigned i=0;i<33;++i)longBones.push_back({"long"+std::to_string(i),i?i-1:animation_NoBone,translated(i?10:0),10});
+    AnimationPose longPose(AnimationRig::create(longBones));AnimationFABRIK longConfig;for(unsigned i=0;i<33;++i)longConfig.chain.push_back(i);longConfig.targetX=100;longConfig.targetY=90;longConfig.maxIterations=128;
+    expect(solveAnimationFABRIK(longPose,longConfig).reached,"FABRIK reaches on a 32-link chain");
+    for(unsigned i=1;i<33;++i){auto a=longPose.getGlobalTransform(i-1),b=longPose.getGlobalTransform(i);near(std::hypot(b.x-a.x,b.y-a.y),10,"long FABRIK segment remains rigid");}
+    AnimationJiggle j;j.mode=jiggleMode_IKTarget;j.maxDistance=1000;JiggleState state;
+    stepJiggleTarget(j,state,0,0,0);auto lag=stepJiggleTarget(j,state,20,0,1.0/60);expect(lag.effectiveX>0&&lag.effectiveX<20,"IK target jiggle lags moving target");
+    const double frozen=state.x;stepJiggleTarget(j,state,20,0,0);near(state.x,frozen,"target getters do not integrate");
+    j.enabled=false;lag=stepJiggleTarget(j,state,40,0,1.0/60);near(state.x,frozen,"disabled target freezes state");near(lag.effectiveX,40,"disabled target passes desired through");
+    stepJiggleTarget(j,state,10000,0,1);near(state.x,frozen,"disabled target freezes across teleports");
+    j.enabled=true;lag=stepJiggleTarget(j,state,40,0,1);expect(lag.reset,"large delta resets instead of unbounded catch-up");
+    j.mode=jiggleMode_Chain;j.chain={0,1,2};state={};pose.resetToReference();solveAnimationJiggle(pose,j,state,0);state.joints[0].velocity=2;
+    auto base=pose.copy();solveAnimationJiggle(pose,j,state,1.0/60);expect(pose.getLocalTransform(0).rotation>0,"chain jiggle responds to angular kick");
+    const double velocity=state.joints[0].velocity;auto queried=base.copy();solveAnimationJiggle(queried,j,state,0);near(state.joints[0].velocity,velocity,"chain zero-delta preserves velocity");
+    auto invalid=j;invalid.frequency=-1;rejects([&]{solveAnimationJiggle(base,invalid,state,.01);},"bad spring tuning rejected");
+    AnimationPipeline pipeline;double clip=-1,simulation=-1;pipeline.addModifier([&](auto,const auto& ctx){clip=ctx.deltaSeconds;simulation=ctx.simulationDeltaSeconds;});
+    pipeline.evaluate(base,{},0,{}, {},.02);near(clip,0,"clip paused context preserved");near(simulation,.02,"jiggle receives simulation time while clip paused");
+}
+
 int main() {
     targetAdapters();
     using namespace pdg;
     pipelineAndIK();
+    proceduralTests();
     authoredOffsetIK();
     // Deliberately out of parent order: stable IDs must not be reordered.
     std::vector<AnimationBone> bones{

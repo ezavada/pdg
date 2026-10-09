@@ -1,0 +1,30 @@
+<map id="SpriteBreakEvent" name="SpriteBreakEvent">
+<area shape="rect" id="Node000001" title="SpriteBreakEvent." alt="" coords="259,237,382,262"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_sprite.html" title="animated, moving image that is automatically moved, animated, and drawn" alt="" coords="240,111,295,136"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="264,149,263,182,271,211,281,224,296,237,291,235,278,228,267,214,258,182,260,153"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_animated.html" title="something that can be automatically moved, spun or resized over time." alt="" coords="425,5,502,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="408,35,347,57,309,85,280,113,276,109,305,81,345,53,412,32"/>
+<area shape="rect" id="Node000010" href="$classpdg_1_1_part.html" title="An independently animated part owned by a Sprite." alt="" coords="353,111,398,136"/>
+<area shape="poly" id="edge16_Node000010_Node000003" title=" " alt="" coords="449,43,424,80,391,112,388,108,420,76,445,46"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="5,5,103,31"/>
+<area shape="poly" id="edge10_Node000001_Node000004" title=" " alt="" coords="51,44,54,94,59,120,70,144,87,166,107,185,156,213,209,230,261,243,256,243,208,236,154,218,104,189,83,170,65,147,54,122,48,95,50,49"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="94,35,229,100,246,110,241,110,226,104,93,41"/>
+<area shape="rect" id="Node000008" href="$classpdg_1_1_sprite_layer.html" title="creates and tracks collections of sprites" alt="" coords="128,111,215,136"/>
+<area shape="poly" id="edge12_Node000008_Node000004" title=" " alt="" coords="77,39,117,76,158,110,153,111,114,80,77,45"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_i_serializable.html" title="Interface for an object which can be serialized." alt="" coords="126,5,219,31"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="195,40,259,110,254,111,193,45"/>
+<area shape="poly" id="edge13_Node000008_Node000005" title=" " alt="" coords="174,44,174,111,169,110,171,48"/>
+<area shape="rect" id="Node000006" href="$classpdg_1_1_collider.html" title="Optional shapes, filtering, sensors and contacts for a Sprite, Part or Particle." alt="" coords="243,5,308,31"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="264,43,262,55,261,85,266,111,261,109,256,85,257,55,261,48"/>
+<area shape="poly" id="edge6_Node000006_Node000006" title=" " alt="" coords="323,8,332,12,335,19,326,28,309,30,308,25,324,23,329,18,328,15,324,13"/>
+<area shape="poly" id="edge17_Node000010_Node000006" title=" " alt="" coords="300,39,316,53,368,111,363,111,312,57,300,44"/>
+<area shape="rect" id="Node000007" href="$classpdg_1_1_physics_body.html" title="Optional physical motion for a Sprite or Part, using seconds." alt="" coords="526,5,624,31"/>
+<area shape="poly" id="edge9_Node000001_Node000007" title=" " alt="" coords="609,39,620,54,624,66,620,79,594,128,565,162,528,188,478,215,431,234,383,244,383,239,429,229,476,210,525,183,561,158,590,125,616,77,618,66,616,56,608,44"/>
+<area shape="poly" id="edge7_Node000002_Node000007" title=" " alt="" coords="523,38,296,115,294,110,527,35"/>
+<area shape="poly" id="edge8_Node000007_Node000007" title=" " alt="" coords="641,9,651,18,643,27,626,30,624,25,641,22,646,18,640,14"/>
+<area shape="poly" id="edge18_Node000010_Node000007" title=" " alt="" coords="567,44,557,65,541,80,507,95,477,97,447,97,411,105,394,113,392,108,409,99,446,92,477,92,506,90,538,76,552,61,563,47"/>
+<area shape="poly" id="edge11_Node000001_Node000008" title=" " alt="" coords="177,150,188,183,207,211,231,227,261,240,256,240,229,232,203,215,183,185,174,154"/>
+<area shape="rect" id="Node000009" href="$classpdg_1_1_cp_constraint.html" title="describes how two sprites are connected to one another (Chipmunk Physics Only)" alt="" coords="422,111,520,136"/>
+<area shape="poly" id="edge14_Node000001_Node000009" title=" " alt="" coords="458,148,433,183,400,215,356,239,355,233,396,211,429,180,453,150"/>
+<area shape="poly" id="edge15_Node000001_Node000010" title=" " alt="" coords="371,150,348,214,332,238,329,234,344,211,367,153"/>
+</map>

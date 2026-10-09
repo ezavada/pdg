@@ -26,7 +26,7 @@
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="titlearea">
    <div id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></div>
-   <div id="projectname">PDG <span id="projectnumber">engine v1.1.1</span>
+   <div id="projectname">PDG <span id="projectnumber">engine v1.2.0</span>
    </div>
 </div>
 <!-- end header part -->
@@ -258,7 +258,7 @@ Static Public Attributes</h2></td></tr>
 <div class="line">    return true;</div>
 <div class="line">}), pdg.eventType_ColliderContact);</div>
 </div><!-- fragment --><p>Retained handles remain queryable after removal, using the final transform; callbacks and physical associations are cleared. Initial Sprite/Layer snapshots preserve collider geometry/configuration, compound body links and constraints. Use a Layer snapshot for links between Sprites. Callback filters and contact handlers cannot be saved; reinstall them after loading. Native callers can also use independent <a class="el" href="classpdg_1_1_collider.html" title="Optional shapes, filtering, sensors and contacts for a Sprite, Part or Particle.">Collider</a> and CollisionWorld objects for custom owner types.</p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="classpdg_1_1_physics_body.html" title="Optional physical motion for a Sprite or Part, using seconds.">PhysicsBody</a>, <a class="el" href="classpdg_1_1_physics_constraint.html" title="A retained physical relationship between any two PhysicsBody owners.">PhysicsConstraint</a>, <a class="el" href="group___physics.html#struct_collider_contact" title="One shape contact delivered as eventType_ColliderContact.">ColliderContact</a></dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classpdg_1_1_physics_body.html" title="Optional physical motion for a Sprite or Part, using seconds.">PhysicsBody</a>, <a class="el" href="classpdg_1_1_physics_constraint.html" title="A retained physical relationship between any two PhysicsBody owners.">PhysicsConstraint</a>, <a class="el" href="group___structured_data_types.html#structpdg_1_1_collider_contact" title="ColliderContact.">ColliderContact</a></dd></dl>
 
 <div class="shared-api-options">
 <p><a class="anchor" id="collider_geometry_sources"></a></p><dl class="section user"><dt>Geometry sources and explicit additions</dt><dd></dd></dl>
@@ -432,6 +432,7 @@ Static Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Add a simple local polygon, including concave outlines. </p>
+<dl class="section note"><dt>Note</dt><dd>Parameter <code>vertices:</code> Array of <code><a class="el" href="classpdg_1_1_point.html" title="point for 2D coordinate system">Point</a></code>.</dd></dl>
 <p>Copies the outline and decomposes concave regions into convex solver pieces, retaining one public shape ID. Collinear edge points and a repeated closing point are accepted; crossings, touching edges, zero-area outlines and nonfinite points are rejected without changing existing geometry. Basic and Chipmunk use the same decomposition.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -1267,6 +1268,7 @@ Static Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Filter contacts independently of owner type. </p>
+<dl class="section note"><dt>Note</dt><dd>Parameter <code>callback:</code> <a class="el" href="namespacepdg.html#structpdg_1_1_collider_filter_callback" title="ColliderFilterCallback">ColliderFilterCallback</a> or <code>null</code>.</dd></dl>
 <p>The predicate receives this <a class="el" href="classpdg_1_1_collider.html" title="Optional shapes, filtering, sensors and contacts for a Sprite, Part or Particle.">Collider</a> and the other <a class="el" href="classpdg_1_1_collider.html" title="Optional shapes, filtering, sensors and contacts for a Sprite, Part or Particle.">Collider</a> and must return a boolean. Returning false suppresses response and contact notifications. It can run multiple times during a step; keep it a read-only decision. Geometric <a class="el" href="#a43f6ee11823c5b9631c8a14543f606fd" title="Test a world point against the geometry.">contains()</a>/overlaps() queries ignore it. Exceptions reject the pair and are recorded by <a class="el" href="#ad5f802cd62dae9043491772dc2a3d9ca" title="Read the last native contact-dispatch error.">getContactError()</a>. Pass null to clear the callback. Owner detachment clears callbacks. See <a class="el" href="#collider_geometry_sources" title="collider_geometry_sources">collider_geometry_sources</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -1321,6 +1323,7 @@ Static Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Install a contact listener. </p>
+<dl class="section note"><dt>Note</dt><dd>Parameter <code>callback:</code> <a class="el" href="namespacepdg.html#structpdg_1_1_collider_contact_callback" title="ColliderContactCallback">ColliderContactCallback</a> or <code>null</code>.</dd></dl>
 <p>The callback receives a contact with collider/other, shape/otherShape, phase, point, normal, impulse, penetration and sensor. It runs after solving and may remove owners. It is independent of owner event delivery through <a class="el" href="#ac97e63b61e49719a0fe7a95419f12ad7" title="Enable contact events on the owning Sprite.">setWantsContactEvents()</a>. Pass null to clear the callback. Owner detachment clears callbacks. See <a class="el" href="#collider_geometry_sources" title="collider_geometry_sources">collider_geometry_sources</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -1494,6 +1497,7 @@ Static Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Replace all geometry with one polygon. </p>
+<dl class="section note"><dt>Note</dt><dd>Parameter <code>vertices:</code> Array of <code><a class="el" href="classpdg_1_1_point.html" title="point for 2D coordinate system">Point</a></code>.</dd></dl>
 <p>Stops any frame/animation source after validation succeeds. Accepts the same outlines as <a class="el" href="#aff82525cf9d15cb4eaf283cfb7a2b0c7" title="Add a simple local polygon, including concave outlines.">addPolygon()</a>. See <a class="el" href="#collider_geometry_sources" title="collider_geometry_sources">collider_geometry_sources</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">

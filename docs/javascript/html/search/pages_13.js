@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['you_20want_0',['Getting the Results you Want',['../classpdg_1_1_tile_layer.html#autotoc_md24',1,'']]],
-  ['your_20custom_20function_3a_1',['Your Custom Function:',['../group___animation.html#autotoc_md5',1,'Your Custom Function:'],['../group___events.html#autotoc_md6',1,'Your Custom Function:'],['../group___sprites.html#autotoc_md8',1,'Your Custom Function:']]]
+  ['usage_20examples_3a_0',['Usage Examples:',['../classpdg_1_1_log_manager.html#autotoc_md11',1,'']]],
+  ['using_20a_20view_1',['Creating and using a View',['../javascript_mvc_guide.html#mvc_view_lifecycle',1,'']]]
 ];

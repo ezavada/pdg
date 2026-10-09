@@ -1,0 +1,5 @@
+<map id="ShutdownEvent" name="ShutdownEvent">
+<area shape="rect" id="Node000001" title="ShutdownEvent." alt="" coords="5,102,119,128"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="13,5,111,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="64,45,65,102,59,101,60,48"/>
+</map>

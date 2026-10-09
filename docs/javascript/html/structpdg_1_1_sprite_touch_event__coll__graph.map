@@ -1,0 +1,26 @@
+<map id="SpriteTouchEvent" name="SpriteTouchEvent">
+<area shape="rect" id="Node000001" title="SpriteTouchEvent." alt="" coords="164,219,288,245"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="5,5,103,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="52,44,57,86,62,107,71,126,97,157,129,183,163,202,195,219,190,219,161,207,126,187,93,161,66,129,57,109,52,87,51,49"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_sprite_layer.html" title="creates and tracks collections of sprites" alt="" coords="129,102,216,128"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="76,40,118,76,154,101,149,102,115,80,76,45"/>
+<area shape="rect" id="Node000007" href="$classpdg_1_1_sprite.html" title="animated, moving image that is automatically moved, animated, and drawn" alt="" coords="250,102,306,128"/>
+<area shape="poly" id="edge9_Node000007_Node000002" title=" " alt="" coords="97,35,252,100,248,103,96,40"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="175,141,181,169,190,194,211,219,206,218,186,196,176,170,172,146"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_i_serializable.html" title="Interface for an object which can be serialized." alt="" coords="126,5,219,31"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="174,44,175,102,170,101,171,49"/>
+<area shape="poly" id="edge10_Node000007_Node000004" title=" " alt="" coords="198,39,267,101,262,102,197,44"/>
+<area shape="rect" id="Node000005" href="$classpdg_1_1_point.html" title="point for 2D coordinate system" alt="" coords="659,102,710,128"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="645,129,275,221,274,216,643,124"/>
+<area shape="rect" id="Node000006" href="$classpdg_1_1_offset.html" title="offset within a 2D coordinate system" alt="" coords="743,5,800,31"/>
+<area shape="poly" id="edge6_Node000005_Node000006" title=" " alt="" coords="753,41,697,104,694,99,748,44"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="269,141,233,220,229,217,264,143"/>
+<area shape="rect" id="Node000008" href="$classpdg_1_1_animated.html" title="something that can be automatically moved, spun or resized over time." alt="" coords="242,5,319,31"/>
+<area shape="poly" id="edge8_Node000007_Node000008" title=" " alt="" coords="282,44,281,103,276,100,278,48"/>
+<area shape="rect" id="Node000009" href="$classpdg_1_1_collider.html" title="Optional shapes, filtering, sensors and contacts for a Sprite, Part or Particle." alt="" coords="343,5,408,31"/>
+<area shape="poly" id="edge11_Node000007_Node000009" title=" " alt="" coords="354,41,292,103,289,99,350,43"/>
+<area shape="poly" id="edge12_Node000009_Node000009" title=" " alt="" coords="423,8,432,12,435,19,426,28,409,30,408,25,424,23,429,18,428,15,423,13"/>
+<area shape="rect" id="Node000010" href="$classpdg_1_1_physics_body.html" title="Optional physical motion for a Sprite or Part, using seconds." alt="" coords="525,5,623,31"/>
+<area shape="poly" id="edge13_Node000007_Node000010" title=" " alt="" coords="520,37,393,81,307,107,305,102,392,75,525,35"/>
+<area shape="poly" id="edge14_Node000010_Node000010" title=" " alt="" coords="639,9,650,18,642,27,624,30,623,25,639,22,645,18,638,14"/>
+</map>

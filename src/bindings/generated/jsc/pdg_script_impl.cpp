@@ -85,7 +85,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""seed"")");
-        uint32 seed = (uint32)floor(fabs(JSValueToNumber(ctx, arguments[1 -1], exception)));
+        uint32 seed = pdg::JSC_NumberToUint32(JSValueToNumber(ctx, arguments[1 -1], exception));
         OS::srand( seed );
         return JSValueMakeUndefined(ctx);
     }

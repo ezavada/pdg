@@ -108,6 +108,9 @@ void handle_framebuffersize_callback(GLFWwindow* window, int width, int height) 
 	if (gMainPort) {
 		GLFWwindow* mainWind = static_cast<GLFWwindow*>(gMainPort->mPlatformWindowRef);
 		if (window == mainWind) {
+			// Framebuffer pixels can change when moving between displays without
+			// changing the window's logical drawing or mouse coordinates.
+			glfwGetWindowSize(window, &width, &height);
 			main_handleLiveResize(width, height);
 		}
 	}
@@ -116,6 +119,7 @@ void handle_framebuffersize_callback(GLFWwindow* window, int width, int height) 
 
 
 void platform_startDrawing(void* windRef) {
+    graphics_flushText();
 	auto* window = static_cast<GLFWwindow*>(windRef);
 	glfwMakeContextCurrent(window);
   #ifndef __EMSCRIPTEN__
@@ -422,6 +426,14 @@ int platform_getWindowScreen(void* windRef) {
 }
 
 void platform_getWindowContentSize(void* windRef, long* outWidth, long* outHeight) {
+	GLFWwindow* window = static_cast<GLFWwindow*>(windRef);
+	int width = 0, height = 0;
+	glfwGetWindowSize(window, &width, &height);
+	*outWidth = width;
+	*outHeight = height;
+}
+
+void platform_getWindowDrawableSize(void* windRef, long* outWidth, long* outHeight) {
 	GLFWwindow* window = static_cast<GLFWwindow*>(windRef);
 	int width = 0;
 	int height = 0;

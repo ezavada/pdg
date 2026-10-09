@@ -198,6 +198,8 @@ namespace pdg {
                 throw;
             }
         }
+        const std::vector<const ISerializable*>& snapshotInstances(bool sizing) const { return sizing?mSerializedSizeInstances:mSerializedInstances; }
+        void snapshotInstances(std::vector<const ISerializable*> values,bool sizing) { (sizing?mSerializedSizeInstances:mSerializedInstances)=std::move(values); }
         /// @endcond
 
 		//! How many bytes are used to serialize a particular pdg::Color value

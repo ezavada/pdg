@@ -98,7 +98,7 @@ bool RestorePendingScriptException(JSValueRef* exception) {
 // ========================================================================================
 
 FUNCTION_IMPL(GetConfigManager)
-	METHOD_SIGNATURE("", [object ConfigManager], 0, ()); 
+	METHOD_SIGNATURE("", [object ConfigManager*], 0, ());
     RETURN( ConfigManager_getScriptSingletonInstance() );
     END
 
@@ -107,7 +107,7 @@ FUNCTION_IMPL(GetConfigManager)
 // ========================================================================================
 
 FUNCTION_IMPL(GetLogManager)
-	METHOD_SIGNATURE("", [object LogManager], 0, ()); 
+	METHOD_SIGNATURE("", [object LogManager*], 0, ());
     RETURN( LogManager_getScriptSingletonInstance() );
 END
 
@@ -160,7 +160,7 @@ STATIC_METHOD_IMPL(EventManager, GetDeviceOrientation)
 	RETURN(jsOrientation);
 	END
 FUNCTION_IMPL(GetEventManager)
-	METHOD_SIGNATURE("", [object EventManager], 0, ());
+	METHOD_SIGNATURE("", [object EventManager*], 0, ());
     JSObjectRef jsInstance = EventManager_getScriptSingletonInstance();
     EventManager* evtMgr = EventManager::getSingletonInstance();
     evtMgr->mEventEmitterScriptObj = jsInstance;
@@ -174,7 +174,7 @@ FUNCTION_IMPL(GetEventManager)
 DECLARE_SYMBOL(name);
 
 METHOD_IMPL(ResourceManager, GetImage)
-	METHOD_SIGNATURE("", [object Image], 1, (string imageName));
+	METHOD_SIGNATURE("", [object Image*], 1, (string imageName));
     REQUIRE_ARG_COUNT(1);
 	REQUIRE_STRING_ARG(1, imageName);
 	Image* img = self->getImage(imageName);
@@ -187,7 +187,7 @@ METHOD_IMPL(ResourceManager, GetImage)
 	RETURN(obj);
 	END
 METHOD_IMPL(ResourceManager, GetImageStrip)
-	METHOD_SIGNATURE("", [object ImageStrip], 1, (string imageName));
+	METHOD_SIGNATURE("", [object ImageStrip*], 1, (string imageName));
     REQUIRE_ARG_COUNT(1);
 	REQUIRE_STRING_ARG(1, imageName);
 	ImageStrip* img = self->getImageStrip(imageName);
@@ -201,7 +201,7 @@ METHOD_IMPL(ResourceManager, GetImageStrip)
 	END
 %#ifndef PDG_NO_SOUND
 METHOD_IMPL(ResourceManager, GetSound)
-	METHOD_SIGNATURE("", [object Sound], 1, (string soundName));
+	METHOD_SIGNATURE("", [object Sound*], 1, (string soundName));
     REQUIRE_ARG_COUNT(1);
 	REQUIRE_STRING_ARG(1, soundName);
 	Sound* snd = self->getSound(soundName);
@@ -217,7 +217,7 @@ METHOD_IMPL(ResourceManager, GetSound)
 
 
 FUNCTION_IMPL(GetResourceManager)
-	METHOD_SIGNATURE("", [object ResourceManager], 0, ());
+	METHOD_SIGNATURE("", [object ResourceManager*], 0, ());
     RETURN( ResourceManager_getScriptSingletonInstance() );
     END
 
@@ -255,6 +255,23 @@ CPP_CONSTRUCTOR_IMPL(ISerializable)
 
 // JavaScriptCore stores the most-derived native pointer. Convert known native
 // classes before using the ISerializable secondary base (not a raw void* cast).
+AnimatedBase* JSC_GetAnimationTarget(JSContextRef ctx, JSValueRef value) {
+    if(!JSValueIsObject(ctx,value)) return nullptr;
+    auto object=JSValueToObject(ctx,value,nullptr);
+    if(JSValueIsObjectOfClass(ctx,value,Troupe_class())) return Troupe_getCppObject(object);
+%#ifdef PDG_SPRITER_SUPPORT
+    if(JSValueIsObjectOfClass(ctx,value,Bone_class())) return Bone_getCppObject(object);
+%#endif
+    if(JSValueIsObjectOfClass(ctx,value,Part_class())) return Part_getCppObject(object);
+    if(JSValueIsObjectOfClass(ctx,value,Sprite_class())) return Sprite_getCppObject(object);
+    if(JSValueIsObjectOfClass(ctx,value,AnimatedAttributesBase_class())) return AnimatedAttributesBase_getCppObject(object);
+    if(JSValueIsObjectOfClass(ctx,value,Camera_class())) return Camera_getCppObject(object);
+    if(JSValueIsObjectOfClass(ctx,value,Particle_class())) return Particle_getCppObject(object);
+    if(JSValueIsObjectOfClass(ctx,value,ParticleEmitter_class())) return ParticleEmitter_getCppObject(object);
+    if(JSValueIsObjectOfClass(ctx,value,AnimatedBase_class())) return AnimatedBase_getCppObject(object);
+    return nullptr;
+}
+
 ISerializable* JSC_GetSerializable(JSContextRef ctx, JSValueRef value) {
     if (!JSValueIsObject(ctx, value)) return nullptr;
     JSObjectRef object = JSValueToObject(ctx, value, nullptr);
@@ -264,13 +281,16 @@ ISerializable* JSC_GetSerializable(JSContextRef ctx, JSValueRef value) {
     if (JSValueIsObjectOfClass(ctx, value, Sprite_class())) return Sprite_getCppObject(object);
     if (JSValueIsObjectOfClass(ctx, value, TileLayer_class())) return static_cast<Serializable<SpriteLayer>*>(TileLayer_getCppObject(object));
     if (JSValueIsObjectOfClass(ctx, value, SpriteLayer_class())) return static_cast<Serializable<SpriteLayer>*>(SpriteLayer_getCppObject(object));
+    if (JSValueIsObjectOfClass(ctx, value, Camera_class())) return Camera_getCppObject(object);
+    if (JSValueIsObjectOfClass(ctx, value, Troupe_class())) return Troupe_getCppObject(object);
+    if (JSValueIsObjectOfClass(ctx, value, AnimatedBase_class())) return AnimatedBase_getCppObject(object);
     if (JSValueIsObjectOfClass(ctx, value, ISerializable_class())) return ISerializable_getCppObject(object);
     return nullptr;
 }
 
 METHOD_IMPL(Serializer, Serialize_obj)
 	self->mSerializerScriptObj = THIS;  // correct for callbacks
-	METHOD_SIGNATURE("", undefined, 1, ([object ISerializable] obj));
+	METHOD_SIGNATURE("", undefined, 1, ([object ISerializable const*] obj));
     REQUIRE_ARG_COUNT(1);
     ISerializable* obj = JSC_GetSerializable(ctx, ARGV[0]);
     if (!obj && !VALUE_IS_NULL(ARGV[0])) { THROW_TYPE_ERR("Expected a serializable object or null"); }
@@ -402,7 +422,7 @@ METHOD_IMPL(GraphicsManager, GetNthSupportedScreenMode);
 	
 	
 FUNCTION_IMPL(GetGraphicsManager)
-	METHOD_SIGNATURE("", [object GraphicsManager], 0, ()); 
+	METHOD_SIGNATURE("", [object GraphicsManager*], 0, ());
     RETURN( GraphicsManager_getScriptSingletonInstance() );
     END
 
@@ -417,7 +437,7 @@ FUNCTION_IMPL(GetGraphicsManager)
 // ========================================================================================
 
 FUNCTION_IMPL(GetSoundManager)
-	METHOD_SIGNATURE("", [object SoundManager], 0, ()); 
+	METHOD_SIGNATURE("", [object SoundManager*], 0, ());
     RETURN( SoundManager_getScriptSingletonInstance() );
     END
 
@@ -430,7 +450,7 @@ FUNCTION_IMPL(GetSoundManager)
 // ========================================================================================
 
 FUNCTION_IMPL(GetFileManager)
-	METHOD_SIGNATURE("", [object FileManager], 0, ()); 
+	METHOD_SIGNATURE("", [object FileManager*], 0, ());
     RETURN( FileManager_getScriptSingletonInstance() );
     END
 
@@ -440,7 +460,7 @@ FUNCTION_IMPL(GetFileManager)
 // ========================================================================================
 
 FUNCTION_IMPL(GetTimerManager)
-	METHOD_SIGNATURE("", [object TimerManager], 0, ()); 
+	METHOD_SIGNATURE("", [object TimerManager*], 0, ());
     JSObjectRef jsInstance = TimerManager_getScriptSingletonInstance();
     TimerManager* timMgr = TimerManager::getSingletonInstance();
     timMgr->mEventEmitterScriptObj = jsInstance;
@@ -726,13 +746,18 @@ ScriptEventHandler::ScriptEventHandler(JSObjectRef func) {
 DECLARE_SYMBOL(triggerName);
 DECLARE_SYMBOL(clipName);
 DECLARE_SYMBOL(entityName);
+DECLARE_SYMBOL(camera);
+DECLARE_SYMBOL(zoom);
 DECLARE_SYMBOL(timeSeconds);
 DECLARE_SYMBOL(offsetSeconds);
 
 bool ScriptEventHandler::handleEvent(EventEmitter* emitter, long inEventType, void* inEventData) noexcept {
   	SETUP_NON_SCRIPT_CALL;
-    if (!emitter->mEventEmitterScriptObj)
+    if (!emitter->mEventEmitterScriptObj) {
         if (auto* particle = dynamic_cast<Particle*>(emitter)) Particle_newFromCpp(ctx, particle);
+        else if (auto* scene = dynamic_cast<Scene*>(emitter)) Scene_newFromCpp(ctx, scene);
+        else if (auto* camera = dynamic_cast<Camera*>(emitter)) Camera_newFromCpp(ctx, camera);
+    }
   	OBJECT jsEvent = OBJECT_CREATE_EMPTY(0);
   	OBJECT_SET_PROPERTY_VALUE(jsEvent, SYMBOL(emitter), OBJ2VAL(emitter->mEventEmitterScriptObj));
   	OBJECT_SET_PROPERTY_VALUE(jsEvent, SYMBOL(eventType), INT2VAL(inEventType));
@@ -839,6 +864,12 @@ bool ScriptEventHandler::handleEvent(EventEmitter* emitter, long inEventType, vo
             OBJECT_SET_PROPERTY_VALUE(jsEvent,SYMBOL(breakAngularSpeed),NUM2VAL(info->breakAngularSpeed));
             OBJECT_SET_PROPERTY_VALUE(jsEvent,SYMBOL(body),(info->body ? OBJ2VAL(info->body->mPhysicsBodyScriptObj ? info->body->mPhysicsBodyScriptObj : PhysicsBody_newFromCpp(ctx, info->body)) : JSValueMakeNull(ctx)));
             OBJECT_SET_PROPERTY_VALUE(jsEvent,SYMBOL(referenceBody),(info->referenceBody ? OBJ2VAL(info->referenceBody->mPhysicsBodyScriptObj ? info->referenceBody->mPhysicsBodyScriptObj : PhysicsBody_newFromCpp(ctx, info->referenceBody)) : JSValueMakeNull(ctx)));
+            break;
+        }
+        case pdg::eventType_ZoomComplete: {
+            const auto* info = static_cast<CameraZoomInfo*>(inEventData);
+            OBJECT_SET_PROPERTY_VALUE(jsEvent, SYMBOL(camera), OBJ2VAL(emitter->mEventEmitterScriptObj));
+            OBJECT_SET_PROPERTY_VALUE(jsEvent, SYMBOL(zoom), NUM2VAL(info->zoom));
             break;
         }
         case pdg::eventType_ColliderContact: {
@@ -1155,6 +1186,7 @@ bool ScriptAnimationHelper::animate(AnimatedBase* what, double deltaSeconds) noe
         else if (auto* emission = dynamic_cast<ParticleEmitter*>(what)) ParticleEmitter_newFromCpp(ctx, emission);
         else if (auto* part = dynamic_cast<Part*>(what)) Part_newFromCpp(ctx, part);
         else if (auto* sprite = dynamic_cast<Sprite*>(what)) Sprite_newFromCpp(ctx, sprite);
+        else if (auto* camera = dynamic_cast<Camera*>(what)) Camera_newFromCpp(ctx, camera);
         else AnimatedBase_newFromCpp(ctx, what);
     }
     argv[0] = OBJ2VAL(what->mAnimatedScriptObj);
@@ -1397,6 +1429,20 @@ FUNCTION_IMPL(RegisterEasingFunction)
 END
 
 
+FUNCTION_IMPL(DeleteAnimationScript)
+    REQUIRE_ARG_COUNT(1);
+    REQUIRE_STRING_ARG(1, name);
+    try { const bool removed=AnimatedBase::deleteScript(name); RETURN_BOOL(removed); }
+    catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); }
+END
+
+FUNCTION_IMPL(DefineAnimationScript)
+    REQUIRE_ARG_COUNT(1);
+    REQUIRE_STRING_ARG(1, name);
+    try { auto* builder=&AnimatedBase::defineScript(name); RETURN_CPP_OBJECT(builder, AnimationScript); }
+    catch (const std::exception& error) { THROW_ERR_MESSAGE(error.what()); }
+END
+
 FUNCTION_IMPL(FinishedScriptSetup)
 	scriptSetupCompleted();  // let the application do anything further it needs to
 	NO_RETURN;
@@ -1444,7 +1490,15 @@ void initBindings(JSContextRef ctx, JSObjectRef exports) {
 	INIT_CLASS(TimerManager);
 	INIT_CLASS(IAnimationHelper);
 	INIT_CLASS_NAMED(AnimatedBase, "Animated");
+    INIT_CLASS(AnimationScript);
+    INIT_CLASS(Troupe);
 	INIT_CLASS(Part);
+%#ifdef PDG_SPRITER_SUPPORT
+    INIT_CLASS(Bone);
+%#endif
+    INIT_CLASS(CollisionQueryBuffer);
+    INIT_CLASS(Scene);
+    INIT_CLASS(Camera);
     INIT_CLASS(Particle);
     INIT_CLASS(ParticleEmitter);
     INIT_CLASS(PhysicsBody);
@@ -1494,6 +1548,8 @@ void initBindings(JSContextRef ctx, JSObjectRef exports) {
 	INIT_FUNCTION("setSerializationDebugMode", SetSerializationDebugMode);
 
     INIT_FUNCTION("registerEasingFunction", RegisterEasingFunction);
+    INIT_FUNCTION("_defineAnimationScript", DefineAnimationScript);
+    INIT_FUNCTION("_deleteAnimationScript", DeleteAnimationScript);
     
     INIT_FUNCTION("getFileManager", GetFileManager);
     INIT_FUNCTION("getLogManager", GetLogManager);
@@ -1546,6 +1602,21 @@ void initBindings(JSContextRef ctx, JSObjectRef exports) {
     INIT_CONSTANT("colliderSource_Animation", colliderSource_Animation);
     INIT_CONSTANT("frameCollider_Bounds", frameCollider_Bounds);
     INIT_CONSTANT("frameCollider_AlphaMask", frameCollider_AlphaMask);
+    INIT_CONSTANT("eventType_ZoomComplete", eventType_ZoomComplete);
+    INIT_CONSTANT("camera_Crossfade", camera_Crossfade);
+    INIT_CONSTANT("camera_WipeLeft", camera_WipeLeft);
+    INIT_CONSTANT("camera_WipeRight", camera_WipeRight);
+    INIT_CONSTANT("camera_WipeUp", camera_WipeUp);
+    INIT_CONSTANT("camera_WipeDown", camera_WipeDown);
+    INIT_CONSTANT("camera_LumaFade", camera_LumaFade);
+    INIT_CONSTANT("camera_WhipLeft", camera_WhipLeft);
+    INIT_CONSTANT("camera_WhipRight", camera_WhipRight);
+    INIT_CONSTANT("camera_WhipUp", camera_WhipUp);
+    INIT_CONSTANT("camera_WhipDown", camera_WhipDown);
+    INIT_CONSTANT("matchSource", matchSource);
+    INIT_CONSTANT("matchSourceAndSize", matchSourceAndSize);
+    INIT_CONSTANT("matchTarget", matchTarget);
+    INIT_CONSTANT("matchTargetAndSize", matchTargetAndSize);
     INIT_CONSTANT("eventType_ColliderContact", eventType_ColliderContact);
     INIT_CONSTANT("eventType_ParticleBreak", eventType_ParticleBreak);
 	INIT_CONSTANT("eventType_SpriteBreak", eventType_SpriteBreak);
@@ -1647,6 +1718,7 @@ void initBindings(JSContextRef ctx, JSObjectRef exports) {
 	INIT_CONSTANT("type_Image", type_Image);
 	INIT_CONSTANT("type_ImageStrip", type_ImageStrip);
 	INIT_CONSTANT("type_Drawing", type_Drawing);
+	INIT_CONSTANT("type_Text", type_Text);
 
 	INIT_CONSTANT("gradientType_None", gradientType_None);
 	INIT_CONSTANT("gradientType_Linear", gradientType_Linear);
@@ -1801,7 +1873,6 @@ void initBindings(JSContextRef ctx, JSObjectRef exports) {
 	INIT_CONSTANT("action_PreAnimateLayer", SpriteLayer::action_PreAnimateLayer);
 	INIT_CONSTANT("action_PostAnimateLayer", SpriteLayer::action_PostAnimateLayer);
 	INIT_CONSTANT("action_AnimationComplete", SpriteLayer::action_AnimationComplete);
-	INIT_CONSTANT("action_ZoomComplete", SpriteLayer::action_ZoomComplete);
 	INIT_CONSTANT("action_LayerFadeInComplete", SpriteLayer::action_FadeInComplete);
 	INIT_CONSTANT("action_LayerFadeOutComplete", SpriteLayer::action_FadeOutComplete);
 

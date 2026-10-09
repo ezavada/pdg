@@ -1,4 +1,4 @@
-.TH "Port" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Port" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -13,84 +13,99 @@ Port \- area in which drawing is done, a viewport (\fIGUI Only\fP)
 
 .in +1c
 .ti -1c
-.RI "\fBclear\fP (\fBColor\fP color=TRANSPARENT_COLOR)"
+.RI "\fBPort\fP \fBclear\fP (\fBColor\fP color=\fBColor\fP(0, 0, 0, 0))"
 .br
 .RI "Replace pixels inside the current clip with an exact color\&. "
 .ti -1c
-.RI "\fBdrawArc\fP (\fBPoint\fP center, number float xRadius, number float yRadius, number float startAngle, number float endAngle, \fBAttributes\fP attrs)"
+.RI "\fBPort\fP \fBclear\fP (number rgba)"
+.br
+.ti -1c
+.RI "\fBPort\fP \fBclear\fP (string colorName)"
+.br
+.ti -1c
+.RI "\fBPort\fP \fBdrawArc\fP (\fBPoint\fP center, number float xRadius, number float yRadius, number float startAngle, number float endAngle, \fBAttributes\fP attrs)"
 .br
 .RI "Draw an elliptical arc using the specified center, radii, and angle range\&. "
 .ti -1c
-.RI "\fBdrawBezier\fP (\fBPoint\fP from, \fBPoint\fP control1, \fBPoint\fP control2, \fBPoint\fP to, \fBAttributes\fP attrs)"
+.RI "\fBPort\fP \fBdrawBezier\fP (\fBPoint\fP from, \fBPoint\fP control1, \fBPoint\fP control2, \fBPoint\fP to, \fBAttributes\fP attrs)"
 .br
 .RI "draws a Bezier curve with the specified control points and attributes "
 .ti -1c
-.RI "\fBdrawCircle\fP (\fBPoint\fP center, number float radius, \fBAttributes\fP attrs)"
+.RI "\fBPort\fP \fBdrawCircle\fP (\fBPoint\fP center, number float radius, \fBAttributes\fP attrs)"
 .br
 .RI "Draw a circle at the specified center point with given radius\&. "
 .ti -1c
-.RI "\fBdrawDrawing\fP (\fBDrawing\fP drawing, \fBPoint\fP loc, \fBAttributes\fP attrs)"
+.RI "\fBPort\fP \fBdrawDrawing\fP (\fBDrawing\fP drawing, \fBPoint\fP loc, \fBAttributes\fP attrs)"
 .br
 .RI "Draws a \fBDrawing\fP object at the specified location with styling attributes\&. "
 .ti -1c
-.RI "\fBdrawDrawing\fP (\fBDrawing\fP drawing, \fBRect\fP rect, \fBAttributes\fP attrs)"
+.RI "\fBPort\fP \fBdrawDrawing\fP (\fBDrawing\fP drawing, \fBRect\fP rect, \fBAttributes\fP attrs)"
 .br
 .RI "Draws a \fBDrawing\fP object within the specified rectangle with styling attributes\&. "
 .ti -1c
-.RI "\fBdrawEllipse\fP (\fBPoint\fP center, number float xRadius, number float yRadius, \fBAttributes\fP attrs)"
+.RI "\fBPort\fP \fBdrawEllipse\fP (\fBPoint\fP center, number float xRadius, number float yRadius, \fBAttributes\fP attrs)"
 .br
 .RI "Draw an ellipse at the specified center point with given x and y radii\&. "
 .ti -1c
-.RI "\fBdrawImage\fP (\fBImage\fP img, \fBPoint\fP loc, \fBAttributes\fP attrs)"
+.RI "\fBPort\fP \fBdrawImage\fP (\fBImage\fP img, \fBPoint\fP loc, \fBAttributes\fP attrs)"
 .br
 .RI "Draws an image at the specified location with styling attributes\&. "
 .ti -1c
-.RI "\fBdrawImage\fP (\fBImage\fP img, \fBQuad\fP quad, \fBAttributes\fP attrs)"
+.RI "\fBPort\fP \fBdrawImage\fP (\fBImage\fP img, \fBQuad\fP quad, \fBAttributes\fP attrs)"
 .br
 .ti -1c
-.RI "\fBdrawImage\fP (\fBImage\fP img, \fBRect\fP rect, \fBAttributes\fP attrs)"
+.RI "\fBPort\fP \fBdrawImage\fP (\fBImage\fP img, \fBRect\fP rect, \fBAttributes\fP attrs)"
 .br
 .RI "Draws an image within the specified rectangle with styling attributes\&. "
 .ti -1c
-.RI "\fBdrawLine\fP (\fBPoint\fP from, \fBPoint\fP to, \fBAttributes\fP attrs)"
+.RI "\fBPort\fP \fBdrawLine\fP (\fBPoint\fP from, \fBPoint\fP to, \fBAttributes\fP attrs)"
 .br
 .RI "draws a line from one point to another with the specified attributes "
 .ti -1c
-.RI "\fBdrawPolygon\fP (\fBPolygon\fP polygon, \fBAttributes\fP attrs)"
+.RI "\fBPort\fP \fBdrawPolygon\fP (\fBPolygon\fP polygon, \fBAttributes\fP attrs)"
 .br
 .RI "draws a polygon with the specified attributes "
 .ti -1c
-.RI "\fBdrawQuad\fP (\fBQuad\fP quad, \fBAttributes\fP attrs)"
+.RI "\fBPort\fP \fBdrawQuad\fP (\fBQuad\fP quad, \fBAttributes\fP attrs)"
 .br
 .RI "draws a quad with the specified attributes "
 .ti -1c
-.RI "\fBdrawRect\fP (\fBRect\fP rect, \fBAttributes\fP attrs)"
+.RI "\fBPort\fP \fBdrawRect\fP (\fBRect\fP rect, \fBAttributes\fP attrs)"
 .br
 .RI "draws a rectangle with the specified attributes "
 .ti -1c
-.RI "\fBdrawRoundedRect\fP (\fBRect\fP rect, number float radius, \fBAttributes\fP attrs)"
+.RI "\fBPort\fP \fBdrawRoundedRect\fP (\fBRect\fP rect, number float radius, \fBAttributes\fP attrs)"
 .br
 .RI "Draw a rectangle with rounded corners using the specified corner radius\&. "
 .ti -1c
-.RI "\fBdrawSphere\fP (\fBPoint\fP center, number float radius, \fBAttributes\fP attrs)"
+.RI "\fBPort\fP \fBdrawSphere\fP (\fBPoint\fP center, number float radius, \fBAttributes\fP attrs)"
 .br
 .RI "Draws a textured sphere at the specified center point with given radius and styling attributes\&. "
 .ti -1c
-.RI "\fBdrawSpline\fP (\fBSpline\fP spline, \fBAttributes\fP attrs)"
+.RI "\fBPort\fP \fBdrawSpline\fP (\fBSpline\fP spline, \fBAttributes\fP attrs)"
 .br
 .RI "draws a spline curve with the specified attributes "
 .ti -1c
-.RI "\fBdrawText\fP (string text, \fBPoint\fP loc, \fBAttributes\fP attrs)"
+.RI "\fBPort\fP \fBdrawText\fP (string text, \fBPoint\fP loc, \fBAttributes\fP attrs)"
 .br
 .RI "Draws text at the specified location with styling attributes\&. "
 .ti -1c
-.RI "\fBdrawText\fP (string text, \fBRect\fP rect, \fBAttributes\fP attrs)"
+.RI "\fBPort\fP \fBdrawText\fP (string text, \fBRect\fP rect, \fBAttributes\fP attrs)"
 .br
 .RI "Draws text within the specified rectangle with styling attributes\&. "
 .ti -1c
-.RI "\fBdrawVector\fP (\fBVector\fP vector, \fBAttributes\fP attrs)"
+.RI "\fBPort\fP \fBdrawVector\fP (\fBVector\fP vector, \fBAttributes\fP attrs)"
 .br
 .RI "Draw a vector (arrow) from origin to the specified endpoint\&. "
+.ti -1c
+.RI "\fBCamera\fP \fBgetCamera\fP ()"
+.br
+.ti -1c
+.RI "\fBPoint\fP \fBgetCameraAnchor\fP ()"
+.br
+.ti -1c
+.RI "boolean \fBgetCameraDrawingEnabled\fP ()"
+.br
 .ti -1c
 .RI "\fBRect\fP \fBgetClipRect\fP ()"
 .br
@@ -112,35 +127,47 @@ Port \- area in which drawing is done, a viewport (\fIGUI Only\fP)
 .br
 .RI "returns the width of the specified text in pixels "
 .ti -1c
-.RI "\fBresetClipRect\fP ()"
+.RI "\fBPoint\fP \fBportToWorld\fP (\fBPoint\fP point)"
+.br
+.RI "Invert this port's camera view\&. "
+.ti -1c
+.RI "\fBPort\fP \fBresetClipRect\fP ()"
 .br
 .RI "Restore the clipping rectangle to the full drawing area\&. "
 .ti -1c
-.RI "\fBresetCursor\fP ()"
+.RI "\fBPort\fP \fBresetCursor\fP ()"
 .br
 .RI "NOT IMPLEMENTED\&. "
+.ti -1c
+.RI "\fBPort\fP \fBsetCameraAnchor\fP (\fBPoint\fP inCameraAnchor)"
+.br
+.RI "Set the Port-owned camera's anchor within its full-port viewport\&. "
+.ti -1c
+.RI "\fBPort\fP \fBsetCameraDrawingEnabled\fP (boolean inCameraDrawingEnabled)"
+.br
+.RI "Select world or screen coordinates for direct drawing\&. "
 .ti -1c
 .RI "\fBPort\fP \fBsetClipRect\fP (\fBRect\fP inClipRect)"
 .br
 .RI "Replace the single clipping rectangle for all drawing operations\&. "
 .ti -1c
-.RI "\fBsetCursor\fP (\fBImage\fP cursorImage, \fBPoint\fP hotSpot)"
+.RI "\fBPort\fP \fBsetCursor\fP (\fBImage\fP cursorImage, \fBPoint\fP hotSpot)"
 .br
 .RI "NOT IMPLEMENTED\&. "
 .ti -1c
-.RI "\fBsetDrawingOrigin\fP (\fBPoint\fP origin)"
+.RI "\fBPort\fP \fBsetDrawingOrigin\fP (\fBPoint\fP origin)"
 .br
 .RI "Set the \fBPort\fP coordinate at the top left of an offscreen surface\&. "
 .ti -1c
-.RI "\fBsetFont\fP (\fBFont\fP font=DEFAULT_FONT)"
+.RI "\fBPort\fP \fBsetFont\fP (\fBFont\fP font=DEFAULT_FONT)"
 .br
 .RI "sets the current font for text rendering "
 .ti -1c
-.RI "\fBsetFontForStyle\fP (uint style, \fBFont\fP font=DEFAULT_FONT)"
+.RI "\fBPort\fP \fBsetFontForStyle\fP (uint style, \fBFont\fP font=DEFAULT_FONT)"
 .br
 .RI "Set a custom font for a specific text style (bold, italic, etc\&.)\&. "
 .ti -1c
-.RI "\fBsetFontScalingFactor\fP (number scaleBy)"
+.RI "\fBPort\fP \fBsetFontScalingFactor\fP (number scaleBy)"
 .br
 .RI "Set a scaling factor to adjust the size of all rendered text\&. "
 .ti -1c
@@ -148,9 +175,13 @@ Port \- area in which drawing is done, a viewport (\fIGUI Only\fP)
 .br
 .RI "NOT IMPLEMENTED\&. "
 .ti -1c
-.RI "\fBstopTrackingMouse\fP (int trackingRef)"
+.RI "\fBPort\fP \fBstopTrackingMouse\fP (int trackingRef)"
 .br
 .RI "NOT IMPLEMENTED\&. "
+.ti -1c
+.RI "\fBPoint\fP \fBworldToPort\fP (\fBPoint\fP point)"
+.br
+.RI "Project a world point using this port's camera and anchor\&. "
 .in -1c
 .SH "Detailed Description"
 .PP 
@@ -166,7 +197,7 @@ area in which drawing is done, a viewport (\fIGUI Only\fP)
 A \fBPort\fP can be a full screen drawing context or a window\&. 
 .SH "Member Function Documentation"
 .PP 
-.SS "clear (\fBColor\fP color = \fRTRANSPARENT_COLOR\fP)"
+.SS "\fBPort\fP clear (\fBColor\fP color = \fR\fBColor\fP(0, 0, 0, 0)\fP)"
 
 .PP
 Replace pixels inside the current clip with an exact color\&. 
@@ -189,7 +220,11 @@ API stability: 2 — Evolving\&.
 .RE
 .PP
 
-.SS "drawArc (\fBPoint\fP center, number float xRadius, number float yRadius, number float startAngle, number float endAngle, \fBAttributes\fP attrs)"
+.SS "\fBPort\fP clear (number rgba)"
+
+.SS "\fBPort\fP clear (string colorName)"
+
+.SS "\fBPort\fP drawArc (\fBPoint\fP center, number float xRadius, number float yRadius, number float startAngle, number float endAngle, \fBAttributes\fP attrs)"
 
 .PP
 Draw an elliptical arc using the specified center, radii, and angle range\&. This function draws an elliptical arc (a portion of an ellipse) using the specified center point, radii, and angle range\&. The arc is drawn with the given attributes for styling\&.
@@ -241,57 +276,57 @@ The arc is drawn using the current transformation matrix and clipping region
 .RE
 .PP
 
-.SS "drawBezier (\fBPoint\fP from, \fBPoint\fP control1, \fBPoint\fP control2, \fBPoint\fP to, \fBAttributes\fP attrs)"
+.SS "\fBPort\fP drawBezier (\fBPoint\fP from, \fBPoint\fP control1, \fBPoint\fP control2, \fBPoint\fP to, \fBAttributes\fP attrs)"
 
 .PP
 draws a Bezier curve with the specified control points and attributes 
-.SS "drawCircle (\fBPoint\fP center, number float radius, \fBAttributes\fP attrs)"
+.SS "\fBPort\fP drawCircle (\fBPoint\fP center, number float radius, \fBAttributes\fP attrs)"
 
 .PP
 Draw a circle at the specified center point with given radius\&. 
-.SS "drawDrawing (\fBDrawing\fP drawing, \fBPoint\fP loc, \fBAttributes\fP attrs)"
+.SS "\fBPort\fP drawDrawing (\fBDrawing\fP drawing, \fBPoint\fP loc, \fBAttributes\fP attrs)"
 
 .PP
 Draws a \fBDrawing\fP object at the specified location with styling attributes\&. 
-.SS "drawDrawing (\fBDrawing\fP drawing, \fBRect\fP rect, \fBAttributes\fP attrs)"
+.SS "\fBPort\fP drawDrawing (\fBDrawing\fP drawing, \fBRect\fP rect, \fBAttributes\fP attrs)"
 
 .PP
 Draws a \fBDrawing\fP object within the specified rectangle with styling attributes\&. 
-.SS "drawEllipse (\fBPoint\fP center, number float xRadius, number float yRadius, \fBAttributes\fP attrs)"
+.SS "\fBPort\fP drawEllipse (\fBPoint\fP center, number float xRadius, number float yRadius, \fBAttributes\fP attrs)"
 
 .PP
 Draw an ellipse at the specified center point with given x and y radii\&. 
-.SS "drawImage (\fBImage\fP img, \fBPoint\fP loc, \fBAttributes\fP attrs)"
+.SS "\fBPort\fP drawImage (\fBImage\fP img, \fBPoint\fP loc, \fBAttributes\fP attrs)"
 
 .PP
 Draws an image at the specified location with styling attributes\&. 
-.SS "drawImage (\fBImage\fP img, \fBQuad\fP quad, \fBAttributes\fP attrs)"
+.SS "\fBPort\fP drawImage (\fBImage\fP img, \fBQuad\fP quad, \fBAttributes\fP attrs)"
 
-.SS "drawImage (\fBImage\fP img, \fBRect\fP rect, \fBAttributes\fP attrs)"
+.SS "\fBPort\fP drawImage (\fBImage\fP img, \fBRect\fP rect, \fBAttributes\fP attrs)"
 
 .PP
 Draws an image within the specified rectangle with styling attributes\&. 
-.SS "drawLine (\fBPoint\fP from, \fBPoint\fP to, \fBAttributes\fP attrs)"
+.SS "\fBPort\fP drawLine (\fBPoint\fP from, \fBPoint\fP to, \fBAttributes\fP attrs)"
 
 .PP
 draws a line from one point to another with the specified attributes 
-.SS "drawPolygon (\fBPolygon\fP polygon, \fBAttributes\fP attrs)"
+.SS "\fBPort\fP drawPolygon (\fBPolygon\fP polygon, \fBAttributes\fP attrs)"
 
 .PP
 draws a polygon with the specified attributes 
-.SS "drawQuad (\fBQuad\fP quad, \fBAttributes\fP attrs)"
+.SS "\fBPort\fP drawQuad (\fBQuad\fP quad, \fBAttributes\fP attrs)"
 
 .PP
 draws a quad with the specified attributes 
-.SS "drawRect (\fBRect\fP rect, \fBAttributes\fP attrs)"
+.SS "\fBPort\fP drawRect (\fBRect\fP rect, \fBAttributes\fP attrs)"
 
 .PP
 draws a rectangle with the specified attributes 
-.SS "drawRoundedRect (\fBRect\fP rect, number float radius, \fBAttributes\fP attrs)"
+.SS "\fBPort\fP drawRoundedRect (\fBRect\fP rect, number float radius, \fBAttributes\fP attrs)"
 
 .PP
 Draw a rectangle with rounded corners using the specified corner radius\&. 
-.SS "drawSphere (\fBPoint\fP center, number float radius, \fBAttributes\fP attrs)"
+.SS "\fBPort\fP drawSphere (\fBPoint\fP center, number float radius, \fBAttributes\fP attrs)"
 
 .PP
 Draws a textured sphere at the specified center point with given radius and styling attributes\&. This function renders a 3D sphere with a texture applied from a single \fBImage\fP\&. The sphere is drawn using perspective projection and includes lighting calculations for realistic 3D appearance\&.
@@ -356,22 +391,28 @@ Very large texture (image) or radius values may impact rendering performance
 .RE
 .PP
 
-.SS "drawSpline (\fBSpline\fP spline, \fBAttributes\fP attrs)"
+.SS "\fBPort\fP drawSpline (\fBSpline\fP spline, \fBAttributes\fP attrs)"
 
 .PP
 draws a spline curve with the specified attributes 
-.SS "drawText (string text, \fBPoint\fP loc, \fBAttributes\fP attrs)"
+.SS "\fBPort\fP drawText (string text, \fBPoint\fP loc, \fBAttributes\fP attrs)"
 
 .PP
 Draws text at the specified location with styling attributes\&. 
-.SS "drawText (string text, \fBRect\fP rect, \fBAttributes\fP attrs)"
+.SS "\fBPort\fP drawText (string text, \fBRect\fP rect, \fBAttributes\fP attrs)"
 
 .PP
 Draws text within the specified rectangle with styling attributes\&. 
-.SS "drawVector (\fBVector\fP vector, \fBAttributes\fP attrs)"
+.SS "\fBPort\fP drawVector (\fBVector\fP vector, \fBAttributes\fP attrs)"
 
 .PP
 Draw a vector (arrow) from origin to the specified endpoint\&. 
+.SS "\fBCamera\fP getCamera ()"
+
+.SS "\fBPoint\fP getCameraAnchor ()"
+
+.SS "boolean getCameraDrawingEnabled ()"
+
 .SS "\fBRect\fP getClipRect ()"
 
 .PP
@@ -408,7 +449,23 @@ Get the total drawing area rectangle for this port\&.
 returns the width of the specified text in pixels 
 .PP
 References \fBpdg::textStyle_Plain\fP\&.
-.SS "resetClipRect ()"
+.SS "\fBPoint\fP portToWorld (\fBPoint\fP point)"
+
+.PP
+Invert this port's camera view\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIpoint\fP Port-coordinate point\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+World-coordinate point; using the \fBPort\fP's built-in camera\&. Use portToLayerPoint() for a layer's explicit camera or parallax settings\&. 
+.RE
+.PP
+
+.SS "\fBPort\fP resetClipRect ()"
 
 .PP
 Restore the clipping rectangle to the full drawing area\&. Use this to allow drawing throughout the \fBPort\fP\&. setClipRect(new Rect()) instead suppresses all drawing\&. Resizing the \fBPort\fP also resets its clip to the drawing area\&. 
@@ -424,10 +481,52 @@ Nothing\&.
 .RE
 .PP
 
-.SS "resetCursor ()"
+.SS "\fBPort\fP resetCursor ()"
 
 .PP
 NOT IMPLEMENTED\&. 
+.SS "\fBPort\fP setCameraAnchor (\fBPoint\fP anchor)"
+
+.PP
+Set the Port-owned camera's anchor within its full-port viewport\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIanchor\fP \fBPoint\fP relative to drawing-area top-left; initially (0,0)\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This port for chaining\&. Each port can use a different anchor without changing the shared camera pose\&. 
+.RE
+.PP
+
+.SS "\fBPort\fP setCameraDrawingEnabled (boolean enabled)"
+
+.PP
+Select world or screen coordinates for direct drawing\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIenabled\fP True to apply the port camera; false for screen-space drawing\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+This port for chaining\&. Coordinate conversions and layer camera selection are unchanged by this setting\&. 
+.PP
+.nf
+const previous = port\&.getCameraDrawingEnabled();
+port\&.setCameraDrawingEnabled(false);
+try { port\&.drawRect(new pdg\&.Rect(10, 10, 30, 30), hudAttributes); }
+finally { port\&.setCameraDrawingEnabled(previous); }
+
+.fi
+.PP
+ 
+.RE
+.PP
+
 .SS "\fBPort\fP setClipRect (\fBRect\fP inClipRect)"
 
 .PP
@@ -450,11 +549,11 @@ This \fBPort\fP, for chaining\&.
 .RE
 .PP
 
-.SS "setCursor (\fBImage\fP cursorImage, \fBPoint\fP hotSpot)"
+.SS "\fBPort\fP setCursor (\fBImage\fP cursorImage, \fBPoint\fP hotSpot)"
 
 .PP
 NOT IMPLEMENTED\&. 
-.SS "setDrawingOrigin (\fBPoint\fP origin)"
+.SS "\fBPort\fP setDrawingOrigin (\fBPoint\fP origin)"
 
 .PP
 Set the \fBPort\fP coordinate at the top left of an offscreen surface\&. 
@@ -480,15 +579,15 @@ API stability: 2 — Evolving\&.
 .RE
 .PP
 
-.SS "setFont (\fBFont\fP font = \fRDEFAULT_FONT\fP)"
+.SS "\fBPort\fP setFont (\fBFont\fP font = \fRDEFAULT_FONT\fP)"
 
 .PP
 sets the current font for text rendering 
-.SS "setFontForStyle (uint style, \fBFont\fP font = \fRDEFAULT_FONT\fP)"
+.SS "\fBPort\fP setFontForStyle (uint style, \fBFont\fP font = \fRDEFAULT_FONT\fP)"
 
 .PP
 Set a custom font for a specific text style (bold, italic, etc\&.)\&. 
-.SS "setFontScalingFactor (number scaleBy)"
+.SS "\fBPort\fP setFontScalingFactor (number scaleBy)"
 
 .PP
 Set a scaling factor to adjust the size of all rendered text\&. 
@@ -496,10 +595,26 @@ Set a scaling factor to adjust the size of all rendered text\&.
 
 .PP
 NOT IMPLEMENTED\&. 
-.SS "stopTrackingMouse (int trackingRef)"
+.SS "\fBPort\fP stopTrackingMouse (int trackingRef)"
 
 .PP
 NOT IMPLEMENTED\&. 
+.SS "\fBPoint\fP worldToPort (\fBPoint\fP point)"
+
+.PP
+Project a world point using this port's camera and anchor\&. 
+.PP
+\fBParameters\fP
+.RS 4
+\fIpoint\fP World-coordinate point\&. 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+Port-coordinate point; using the \fBPort\fP's built-in camera\&. Use layerToPortPoint() for a layer's explicit camera or parallax settings\&. 
+.RE
+.PP
+
 
 .SH "Author"
 .PP 

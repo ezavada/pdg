@@ -1,4 +1,4 @@
-.TH "TimerManager" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "TimerManager" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -78,6 +78,9 @@ Inherits \fBEventEmitter\fP\&.
 
 Public Member Functions inherited from \fBEventEmitter\fP
 .in +1c
+.ti -1c
+.RI "\fBEventEmitter\fP ()"
+.br
 .ti -1c
 .RI "\fBaddHandler\fP (\fBIEventHandler\fP inHandler, int inEventType=\fBall_events\fP)"
 .br
@@ -306,7 +309,14 @@ true if the timer is paused, false if not
 .SS "\fBIEventHandler\fP onInterval (function func, int interval)"
 
 .PP
-setup handler to be called at a regular interval This creates a handler from your function and automatically assigns a timer id\&. You can call cancel() on the handler object returned to remove the timer and cleanup the handler\&. The timer field of the handler object contains the timer's id number for use in other \fBTimerManager\fP calls\&.
+setup handler to be called at a regular interval 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRfunc:\fP \fBTimerNotification\fP\&.
+.RE
+.PP
+This creates a handler from your function and automatically assigns a timer id\&. You can call cancel() on the handler object returned to remove the timer and cleanup the handler\&. The timer field of the handler object contains the timer's id number for use in other \fBTimerManager\fP calls\&.
 
 .PP
 .PP
@@ -344,7 +354,14 @@ an \fBIEventHandler\fP object with a cancel() method and a timer value
 .SS "\fBIEventHandler\fP onTimeout (function func, int delay)"
 
 .PP
-setup handler to be called once after a delay This creates a handler from your function and automatically assigns a timer id\&. You can call cancel() on the handler object returned to remove the timer and cleanup the handler\&. The timer field of the handler object contains the timer's id number for use in other \fBTimerManager\fP calls\&.
+setup handler to be called once after a delay 
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRfunc:\fP \fBTimerNotification\fP\&.
+.RE
+.PP
+This creates a handler from your function and automatically assigns a timer id\&. You can call cancel() on the handler object returned to remove the timer and cleanup the handler\&. The timer field of the handler object contains the timer's id number for use in other \fBTimerManager\fP calls\&.
 
 .PP
 \fBParameters\fP

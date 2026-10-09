@@ -8,7 +8,7 @@ Set the data block that should be deserialized. It should have been created at s
 
 \param data the MemBlock object with the serialized data
 
-\sa setDataPtr(BinaryString)
+\sa setDataPtr(Uint8Array)
 \sa Serializer.getDataPtr
 
 **/ }

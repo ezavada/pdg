@@ -1,0 +1,9 @@
+<map id="MouseTrackingEvent" name="MouseTrackingEvent">
+<area shape="rect" id="Node000001" title="Browser mouse tracking payload; the native V8 converter does not deliver these events." alt="" coords="20,197,165,223"/>
+<area shape="rect" id="Node000002" href="$classpdg_1_1_event_emitter.html" title="Distributes events to event handlers." alt="" coords="5,80,103,106"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="55,119,60,146,67,172,83,197,78,197,62,174,55,148,53,124"/>
+<area shape="rect" id="Node000003" href="$classpdg_1_1_point.html" title="point for 2D coordinate system" alt="" coords="127,80,178,106"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="142,119,115,175,101,199,98,195,110,172,138,121"/>
+<area shape="rect" id="Node000004" href="$classpdg_1_1_offset.html" title="offset within a 2D coordinate system" alt="" coords="124,5,181,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="154,44,155,81,150,79,151,49"/>
+</map>

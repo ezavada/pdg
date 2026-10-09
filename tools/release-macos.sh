@@ -170,6 +170,7 @@ for package_dir in "$STAGE_DIR" "$DEBUG_STAGE_DIR"; do
     cmake -E copy "$PDG_ROOT/deps/libtess2/LICENSE.txt" "$notices_dir/libtess2.txt"
     cmake -E copy "$PDG_ROOT/deps/minizip/LICENSE" "$notices_dir/minizip.txt"
     cmake -E copy "$PDG_ROOT/deps/node/LICENSE" "$notices_dir/node.txt"
+    cmake -E copy "$PDG_ROOT/src/js/vendor/ws/LICENSE" "$notices_dir/ws.txt"
     cmake -E copy "$PDG_ROOT/deps/png/LICENSE" "$notices_dir/libpng.txt"
     cmake -E copy "$PDG_ROOT/deps/SpriterPlusPlus/LICENSE" "$notices_dir/SpriterPlusPlus.txt"
     cmake -E copy "$PDG_ROOT/deps/SpriterPlusPlus/tinyxml2/license.txt" "$notices_dir/tinyxml2.txt"

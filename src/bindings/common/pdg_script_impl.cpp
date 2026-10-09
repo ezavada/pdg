@@ -53,7 +53,6 @@ bool s_HaveSavedError = false;
 #include "animation/animation_impl_macros.h"
 
 
-
 // ========================================================================================
 //MARK: Script Serializable
 // ========================================================================================
@@ -83,8 +82,6 @@ ScriptAnimationHelper::ScriptAnimationHelper() {
 // ========================================================================================
 //MARK: Script Sprite Collide Helper
 // ========================================================================================
-
-
 
 
 %#ifndef PDG_NO_GUI
@@ -121,13 +118,12 @@ FUNCTION_IMPL(Srand)
  	NO_RETURN;
  	END
 FUNCTION_IMPL(SetSerializationDebugMode)
-	METHOD_SIGNATURE("", undefined, 1, (bool debugMode)); 
+	METHOD_SIGNATURE("", undefined, 1, (boolean debugMode));
 	REQUIRE_ARG_COUNT(1);
     REQUIRE_BOOL_ARG(1, debugMode);
  	ISerializer::s_DebugMode = debugMode;
  	NO_RETURN;
  	END
-
 
 
 // =========================  initializers =============================
@@ -173,7 +169,6 @@ FUNCTION_IMPL(IsQuitting)
 	bool isQuitting = pdg_LibIsQuitting();
 	RETURN_BOOL( isQuitting );
 END
-
 
 
 } // end pdg namespace

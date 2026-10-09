@@ -1,0 +1,98 @@
+.TH "IAnimationHelper" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+IAnimationHelper \- helper for add-on or complex motion during animation  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fR#include <pdg\-js\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBIAnimationHelper\fP (function callback)"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+helper for add-on or complex motion during animation 
+
+
+.PP
+\fBNote\fP
+.RS 4
+\fBAPI Stability: 2 — Evolving\fP\&. This API is implemented and supported, but its contract is still settling\&. Compatibility is preserved where practical; breaking changes are documented in release notes\&. See \fBAPI stability\fP\&.
+.RE
+.PP
+Implement this interface to do extra animation stuff for a specific \fBAnimated\fP object then add by calling the object's addAnimationHelper() method\&. You can have multiple Animation Helpers attached to the same object\&. Your helper will then be called every time movement for the object is calculated\&.
+
+.PP
+To create a helper:
+
+.PP
+.PP
+.nf
+const myHelper = new pdg\&.IAnimationHelper(function(what, deltaSeconds) {
+                console\&.log("in my animation helper for " + what + " after " + deltaSeconds + " seconds" );
+                return true;  // not done, keep helping
+});
+myAnimatedObj\&.addAnimationHelper(myHelper);
+.fi
+.PP
+
+.PP
+For a helper with its own methods or state, declare a JavaScript class that extends \fR\fBpdg\&.IAnimationHelper\fP\fP\&. The native interface takes a callback in its constructor; forward that callback to your \fRanimate()\fP method through \fRsuper()\fP:
+
+.PP
+.PP
+.nf
+class MyAnimationHelperClass extends pdg\&.IAnimationHelper {
+    constructor() {
+        super(function(what, deltaSeconds) {
+            return this\&.animate(what, deltaSeconds);
+        });
+    }
+
+    animate(what, deltaSeconds) {
+        console\&.log("Animation step:", deltaSeconds, "seconds");
+        return false; // finished; remove this helper from the object
+    }
+}
+
+myAnimatedObj\&.addAnimationHelper(new MyAnimationHelperClass());
+.fi
+.PP
+.SS "Your Custom Function:"
+As you can see from the examples above, your Animation Helper function (or animate() method) will be called with two parameters, and return a boolean: 
+.PP
+\fBParameters\fP
+.RS 4
+\fIwhat\fP the \fBAnimated\fP object that is being animated 
+.br
+\fIdeltaSeconds\fP the elapsed time in floating-point seconds since the last time this object's movement was calculated 
+.RE
+.PP
+\fBReturns\fP
+.RS 4
+\fBtrue\fP if the helper should continue to be called; or \fBfalse\fP if it is done and should be removed from this \fBAnimated\fP object\&. 
+.RE
+.PP
+
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "IAnimationHelper (function callback)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRcallback:\fP \fBAnimationHelperCallback\fP\&. 
+.RE
+.PP
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Pixel Dust Game Engine from the source code\&.

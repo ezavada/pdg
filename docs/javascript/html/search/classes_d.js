@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['quad_0',['Quad',['../classpdg_1_1_quad.html',1,'pdg']]]
+  ['offset_0',['Offset',['../classpdg_1_1_offset.html',1,'pdg']]]
 ];

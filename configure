@@ -492,11 +492,8 @@ else
     echo "-- Skipping GLFW configuration (headless build)"
 fi
 
-# Configure libjpeg-turbo for Windows platforms and sync JPEG headers for Linux
+# Configure bundled libjpeg-turbo for Windows; Linux uses system headers and library
 if [ "$PLATFORM" == "linux" ]; then
-    echo -e "${HEAD}Preparing JPEG headers...${RESET}"
-    echo "-- Copying Unix/Linux jconfig.h for libjpeg-turbo headers..."
-    cp $PDG_ROOT/src/sys/libjpeg-turbo/jconfig-unix.h $PDG_ROOT/deps/libjpeg-turbo/src/jconfig.h
     echo "-- Using system JPEG runtime on Linux; skipping bundled libjpeg-turbo build configuration"
 elif [ "$PLATFORM" != "darwin" ]; then
     echo -e "${HEAD}Configuring libjpeg-turbo Library...${RESET}"

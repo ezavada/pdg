@@ -11,6 +11,7 @@
 // -----------------------------------------------
 
 #include "pdg_project.h"
+#include "pdg_ios_network.h"
 
 #include "pdg_jsc_ios.h"
 #include "pdg_javascript.h"
@@ -356,6 +357,7 @@ void JSC_IOS_Start(int argc, const char* argv[]) {
     gMainContext = ctx;
 
 	JSC_IOS_SetupProcessObject(argc, argv);
+    JSC_IOS_NetworkInstall(ctx, process);
 
 	// Call the process.binding("natives") function. We call it directly from C++ though
 	// rather than through JavaScript
@@ -382,6 +384,8 @@ DECLARE_SYMBOL(_needImmediateCallback);
 DECLARE_SYMBOL(_immediateCallback);
 
 void JSC_IOS_Idle() {
+    JSValueRef networkException = JSC_IOS_NetworkIdle();
+    if (networkException) FatalException(networkException, 0);
     // call into Javascript for any pending setImmediate() calls
     if (process) {
         JSValueRef propVal = JSObjectGetProperty(ctx, process, SYMBOL(_needImmediateCallback), 0);
@@ -575,6 +579,7 @@ static JSValueRef JSC_IOS_ReallyExit(JSContextRef ctx, JSObjectRef function, JSO
 	if (argumentCount > 0 && JSValueIsNumber(ctx, arguments[0])) {
 		exitCode = static_cast<int>(JSValueToNumber(ctx, arguments[0], exception));
 	}
+	JSC_IOS_NetworkShutdown();
 	std::exit(exitCode);
 	return JSValueMakeUndefined(ctx);
 }

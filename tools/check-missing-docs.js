@@ -139,7 +139,6 @@ function createParameterSignature(params) {
         if (p.type === 'string') return ' string ';
         if (p.type === 'boolean') return ' boolean ';
         if (p.type === 'function') return ' function ';
-        if (p.type === 'string Binary') return ' binarystring ';
         if (p.type === 'object MemBlock') return ' memblock ';
         if (p.type === 'object') return ' object ';
         if (p.type === 'undefined') return ' undefined ';
@@ -320,14 +319,8 @@ function createDoxFile(filePath, className, methodName, method, params) {
         // Method template
         const paramList = params.map(p => {
             // Extract the last word from the type (e.g., "number int" -> "int", "object Color" -> "Color")
-            // Special case for "string Binary" -> "BinaryString"
-            let typeName;
-            if (p.type === 'string Binary') {
-                typeName = 'BinaryString';
-            } else {
-                const typeWords = p.type.split(' ');
-                typeName = typeWords[typeWords.length - 1];
-            }
+            const typeWords = p.type.split(' ');
+            const typeName = typeWords[typeWords.length - 1];
             return `${typeName} ${p.name}`;
         }).join(', ');
         const brief = method.brief || 'TODO: Add brief description';

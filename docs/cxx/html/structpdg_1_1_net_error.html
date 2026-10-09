@@ -31,7 +31,7 @@
   <td id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></td>
   <td style="padding-left: 0.5em;">
    <div id="projectname">Pixel Dust Game Engine
-   &#160;<span id="projectnumber">v1.1.1</span>
+   &#160;<span id="projectnumber">v1.2.0</span>
    </div>
   </td>
  </tr>
@@ -113,9 +113,28 @@ document.addEventListener('DOMContentLoaded', codefold.init);
 <div class="contents">
 
 <p><code>#include &lt;network.h&gt;</code></p>
+<div class="dynheader">
+Collaboration diagram for NetError:</div>
+<div class="dyncontent">
+<div class="center"><img src="structpdg_1_1_net_error__coll__graph.png" border="0" usemap="#a_net_error_coll__map" loading="lazy" alt="Collaboration graph"/></div>
+<map name="a_net_error_coll__map" id="a_net_error_coll__map">
+<area shape="rect" title=" " alt="" coords="42,291,112,317"/>
+<area shape="rect" title=" " alt="" coords="50,80,104,106"/>
+<area shape="poly" title=" " alt="" coords="74,118,71,177,71,220,78,291,73,291,65,220,65,177,72,123"/>
+<area shape="rect" href="structpdg_1_1_net_endpoint.html" title=" " alt="" coords="141,186,234,212"/>
+<area shape="poly" title=" " alt="" coords="101,114,177,184,172,186,100,119"/>
+<area shape="rect" title=" " alt="" coords="5,5,149,31"/>
+<area shape="poly" title=" " alt="" coords="77,44,80,80,74,80,77,49"/>
+<area shape="poly" title=" " alt="" coords="167,223,92,293,88,289,162,221"/>
+</map>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
+<tr class="memitem:a40036ceeca10849cabe2f0d92ffda83d" id="r_a40036ceeca10849cabe2f0d92ffda83d"><td class="memItemLeft">std::string&#160;</td><td class="memItemRight"><a class="el" href="#a40036ceeca10849cabe2f0d92ffda83d">code</a></td></tr>
+<tr class="memitem:a36bd74109f547f7f8198faf5a12d2879" id="r_a36bd74109f547f7f8198faf5a12d2879"><td class="memItemLeft">std::string&#160;</td><td class="memItemRight"><a class="el" href="#a36bd74109f547f7f8198faf5a12d2879">message</a></td></tr>
+<tr class="memitem:a507c964370f048592080ec09750c03fe" id="r_a507c964370f048592080ec09750c03fe"><td class="memItemLeft"><a class="el" href="namespacepdg.html#a5715f76af8e5a725c9efd63b78ee5dba">NetTransport</a>&#160;</td><td class="memItemRight"><a class="el" href="#a507c964370f048592080ec09750c03fe">transport</a> = <a class="el" href="namespacepdg.html#a5715f76af8e5a725c9efd63b78ee5dbaa925641e0b76c28cc940e8f3ca178d826">NetTransport::Native</a></td></tr>
+<tr class="memitem:adc11427bf84662c18ba6c79cf98ea36f" id="r_adc11427bf84662c18ba6c79cf98ea36f"><td class="memItemLeft"><a class="el" href="structpdg_1_1_net_endpoint.html">NetEndpoint</a>&#160;</td><td class="memItemRight"><a class="el" href="#adc11427bf84662c18ba6c79cf98ea36f">endpoint</a></td></tr>
 <tr class="memitem:a7350fbd6ad10618f3b750b1f99ca5c3c" id="r_a7350fbd6ad10618f3b750b1f99ca5c3c"><td class="memItemLeft">long&#160;</td><td class="memItemRight"><a class="el" href="#a7350fbd6ad10618f3b750b1f99ca5c3c">id</a></td></tr>
 <tr class="memitem:ae376f130b17d169ee51be68077a89ed0" id="r_ae376f130b17d169ee51be68077a89ed0"><td class="memItemLeft">void *&#160;</td><td class="memItemRight"><a class="el" href="#ae376f130b17d169ee51be68077a89ed0">context</a></td></tr>
 <tr class="memitem:a0034dae14c0236405964d5d0ca247c6b" id="r_a0034dae14c0236405964d5d0ca247c6b"><td class="memItemLeft">long&#160;</td><td class="memItemRight"><a class="el" href="#a0034dae14c0236405964d5d0ca247c6b">error</a></td></tr>
@@ -123,6 +142,20 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 id="header-details" class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>got an error from network layer, not necessarily fatal will be followed by <a class="el" href="structpdg_1_1_net_disconnect.html">NetDisconnect</a> if this was a fatal error </p>
 </div><a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Member Data Documentation</h2>
+<a id="a40036ceeca10849cabe2f0d92ffda83d" name="a40036ceeca10849cabe2f0d92ffda83d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a40036ceeca10849cabe2f0d92ffda83d">&#9670;&#160;</a></span>code</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string code</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ae376f130b17d169ee51be68077a89ed0" name="ae376f130b17d169ee51be68077a89ed0"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae376f130b17d169ee51be68077a89ed0">&#9670;&#160;</a></span>context</h2>
 
@@ -131,6 +164,20 @@ Public Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">void* context</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="adc11427bf84662c18ba6c79cf98ea36f" name="adc11427bf84662c18ba6c79cf98ea36f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc11427bf84662c18ba6c79cf98ea36f">&#9670;&#160;</a></span>endpoint</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structpdg_1_1_net_endpoint.html">NetEndpoint</a> endpoint</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -159,6 +206,34 @@ Public Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">long id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a36bd74109f547f7f8198faf5a12d2879" name="a36bd74109f547f7f8198faf5a12d2879"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36bd74109f547f7f8198faf5a12d2879">&#9670;&#160;</a></span>message</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string message</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a507c964370f048592080ec09750c03fe" name="a507c964370f048592080ec09750c03fe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a507c964370f048592080ec09750c03fe">&#9670;&#160;</a></span>transport</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacepdg.html#a5715f76af8e5a725c9efd63b78ee5dba">NetTransport</a> transport = <a class="el" href="namespacepdg.html#a5715f76af8e5a725c9efd63b78ee5dbaa925641e0b76c28cc940e8f3ca178d826">NetTransport::Native</a></td>
         </tr>
       </table>
 </div><div class="memdoc">

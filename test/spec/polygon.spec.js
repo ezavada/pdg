@@ -29,6 +29,27 @@
 
 describe("Polygon", function() {
 
+  it("owns move-only result values independently of both inputs", function() {
+    var source = new pdg.Polygon();
+    source.addPoint(new pdg.Point(0, 0));
+    source.addPoint(new pdg.Point(10, 0));
+    source.addPoint(new pdg.Point(10, 10));
+    var empty = new pdg.Polygon();
+    var copy = empty.unionWith(source);
+    expect(copy).not.toBe(source);
+    expect(copy.getPointCount()).toBe(3);
+    copy.move(new pdg.Offset(20, 30));
+    expect(source.getBounds().left).toBe(0);
+    expect(copy.getBounds().left).toBe(20);
+    var intersection = empty.intersection(source);
+    expect(intersection).not.toBe(empty);
+    expect(intersection.getPointCount()).toBe(0);
+    if (typeof copy.delete === 'function') {
+      copy.delete(); intersection.delete(); empty.delete();
+    }
+    expect(source.getPointCount()).toBe(3);
+  });
+
   describe("availability", function() {
 
     it("checks if Polygon is available", function() {

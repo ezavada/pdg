@@ -1,0 +1,47 @@
+namespace pdg { /**
+\fn ElementRef pdg::Drawing::addText(string text, Rect rect, Attributes attrs)
+\brief Add editable text to a drawing.
+
+Copies the text and attributes. Use font(), textSize(), textStyle(), fillColor()
+and fillOpacity() on the attributes to style it, as with Port.drawText(). Newlines
+are supported. The rectangle supplies the local layout bounds and four editable
+corner control points; hit testing uses that rectangle rather than glyph outlines.
+Element and parent transforms and opacities apply normally, including live attributes.
+
+Text and styling are saved with drawing artwork in Part/Sprite snapshots.
+Font names and scaling factors are saved; font files are not embedded. The receiving
+system must provide the font for the same appearance. Older drawing snapshots remain readable.
+
+\param text Text string, including the empty string; at most 1 MiB in UTF-8.
+\param rect Finite rectangle with right >= left and bottom >= top, in drawing coordinates.
+\param attrs Text styling and transformation attributes.
+\return An ElementRef of type pdg.type_Text for later editing.
+
+\note Rendering requires a graphics build. In this example, sprite is an existing
+Sprite; serializing it also saves the drawing assigned to its label Part.
+\par Example
+\code{.js}
+var drawing = pdg.createDrawing();
+var attrs = new pdg.Attributes().font(pdg.gfx.createFont("Arial"))
+    .textSize(24).textStyle(pdg.textStyle_Bold).fillColor("white");
+var label = drawing.addText("Player 1", new pdg.Rect(0, 0, 180, 40), attrs);
+sprite.createPart("label").setDrawing(drawing);
+label.setText("Player 2");
+var save = new pdg.Serializer();
+save.serialize_obj(sprite);
+\endcode
+\see ElementRef.getText(), ElementRef.setText(), Part.setDrawing(), Port.drawText()
+*/ }
+namespace pdg { /**
+\fn string pdg::ElementRef::getText()
+\brief Get the current text of a text element.
+\return The text string. Throws for a non-text or removed element.
+\see setText(), Drawing.addText()
+*/ }
+namespace pdg { /**
+\fn pdg::ElementRef::setText(string text)
+\brief Replace a text element's text while retaining its rectangle and styling.
+\param text Replacement string, at most 1 MiB in UTF-8; an empty string is allowed.
+\return undefined. Throws for a non-string, non-text or removed element.
+\see getText(), Drawing.addText()
+*/ }

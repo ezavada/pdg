@@ -1,0 +1,48 @@
+namespace pdg { /**
+\fn object pdg::NetServer::ready()
+\brief Wait until the requested listeners are bound.
+
+Returns a Promise resolving to an array of bound listener addresses, including
+transport, address, port and secure. WebSocket entries also contain path.
+server.listeners.native and server.listeners.websocket contain these snapshots,
+or null when unavailable. Call listen() first. With the default atomic startup,
+a failed listener closes all requested listeners and rejects the Promise. With
+allowPartialListen, individual failures reach onError() and successfully bound
+addresses resolve; failure of every listener still rejects.
+
+\return Promise of the bound address array.
+\see listen(), shutdown(), \ref websocket_server_options
+**/ }
+
+namespace pdg { /**
+\var string pdg::NetConnection::transport
+\brief Read-only carrier name: native or websocket.
+
+onMessage() continues to report "tcp" for reliable messages and "udp" for
+native datagrams. Inspect transport to identify the carrier. WebSocket reports
+hasDgram as false, so sendDgram() uses send().
+**/ }
+
+namespace pdg { /**
+\var boolean pdg::NetConnection::secure
+\brief Read-only indication that the carrier uses TLS.
+
+True for wss://, false for ws:// and native TCP. Browser localAddr and remoteAddr
+are empty strings; localPort and remotePort are zero because browser APIs do not
+expose socket endpoints. Native runtimes populate the available endpoints.
+**/ }
+
+namespace pdg { /**
+\var boolean pdg::hasNetworkClient
+\brief True when NetClient is available.
+
+Browser WebSocket, iOS JavaScriptCore TCP/UDP and WebSocket, and standalone runtimes expose clients. hasNetwork remains
+the broad networking capability flag; use hasNetworkServer before hosting.
+**/ }
+
+namespace pdg { /**
+\var boolean pdg::hasNetworkServer
+\brief True when NetServer and incoming listeners are available.
+
+True in standalone and Node runtimes, false in browser and iOS/JSC runtimes.
+**/ }

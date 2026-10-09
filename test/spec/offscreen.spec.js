@@ -28,6 +28,44 @@ if (pdg.hasGraphics) describe('Offscreen ports', function() {
     beforeEach(function() { ports = []; });
     afterEach(function() { ports.forEach(function(p) { pdg.gfx.closeGraphicsPort(p); }); });
 
+    it('tints antialiased text once when compositing with partial opacity', function() {
+        var target = create(64, 32);
+        fill(target, 'blue');
+        var attrs = new pdg.Attributes().textSize(20).fillColor(new pdg.Color(1, 0, 0, .5));
+        target.drawText('MM', new pdg.Point(4, 24), attrs);
+        var rendered = image(target), maximumRed = 0;
+        for (var y = 0; y < 32; ++y) for (var x = 0; x < 64; ++x) {
+            var value = rendered.getPixel(x, y);
+            maximumRed = Math.max(maximumRed, value.red);
+            expect(Math.abs(value.red + value.blue - 1) < .025).toBe(true);
+            expect(value.green < .025 && value.alpha > .975).toBe(true);
+        }
+        expect(maximumRed > .45 && maximumRed < .525).toBe(true);
+        if (typeof rendered.delete === 'function') rendered.delete();
+        if (typeof attrs.delete === 'function') attrs.delete();
+    });
+
+    it('keeps changing numeric text aligned when a repeated label becomes a cached raster', function() {
+        var target = create(64, 40), label = 'Score 123';
+        var attrs = new pdg.Attributes().textSize(12).fillColor('white');
+        var point = new pdg.Point(4, 30), width = target.getTextWidth(label, 12);
+        fill(target, 'blue'); target.drawText(label, point, attrs);
+        var first = image(target, true);
+        fill(target, 'blue'); target.drawText(label, point, attrs);
+        var repeated = image(target, true), error = 0, ink = 0;
+        for (var y = 0; y < 40; ++y) for (var x = 0; x < 64; ++x) {
+            var a = first.getPixel(x, y), b = repeated.getPixel(x, y);
+            error += Math.abs(a.red - b.red);
+            ink += a.red > .5;
+        }
+        expect(ink > 20).toBe(true);
+        expect(error / (64 * 40) < .025).toBe(true);
+        expect(target.getTextWidth(label, 12)).toBe(width);
+        [first, repeated, attrs, point].forEach(function(value) {
+            if (typeof value.delete === 'function') value.delete();
+        });
+    });
+
     // The browser shape-fill check already runs these shared pixel regressions.
     // Exercise them in the native suite too, without standalone misc launchers.
     if (typeof process !== 'undefined' && process.versions && process.versions.node) {

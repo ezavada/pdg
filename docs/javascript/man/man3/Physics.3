@@ -1,4 +1,4 @@
-.TH "Physics" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "Physics" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -27,7 +27,7 @@ Physics \- Physics
 .ti -1c
 .RI "struct \fBColliderContact\fP"
 .br
-.RI "One shape contact delivered as eventType_ColliderContact\&. "
+.RI "\fBColliderContact\fP\&. "
 .ti -1c
 .RI "class \fBCpArbiter\fP"
 .br
@@ -59,7 +59,7 @@ Physics \- Physics
 .ti -1c
 .RI "struct \fBSpriteBreakEvent\fP"
 .br
-.RI "A body exceeded its angular-speed threshold or a legacy joint exceeded its break force\&. "
+.RI "\fBSpriteBreakEvent\fP\&. "
 .ti -1c
 .RI "struct \fBSpriteCollideEvent\fP"
 .br
@@ -140,11 +140,26 @@ Select approaching circles, touching circles with opposing forces, box stacks, j
  
 .SH "Class Documentation"
 .PP 
-.SH "struct ColliderContact"
+.SH "struct pdg::ColliderContact"
 .PP 
-One shape contact delivered as eventType_ColliderContact\&. 
+\fBColliderContact\fP\&. 
 
-Enable Collider::setWantsContactEvents() on each collider whose owner should receive notifications\&. Both Sprite and Part colliders deliver through the owning Sprite\&. Each receiving collider sees itself as \fRcollider\fP; vectors reverse for the other endpoint\&. Delivery occurs synchronously after the solve\&.
+One shape contact delivered as eventType_ColliderContact\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  collider  \fR\fBCollider\fP\fP  Required  impulse  \fR\fBVector\fP\fP  Required  normal  \fR\fBVector\fP\fP  Required  other  \fR\fBCollider\fP\fP  Required  otherShape  \fRnumber\fP  Required  penetration  \fRnumber\fP  Required  phase  \fRnumber\fP  Required  point  \fR\fBPoint\fP\fP  Required  sensor  \fRboolean\fP  Required  shape  \fRnumber\fP  Required  
+.RE
+.PP
+Enable \fBCollider::setWantsContactEvents()\fP on each collider whose owner should receive notifications\&. Both \fBSprite\fP and \fBPart\fP colliders deliver through the owning \fBSprite\fP\&. Each receiving collider sees itself as \fR\fBcollider\fP\fP; vectors reverse for the other endpoint\&. Delivery occurs synchronously after the solve\&.
 
 .PP
 
@@ -154,7 +169,7 @@ Enable Collider::setWantsContactEvents() on each collider whose owner should rec
 
 .RE
 .PP
-Field  Meaning  emitter  Owning Sprite receiving this event  eventType  \fBpdg::eventType_ColliderContact\fP  collider, other  Shared Collider handles identifying both endpoints  shape, otherShape  Stable shape IDs within the corresponding colliders  phase  collision_Begin, collision_Stay or collision_End  point  Approximate contact Point in owning-layer/world coordinates  normal  Unit Vector directed from collider toward other  impulse  Actual impulse applied to other; zero for sensors, sleeping contacts and end contacts  penetration  Nonnegative overlap depth; zero for an end contact  sensor  Whether either collider is a sensor  
+Field  Meaning  emitter  Owning \fBSprite\fP receiving this event  eventType  \fBpdg::eventType_ColliderContact\fP  collider, other  Shared \fBCollider\fP handles identifying both endpoints  shape, otherShape  Stable shape IDs within the corresponding colliders  phase  collision_Begin, collision_Stay or collision_End  point  Approximate contact \fBPoint\fP in owning-layer/world coordinates  normal  Unit \fBVector\fP directed from collider toward other  impulse  Actual impulse applied to other; zero for sensors, sleeping contacts and end contacts  penetration  Nonnegative overlap depth; zero for an end contact  sensor  Whether either collider is a sensor  
 
 .PP
 
@@ -162,12 +177,62 @@ Field  Meaning  emitter  Owning Sprite receiving this event  eventType  \fBpdg::
 Chipmunk contacts reuse its solved manifold: point is the mean of the contact midpoints and penetration is the greatest overlap depth\&. Sleeping pairs continue to report collision_Stay without a new impulse\&.
 
 .PP
-Geometry, filters and physical associations are evaluated for the solved frame\&. A callback can remove an endpoint before another notification is delivered; retained handles remain safe and isAttached() reports their current state\&. Contact identity is per shape pair, so compound geometry can generate several notifications for the same two owners\&. Native \fBColliderContact\fP pointers are borrowed only for the callback; JavaScript retains its Collider handles\&. 
+Geometry, filters and physical associations are evaluated for the solved frame\&. A callback can remove an endpoint before another notification is delivered; retained handles remain safe and isAttached() reports their current state\&. Contact identity is per shape pair, so compound geometry can generate several notifications for the same two owners\&. Native \fBColliderContact\fP pointers are borrowed only for the callback; JavaScript retains its \fBCollider\fP handles\&. 
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBCollider\fP \fIcollider\fP collider Type: \fR\fBCollider\fP\fP\&. Required\&. 
+.br
+.PP
+\fBVector\fP \fIimpulse\fP impulse Type: \fR\fBVector\fP\fP\&. Required\&. 
+.br
+.PP
+\fBVector\fP \fInormal\fP normal Type: \fR\fBVector\fP\fP\&. Required\&. 
+.br
+.PP
+\fBCollider\fP \fIother\fP other Type: \fR\fBCollider\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIotherShape\fP otherShape Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIpenetration\fP penetration Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIphase\fP phase Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPoint\fP \fIpoint\fP point Type: \fR\fBPoint\fP\fP\&. Required\&. 
+.br
+.PP
+boolean \fIsensor\fP sensor Type: \fRboolean\fP\&. Required\&. 
+.br
+.PP
+number \fIshape\fP shape Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
 .SH "struct pdg::SpriteBreakEvent"
 .PP 
-A body exceeded its angular-speed threshold or a legacy joint exceeded its break force\&. 
+\fBSpriteBreakEvent\fP\&. 
 
-Register an IEventHandler for eventType_SpriteBreak on the owning Sprite\&. Part body notifications use their owning Sprite's route\&. Inspect reason to distinguish the two event forms\&. Body notifications work with both basic and Chipmunk solvers\&.
+A body exceeded its angular-speed threshold or a legacy joint exceeded its break force\&.
+
+.PP
+\fBNote\fP
+.RS 4
+Documentation-only JavaScript shape, not a runtime constructor\&.
+.RE
+.PP
+ 
+.PP
+\fBFields\fP
+.RS 4
+Field  Type  Required/default  Meaning  actingSprite  \fR\fBSprite\fP\fP or \fRnull\fP  Required  action  \fRnumber\fP  Required  angularSpeed  \fRnumber\fP  Required  body  \fR\fBPhysicsBody\fP\fP or \fRnull\fP  Required  breakAngularSpeed  \fRnumber\fP  Required  breakForce  \fRnumber\fP  Required  emitter  \fR\fBEventEmitter\fP\fP  Required  eventType  \fRnumber\fP  Required  force  \fRnumber\fP  Required  impulse  \fRnumber\fP  Required  inLayer  \fR\fBSpriteLayer\fP\fP or \fRnull\fP  Required  joint  \fR\fBCpConstraint\fP\fP or \fRnull\fP  Required  part  \fR\fBPart\fP\fP or \fRnull\fP  Required  reason  \fRnumber\fP  Required  referenceBody  \fR\fBPhysicsBody\fP\fP or \fRnull\fP  Required  targetSprite  \fR\fBSprite\fP\fP or \fRnull\fP  Required  
+.RE
+.PP
+Register an \fBIEventHandler\fP for eventType_SpriteBreak on the owning \fBSprite\fP\&. \fBPart\fP body notifications use their owning \fBSprite\fP's route\&. Inspect reason to distinguish the two event forms\&. Body notifications work with both basic and Chipmunk solvers\&.
 
 .PP
  
@@ -177,23 +242,76 @@ Register an IEventHandler for eventType_SpriteBreak on the owning Sprite\&. Part
 
 .RE
 .PP
-Field  Meaning  emitter, eventType  Standard event emitter and eventType_SpriteBreak\&.  actingSprite, inLayer  Owning Sprite and its layer (null outside a layer)\&.  reason  physicsBreak_AngularSpeed or physicsBreak_Force\&.  action  action_BodyBreak for speed; action_JointBreak for legacy force breaks\&.  body, part  Source PhysicsBody and optional Part for speed; null for legacy force breaks\&.  referenceBody  Optional angular-speed reference PhysicsBody, otherwise null\&.  angularSpeed  Measured speed magnitude in radians/second; zero for force breaks\&.  breakAngularSpeed  Configured speed threshold in radians/second; zero for force breaks\&.  targetSprite, joint  Legacy joint endpoint and CpConstraint; null for speed events\&.  impulse, force, breakForce  Legacy joint impulse, solved force and break threshold; zero for speed events\&.  
+Field  Meaning  emitter, eventType  Standard event emitter and eventType_SpriteBreak\&.  actingSprite, inLayer  Owning \fBSprite\fP and its layer (null outside a layer)\&.  reason  physicsBreak_AngularSpeed or physicsBreak_Force\&.  action  action_BodyBreak for speed; action_JointBreak for legacy force breaks\&.  body, part  Source \fBPhysicsBody\fP and optional \fBPart\fP for speed; null for legacy force breaks\&.  referenceBody  Optional angular-speed reference \fBPhysicsBody\fP, otherwise null\&.  angularSpeed  Measured speed magnitude in radians/second; zero for force breaks\&.  breakAngularSpeed  Configured speed threshold in radians/second; zero for force breaks\&.  targetSprite, joint  Legacy joint endpoint and \fBCpConstraint\fP; null for speed events\&.  impulse, force, breakForce  Legacy joint impulse, solved force and break threshold; zero for speed events\&.  
 
 .PP
 
 .PP
-Angular-speed notifications do not clamp speed, apply braking, disconnect joints or split artwork, regardless of the handler's return value\&. They fire once per sampled excursion above the limit; returning to or below the limit rearms them\&. See PhysicsBody\&.setBreakAngularSpeed() for sampling and reference lifetime rules\&.
+Angular-speed notifications do not clamp speed, apply braking, disconnect joints or split artwork, regardless of the handler's return value\&. They fire once per sampled excursion above the limit; returning to or below the limit rearms them\&. See \fBPhysicsBody\&.setBreakAngularSpeed()\fP for sampling and reference lifetime rules\&.
 
 .PP
-Legacy Chipmunk joint-force events retain their existing behavior: returning true handles the notification; an unhandled event invokes the existing disconnect path\&. Shared PhysicsConstraint force breaking retains its existing behavior too; this body feature does not add force events to that separate constraint path\&.
+Legacy Chipmunk joint-force events retain their existing behavior: returning true handles the notification; an unhandled event invokes the existing disconnect path\&. Shared \fBPhysicsConstraint\fP force breaking retains its existing behavior too; this body feature does not add force events to that separate constraint path\&.
 
 .PP
 \fBSee also\fP
 .RS 4
-PhysicsBody\&.setBreakAngularSpeed(), \fBpdg\&.eventType_SpriteBreak\fP 
+\fBPhysicsBody\&.setBreakAngularSpeed()\fP, \fBpdg\&.eventType_SpriteBreak\fP 
 .RE
 .PP
 
+.PP
+\fBClass Members:\fP
+.RS 4
+\fBSprite\fP \fIactingSprite\fP actingSprite Type: \fR\fBSprite\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIaction\fP action Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIangularSpeed\fP angularSpeed Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPhysicsBody\fP \fIbody\fP body Type: \fR\fBPhysicsBody\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIbreakAngularSpeed\fP breakAngularSpeed Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIbreakForce\fP breakForce Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBEventEmitter\fP \fIemitter\fP emitter Type: \fR\fBEventEmitter\fP\fP\&. Required\&. 
+.br
+.PP
+number \fIeventType\fP eventType Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIforce\fP force Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+number \fIimpulse\fP impulse Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBSpriteLayer\fP \fIinLayer\fP inLayer Type: \fR\fBSpriteLayer\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+\fBCpConstraint\fP \fIjoint\fP joint Type: \fR\fBCpConstraint\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+\fBPart\fP \fIpart\fP part Type: \fR\fBPart\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+number \fIreason\fP reason Type: \fRnumber\fP\&. Required\&. 
+.br
+.PP
+\fBPhysicsBody\fP \fIreferenceBody\fP referenceBody Type: \fR\fBPhysicsBody\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+\fBSprite\fP \fItargetSprite\fP targetSprite Type: \fR\fBSprite\fP\fP or \fRnull\fP\&. Required\&. 
+.br
+.PP
+.RE
+.PP
 .SH "struct pdg::SpriteCollideEvent"
 .PP 
 a Sprite collided with something (\fIOptional\fP) 
@@ -268,7 +386,7 @@ eventType_SpriteAnimate action: a sprite has hit the edge of the sprite layer Th
 \fBSprite\&.setWantsCollideWallEvents()\fP 
 
 .PP
-\fBSpriteLayer\&.setSize()\fP 
+SpriteLayer\&.setSize() 
 
 .PP
 \fBeventType_SpriteCollide\fP 

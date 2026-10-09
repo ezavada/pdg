@@ -107,7 +107,7 @@ namespace pdg
         {
             if (JSValueIsNumber(ctx, arguments[0]))
             {
-                splineType = (int)(int32)floor(JSValueToNumber(ctx, arguments[0], exception));
+                splineType = (int)pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[0], exception));
             }
             else if (!JSValueIsNull(ctx, arguments[0]) && !JSValueIsUndefined(ctx, arguments[0]))
             {
@@ -207,7 +207,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 1);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""pointIndex"")");
-        int32 pointIndex = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 pointIndex = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         Point result = self->getPoint(pointIndex);
         return JSC_PointToValue(ctx, result, exception);
     }
@@ -220,7 +220,7 @@ namespace pdg
             return JSC_ThrowArgCountException(ctx, exception, argumentCount, 2);
         if (!JSValueIsNumber(ctx, arguments[1 -1]))
             return JSC_ThrowArgTypeException(ctx, exception, 1, "a number (""pointIndex"")");
-        int32 pointIndex = (int32)floor(JSValueToNumber(ctx, arguments[1 -1], exception));
+        int32 pointIndex = pdg::JSC_NumberToInt32(JSValueToNumber(ctx, arguments[1 -1], exception));
         pdg::Point point;
         auto point_isPoint = JSC_ValueIsPoint(ctx, arguments[2 -1], point, exception);
         if (!point_isPoint.has_value()) { return JSValueMakeNull(ctx); }

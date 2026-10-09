@@ -57,42 +57,14 @@ function printProperties(obj) {
    }
 }
 
-// use in your interface functions like so:
-//	var _sig = methodSignature("brief description of my method", arguments, "[object Something]", 0, "()"); if (_sig != null) return _sig;
-function methodSignature(brief, args, rettype, paramcount, params) {
-//	if ((typeof process != "undefined") && process.ios) return null;
-	if ((args.length == 1) && (args[0] == null)) {
-		var desc = "";
-		if (brief.length > 0) {
-			desc = " - " + brief;
-		}
-		return rettype + " function" + params + desc;
-	}
-	return null;
-}
-
-function X_methodSignature() {
-    return null;
-}
-
-
-// only do if we are being used as a node module
-if (typeof process != 'undefined') {
-	global.methodSignature = (process.ios) ? X_methodSignature : methodSignature;
-} else if (typeof window == 'object') {
-    window.methodSignature = X_methodSignature;
-}
-
 // Export for module systems
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
-        methodSignature: methodSignature,
         printProperties: printProperties
     };
 }
 // Also support legacy 'exports' global
 if (typeof exports !== 'undefined') {
-    exports.methodSignature = methodSignature;
     exports.printProperties = printProperties;
 }
 console.dump = printProperties;

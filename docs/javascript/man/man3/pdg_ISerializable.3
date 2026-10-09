@@ -1,4 +1,4 @@
-.TH "ISerializable" 3 "Version v1.1.1" "Pixel Dust Game Engine" \" -*- nroff -*-
+.TH "ISerializable" 3 "Version v1.2.0" "Pixel Dust Game Engine" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -11,6 +11,13 @@ ISerializable \- Interface for an object which can be serialized\&.
 \fR#include <pdg\-js\&.h>\fP
 .PP
 Inherited by \fBSprite\fP, and \fBSpriteLayer\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBISerializable\fP (function getSerializedSize, function serialize, function deserialize, function getMyClassTag)"
+.br
+.in -1c
 .SS "Related Symbols"
 (Note that these are not member symbols\&.) 
 .in +1c
@@ -116,6 +123,26 @@ Objects can serialize other objects with \fRserialize_obj()\fP\&. The serializer
 
 .PP
 \fBpdg\&.registerSerializableClass\fP 
+.RE
+.PP
+
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "ISerializable (function getSerializedSize, function serialize, function deserialize, function getMyClassTag)"
+
+.PP
+\fBNote\fP
+.RS 4
+Parameter \fRgetSerializedSize:\fP \fBSerializedSizeCallback\fP\&. 
+
+.PP
+Parameter \fRserialize:\fP \fBSerializeCallback\fP\&. 
+
+.PP
+Parameter \fRdeserialize:\fP \fBDeserializeCallback\fP\&. 
+
+.PP
+Parameter \fRgetMyClassTag:\fP \fBClassTagCallback\fP\&. 
 .RE
 .PP
 

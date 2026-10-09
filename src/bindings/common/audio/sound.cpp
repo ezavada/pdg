@@ -64,3 +64,5 @@ namespace pdg {
 
 } // pdg namespace
 
+
+// @pdg-class {"name":"SoundManager","native_binding":{"browser":{"generate":true,"guard":"!PDG_NO_SOUND","base":null,"support_bindings":[{"name":"stopAllSounds","symbol":"pdg::SoundManager::stopAllSounds"}]}}}

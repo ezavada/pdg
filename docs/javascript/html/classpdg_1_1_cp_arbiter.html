@@ -26,7 +26,7 @@
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
 <div id="titlearea">
    <div id="projectlogo"><img alt="Pixel Dust Game Engine" src="pixeldust.png" height="56"/></div>
-   <div id="projectname">PDG <span id="projectnumber">engine v1.1.1</span>
+   <div id="projectname">PDG <span id="projectnumber">engine v1.2.0</span>
    </div>
 </div>
 <!-- end header part -->
@@ -170,10 +170,18 @@ Public Member Functions</h2></td></tr>
 <p>get the depth of penetration for a particular contact point </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">i</td><td>index into contact points</td></tr>
+    <tr><td class="paramname">i</td><td>integer index into contact points, from 0 through <a class="el" href="#a6bfb4dd6c15455b40b05ad3c34ba9aee" title="number of contacts tracked by this arbiter">getCount()</a> - 1</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">TypeError</td><td>if i is not a signed 32-bit integer. </td></tr>
+    <tr><td class="paramname">RangeError</td><td>if i is outside the current contact count.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Read contact data during the collision callback while the arbiter is valid.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>how far the contact point is inside the other object </dd></dl>
 
 </div>
@@ -218,10 +226,18 @@ Public Member Functions</h2></td></tr>
 <p>get the location of a particular contact point </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">i</td><td>index into contact points</td></tr>
+    <tr><td class="paramname">i</td><td>integer index into contact points, from 0 through <a class="el" href="#a6bfb4dd6c15455b40b05ad3c34ba9aee" title="number of contacts tracked by this arbiter">getCount()</a> - 1</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">TypeError</td><td>if i is not a signed 32-bit integer. </td></tr>
+    <tr><td class="paramname">RangeError</td><td>if i is outside the current contact count.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Read contact data during the collision callback while the arbiter is valid.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>the location of the contact </dd></dl>
 
 </div>
@@ -244,10 +260,18 @@ Public Member Functions</h2></td></tr>
 <p>get the location of a particular contact point </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">i</td><td>index into contact points</td></tr>
+    <tr><td class="paramname">i</td><td>integer index into contact points, from 0 through <a class="el" href="#a6bfb4dd6c15455b40b05ad3c34ba9aee" title="number of contacts tracked by this arbiter">getCount()</a> - 1</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">TypeError</td><td>if i is not a signed 32-bit integer. </td></tr>
+    <tr><td class="paramname">RangeError</td><td>if i is outside the current contact count.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Read contact data during the collision callback while the arbiter is valid.</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>the location of the contact </dd></dl>
 
 </div>

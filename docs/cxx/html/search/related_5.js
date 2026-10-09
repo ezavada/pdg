@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['operator_21_3d_0',['operator!=',['../classpdg_1_1_collider_ref.html#a8d7b1d326749c85997c2f11ee672c725',1,'pdg::ColliderRef::operator!=()'],['../classpdg_1_1_physics_body_ref.html#accdee7bbdc82faa98f6bcddef199e801',1,'pdg::PhysicsBodyRef::operator!=()']]],
-  ['operator_3d_3d_1',['operator==',['../classpdg_1_1_collider_ref.html#a324adb27b6aa2245cb8bf63608e1aa59',1,'pdg::ColliderRef::operator==()'],['../classpdg_1_1_physics_body_ref.html#add6efe40cd0f5282305961d6c1c5e5e4',1,'pdg::PhysicsBodyRef::operator==()']]]
+  ['graphics_5ffinishdrawing_0',['graphics_finishDrawing',['../classpdg_1_1_port.html#a78ad7b9baba72a10a0af9f2ec46ef901',1,'pdg::Port']]],
+  ['graphicsmanager_1',['GraphicsManager',['../classpdg_1_1_port.html#ad65eae853be6e1a35bf85e6865583560',1,'pdg::Port']]]
 ];
