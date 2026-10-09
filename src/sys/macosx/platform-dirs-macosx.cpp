@@ -90,7 +90,10 @@ const char* platform_setupDirectories(int argc, const char* argv[]) {
 		appDataDir = workingDir;
 	}
 	if (isBundle &&!bundleName.empty()) {
-		resourceDir = workingDir + bundleName + "/Contents/Resources/";
+		// Canonical directory paths may omit the trailing separator.
+		resourceDir = workingDir;
+		if (!resourceDir.empty() && resourceDir.back() != '/') resourceDir += '/';
+		resourceDir += bundleName + "/Contents/Resources/";
 	} else {
 		resourceDir = workingDir;
 	}
